@@ -1,12 +1,34 @@
 import { useParams, Link } from "react-router-dom";
-import { FileText, ListChecks, BookMarked, ArrowUpRight, Compass } from "lucide-react";
+import {
+  FileText,
+  ListChecks,
+  BookMarked,
+  ArrowUpRight,
+  Compass,
+  PackageCheck,
+  Database,
+  Image as ImageIcon,
+  FlaskConical,
+  Paperclip,
+  type LucideIcon,
+} from "lucide-react";
 import { resolveDoc, toMarkdown } from "../data/documents";
 import { stations, phaseById } from "../data/stations";
+import { prereqKindLabel, type PrereqKind } from "../data/docTree";
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
+
+// 준비물 종류 → 아이콘·색
+const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
+  doc: { Icon: FileText, color: "var(--p3)" },
+  data: { Icon: Database, color: "var(--p1)" },
+  photo: { Icon: ImageIcon, color: "var(--p4)" },
+  test: { Icon: FlaskConical, color: "var(--p2)" },
+  other: { Icon: Paperclip, color: "var(--text-muted)" },
+};
 
 /** /doc/:id — 문서 작성 워크스페이스 (복사용 템플릿 + 워드 내보내기). */
 export function DocumentWorkspace() {
@@ -66,6 +88,52 @@ export function DocumentWorkspace() {
             <DocxExport doc={doc} />
           </div>
         </div>
+
+        {/* 작성 전 준비물 */}
+        {doc.prerequisites && doc.prerequisites.length > 0 && (
+          <section
+            aria-labelledby="prereq-heading"
+            className="rounded-[var(--r-md)] border"
+            style={{ borderColor: "var(--border)", background: "var(--p2-tint)", padding: "var(--s-5)", marginBottom: "var(--s-6)" }}
+          >
+            <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-1)" }}>
+              <PackageCheck size={20} style={{ color: "var(--warning)" }} aria-hidden />
+              <h2 id="prereq-heading" className="font-extrabold" style={{ fontSize: "var(--t-lg)" }}>
+                작성 전 준비물
+              </h2>
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-4)" }}>
+              이 문서를 쓰기 전에 아래 자료·사진·시험·선행문서를 먼저 확보하세요.
+            </p>
+            <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+              {doc.prerequisites.map((p, i) => {
+                const st = PREREQ_STYLE[p.kind];
+                return (
+                  <div
+                    key={i}
+                    className="flex items-start gap-3 rounded-[var(--r-md)] bg-bg"
+                    style={{ border: "1px solid var(--border)", padding: "var(--s-3)" }}
+                  >
+                    <span
+                      className="grid shrink-0 place-items-center rounded-[var(--r-sm)]"
+                      style={{ width: 32, height: 32, background: "var(--surface)" }}
+                    >
+                      <st.Icon size={18} style={{ color: st.color }} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <span className="font-semibold" style={{ color: st.color, fontSize: "var(--t-xs)" }}>
+                        {prereqKindLabel[p.kind]}
+                      </span>
+                      <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
+                        {p.label}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* 본문 2열 */}
         <div

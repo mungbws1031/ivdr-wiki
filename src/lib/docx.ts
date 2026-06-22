@@ -11,6 +11,7 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
 import type { DocTemplate } from "../data/documents";
+import { prereqKindLabel } from "../data/docTree";
 
 export const DOCX_MIME =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -23,6 +24,10 @@ function buildData(doc: DocTemplate) {
     docTitle: doc.docTitle,
     purpose: doc.purpose,
     refsLine: doc.refs.join(" · "),
+    prerequisites: (doc.prerequisites ?? []).map((p) => ({
+      kind: prereqKindLabel[p.kind],
+      label: p.label,
+    })),
     sections: doc.sections.map((s) => ({
       heading: s.heading,
       guidance: s.guidance,
@@ -59,6 +64,13 @@ function buildBodyXml(doc: DocTemplate): string {
   parts.push(paraXml(`목적: ${doc.purpose}`));
   parts.push(paraXml(`근거: ${doc.refs.join(" · ")}`));
   parts.push(paraXml(""));
+  if (doc.prerequisites && doc.prerequisites.length) {
+    parts.push(paraXml("작성 전 준비물", { bold: true, size: 26 }));
+    for (const p of doc.prerequisites) {
+      parts.push(paraXml(`☐ (${prereqKindLabel[p.kind]}) ${p.label}`));
+    }
+    parts.push(paraXml(""));
+  }
   for (const s of doc.sections) {
     parts.push(paraXml(s.heading, { bold: true, size: 26 }));
     parts.push(paraXml(`· ${s.guidance}`));
@@ -129,6 +141,11 @@ export async function generateSampleDocx(doc: DocTemplate): Promise<Blob> {
     line("{docTitle}", { heading: HeadingLevel.HEADING_1 }),
     line("목적: {purpose}"),
     line("근거: {refsLine}"),
+    line(""),
+    line("작성 전 준비물", { heading: HeadingLevel.HEADING_2 }),
+    line("{#prerequisites}"),
+    line("- [{kind}] {label}"),
+    line("{/prerequisites}"),
     line(""),
     line("[아래 sections 블록이 각 섹션마다 반복됩니다]"),
     line("{#sections}"),

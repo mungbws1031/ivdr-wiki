@@ -5,7 +5,12 @@
 // 규제 사실은 2026.6 기준 확인값. 실제 제출 전 최신 관보·NB 요건으로 재확인할 것.
 // =====================================================================
 
-import { leafById, type DocLeaf } from "./docTree";
+import {
+  leafById,
+  prereqKindLabel,
+  type DocLeaf,
+  type Prerequisite,
+} from "./docTree";
 import { stations, type Station } from "./stations";
 
 export interface DocSection {
@@ -19,6 +24,7 @@ export interface DocTemplate {
   stationId: number; // 1..11
   docTitle: string;
   purpose: string; // 이 문서가 충족/증명하는 것
+  prerequisites?: Prerequisite[]; // 작성 전 준비물 (resolveDoc에서 잎으로부터 채움)
   sections: DocSection[];
   checklist: string[];
   relatedConceptSlugs: string[];
@@ -439,6 +445,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
     purpose:
       leaf.note ??
       `${station.title} 단계의 산출 문서입니다. ${station.oneLine}`,
+    prerequisites: leaf.prerequisites ?? [],
     sections: [
       {
         heading: "1. 목적 · 적용 범위",
@@ -473,9 +480,12 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
 
 /** id 로 문서 콘텐츠 해석 — 전용 템플릿 우선, 없으면 자동 생성. */
 export function resolveDoc(id: string): DocTemplate | undefined {
-  const detailed = docById(id);
-  if (detailed) return detailed;
   const leaf = leafById(id);
+  const detailed = docById(id);
+  if (detailed) {
+    // 준비물은 잎(docTree)에서 단일 출처로 관리 → 전용 템플릿에도 주입
+    return { ...detailed, prerequisites: leaf?.prerequisites ?? [] };
+  }
   if (!leaf) return undefined;
   const station = stations.find((s) => s.id === leaf.stationId);
   if (!station) return undefined;
@@ -490,6 +500,13 @@ export function toMarkdown(t: DocTemplate): string {
   lines.push(`> 목적: ${t.purpose}`);
   lines.push(`> 관련 조항: ${t.refs.join(" · ")}`);
   lines.push("");
+  if (t.prerequisites && t.prerequisites.length) {
+    lines.push(`## 작성 전 준비물`);
+    for (const p of t.prerequisites) {
+      lines.push(`- [ ] (${prereqKindLabel[p.kind]}) ${p.label}`);
+    }
+    lines.push("");
+  }
   for (const s of t.sections) {
     lines.push(`## ${s.heading}`);
     lines.push(`<!-- ${s.guidance} -->`);
