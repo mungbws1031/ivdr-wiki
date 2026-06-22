@@ -9,6 +9,7 @@ import {
   leafById,
   prereqKindLabel,
   rationaleFor,
+  knowledgeFor,
   type DocLeaf,
   type Prerequisite,
 } from "./docTree";
@@ -26,6 +27,7 @@ export interface DocTemplate {
   docTitle: string;
   purpose: string; // 이 문서가 충족/증명하는 것 (무엇)
   rationale?: string; // 이 문서를 왜 쓰는가 (취지·근본 이유)
+  knowledge?: string[]; // 작성 전 알아야 할 것 (사전 지식 체크리스트)
   prerequisites?: Prerequisite[]; // 작성 전 준비물 (resolveDoc에서 잎으로부터 채움)
   sections: DocSection[];
   checklist: string[];
@@ -448,6 +450,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
       leaf.note ??
       `${station.title} 단계의 산출 문서입니다. ${station.oneLine}`,
     rationale: rationaleFor(leaf.id),
+    knowledge: knowledgeFor(leaf.id),
     prerequisites: leaf.prerequisites ?? [],
     sections: [
       {
@@ -490,6 +493,7 @@ export function resolveDoc(id: string): DocTemplate | undefined {
     return {
       ...detailed,
       rationale: rationaleFor(id),
+      knowledge: knowledgeFor(id),
       prerequisites: leaf?.prerequisites ?? [],
     };
   }
@@ -510,6 +514,11 @@ export function toMarkdown(t: DocTemplate): string {
   if (t.rationale) {
     lines.push(`## 취지 — 왜 이 문서를 쓰는가`);
     lines.push(t.rationale);
+    lines.push("");
+  }
+  if (t.knowledge && t.knowledge.length) {
+    lines.push(`## 작성 전 알아야 할 것`);
+    for (const k of t.knowledge) lines.push(`- [ ] ${k}`);
     lines.push("");
   }
   if (t.prerequisites && t.prerequisites.length) {

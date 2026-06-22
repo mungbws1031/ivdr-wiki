@@ -7,6 +7,7 @@ import {
   Compass,
   PackageCheck,
   Lightbulb,
+  GraduationCap,
   Database,
   Image as ImageIcon,
   FlaskConical,
@@ -114,6 +115,33 @@ export function DocumentWorkspace() {
             <DocxExport doc={doc} />
           </div>
         </div>
+
+        {/* 작성 전 알아야 할 것 (사전 지식 체크리스트) */}
+        {doc.knowledge && doc.knowledge.length > 0 && (
+          <section
+            aria-labelledby="knowledge-heading"
+            className="rounded-[var(--r-md)] border"
+            style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-5)", marginBottom: "var(--s-4)" }}
+          >
+            <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-1)" }}>
+              <GraduationCap size={20} style={{ color: "var(--info)" }} aria-hidden />
+              <h2 id="knowledge-heading" className="font-extrabold" style={{ fontSize: "var(--t-lg)" }}>
+                작성 전 알아야 할 것
+              </h2>
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-3)" }}>
+              이 문서를 쓰기 전에 아래 개념·결정을 먼저 이해하고 있어야 합니다.
+            </p>
+            <ul className="flex flex-col" style={{ gap: 8 }}>
+              {doc.knowledge.map((k, i) => (
+                <li key={i} className="flex items-start gap-2 text-text" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)" }}>
+                  <span aria-hidden className="mt-0.5 shrink-0 font-bold" style={{ color: "var(--info)" }}>☐</span>
+                  <span>{k}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* 작성 전 준비물 */}
         {doc.prerequisites && doc.prerequisites.length > 0 && (

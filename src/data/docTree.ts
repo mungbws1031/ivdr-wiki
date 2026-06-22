@@ -673,6 +673,206 @@ export const docRationale: Record<string, string> = {
 export const rationaleFor = (id: string): string | undefined =>
   docRationale[id];
 
+// ---------------------------------------------------------------------
+// 문서별 '작성 전 알아야 할 것' — 사전 지식·이해·결정 체크리스트.
+// (준비물=확보할 자료 / 지식=머릿속에 정리돼 있어야 할 개념·결정)
+// ---------------------------------------------------------------------
+export const docKnowledge: Record<string, string[]> = {
+  "intended-purpose": [
+    "내 제품이 검출/측정하는 정확한 대상과 그 임상적 의미",
+    "타깃 사용자·사용 환경(전문가/자가검사, 실험실/가정)",
+    "결과가 어떤 임상 결정을 보조하는지",
+  ],
+  "qualification-statement": [
+    "IVDR Art.2의 IVD 정의 요건",
+    "내 제품이 정의의 어느 요소에 해당/비해당하는지",
+    "경계 사례(연구용·일반 제품)와의 구분 기준",
+  ],
+  "classification-rationale": [
+    "Annex VIII Rule 1~7의 적용 순서와 우선순위",
+    "자가검사/근접검사가 분류에 미치는 영향(Rule 4)",
+    "둘 이상 해당 시 최고 등급 채택 원칙",
+  ],
+  "conformity-route-plan": [
+    "클래스별 가능한 Annex 경로(IX/X/XI)의 차이",
+    "각 경로에서 NB가 심사하는 범위",
+    "경로별로 필요한 산출물",
+  ],
+  "device-description": [
+    "기기 구성·작동 원리",
+    "변형(variant)·모델 범위",
+    "이전 세대·유사 기기와의 차이",
+  ],
+  "design-manufacturing-info": [
+    "핵심 설계 입력·출력",
+    "제조 공정의 중요 관리점(CTQ)",
+    "외주 vs 자가 제조 구분",
+  ],
+  "tech-doc-toc-gspr": [
+    "Annex I GSPR 각 항목의 의미",
+    "내 기기에 적용/비적용되는 요구 구분",
+    "충족 증거가 어디에 있는지(추적성)",
+  ],
+  "labelling-spec": [
+    "IVDR이 요구하는 필수 라벨 정보 항목",
+    "UDI 캐리어·CE·NB 번호 표기 규칙",
+    "적용 심볼 표준(ISO 15223-1)",
+  ],
+  ifu: [
+    "사용자 수준(전문가/비전문가)에 맞는 표현",
+    "사용 단계별 위험과 경고",
+    "언어·형식 요건",
+  ],
+  "benefit-risk": [
+    "임상적 이익의 정량/정성 근거",
+    "잔여 위험의 종류와 수준",
+    "이익이 위험을 능가한다는 판단 논리",
+  ],
+  "stability-study": [
+    "실시간 vs 가속 안정성의 차이와 한계",
+    "유효기간·개봉 후 사용기간 설정 방법",
+    "운송(수송) 조건 시험 요건",
+  ],
+  "sw-validation": [
+    "소프트웨어 안전등급(IEC 62304)",
+    "검증 수준(단위/통합/시스템)",
+    "사이버보안 위협 모델",
+  ],
+  "performance-eval-plan": [
+    "성능평가 3단(과학·분석·임상)의 관계",
+    "각 성능의 수용 기준 설정 방법",
+    "필요한 연구 유형",
+  ],
+  "scientific-validity": [
+    "분석물질-임상상태 연관의 근거 수준",
+    "문헌 검색·평가 방법",
+    "기존 합의·가이드라인 존재 여부",
+  ],
+  "analytical-performance": [
+    "정밀도·정확도·LoD·LoQ 등 지표의 정의",
+    "교차반응·간섭 평가 방법",
+    "참조 물질·방법",
+  ],
+  "clinical-performance": [
+    "민감도·특이도·예측도의 의미",
+    "적절한 대상군·검체 수",
+    "연구 설계(전향/후향)와 윤리 요건",
+  ],
+  "performance-eval-report": [
+    "PEP 대비 결과의 충족 여부 판단",
+    "잔여 위험·한계의 기술 방법",
+    "결론 도출 논리",
+  ],
+  "risk-management-plan": [
+    "ISO 14971 위험관리 흐름",
+    "위험 수용 기준 설정 방법",
+    "위험-요구-성능 추적의 의미",
+  ],
+  "risk-management-file": [
+    "위해요인→위험상황→위해 연결 방법",
+    "통제수단 우선순위(설계>보호>정보)",
+    "잔여위험 평가·공개",
+  ],
+  "usability-file": [
+    "사용 시나리오·핵심 작업 도출",
+    "형성평가 vs 총괄평가 차이",
+    "사용 오류와 위험의 연결",
+  ],
+  "qms-ivdr-matrix": [
+    "ISO 13485와 IVDR 요구의 차이",
+    "IVDR 고유 프로세스 목록",
+    "절차서-요구 매핑 방법",
+  ],
+  "doc-record-control": [
+    "문서 vs 기록의 구분",
+    "버전·승인·배포 통제 원칙",
+    "보존 기간 요건",
+  ],
+  "capa-sop": [
+    "시정 vs 예방 vs 수정의 차이",
+    "근본원인 분석 기법",
+    "유효성 검증 방법",
+  ],
+  "supplier-control": [
+    "핵심/비핵심 공급자 구분",
+    "공급자 평가·재평가 기준",
+    "변경 통제 흐름",
+  ],
+  "complaint-handling": [
+    "불만의 정의와 범위",
+    "중대성·보고 대상 판단 기준",
+    "조사·기록 요건",
+  ],
+  "vigilance-sop": [
+    "중대사고·FSCA의 정의",
+    "보고 기한과 대상 당국",
+    "동향 보고와의 관계",
+  ],
+  "nb-application": [
+    "내 클래스의 NB 개입 여부",
+    "NB scope(NANDO)와 매칭",
+    "심사 단계·소요 기간",
+  ],
+  "declaration-of-conformity": [
+    "Annex IV 필수 기재 항목",
+    "제조자 책임의 의미",
+    "기술문서·라벨과의 일관성",
+  ],
+  "ce-marking-application": [
+    "CE 부착 규칙과 크기·위치",
+    "NB 번호 병기 조건",
+    "오부착의 법적 위험",
+  ],
+  "authorised-rep-mandate": [
+    "EU 대리인의 법적 책임 범위",
+    "위임에 포함/제외되는 사항",
+    "수입자·유통자와의 관계",
+  ],
+  "actor-registration": [
+    "행위자 역할(제조자/대리인/수입자) 구분",
+    "SRN 발급 절차",
+    "기기 등록과의 선후 관계",
+  ],
+  "device-registration": [
+    "Basic UDI-DI와 UDI-DI의 관계",
+    "EUDAMED 모듈·의무 시점",
+    "레거시 기기 등록 기한",
+  ],
+  "udi-assignment": [
+    "UDI-DI/PI의 구성",
+    "발행기관(GS1 등) 선택",
+    "라벨 캐리어 형식·판독 요건",
+  ],
+  "pms-plan": [
+    "능동 vs 수동 PMS 데이터",
+    "지표·주기·임계값 설정",
+    "PMS→성능→위험 환류 경로",
+  ],
+  "pms-report": [
+    "PMS 보고 대상 등급",
+    "데이터 종합·결론 방법",
+    "PSUR과의 구분",
+  ],
+  psur: [
+    "PSUR 주기(클래스별)",
+    "포함해야 할 데이터",
+    "NB·EUDAMED 제출 흐름",
+  ],
+  "pmpf-plan": [
+    "PMPF가 필요한 경우 판단",
+    "추적 지표·방법 설계",
+    "PER 갱신과의 연계",
+  ],
+  "trend-reporting": [
+    "트렌드 보고의 발동 기준(통계적 유의)",
+    "기준선 설정 방법",
+    "보고 경로",
+  ],
+};
+
+export const knowledgeFor = (id: string): string[] | undefined =>
+  docKnowledge[id];
+
 export function allLeaves(): DocLeaf[] {
   return docTree.flatMap((g) => g.items);
 }
