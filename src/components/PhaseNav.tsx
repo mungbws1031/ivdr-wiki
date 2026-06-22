@@ -1,0 +1,64 @@
+import { phases, type PhaseId } from "../data/stations";
+
+/**
+ * 상단 sticky 페이즈 레일 — 현재 보고 있는 페이즈를 강조(현재 위치 신호).
+ * 클릭 시 해당 밴드로 스크롤. PhaseFilter/ProgressRail 의 랜딩용 경량 버전.
+ */
+export function PhaseNav({ activePhase }: { activePhase: PhaseId | null }) {
+  return (
+    <nav
+      aria-label="페이즈 빠른 이동"
+      className="sticky top-0 z-30 border-b backdrop-blur"
+      style={{
+        background: "rgba(255,255,255,0.85)",
+        borderColor: "var(--border)",
+      }}
+    >
+      <div
+        className="mx-auto flex items-center gap-2 overflow-x-auto"
+        style={{ maxWidth: "var(--max-w)", padding: "10px var(--margin)" }}
+      >
+        <span className="shrink-0 font-extrabold text-text" style={{ fontSize: "var(--t-sm)" }}>
+          IVDR 여정
+        </span>
+        <span aria-hidden style={{ color: "var(--border-strong)" }}>
+          ·
+        </span>
+        <ul className="flex items-center gap-1.5">
+          {phases.map((p) => {
+            const color = `var(${p.colorVar})`;
+            const active = activePhase === p.id;
+            return (
+              <li key={p.id}>
+                <a
+                  href={`#phase-${p.id}`}
+                  aria-current={active ? "true" : undefined}
+                  className="inline-flex items-center gap-1.5 rounded-full font-semibold transition-colors"
+                  style={{
+                    fontSize: "var(--t-sm)",
+                    padding: "5px 12px",
+                    minHeight: 32,
+                    color: active ? "var(--text-on-color)" : "var(--text-muted)",
+                    background: active ? color : "transparent",
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    className="rounded-full"
+                    style={{
+                      width: 8,
+                      height: 8,
+                      background: active ? "var(--text-on-color)" : color,
+                    }}
+                  />
+                  <span className="hidden sm:inline">{p.order}. {p.title}</span>
+                  <span className="sm:hidden">{p.order}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </nav>
+  );
+}
