@@ -23,6 +23,7 @@ function buildData(doc: DocTemplate) {
   return {
     docTitle: doc.docTitle,
     purpose: doc.purpose,
+    rationale: doc.rationale ?? "",
     refsLine: doc.refs.join(" · "),
     prerequisites: (doc.prerequisites ?? []).map((p) => ({
       kind: prereqKindLabel[p.kind],
@@ -64,6 +65,11 @@ function buildBodyXml(doc: DocTemplate): string {
   parts.push(paraXml(`목적: ${doc.purpose}`));
   parts.push(paraXml(`근거: ${doc.refs.join(" · ")}`));
   parts.push(paraXml(""));
+  if (doc.rationale) {
+    parts.push(paraXml("취지 — 왜 이 문서를 쓰는가", { bold: true, size: 26 }));
+    parts.push(paraXml(doc.rationale));
+    parts.push(paraXml(""));
+  }
   if (doc.prerequisites && doc.prerequisites.length) {
     parts.push(paraXml("작성 전 준비물", { bold: true, size: 26 }));
     for (const p of doc.prerequisites) {
@@ -141,6 +147,9 @@ export async function generateSampleDocx(doc: DocTemplate): Promise<Blob> {
     line("{docTitle}", { heading: HeadingLevel.HEADING_1 }),
     line("목적: {purpose}"),
     line("근거: {refsLine}"),
+    line(""),
+    line("취지 — 왜 이 문서를 쓰는가", { heading: HeadingLevel.HEADING_2 }),
+    line("{rationale}"),
     line(""),
     line("작성 전 준비물", { heading: HeadingLevel.HEADING_2 }),
     line("{#prerequisites}"),

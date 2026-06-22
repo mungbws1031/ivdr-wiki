@@ -8,6 +8,7 @@
 import {
   leafById,
   prereqKindLabel,
+  rationaleFor,
   type DocLeaf,
   type Prerequisite,
 } from "./docTree";
@@ -23,7 +24,8 @@ export interface DocTemplate {
   id: string; // 고유 슬러그 (docTree 잎 id 와 일치)
   stationId: number; // 1..11
   docTitle: string;
-  purpose: string; // 이 문서가 충족/증명하는 것
+  purpose: string; // 이 문서가 충족/증명하는 것 (무엇)
+  rationale?: string; // 이 문서를 왜 쓰는가 (취지·근본 이유)
   prerequisites?: Prerequisite[]; // 작성 전 준비물 (resolveDoc에서 잎으로부터 채움)
   sections: DocSection[];
   checklist: string[];
@@ -445,6 +447,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
     purpose:
       leaf.note ??
       `${station.title} 단계의 산출 문서입니다. ${station.oneLine}`,
+    rationale: rationaleFor(leaf.id),
     prerequisites: leaf.prerequisites ?? [],
     sections: [
       {
@@ -483,8 +486,12 @@ export function resolveDoc(id: string): DocTemplate | undefined {
   const leaf = leafById(id);
   const detailed = docById(id);
   if (detailed) {
-    // 준비물은 잎(docTree)에서 단일 출처로 관리 → 전용 템플릿에도 주입
-    return { ...detailed, prerequisites: leaf?.prerequisites ?? [] };
+    // 준비물·취지는 docTree(잎/맵)에서 단일 출처로 관리 → 전용 템플릿에도 주입
+    return {
+      ...detailed,
+      rationale: rationaleFor(id),
+      prerequisites: leaf?.prerequisites ?? [],
+    };
   }
   if (!leaf) return undefined;
   const station = stations.find((s) => s.id === leaf.stationId);
@@ -500,6 +507,11 @@ export function toMarkdown(t: DocTemplate): string {
   lines.push(`> 목적: ${t.purpose}`);
   lines.push(`> 관련 조항: ${t.refs.join(" · ")}`);
   lines.push("");
+  if (t.rationale) {
+    lines.push(`## 취지 — 왜 이 문서를 쓰는가`);
+    lines.push(t.rationale);
+    lines.push("");
+  }
   if (t.prerequisites && t.prerequisites.length) {
     lines.push(`## 작성 전 준비물`);
     for (const p of t.prerequisites) {

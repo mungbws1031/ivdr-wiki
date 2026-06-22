@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   Compass,
   PackageCheck,
+  Lightbulb,
   Database,
   Image as ImageIcon,
   FlaskConical,
@@ -81,6 +82,31 @@ export function DocumentWorkspace() {
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginTop: "var(--s-2)", maxWidth: 720 }}>
             {doc.purpose}
           </p>
+
+          {/* 취지 — 왜 이 문서를 쓰는가 */}
+          {doc.rationale && (
+            <div
+              className="flex gap-3 rounded-[var(--r-md)]"
+              style={{
+                background: "var(--info-bg)",
+                borderLeft: "4px solid var(--info)",
+                padding: "var(--s-4)",
+                marginTop: "var(--s-4)",
+                maxWidth: 760,
+              }}
+            >
+              <Lightbulb size={20} style={{ color: "var(--info)" }} className="mt-0.5 shrink-0" aria-hidden />
+              <div>
+                <span className="font-bold" style={{ color: "var(--info)", fontSize: "var(--t-sm)" }}>
+                  왜 이 문서를 쓰는가 (취지)
+                </span>
+                <p className="text-text" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginTop: 2 }}>
+                  {doc.rationale}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div style={{ marginTop: "var(--s-4)" }}>
             <CopyMarkdownBar markdown={markdown} filename={filename} />
           </div>
