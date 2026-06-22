@@ -1,21 +1,12 @@
 import { useEffect, useRef } from "react";
-import { Compass, X, BookMarked, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen } from "lucide-react";
 import { phaseById, type Station } from "../data/stations";
+import { concepts } from "../data/concepts";
 import { getIcon } from "../lib/icons";
+import { renderRich } from "../lib/richText";
 import { StatusChip } from "./StatusChip";
-
-/** **bold** 만 지원하는 초경량 인라인 렌더러 (본문 강조용). */
-function renderInline(text: string) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") ? (
-      <strong key={i} className="font-bold text-text">
-        {part.slice(2, -2)}
-      </strong>
-    ) : (
-      <span key={i}>{part}</span>
-    ),
-  );
-}
+import { ConceptChip } from "./ConceptChip";
 
 /**
  * 정거장 상세 — 본문은 여기서만 (개요 오염 X).
@@ -114,6 +105,16 @@ export function StationDetail({
             <StatusChip label={station.tag.label} tone={station.tag.tone} size="md" />
           </div>
 
+          {/* 📄 문서 작성 CTA (accent 허용) */}
+          <Link
+            to={`/doc/${station.id}`}
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
+            style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "11px 16px", minHeight: 44 }}
+          >
+            <FileText size={18} aria-hidden />
+            이 단계 문서 작성하기 →
+          </Link>
+
           {/* 🧭 지금 할 일 — accent 아님, 페이즈색 카드 */}
           <div
             className="rounded-[var(--r-md)]"
@@ -147,7 +148,7 @@ export function StationDetail({
                   marginBottom: "var(--s-4)",
                 }}
               >
-                {renderInline(p)}
+                {renderRich(p)}
               </p>
             ))}
           </div>
@@ -185,10 +186,31 @@ export function StationDetail({
             >
               <AlertCircle size={18} style={{ color: "var(--warning)" }} className="mt-0.5 shrink-0" aria-hidden />
               <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-                {renderInline(station.note)}
+                {renderRich(station.note)}
               </p>
             </div>
           )}
+
+          {/* 관련 개념 (양방향 연결) */}
+          {(() => {
+            const related = concepts.filter((c) => c.relatedStationIds.includes(station.id));
+            if (related.length === 0) return null;
+            return (
+              <div style={{ marginTop: "var(--s-6)" }}>
+                <div className="flex items-center gap-2 text-text-muted" style={{ marginBottom: "var(--s-2)" }}>
+                  <BookOpen size={16} aria-hidden />
+                  <span className="font-semibold" style={{ fontSize: "var(--t-sm)" }}>
+                    관련 개념
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {related.map((c) => (
+                    <ConceptChip key={c.slug} slug={c.slug} />
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* 관련 조항 */}
           <div style={{ marginTop: "var(--s-6)" }}>

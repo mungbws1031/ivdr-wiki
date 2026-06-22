@@ -1,0 +1,278 @@
+// =====================================================================
+// src/data/concepts.ts
+// 개념 위키 — IVDR 조항·Annex·표준·핵심 개념. 정거장/문서와 양방향 연결.
+// 본문은 {{slug|표시텍스트}} 인라인 링크 마크업을 허용한다(renderRich 처리).
+// 규제 사실은 2026.6 기준 확인값. 실제 진행 시 최신 관보로 재확인할 것.
+// =====================================================================
+
+export type ConceptCategory =
+  | "annex" // IVDR 부속서
+  | "standard" // 국제 표준
+  | "concept" // 핵심 개념/시스템
+  | "actor" // 행위자/기관
+  | "deliverable"; // 산출물 문서
+
+export interface WikiConcept {
+  slug: string;
+  term: string;
+  aka?: string[];
+  category: ConceptCategory;
+  summary: string; // 한 줄 정의 (인덱스/칩)
+  body: string[]; // 심화 문단 ({{slug|label}} 허용)
+  refs: string[];
+  relatedStationIds: number[];
+  relatedConceptSlugs: string[];
+}
+
+export const categoryLabel: Record<ConceptCategory, string> = {
+  annex: "부속서(Annex)",
+  standard: "국제 표준",
+  concept: "핵심 개념",
+  actor: "행위자·기관",
+  deliverable: "산출물 문서",
+};
+
+export const concepts: WikiConcept[] = [
+  {
+    slug: "intended-purpose",
+    term: "의도된 목적 (Intended Purpose)",
+    aka: ["Intended Purpose", "사용목적"],
+    category: "concept",
+    summary: "제조자가 정한 기기의 용도. 분류·성능·라벨링의 출발점.",
+    body: [
+      "의도된 목적은 제조자가 라벨·사용설명서(IFU)·판촉자료에 명시한 기기의 용도다. IVDR 여정 전체가 이 한 문단에서 갈라지므로 **가장 먼저, 가장 정확히** 확정해야 한다.",
+      "최소 5요소를 포함한다 — **무엇을** 검출/측정하는가, 어떤 **검체**인가, **사용자**는 누구인가(전문가·자가검사), 사용 **환경**(실험실·근접검사·가정), 그리고 결과가 돕는 임상적 **결정**. 이 요소들이 {{annex-viii|분류}}와 {{annex-xiii|성능평가}} 설계를 직접 좌우한다.",
+    ],
+    refs: ["IVDR Art.2 (정의)"],
+    relatedStationIds: [1, 2, 6],
+    relatedConceptSlugs: ["annex-viii", "annex-xiii"],
+  },
+  {
+    slug: "annex-viii",
+    term: "Annex VIII — 분류 규칙",
+    aka: ["Annex VIII", "Classification Rules"],
+    category: "annex",
+    summary: "Rule 1~7로 A/B/C/D 위험 등급을 결정하는 분류 규칙.",
+    body: [
+      "Annex VIII은 IVD를 위험 기반 4등급(A < B < C < D)으로 나누는 7개 규칙을 담는다. 규칙을 순서대로 적용하고, 둘 이상 해당하면 **가장 높은 등급**을 채택한다.",
+      "Rule 1~2는 최고위험(혈액 스크리닝·생명위협 감염 등 → 주로 D), Rule 3은 중간(C), Rule 4는 **자가검사·근접검사**(대체로 C, 임신·가임력 일부 B), Rule 5는 A(시약·기구·용기·일반 배지 등), Rule 6은 그 외 C, Rule 7은 자가관리(self-monitoring) 등을 다룬다.",
+      "분류 결과는 {{notified-body|NB}} 개입 여부와 전환 기한을 통째로 바꾸므로, 적용한 규칙과 근거를 1장짜리 분류 근거서로 남긴다.",
+    ],
+    refs: ["IVDR Annex VIII", "Art.47"],
+    relatedStationIds: [2, 3],
+    relatedConceptSlugs: ["intended-purpose", "notified-body"],
+  },
+  {
+    slug: "gspr",
+    term: "GSPR — 일반 안전·성능 요구사항",
+    aka: ["Annex I", "General Safety and Performance Requirements"],
+    category: "annex",
+    summary: "모든 IVD가 충족해야 할 안전·성능 요구사항 (Annex I).",
+    body: [
+      "GSPR(Annex I)은 모든 IVD가 충족해야 할 일반 안전·성능 요구사항의 목록이다. 기술문서의 뼈대이며, 각 요구사항에 대해 **적용 여부 → 충족 방법 → 증거 위치**를 매핑하는 GSPR 체크리스트가 출발점이 된다.",
+      "GSPR는 {{annex-xiii|성능평가}} 결과와 {{iso-14971|위험관리}} 파일을 한데 묶는 허브 역할을 한다. 요구사항 ↔ 위험 ↔ 성능 증거가 서로를 가리켜야 추적성이 성립한다.",
+    ],
+    refs: ["IVDR Annex I (GSPR)"],
+    relatedStationIds: [5, 7],
+    relatedConceptSlugs: ["annex-ii", "iso-14971", "annex-xiii"],
+  },
+  {
+    slug: "annex-ii",
+    term: "Annex II — 기술문서",
+    aka: ["Annex II", "Technical Documentation"],
+    category: "annex",
+    summary: "제품 적합성을 입증하는 기술문서의 필수 목차.",
+    body: [
+      "Annex II는 기술문서가 담아야 할 항목을 규정한다 — 기기 설명·의도된 목적, 라벨·IFU, 설계·제조 정보, {{gspr|GSPR}} 충족 근거, 위험·이익 분석, 검증·밸리데이션(성능평가 포함).",
+      "Annex II 목차를 그대로 폴더 구조로 만들어 항목별 담당자·기한을 배정하면 증거 수집이 체계화된다. 시판 후 영역은 {{annex-iii|Annex III}}가 보완한다.",
+    ],
+    refs: ["IVDR Annex II"],
+    relatedStationIds: [5],
+    relatedConceptSlugs: ["gspr", "annex-iii", "annex-xiii"],
+  },
+  {
+    slug: "annex-iii",
+    term: "Annex III — 시판 후 감시 기술문서",
+    aka: ["Annex III", "PMS Technical Documentation"],
+    category: "annex",
+    summary: "PMS 계획·PSUR·PMPF 등 시판 후 문서의 요건.",
+    body: [
+      "Annex III는 시판 후 감시({{pms|PMS}}) 관련 기술문서의 요건을 규정한다 — PMS 계획, PMS 보고서 또는 {{pms|PSUR}}, 그리고 {{annex-xiii|PMPF}} 계획·보고서.",
+      "{{annex-ii|Annex II}}(출시 전 증거)와 짝을 이뤄, 출시 후 수집 데이터가 성능·위험 파일로 환류되도록 연결한다.",
+    ],
+    refs: ["IVDR Annex III"],
+    relatedStationIds: [5, 11],
+    relatedConceptSlugs: ["annex-ii", "pms", "annex-xiii"],
+  },
+  {
+    slug: "annex-xiii",
+    term: "Annex XIII — 성능평가·PMPF",
+    aka: ["Annex XIII", "Performance Evaluation"],
+    category: "annex",
+    summary: "성능평가 3단(과학·분석·임상)과 PMPF의 절차.",
+    body: [
+      "Annex XIII는 {{pep-per|성능평가}}의 절차를 규정한다 — **과학적 타당성 → 분석적 성능 → 임상적 성능**의 3단 증거를 계획(PEP)하고 수집해 보고서(PER)로 닫는다.",
+      "Part B는 **PMPF(시판 후 성능 추적)**를 다룬다. 출시 후에도 성능을 지속 확인하여 {{pms|PMS}} 루프에 환류한다.",
+    ],
+    refs: ["IVDR Annex XIII", "Art.56"],
+    relatedStationIds: [6, 11],
+    relatedConceptSlugs: ["pep-per", "pms", "gspr"],
+  },
+  {
+    slug: "iso-13485",
+    term: "ISO 13485:2016 — 의료기기 QMS",
+    aka: ["ISO 13485", "품질경영시스템"],
+    category: "standard",
+    summary: "의료기기 품질경영시스템 국제 표준. IVDR QMS의 토대.",
+    body: [
+      "ISO 13485:2016은 의료기기 품질경영시스템(QMS) 국제 표준으로, 대부분의 제조자가 IVDR QMS의 토대로 삼는다.",
+      "다만 **ISO 13485 인증서만으로 IVDR을 충족하지는 않는다.** IVDR 고유 프로세스({{annex-xiii|성능평가}}·{{pms|PMS}}·{{pms|PSUR}}·{{udi|UDI}})를 절차서에 명시적으로 연결해야 한다. 전환 기한 연장 조건에도 '2025.5.26까지 Art.10(8) QMS'가 포함된다.",
+    ],
+    refs: ["ISO 13485:2016", "IVDR Art.10(8)"],
+    relatedStationIds: [4],
+    relatedConceptSlugs: ["pms", "annex-xiii"],
+  },
+  {
+    slug: "iso-14971",
+    term: "ISO 14971:2019 — 위험관리",
+    aka: ["ISO 14971", "Risk Management"],
+    category: "standard",
+    summary: "의료기기 위험관리 국제 표준. GSPR·성능과 추적 연결.",
+    body: [
+      "ISO 14971:2019는 의료기기 위험관리 프로세스(분석→평가→통제→잔여위험 평가→생산·시판후 모니터링) 표준이다.",
+      "위험관리 파일은 {{gspr|GSPR}} 및 성능 결과와 **양방향 추적**되어야 한다. 자가검사 제품은 사용자가 비전문가이므로 {{iec-62366|IEC 62366}} 사용적합성과 연계해 사용 오류 위험을 다룬다.",
+    ],
+    refs: ["ISO 14971:2019", "IVDR Annex I"],
+    relatedStationIds: [7],
+    relatedConceptSlugs: ["gspr", "iec-62366"],
+  },
+  {
+    slug: "iec-62366",
+    term: "IEC 62366-1 — 사용적합성",
+    aka: ["IEC 62366", "Usability Engineering"],
+    category: "standard",
+    summary: "사용적합성(휴먼팩터) 엔지니어링 표준. 자가검사 필수.",
+    body: [
+      "IEC 62366-1은 사용적합성(usability/휴먼팩터) 엔지니어링 표준이다. 사용 인터페이스를 설계·평가해 사용 오류로 인한 위험을 줄인다.",
+      "특히 비전문가가 쓰는 **자가검사·근접검사** 기기에서 핵심이다. 사용 오류가 곧 임상 위험이 되므로 {{iso-14971|위험관리}}와 연계한다.",
+    ],
+    refs: ["IEC 62366-1", "IVDR Annex I"],
+    relatedStationIds: [7],
+    relatedConceptSlugs: ["iso-14971"],
+  },
+  {
+    slug: "notified-body",
+    term: "Notified Body (NB) · NANDO",
+    aka: ["NB", "인증기관", "NANDO"],
+    category: "actor",
+    summary: "적합성을 심사·인증하는 제3자 기관. A 비멸균 제외 필수.",
+    body: [
+      "Notified Body(NB, 인증기관)는 EU가 지정한 제3자 적합성 평가 기관이다. Class A 비멸균을 제외한 모든 기기는 NB의 QMS·기술문서 심사를 거쳐 인증서를 받아야 한다.",
+      "내 제품 scope를 다루는 NB는 **NANDO** 데이터베이스에서 찾는다. NB 심사 슬롯이 한정적이라 조기 접촉·서면계약이 중요하다. Class C 레거시 기기의 NB 신청 마감은 **2026.5.26**.",
+    ],
+    refs: ["IVDR Art.38~46", "NANDO 데이터베이스"],
+    relatedStationIds: [3, 8],
+    relatedConceptSlugs: ["annex-viii", "ce-marking"],
+  },
+  {
+    slug: "ce-marking",
+    term: "CE 마킹 (Annex V)",
+    aka: ["CE Marking", "Annex V"],
+    category: "concept",
+    summary: "IVDR 적합성을 나타내는 마크. EU 시장 출시 자격.",
+    body: [
+      "CE 마킹은 제품이 적용 EU 규정(IVDR)을 충족함을 나타내는 표시로, 부착 형태·규칙은 Annex V가 정한다. NB가 관여한 경우 NB 식별번호가 함께 표기된다.",
+      "CE 부착의 근거는 제조자가 작성하는 {{doc|적합성 선언서(DoC)}}다. CE는 곧 EU 시장 출시 자격이다.",
+    ],
+    refs: ["IVDR Annex V", "Art.18"],
+    relatedStationIds: [9],
+    relatedConceptSlugs: ["doc", "notified-body"],
+  },
+  {
+    slug: "doc",
+    term: "적합성 선언서 (DoC, Annex IV)",
+    aka: ["DoC", "Declaration of Conformity", "Annex IV"],
+    category: "deliverable",
+    summary: "제조자가 IVDR 충족을 공식 선언하는 문서.",
+    body: [
+      "적합성 선언서(DoC)는 제조자가 기기의 IVDR 적합성을 공식 선언·서명하는 문서로, 필수 항목은 Annex IV가 규정한다 — 제조자/대리인 식별, 기기 식별(Basic UDI-DI 포함), 분류, 적용 규정·표준, NB 정보(해당 시) 등.",
+      "DoC는 {{ce-marking|CE 마킹}}의 법적 근거이며, 라벨링과 항목이 일치해야 한다.",
+    ],
+    refs: ["IVDR Annex IV", "Art.17"],
+    relatedStationIds: [9],
+    relatedConceptSlugs: ["ce-marking", "udi"],
+  },
+  {
+    slug: "pep-per",
+    term: "PEP / PER — 성능평가 계획·보고서",
+    aka: ["PEP", "PER", "Performance Evaluation Plan/Report"],
+    category: "deliverable",
+    summary: "성능평가의 계획(PEP)과 그 결과 보고서(PER).",
+    body: [
+      "PEP(성능평가 계획)는 {{annex-xiii|Annex XIII}}가 요구하는 과학적 타당성·분석적 성능·임상적 성능 증거를 **어떻게 확보할지** 먼저 설계하는 문서다. 계획 없이 데이터를 모으면 재작업이 발생한다.",
+      "PER(성능평가 보고서)는 수집된 증거로 성능을 입증해 평가를 닫는 문서다. 흐름: **PEP → 데이터 → PER**. 출시 후에는 {{annex-xiii|PMPF}}로 이어진다.",
+    ],
+    refs: ["IVDR Art.56", "Annex XIII"],
+    relatedStationIds: [6],
+    relatedConceptSlugs: ["annex-xiii", "gspr"],
+  },
+  {
+    slug: "pms",
+    term: "PMS · PMPF · PSUR — 시판 후 감시",
+    aka: ["PMS", "PMPF", "PSUR", "Post-Market Surveillance"],
+    category: "concept",
+    summary: "출시 후 안전·성능을 지속 감시하고 환류하는 시스템.",
+    body: [
+      "PMS(시판 후 감시)는 출시 후 기기의 안전·성능 데이터를 능동·체계적으로 수집·분석하는 활동으로, {{iso-13485|QMS}}에 통합한다. 계획·문서 요건은 {{annex-iii|Annex III}}.",
+      "**PMPF**({{annex-xiii|Annex XIII}} Part B)는 시판 후 성능을 지속 추적한다. **PSUR**(정기 안전성 갱신 보고서)은 PMS 결과를 종합하며, **Class C·D는 매년** 갱신한다. PMS → 성능 → 위험으로 데이터가 환류되는 경로를 명문화해야 한다.",
+    ],
+    refs: ["IVDR Art.78~81", "Annex III", "Annex XIII Part B"],
+    relatedStationIds: [11],
+    relatedConceptSlugs: ["annex-iii", "annex-xiii", "iso-13485"],
+  },
+  {
+    slug: "eudamed",
+    term: "EUDAMED",
+    aka: ["European Database on Medical Devices"],
+    category: "concept",
+    summary: "유럽 의료기기 데이터베이스. 행위자·기기·UDI 등록.",
+    body: [
+      "EUDAMED는 행위자·기기·인증서·{{udi|UDI}}·시판후·임상/성능 데이터를 담는 EU 통합 데이터베이스다.",
+      "Decision (EU) 2025/2371에 따라 **첫 4개 모듈이 2026.5.28 의무화**되며, 레거시 기기 등록은 **2026.11.28**까지 완료해야 한다. 먼저 {{srn|행위자 등록(SRN)}}을 확보한 뒤 기기를 등록한다.",
+    ],
+    refs: ["IVDR Art.33~34", "Decision (EU) 2025/2371"],
+    relatedStationIds: [10],
+    relatedConceptSlugs: ["udi", "srn"],
+  },
+  {
+    slug: "srn",
+    term: "SRN — 단일 등록 번호",
+    aka: ["Single Registration Number"],
+    category: "concept",
+    summary: "행위자(제조자 등)가 EUDAMED 등록 시 받는 고유 번호.",
+    body: [
+      "SRN(단일 등록 번호)은 제조자·대리인·수입자가 {{eudamed|EUDAMED}}에 행위자 등록을 하면 부여되는 고유 식별번호다.",
+      "SRN은 이후 기기 등록·인증·DoC 등에서 행위자를 식별하는 데 쓰이므로, 등록 절차의 **가장 먼저** 확보해야 할 항목이다.",
+    ],
+    refs: ["IVDR Art.28", "Annex VI"],
+    relatedStationIds: [10],
+    relatedConceptSlugs: ["eudamed", "udi"],
+  },
+  {
+    slug: "udi",
+    term: "UDI — 고유기기식별",
+    aka: ["UDI-DI", "Basic UDI-DI", "Unique Device Identification"],
+    category: "concept",
+    summary: "기기를 전 세계 고유하게 식별하는 코드 체계.",
+    body: [
+      "UDI(고유기기식별)는 기기를 전 세계적으로 고유하게 식별하는 체계다. **UDI-DI**(기기 식별자)와 생산정보(UDI-PI)로 구성되며, **Basic UDI-DI**는 규제 문서({{doc|DoC}}·인증서·{{eudamed|EUDAMED}})를 묶는 상위 식별자다.",
+      "라벨에 UDI 캐리어(바코드 등)를 표기하고, UDI-DI를 EUDAMED 기기 등록과 연결한다.",
+    ],
+    refs: ["IVDR Art.24~27", "Annex VI Part C"],
+    relatedStationIds: [10],
+    relatedConceptSlugs: ["eudamed", "srn", "doc"],
+  },
+];
+
+export const conceptBySlug = (slug: string): WikiConcept | undefined =>
+  concepts.find((c) => c.slug === slug);
