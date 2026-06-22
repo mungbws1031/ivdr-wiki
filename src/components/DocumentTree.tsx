@@ -1,11 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  FolderTree,
-  FolderOpen,
-  FileText,
-  FileCheck,
-  ArrowUpRight,
-} from "lucide-react";
+import { FolderTree, FolderOpen, FileText, Sparkles } from "lucide-react";
 import {
   docTree,
   requirementMeta,
@@ -18,9 +12,6 @@ import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { StatusChip } from "./StatusChip";
 
-// 5개 제출 그룹 → 페이즈 5색에 대응(한눈에 구분).
-const GROUP_COLORS = ["--p1", "--p2", "--p3", "--p4", "--p5"];
-
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
 function Elbow({ color, top = 26 }: { color: string; top?: number }) {
   return (
@@ -32,7 +23,7 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
   );
 }
 
-/** /documents — 제출 문서 트리(마인드맵). */
+/** /documents — 제출 문서 트리(마인드맵). 모든 잎은 문서로 열린다. */
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
@@ -54,8 +45,8 @@ export function DocumentTree() {
           써야 할 문서 — 제출 문서 트리
         </h1>
         <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginTop: "var(--s-2)", maxWidth: 720 }}>
-          제출 구조를 트리로 펼쳤습니다. 색은 5개 문서 그룹을 구분하고, 잎 노드를 누르면 작성
-          템플릿으로 이동합니다.
+          제출 구조를 트리로 펼쳤습니다. 색은 문서 그룹을 구분하고, 모든 잎 노드를 누르면 작성
+          템플릿이 열립니다(워드 내보내기 포함).
         </p>
 
         {/* 요약 + 등록부 내보내기 */}
@@ -65,7 +56,7 @@ export function DocumentTree() {
         >
           <div className="flex items-center gap-4 text-text" style={{ fontSize: "var(--t-sm)" }}>
             <span className="font-bold">총 <span style={{ color: "var(--accent)" }}>{stats.total}</span>개 문서</span>
-            <span className="text-text-muted">템플릿 {stats.withTemplate}개 · 그룹 {stats.groups}개</span>
+            <span className="text-text-muted">전용 템플릿 {stats.detailed}개 · 그룹 {stats.groups}개</span>
           </div>
           <CopyMarkdownBar markdown={register} filename="IVDR-문서-마스터-등록부.md" />
         </div>
@@ -93,9 +84,9 @@ export function DocumentTree() {
               className="relative"
               style={{ marginLeft: 18, paddingLeft: 28, borderLeft: "2px solid var(--border-strong)" }}
             >
-              {docTree.map((group, gi) => {
-                const gColor = `var(${GROUP_COLORS[gi % GROUP_COLORS.length]})`;
-                const gTint = `var(${GROUP_COLORS[gi % GROUP_COLORS.length]}-tint)`;
+              {docTree.map((group) => {
+                const gColor = `var(${group.colorVar})`;
+                const gTint = `var(${group.colorVar}-tint)`;
                 return (
                   <div key={group.id} className="relative" style={{ paddingTop: "var(--s-6)" }}>
                     <Elbow color="var(--border-strong)" top={26 + 24} />
@@ -131,9 +122,8 @@ export function DocumentTree() {
                         const sColor = `var(${phase.colorVar})`;
                         const Icon = getIcon(station.icon);
                         const req = requirementMeta[leaf.requirement];
-                        const isTemplate = leaf.kind === "template";
                         return (
-                          <div key={leaf.title} className="relative" style={{ marginBottom: "var(--s-2)" }}>
+                          <div key={leaf.id} className="relative" style={{ marginBottom: "var(--s-2)" }}>
                             <Elbow color={gColor} top={26} />
                             <div
                               className="rounded-[var(--r-md)] border bg-bg"
@@ -141,12 +131,12 @@ export function DocumentTree() {
                             >
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                                 <StatusChip label={req.label} tone={req.tone} />
-                                {!isTemplate && (
+                                {leaf.detailed && (
                                   <span
-                                    className="rounded-full font-semibold text-text-subtle"
-                                    style={{ background: "var(--surface-2)", fontSize: "var(--t-xs)", padding: "2px 9px" }}
+                                    className="inline-flex items-center gap-1 rounded-full font-semibold"
+                                    style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-xs)", padding: "2px 9px" }}
                                   >
-                                    참조
+                                    전용 템플릿
                                   </span>
                                 )}
                                 <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
@@ -169,25 +159,14 @@ export function DocumentTree() {
                                     </span>
                                     <Icon size={13} style={{ color: sColor }} aria-hidden />
                                   </Link>
-                                  {isTemplate ? (
-                                    <Link
-                                      to={`/doc/${station.id}`}
-                                      className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-bold text-text-on-color"
-                                      style={{ background: "var(--accent)", fontSize: "var(--t-xs)", padding: "6px 11px", minHeight: 32 }}
-                                    >
-                                      <FileText size={14} aria-hidden />
-                                      템플릿
-                                    </Link>
-                                  ) : (
-                                    <Link
-                                      to={`/station/${station.id}`}
-                                      className="inline-flex items-center gap-1 rounded-[var(--r-md)] border font-semibold text-text hover:bg-surface"
-                                      style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-xs)", padding: "6px 10px", minHeight: 32 }}
-                                    >
-                                      정거장
-                                      <ArrowUpRight size={13} aria-hidden />
-                                    </Link>
-                                  )}
+                                  <Link
+                                    to={`/doc/${leaf.id}`}
+                                    className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-bold text-text-on-color"
+                                    style={{ background: "var(--accent)", fontSize: "var(--t-xs)", padding: "6px 11px", minHeight: 32 }}
+                                  >
+                                    <FileText size={14} aria-hidden />
+                                    문서 열기
+                                  </Link>
                                 </div>
                               </div>
 
@@ -220,14 +199,15 @@ export function DocumentTree() {
           style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-3) var(--s-4)", marginTop: "var(--s-8)" }}
         >
           <span className="font-semibold text-text-muted" style={{ fontSize: "var(--t-xs)" }}>범례</span>
-          <span className="flex items-center gap-1.5"><StatusChip label="필수" tone="info" /></span>
-          <span className="flex items-center gap-1.5"><StatusChip label="조건부" tone="warning" /></span>
-          <span className="flex items-center gap-1.5"><StatusChip label="해당 시" tone="neutral" /></span>
+          <StatusChip label="필수" tone="info" />
+          <StatusChip label="조건부" tone="warning" />
+          <StatusChip label="해당 시" tone="neutral" />
           <span className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-            <FileText size={13} style={{ color: "var(--accent)" }} aria-hidden /> 전용 템플릿
+            <span className="inline-flex items-center rounded-full font-semibold" style={{ background: "var(--accent-weak)", color: "var(--accent)", padding: "1px 8px" }}>전용 템플릿</span>
+            = 손으로 작성한 상세 템플릿
           </span>
           <span className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-            <FileCheck size={13} aria-hidden /> 참조 = 관련 정거장 문서에 포함
+            <Sparkles size={13} style={{ color: "var(--info)" }} aria-hidden /> 나머지는 일반 템플릿 자동 생성
           </span>
         </div>
       </main>

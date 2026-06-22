@@ -1,18 +1,18 @@
 import { useParams, Link } from "react-router-dom";
 import { FileText, ListChecks, BookMarked, ArrowUpRight, Compass } from "lucide-react";
-import { docByStationId, toMarkdown } from "../data/documents";
+import { resolveDoc, toMarkdown } from "../data/documents";
 import { stations, phaseById } from "../data/stations";
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
+import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
 
-/** /doc/:id — 정거장별 문서 작성 워크스페이스 (복사용 템플릿). */
+/** /doc/:id — 문서 작성 워크스페이스 (복사용 템플릿 + 워드 내보내기). */
 export function DocumentWorkspace() {
   const { id } = useParams();
-  const stationId = Number(id);
-  const doc = docByStationId(stationId);
-  const station = stations.find((s) => s.id === stationId);
+  const doc = id ? resolveDoc(id) : undefined;
+  const station = doc ? stations.find((s) => s.id === doc.stationId) : undefined;
 
   if (!doc || !station) {
     return (
@@ -61,6 +61,9 @@ export function DocumentWorkspace() {
           </p>
           <div style={{ marginTop: "var(--s-4)" }}>
             <CopyMarkdownBar markdown={markdown} filename={filename} />
+          </div>
+          <div style={{ marginTop: "var(--s-3)" }}>
+            <DocxExport doc={doc} />
           </div>
         </div>
 

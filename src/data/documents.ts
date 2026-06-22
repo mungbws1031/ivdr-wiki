@@ -5,6 +5,9 @@
 // 규제 사실은 2026.6 기준 확인값. 실제 제출 전 최신 관보·NB 요건으로 재확인할 것.
 // =====================================================================
 
+import { leafById, type DocLeaf } from "./docTree";
+import { stations, type Station } from "./stations";
+
 export interface DocSection {
   heading: string;
   guidance: string; // 무엇을 어떻게 쓰는지 안내
@@ -12,6 +15,7 @@ export interface DocSection {
 }
 
 export interface DocTemplate {
+  id: string; // 고유 슬러그 (docTree 잎 id 와 일치)
   stationId: number; // 1..11
   docTitle: string;
   purpose: string; // 이 문서가 충족/증명하는 것
@@ -23,6 +27,7 @@ export interface DocTemplate {
 
 export const documents: DocTemplate[] = [
   {
+    id: "intended-purpose",
     stationId: 1,
     docTitle: "의도된 목적 정의서",
     purpose:
@@ -60,6 +65,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.2"],
   },
   {
+    id: "classification-rationale",
     stationId: 2,
     docTitle: "분류 근거서",
     purpose:
@@ -98,6 +104,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Annex VIII", "Art.47"],
   },
   {
+    id: "conformity-route-plan",
     stationId: 3,
     docTitle: "적합성 평가 경로 계획 + 산출물 체크리스트",
     purpose:
@@ -129,6 +136,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.48", "Annex IX~XI"],
   },
   {
+    id: "qms-ivdr-matrix",
     stationId: 4,
     docTitle: "QMS↔IVDR 연계 매트릭스",
     purpose:
@@ -161,6 +169,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.10(8)", "ISO 13485:2016"],
   },
   {
+    id: "tech-doc-toc-gspr",
     stationId: 5,
     docTitle: "기술문서 목차(Annex II/III) + GSPR 체크리스트",
     purpose:
@@ -193,6 +202,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Annex II", "Annex III", "Annex I"],
   },
   {
+    id: "performance-eval-plan",
     stationId: 6,
     docTitle: "성능평가 계획 (PEP) 목차",
     purpose:
@@ -229,6 +239,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.56", "Annex XIII"],
   },
   {
+    id: "risk-management-plan",
     stationId: 7,
     docTitle: "위험관리 계획 (ISO 14971) + GSPR↔위험 추적표",
     purpose:
@@ -265,6 +276,7 @@ export const documents: DocTemplate[] = [
     refs: ["ISO 14971:2019", "IVDR Annex I"],
   },
   {
+    id: "nb-application",
     stationId: 8,
     docTitle: "NB 선정·접촉·신청 준비 체크리스트",
     purpose:
@@ -297,6 +309,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.38~46"],
   },
   {
+    id: "declaration-of-conformity",
     stationId: 9,
     docTitle: "적합성 선언서 (DoC, Annex IV) 템플릿",
     purpose:
@@ -334,6 +347,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Annex IV", "Annex V", "Art.17~18"],
   },
   {
+    id: "device-registration",
     stationId: 10,
     docTitle: "EUDAMED/UDI 등록 데이터 준비표",
     purpose:
@@ -371,6 +385,7 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Art.24~28", "Annex VI", "Decision (EU) 2025/2371"],
   },
   {
+    id: "pms-plan",
     stationId: 11,
     docTitle: "시판 후 감시 계획 (PMS Plan) + PMPF/PSUR 일정",
     purpose:
@@ -411,6 +426,61 @@ export const documents: DocTemplate[] = [
 
 export const docByStationId = (id: number): DocTemplate | undefined =>
   documents.find((d) => d.stationId === id);
+
+export const docById = (id: string): DocTemplate | undefined =>
+  documents.find((d) => d.id === id);
+
+/** 전용 템플릿이 없는 잎은 일반 템플릿을 자동 생성한다. */
+function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
+  return {
+    id: leaf.id,
+    stationId: leaf.stationId,
+    docTitle: leaf.title,
+    purpose:
+      leaf.note ??
+      `${station.title} 단계의 산출 문서입니다. ${station.oneLine}`,
+    sections: [
+      {
+        heading: "1. 목적 · 적용 범위",
+        guidance: "이 문서의 목적과 대상 제품·적용 범위를 적는다.",
+        placeholder: "목적: [____]\n적용 범위(제품·모델): [____]",
+      },
+      {
+        heading: "2. 핵심 내용",
+        guidance: "관련 요구사항에 따라 핵심 내용을 작성한다.",
+        placeholder: "[____]",
+      },
+      {
+        heading: "3. 근거 · 참조",
+        guidance: "관련 조항·표준·연결 문서를 적는다.",
+        placeholder: leaf.refs.join("\n"),
+      },
+      {
+        heading: "4. 검토 · 승인",
+        guidance: "작성자·검토자·승인자와 일자를 기록한다.",
+        placeholder: "작성: [__]\n검토: [__]\n승인: [__]\n일자: [__]",
+      },
+    ],
+    checklist: [
+      "관련 조항·표준 요구를 모두 반영했는가",
+      "관련 문서와 상호 참조(추적)했는가",
+      "작성·검토·승인 이력이 있는가",
+    ],
+    relatedConceptSlugs: [],
+    refs: leaf.refs,
+  };
+}
+
+/** id 로 문서 콘텐츠 해석 — 전용 템플릿 우선, 없으면 자동 생성. */
+export function resolveDoc(id: string): DocTemplate | undefined {
+  const detailed = docById(id);
+  if (detailed) return detailed;
+  const leaf = leafById(id);
+  if (!leaf) return undefined;
+  const station = stations.find((s) => s.id === leaf.stationId);
+  if (!station) return undefined;
+  return buildGenericDoc(leaf, station);
+}
 
 /** 복사/.md 다운로드용 마크다운 생성. */
 export function toMarkdown(t: DocTemplate): string {

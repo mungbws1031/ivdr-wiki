@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen } from "lucide-react";
 import { phaseById, type Station } from "../data/stations";
 import { concepts } from "../data/concepts";
+import { primaryDocIdForStation } from "../data/docTree";
 import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { StatusChip } from "./StatusChip";
@@ -107,7 +108,7 @@ export function StationDetail({
 
           {/* 📄 문서 작성 CTA (accent 허용) */}
           <Link
-            to={`/doc/${station.id}`}
+            to={`/doc/${primaryDocIdForStation(station.id)}`}
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
             style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "11px 16px", minHeight: 44 }}
           >
