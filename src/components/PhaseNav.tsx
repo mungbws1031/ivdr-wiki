@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Library } from "lucide-react";
+import { Library, FolderTree } from "lucide-react";
 import { phases, type PhaseId } from "../data/stations";
 
 /**
@@ -61,15 +61,26 @@ export function PhaseNav({ activePhase }: { activePhase: PhaseId | null }) {
           })}
         </ul>
 
-        <Link
-          to="/wiki"
-          className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border font-semibold text-text-muted hover:bg-surface"
-          style={{ fontSize: "var(--t-sm)", padding: "5px 12px", minHeight: 32, borderColor: "var(--border-strong)" }}
-        >
-          <Library size={14} style={{ color: "var(--info)" }} aria-hidden />
-          <span className="hidden sm:inline">개념 위키</span>
-          <span className="sm:hidden">위키</span>
-        </Link>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <Link
+            to="/documents"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border font-semibold text-text-muted hover:bg-surface"
+            style={{ fontSize: "var(--t-sm)", padding: "5px 12px", minHeight: 32, borderColor: "var(--border-strong)" }}
+          >
+            <FolderTree size={14} style={{ color: "var(--accent)" }} aria-hidden />
+            <span className="hidden sm:inline">문서 목록</span>
+            <span className="sm:hidden">문서</span>
+          </Link>
+          <Link
+            to="/wiki"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border font-semibold text-text-muted hover:bg-surface"
+            style={{ fontSize: "var(--t-sm)", padding: "5px 12px", minHeight: 32, borderColor: "var(--border-strong)" }}
+          >
+            <Library size={14} style={{ color: "var(--info)" }} aria-hidden />
+            <span className="hidden sm:inline">개념 위키</span>
+            <span className="sm:hidden">위키</span>
+          </Link>
+        </div>
       </div>
     </nav>
   );

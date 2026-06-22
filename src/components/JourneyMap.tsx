@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Compass } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Compass, FolderTree, Library } from "lucide-react";
 import { phases, stations, type PhaseId } from "../data/stations";
 import { PhaseBand } from "./PhaseBand";
 import { PhaseNav } from "./PhaseNav";
@@ -98,6 +98,26 @@ export function JourneyMap() {
             11개 정거장을 5개 페이즈로 묶어 색으로 구분했다. 카드를 누르면 본문·지금 할 일·관련
             조항이 열린다. 개요는 늘 깨끗하게.
           </p>
+
+          {/* 진입 버튼 */}
+          <div className="flex flex-wrap gap-3" style={{ marginTop: "var(--s-6)" }}>
+            <Link
+              to="/documents"
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
+              style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "11px 18px", minHeight: 44 }}
+            >
+              <FolderTree size={18} aria-hidden />
+              써야 할 문서 전체 보기
+            </Link>
+            <Link
+              to="/wiki"
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-bold text-text hover:bg-surface"
+              style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "11px 18px", minHeight: 44 }}
+            >
+              <Library size={18} style={{ color: "var(--info)" }} aria-hidden />
+              개념 위키
+            </Link>
+          </div>
         </header>
 
         {/* ── 5 페이즈 밴드 (+ P2 뒤 결정 갈림길 히어로) ── */}

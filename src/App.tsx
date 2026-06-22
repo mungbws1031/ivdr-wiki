@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { JourneyMap } from "./components/JourneyMap";
 import { DocumentWorkspace } from "./components/DocumentWorkspace";
+import { DocumentTree } from "./components/DocumentTree";
 import { ConceptPage } from "./components/ConceptPage";
 import { WikiIndex } from "./components/WikiIndex";
 
@@ -11,7 +12,8 @@ export default function App() {
         {/* 랜딩 + 딥링크 상세(drawer) */}
         <Route path="/" element={<JourneyMap />} />
         <Route path="/station/:id" element={<JourneyMap />} />
-        {/* 문서 작성 워크스페이스 */}
+        {/* 문서 트리(마스터 등록부) + 작성 워크스페이스 */}
+        <Route path="/documents" element={<DocumentTree />} />
         <Route path="/doc/:id" element={<DocumentWorkspace />} />
         {/* 개념 위키 */}
         <Route path="/wiki" element={<WikiIndex />} />
