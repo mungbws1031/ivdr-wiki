@@ -326,6 +326,19 @@ export const docTree: DocGroup[] = [
         ],
       },
       {
+        id: "fmea",
+        title: "FMEA (고장모드 영향분석)",
+        refs: ["ISO 14971:2019", "IEC 60812"],
+        stationId: 7,
+        requirement: "ifApplicable",
+        note: "ISO 14971 위험분석의 상향식 기법 — 설계(dFMEA)·공정(pFMEA)·사용(uFMEA)으로 적용. FMEA는 의무가 아니나 실무 표준.",
+        prerequisites: [
+          P("doc", "위험관리 계획·기기 기능/부품 목록"),
+          P("data", "고장모드·원인·영향 후보 목록"),
+          P("other", "심각도·발생도·검출도 평가 척도(RPN 기준)"),
+        ],
+      },
+      {
         id: "usability-file",
         title: "사용적합성(IEC 62366) 계획·보고서",
         refs: ["IEC 62366-1", "Annex I"],
@@ -630,6 +643,8 @@ export const docRationale: Record<string, string> = {
     "위험은 한 번이 아니라 전 수명주기에 걸쳐 관리되어야 한다. 위험-요구-성능을 추적 연결해 빠진 위험이 없도록 체계를 세운다.",
   "risk-management-file":
     "계획대로 위험이 실제로 통제·검증되었는지 증거로 남겨야 한다. 잔여위험이 수용 가능함을 입증하는 책임 기록이다.",
+  fmea:
+    "FMEA는 부품·공정·사용 단계의 잠재 고장이 어떤 위해로 이어지는지 짚는 상향식(bottom-up) 분석이다. '무엇이 어떻게 잘못될 수 있는가'를 빠짐없이 드러내 통제수단을 설계하고, ISO 14971 위험관리 파일을 구체적 근거로 뒷받침하기 위함이다.",
   "usability-file":
     "사용 오류는 가장 흔한 위해 원인 중 하나다. 사용자가 실수 없이 쓸 수 있는지 검증해 현실의 사용 위험을 줄인다.",
   "qms-ivdr-matrix":
@@ -772,6 +787,11 @@ export const docKnowledge: Record<string, string[]> = {
     "위해요인→위험상황→위해 연결 방법",
     "통제수단 우선순위(설계>보호>정보)",
     "잔여위험 평가·공개",
+  ],
+  fmea: [
+    "dFMEA·pFMEA·uFMEA의 구분과 적용 범위",
+    "심각도(S)·발생도(O)·검출도(D)와 RPN 산정 방법",
+    "FMEA 결과를 ISO 14971 위험통제·추적표로 연결하는 방법",
   ],
   "usability-file": [
     "사용 시나리오·핵심 작업 도출",
