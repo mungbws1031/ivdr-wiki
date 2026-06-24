@@ -1073,6 +1073,92 @@ export const docKnowledge: Record<string, string[]> = {
 export const knowledgeFor = (id: string): string[] | undefined =>
   docKnowledge[id];
 
+// ---------------------------------------------------------------------
+// 문서 작성 순서 — 의존성을 반영한 권장 로드맵(단계별).
+// 각 문서는 정확히 한 단계에 속한다.
+// ---------------------------------------------------------------------
+export interface OrderStep {
+  step: number;
+  title: string;
+  why: string;
+  docIds: string[];
+}
+
+export const docOrder: OrderStep[] = [
+  {
+    step: 1,
+    title: "범위·분류 확정",
+    why: "의도된 목적이 분류·경로·모든 증거의 기준 — 가장 먼저 못 박는다.",
+    docIds: ["intended-purpose", "qualification-statement", "classification-rationale", "conformity-route-plan"],
+  },
+  {
+    step: 2,
+    title: "QMS 토대 구축",
+    why: "QMS는 전체에 깔리는 바닥. 문서·인력·책임 체계를 먼저 세운다.",
+    docIds: ["quality-manual", "qms-ivdr-matrix", "prrc", "doc-record-control", "supplier-control", "training-competence", "calibration-maintenance"],
+  },
+  {
+    step: 3,
+    title: "설계관리",
+    why: "무엇을 만들지(설계)가 정해져야 검증·성능·위험의 대상이 생긴다.",
+    docIds: ["dd-plan", "design-inputs", "design-outputs", "design-review", "design-verification", "design-validation", "design-transfer", "design-changes", "dhf", "traceability-matrix"],
+  },
+  {
+    step: 4,
+    title: "위험관리 (설계와 병행)",
+    why: "설계와 나란히 위험을 식별·통제. 이후 성능·이익위험의 입력이 된다.",
+    docIds: ["risk-management-plan", "fmea", "fta", "usability-file", "risk-management-file"],
+  },
+  {
+    step: 5,
+    title: "성능 증거",
+    why: "성능은 계획(PEP) 먼저, 그 다음 데이터 → 보고서(PER).",
+    docIds: ["performance-eval-plan", "scientific-validity", "analytical-performance", "clinical-performance", "stability-study", "metrological-traceability", "performance-eval-report"],
+  },
+  {
+    step: 6,
+    title: "생산·공정 검증",
+    why: "양산 공정이 일관된 결과를 내는지 검증한다.",
+    docIds: ["process-validation", "sterilization-validation", "dmr", "dhr"],
+  },
+  {
+    step: 7,
+    title: "기기 정보·안전",
+    why: "기기 설명·라벨·IFU와 안전 증거를 정리(이익-위험 포함).",
+    docIds: ["device-description", "design-manufacturing-info", "sw-validation", "biocompatibility", "labelling-spec", "ifu", "benefit-risk"],
+  },
+  {
+    step: 8,
+    title: "기술문서 통합",
+    why: "앞의 모든 증거를 GSPR 체크리스트로 묶어 기술문서를 완성한다.",
+    docIds: ["tech-doc-toc-gspr"],
+  },
+  {
+    step: 9,
+    title: "적합성 평가·인증",
+    why: "NB 심사 → 적합성 선언(DoC) → CE → SSP(Class C·D).",
+    docIds: ["nb-application", "declaration-of-conformity", "ce-marking-application", "ssp"],
+  },
+  {
+    step: 10,
+    title: "등록·시장 진입",
+    why: "EUDAMED 행위자·UDI·기기 등록으로 합법 출시.",
+    docIds: ["actor-registration", "udi-assignment", "device-registration", "authorised-rep-mandate", "importer-distributor"],
+  },
+  {
+    step: 11,
+    title: "시판 후·지속 운영",
+    why: "출시 후에도 PMS·바이질런스·CAPA·심사로 루프를 유지한다.",
+    docIds: ["pms-plan", "pmpf-plan", "pms-report", "psur", "trend-reporting", "vigilance-sop", "complaint-handling", "capa-sop", "nonconforming-product", "fsca-recall", "internal-audit", "management-review"],
+  },
+];
+
+/** 잎 id → 그룹 색 (작성순서 칩 색). */
+export function colorForLeaf(id: string): string {
+  for (const g of docTree) if (g.items.some((l) => l.id === id)) return g.colorVar;
+  return "--text-muted";
+}
+
 export function allLeaves(): DocLeaf[] {
   return docTree.flatMap((g) => g.items);
 }

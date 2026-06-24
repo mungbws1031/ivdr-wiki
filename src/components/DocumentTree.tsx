@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FolderTree, FolderOpen, FileText, Sparkles, List, Network } from "lucide-react";
+import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered } from "lucide-react";
 import {
   docTree,
   requirementMeta,
@@ -13,6 +13,7 @@ import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { StatusChip } from "./StatusChip";
 import { DocumentMindmap } from "./DocumentMindmap";
+import { DocumentOrder } from "./DocumentOrder";
 
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
 function Elbow({ color, top = 26 }: { color: string; top?: number }) {
@@ -29,7 +30,7 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
-  const [tab, setTab] = useState<"list" | "map">("list");
+  const [tab, setTab] = useState<"list" | "map" | "order">("list");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -74,6 +75,7 @@ export function DocumentTree() {
           {([
             { id: "list", label: "목록", Icon: List },
             { id: "map", label: "구조 파악하기", Icon: Network },
+            { id: "order", label: "작성 순서", Icon: ListOrdered },
           ] as const).map((t) => {
             const active = tab === t.id;
             return (
@@ -111,6 +113,17 @@ export function DocumentTree() {
               </span>
             </p>
             <DocumentMindmap />
+          </div>
+        )}
+
+        {/* 작성 순서 (로드맵) */}
+        {tab === "order" && (
+          <div style={{ marginTop: "var(--s-6)" }}>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-6)" }}>
+              의존성을 반영한 권장 작성 순서입니다. 위에서 아래로 진행하며, 같은 단계 안의 문서는
+              병행 가능합니다. 칩을 누르면 작성 페이지로 이동합니다.
+            </p>
+            <DocumentOrder />
           </div>
         )}
 
