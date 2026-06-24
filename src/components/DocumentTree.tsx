@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FolderTree, FolderOpen, FileText, Sparkles } from "lucide-react";
+import { FolderTree, FolderOpen, FileText, Sparkles, List, Network } from "lucide-react";
 import {
   docTree,
   requirementMeta,
@@ -11,6 +12,7 @@ import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { StatusChip } from "./StatusChip";
+import { DocumentMindmap } from "./DocumentMindmap";
 
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
 function Elbow({ color, top = 26 }: { color: string; top?: number }) {
@@ -27,6 +29,7 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
+  const [tab, setTab] = useState<"list" | "map">("list");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -61,8 +64,60 @@ export function DocumentTree() {
           <CopyMarkdownBar markdown={register} filename="IVDR-문서-마스터-등록부.md" />
         </div>
 
-        {/* ── 마인드맵 트리 ── */}
-        <div style={{ marginTop: "var(--s-8)", overflowX: "auto" }}>
+        {/* 탭 */}
+        <div
+          role="tablist"
+          aria-label="문서 보기 방식"
+          className="flex items-center gap-1"
+          style={{ marginTop: "var(--s-8)", borderBottom: "1px solid var(--border)" }}
+        >
+          {([
+            { id: "list", label: "목록", Icon: List },
+            { id: "map", label: "구조 파악하기", Icon: Network },
+          ] as const).map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                type="button"
+                aria-selected={active}
+                onClick={() => setTab(t.id)}
+                className="inline-flex items-center gap-2 font-bold"
+                style={{
+                  fontSize: "var(--t-sm)",
+                  padding: "10px 14px",
+                  minHeight: 44,
+                  color: active ? "var(--accent)" : "var(--text-muted)",
+                  borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
+                  marginBottom: -1,
+                }}
+              >
+                <t.Icon size={16} aria-hidden />
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 구조 파악하기 (마인드맵) */}
+        {tab === "map" && (
+          <div style={{ marginTop: "var(--s-6)" }}>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-4)" }}>
+              전체 {stats.total}개 문서의 가지를 한눈에. 잎 노드를 누르면 작성 페이지로 이동합니다.
+              <span className="inline-flex items-center gap-1" style={{ marginLeft: 8 }}>
+                <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: "var(--accent)" }} aria-hidden />
+                = 전용 템플릿
+              </span>
+            </p>
+            <DocumentMindmap />
+          </div>
+        )}
+
+        {/* 목록 (상세 트리) */}
+        {tab === "list" && (
+        <>
+        <div style={{ marginTop: "var(--s-6)", overflowX: "auto" }}>
           <div style={{ minWidth: 320 }}>
             {/* 루트 */}
             <div
@@ -210,6 +265,8 @@ export function DocumentTree() {
             <Sparkles size={13} style={{ color: "var(--info)" }} aria-hidden /> 나머지는 일반 템플릿 자동 생성
           </span>
         </div>
+        </>
+        )}
       </main>
     </div>
   );
