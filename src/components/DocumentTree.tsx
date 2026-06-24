@@ -6,12 +6,14 @@ import {
   requirementMeta,
   docTreeStats,
   toRegisterMarkdown,
+  metaFor,
 } from "../data/docTree";
 import { stations, phaseById } from "../data/stations";
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { StatusChip } from "./StatusChip";
+import { LevelMeter } from "./LevelMeter";
 import { DocumentMindmap } from "./DocumentMindmap";
 import { DocumentOrder } from "./DocumentOrder";
 
@@ -239,10 +241,19 @@ export function DocumentTree() {
                               </div>
 
                               {/* 메타 */}
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1" style={{ marginTop: 6 }}>
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1" style={{ marginTop: 6 }}>
                                 <span className="font-mono text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
                                   {leaf.refs.join(", ")}
                                 </span>
+                                {(() => {
+                                  const m = metaFor(leaf.id);
+                                  return m ? (
+                                    <span className="flex items-center gap-x-3">
+                                      <LevelMeter kind="importance" level={m.importance} showLabel={false} />
+                                      <LevelMeter kind="difficulty" level={m.difficulty} showLabel={false} />
+                                    </span>
+                                  ) : null;
+                                })()}
                               </div>
                               {leaf.note && (
                                 <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>

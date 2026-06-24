@@ -1159,6 +1159,92 @@ export function colorForLeaf(id: string): string {
   return "--text-muted";
 }
 
+// ---------------------------------------------------------------------
+// 문서별 작성 난이도 / 중요도 (편집 판단 — 제품·조직에 따라 가변).
+// difficulty: low 낮음 / med 보통 / high 높음
+// importance: low 보통 / med 높음 / high 필수
+// ---------------------------------------------------------------------
+export type Level = "low" | "med" | "high";
+export const difficultyLabel: Record<Level, string> = { low: "낮음", med: "보통", high: "높음" };
+export const importanceLabel: Record<Level, string> = { low: "보통", med: "높음", high: "필수" };
+export const levelRank: Record<Level, number> = { low: 1, med: 2, high: 3 };
+
+export interface DocMeta {
+  difficulty: Level;
+  importance: Level;
+}
+
+export const docMeta: Record<string, DocMeta> = {
+  "intended-purpose": { difficulty: "med", importance: "high" },
+  "qualification-statement": { difficulty: "low", importance: "med" },
+  "classification-rationale": { difficulty: "med", importance: "high" },
+  "conformity-route-plan": { difficulty: "low", importance: "high" },
+  "device-description": { difficulty: "low", importance: "med" },
+  "design-manufacturing-info": { difficulty: "med", importance: "med" },
+  "tech-doc-toc-gspr": { difficulty: "high", importance: "high" },
+  "labelling-spec": { difficulty: "med", importance: "high" },
+  ifu: { difficulty: "med", importance: "high" },
+  "benefit-risk": { difficulty: "high", importance: "high" },
+  "stability-study": { difficulty: "high", importance: "high" },
+  "sw-validation": { difficulty: "high", importance: "med" },
+  biocompatibility: { difficulty: "high", importance: "med" },
+  "dd-plan": { difficulty: "low", importance: "med" },
+  "design-inputs": { difficulty: "med", importance: "high" },
+  "design-outputs": { difficulty: "med", importance: "high" },
+  "design-review": { difficulty: "low", importance: "med" },
+  "design-verification": { difficulty: "high", importance: "high" },
+  "design-validation": { difficulty: "high", importance: "high" },
+  "design-transfer": { difficulty: "med", importance: "med" },
+  "design-changes": { difficulty: "med", importance: "med" },
+  dhf: { difficulty: "low", importance: "med" },
+  "traceability-matrix": { difficulty: "high", importance: "high" },
+  "process-validation": { difficulty: "high", importance: "high" },
+  "sterilization-validation": { difficulty: "high", importance: "med" },
+  dmr: { difficulty: "med", importance: "med" },
+  dhr: { difficulty: "low", importance: "med" },
+  "performance-eval-plan": { difficulty: "high", importance: "high" },
+  "scientific-validity": { difficulty: "med", importance: "high" },
+  "analytical-performance": { difficulty: "high", importance: "high" },
+  "clinical-performance": { difficulty: "high", importance: "high" },
+  "performance-eval-report": { difficulty: "high", importance: "high" },
+  "metrological-traceability": { difficulty: "high", importance: "med" },
+  "risk-management-plan": { difficulty: "med", importance: "high" },
+  "risk-management-file": { difficulty: "high", importance: "high" },
+  fmea: { difficulty: "high", importance: "med" },
+  fta: { difficulty: "med", importance: "low" },
+  "usability-file": { difficulty: "high", importance: "med" },
+  "qms-ivdr-matrix": { difficulty: "med", importance: "high" },
+  "doc-record-control": { difficulty: "low", importance: "med" },
+  "capa-sop": { difficulty: "med", importance: "high" },
+  "supplier-control": { difficulty: "med", importance: "med" },
+  "complaint-handling": { difficulty: "low", importance: "high" },
+  "vigilance-sop": { difficulty: "med", importance: "high" },
+  prrc: { difficulty: "low", importance: "high" },
+  "quality-manual": { difficulty: "med", importance: "high" },
+  "management-review": { difficulty: "low", importance: "med" },
+  "internal-audit": { difficulty: "med", importance: "high" },
+  "training-competence": { difficulty: "low", importance: "med" },
+  "calibration-maintenance": { difficulty: "low", importance: "med" },
+  "nonconforming-product": { difficulty: "low", importance: "med" },
+  "nb-application": { difficulty: "high", importance: "high" },
+  "declaration-of-conformity": { difficulty: "med", importance: "high" },
+  "ce-marking-application": { difficulty: "low", importance: "high" },
+  "authorised-rep-mandate": { difficulty: "low", importance: "med" },
+  ssp: { difficulty: "med", importance: "high" },
+  "importer-distributor": { difficulty: "low", importance: "med" },
+  "actor-registration": { difficulty: "low", importance: "high" },
+  "device-registration": { difficulty: "med", importance: "high" },
+  "udi-assignment": { difficulty: "med", importance: "high" },
+  "pms-plan": { difficulty: "med", importance: "high" },
+  "pms-report": { difficulty: "med", importance: "med" },
+  psur: { difficulty: "high", importance: "high" },
+  "pmpf-plan": { difficulty: "med", importance: "med" },
+  "trend-reporting": { difficulty: "low", importance: "low" },
+  "fsca-recall": { difficulty: "med", importance: "high" },
+};
+
+export const metaFor = (id: string): DocMeta | undefined => docMeta[id];
+
 export function allLeaves(): DocLeaf[] {
   return docTree.flatMap((g) => g.items);
 }

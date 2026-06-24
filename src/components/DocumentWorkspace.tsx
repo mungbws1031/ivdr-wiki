@@ -22,6 +22,7 @@ import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
+import { LevelMeter } from "./LevelMeter";
 
 // 준비물 종류 → 아이콘·색
 const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
@@ -83,6 +84,13 @@ export function DocumentWorkspace() {
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginTop: "var(--s-2)", maxWidth: 720 }}>
             {doc.purpose}
           </p>
+
+          {doc.difficulty && doc.importance && (
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2" style={{ marginTop: "var(--s-3)" }}>
+              <LevelMeter kind="importance" level={doc.importance} />
+              <LevelMeter kind="difficulty" level={doc.difficulty} />
+            </div>
+          )}
 
           {/* 취지 — 왜 이 문서를 쓰는가 */}
           {doc.rationale && (
