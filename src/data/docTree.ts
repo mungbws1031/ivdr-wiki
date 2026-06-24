@@ -237,6 +237,19 @@ export const docTree: DocGroup[] = [
           P("data", "사이버보안 위험평가"),
         ],
       },
+      {
+        id: "cybersecurity",
+        title: "사이버보안 문서 (MDCG 2019-16)",
+        refs: ["MDCG 2019-16", "Annex I 16.2"],
+        stationId: 5,
+        requirement: "conditional",
+        note: "소프트웨어·연결(앱 연동) 기기는 사실상 필수.",
+        prerequisites: [
+          P("doc", "SW 아키텍처·데이터 흐름도"),
+          P("data", "위협 모델·자산 식별"),
+          P("test", "보안 검증·침투 시험"),
+        ],
+      },
     ],
   },
   {
@@ -281,6 +294,10 @@ export const docTree: DocGroup[] = [
         prerequisites: [P("doc", "사양·도면·BOM·작업지시"), P("data", "라벨·검사 기준")] },
       { id: "dhr", title: "기기 이력 기록 (DHR/배치기록)", refs: ["ISO 13485 7.5.1"], stationId: 5, requirement: "required",
         prerequisites: [P("data", "생산·검사·릴리스 기록"), P("doc", "배치 추적 구조")] },
+      { id: "packaging-validation", title: "포장·멸균배리어 밸리데이션 (ISO 11607)", refs: ["ISO 11607-1", "ISO 11607-2"], stationId: 5, requirement: "ifApplicable", note: "멸균 기기 한정 — 멸균 밸리데이션과 별개.",
+        prerequisites: [P("test", "밀봉·무결성·노화 시험"), P("data", "포장 사양·공정 파라미터"), P("doc", "운송 시뮬레이션")] },
+      { id: "product-preservation", title: "취급·보관·포장·배송 관리", refs: ["ISO 13485 7.5.11"], stationId: 5, requirement: "required",
+        prerequisites: [P("doc", "보관·취급 조건"), P("data", "콜드체인·유효기간 관리"), P("other", "배송 검증")] },
     ],
   },
   {
@@ -360,6 +377,19 @@ export const docTree: DocGroup[] = [
           P("doc", "교정 계층·참조 물질"),
           P("test", "값 지정(value assignment) 데이터"),
           P("data", "측정 불확도 추정"),
+        ],
+      },
+      {
+        id: "clinical-performance-study-plan",
+        title: "임상·성능 연구 계획서/신청 (CPSP)",
+        refs: ["Annex XIII Part A", "Annex XIV", "Art.58"],
+        stationId: 6,
+        requirement: "conditional",
+        note: "중재적 임상성능 연구 시 — 윤리 승인·EUDAMED 신청.",
+        prerequisites: [
+          P("doc", "연구 가설·의도된 목적"),
+          P("data", "연구 설계·검체·통계"),
+          P("other", "윤리위원회·당국 신청 양식"),
         ],
       },
     ],
@@ -525,6 +555,10 @@ export const docTree: DocGroup[] = [
         prerequisites: [P("data", "장비 목록·교정 주기"), P("doc", "교정 성적서"), P("other", "국가표준 추적성")] },
       { id: "nonconforming-product", title: "부적합품 관리 (NCR)", refs: ["ISO 13485 8.3"], stationId: 4, requirement: "required",
         prerequisites: [P("doc", "부적합 처리 절차"), P("data", "식별·격리·처리 기준"), P("other", "CAPA 연계")] },
+      { id: "quality-policy-org", title: "품질방침·조직 R&R", refs: ["ISO 13485 5.3", "5.5"], stationId: 4, requirement: "required",
+        prerequisites: [P("doc", "품질방침문"), P("data", "조직도·책임권한"), P("other", "경영대리인 지정")] },
+      { id: "qms-software-validation", title: "QMS 소프트웨어 밸리데이션 (CSV)", refs: ["ISO 13485 4.1.6"], stationId: 4, requirement: "conditional", note: "eQMS·ERP 등 QMS용 SW — 제품 SW검증과 별개.",
+        prerequisites: [P("doc", "대상 SW·용도 목록"), P("data", "위험 기반 밸리데이션 범위"), P("test", "IQ/OQ·시나리오 테스트")] },
     ],
   },
   {
@@ -587,6 +621,12 @@ export const docTree: DocGroup[] = [
         prerequisites: [P("doc", "PER·위험·임상성능 요약"), P("data", "대상 사용자·잔여위험"), P("other", "일반인 가독 버전")] },
       { id: "importer-distributor", title: "수입자·유통자 의무 점검", refs: ["Art.13~14"], stationId: 10, requirement: "ifApplicable", note: "EU 내 수입자·유통자가 있을 때.",
         prerequisites: [P("doc", "공급망·계약"), P("data", "검증 항목(라벨·DoC·UDI)")] },
+      { id: "cs-compliance", title: "공통기술규격(CS) 적합성", refs: ["Art.9"], stationId: 3, requirement: "ifApplicable", note: "Class D·CS 지정 품목 한정.",
+        prerequisites: [P("doc", "적용 CS 목록"), P("data", "CS 요구 대비 충족 증거"), P("other", "미적용 시 동등 이상 정당화")] },
+      { id: "eurl-batch-verification", title: "EU 기준검사실(EURL) 배치검증 대응", refs: ["Art.48", "Annex IX 4.12"], stationId: 8, requirement: "ifApplicable", note: "Class D 한정 — 출하 전 EURL 검증.",
+        prerequisites: [P("doc", "배치 릴리스 절차"), P("data", "EURL 제출 시료·사양"), P("other", "EURL 지정 현황 확인")] },
+      { id: "cdx-consultation", title: "동반진단 당국·EMA 협의", refs: ["Art.48(5)"], stationId: 3, requirement: "ifApplicable", note: "동반진단(CDx) 한정.",
+        prerequisites: [P("doc", "연관 의약품·적응증"), P("data", "CDx 의도된 목적"), P("other", "EMA·당국 협의 기록")] },
     ],
   },
   {
@@ -836,6 +876,24 @@ export const docRationale: Record<string, string> = {
   fta: "정의된 위해사건이 어떤 고장 조합으로 발생하는지 하향식으로 분석해 FMEA의 상향식 분석을 보완한다.",
   "fsca-recall":
     "시장의 안전 문제에 신속·체계적으로 대응해 추가 피해를 막고 법적 보고 의무를 이행한다.",
+  "clinical-performance-study-plan":
+    "사람 대상으로 임상 증거를 새로 만들 때는 피험자 안전과 데이터 신뢰성을 위해 사전 계획·윤리 승인·당국 신청이 필수다. 무계획 연구의 데이터는 인정되지 않는다.",
+  "cs-compliance":
+    "공통기술규격(CS)이 있는 품목은 CS를 충족하거나 동등 이상임을 입증해야 한다. 규제 기대치의 기준선을 맞춰 심사 리스크를 줄인다.",
+  "eurl-batch-verification":
+    "Class D는 최고위험이라 제3자(EU 기준검사실)의 배치 검증으로 출하 전 안전을 한 번 더 거른다. 미대응 시 합법 출하가 막힌다.",
+  "cdx-consultation":
+    "동반진단은 특정 의약품 사용을 좌우하므로, 해당 의약품 당국(EMA 등)과 협의해 진단-치료의 임상적 정합성을 보장한다.",
+  cybersecurity:
+    "연결·소프트웨어 기기는 사이버 위협이 곧 환자 안전·데이터 위험이다. 보안 설계·검증을 문서화해 위협으로 인한 위해와 정보 유출을 막는다.",
+  "packaging-validation":
+    "멸균 기기는 사용 시점까지 무균이 유지돼야 한다. 멸균배리어(포장)가 유통·노화 후에도 무결함을 입증해 감염 위험을 막는다.",
+  "qms-software-validation":
+    "QMS를 돌리는 소프트웨어가 오작동하면 품질기록·추적성이 통째로 흔들린다. 사용 전 의도대로 동작함을 검증해 시스템 신뢰성을 확보한다.",
+  "product-preservation":
+    "유통 과정에서 제품이 손상·변질되면 사용 시점 성능을 보장할 수 없다. 보존 조건을 통제해 출하 후에도 품질을 유지한다.",
+  "quality-policy-org":
+    "품질방침과 책임·권한이 명확해야 QMS가 실제로 작동한다. 누가 무엇을 책임지는지 못 박아 일관된 품질 운영의 토대를 만든다.",
 };
 
 export const rationaleFor = (id: string): string | undefined =>
@@ -1068,6 +1126,15 @@ export const docKnowledge: Record<string, string[]> = {
   biocompatibility: ["접촉 분류·기간(ISO 10993-1)", "필요 시험 항목 선정", "화학적 특성평가 활용"],
   fta: ["FTA(top-down) vs FMEA(bottom-up)", "논리 게이트·최소 절단집합", "정성/정량 분석"],
   "fsca-recall": ["FSCA·리콜의 정의·구분", "당국 보고 기한·경로", "효과성 점검"],
+  "clinical-performance-study-plan": ["중재적 vs 비중재적 성능연구 구분", "Annex XIV 신청·승인 절차", "윤리·동의·피험자 안전 요건"],
+  "cs-compliance": ["내 품목에 적용되는 CS 존재 여부", "CS 충족 또는 동등성 입증 방법", "CS와 GSPR·성능의 관계"],
+  "eurl-batch-verification": ["Class D EURL 검증 적용 범위", "시료·문서 제출 절차", "EURL 미지정 영역의 전환 규정"],
+  "cdx-consultation": ["CDx 정의·해당 여부", "Art.48(5) 협의 절차", "의약품-진단 연계 임상 근거"],
+  cybersecurity: ["MDCG 2019-16 보안 요구", "위협 모델링·자산 식별", "보안 위험과 ISO 14971 연계", "시판 후 보안 업데이트 관리"],
+  "packaging-validation": ["ISO 11607-1(설계) vs -2(공정)", "밀봉 강도·무결성 시험", "노화·운송 시뮬레이션"],
+  "qms-software-validation": ["4.1.6 QMS SW 밸리데이션 요구", "위험 기반 범위 설정", "변경·업그레이드 시 재밸리데이션"],
+  "product-preservation": ["보관·취급 조건 정의", "콜드체인·모니터링", "배송 포장·검증"],
+  "quality-policy-org": ["품질방침·목표 수립", "책임·권한·경영대리인 지정", "조직 변경 관리"],
 };
 
 export const knowledgeFor = (id: string): string[] | undefined =>
@@ -1095,7 +1162,7 @@ export const docOrder: OrderStep[] = [
     step: 2,
     title: "QMS 토대 구축",
     why: "QMS는 전체에 깔리는 바닥. 문서·인력·책임 체계를 먼저 세운다.",
-    docIds: ["quality-manual", "qms-ivdr-matrix", "prrc", "doc-record-control", "supplier-control", "training-competence", "calibration-maintenance"],
+    docIds: ["quality-manual", "quality-policy-org", "qms-ivdr-matrix", "prrc", "doc-record-control", "supplier-control", "training-competence", "calibration-maintenance", "qms-software-validation"],
   },
   {
     step: 3,
@@ -1113,19 +1180,19 @@ export const docOrder: OrderStep[] = [
     step: 5,
     title: "성능 증거",
     why: "성능은 계획(PEP) 먼저, 그 다음 데이터 → 보고서(PER).",
-    docIds: ["performance-eval-plan", "scientific-validity", "analytical-performance", "clinical-performance", "stability-study", "metrological-traceability", "performance-eval-report"],
+    docIds: ["performance-eval-plan", "scientific-validity", "analytical-performance", "clinical-performance", "clinical-performance-study-plan", "stability-study", "metrological-traceability", "performance-eval-report"],
   },
   {
     step: 6,
     title: "생산·공정 검증",
     why: "양산 공정이 일관된 결과를 내는지 검증한다.",
-    docIds: ["process-validation", "sterilization-validation", "dmr", "dhr"],
+    docIds: ["process-validation", "sterilization-validation", "packaging-validation", "dmr", "dhr", "product-preservation"],
   },
   {
     step: 7,
     title: "기기 정보·안전",
     why: "기기 설명·라벨·IFU와 안전 증거를 정리(이익-위험 포함).",
-    docIds: ["device-description", "design-manufacturing-info", "sw-validation", "biocompatibility", "labelling-spec", "ifu", "benefit-risk"],
+    docIds: ["device-description", "design-manufacturing-info", "sw-validation", "cybersecurity", "biocompatibility", "labelling-spec", "ifu", "benefit-risk"],
   },
   {
     step: 8,
@@ -1137,7 +1204,7 @@ export const docOrder: OrderStep[] = [
     step: 9,
     title: "적합성 평가·인증",
     why: "NB 심사 → 적합성 선언(DoC) → CE → SSP(Class C·D).",
-    docIds: ["nb-application", "declaration-of-conformity", "ce-marking-application", "ssp"],
+    docIds: ["nb-application", "declaration-of-conformity", "ce-marking-application", "ssp", "cs-compliance", "eurl-batch-verification", "cdx-consultation"],
   },
   {
     step: 10,
@@ -1241,6 +1308,15 @@ export const docMeta: Record<string, DocMeta> = {
   "pmpf-plan": { difficulty: "med", importance: "med" },
   "trend-reporting": { difficulty: "low", importance: "low" },
   "fsca-recall": { difficulty: "med", importance: "high" },
+  "clinical-performance-study-plan": { difficulty: "high", importance: "high" },
+  "cs-compliance": { difficulty: "med", importance: "med" },
+  "eurl-batch-verification": { difficulty: "med", importance: "high" },
+  "cdx-consultation": { difficulty: "med", importance: "med" },
+  cybersecurity: { difficulty: "high", importance: "high" },
+  "packaging-validation": { difficulty: "high", importance: "med" },
+  "qms-software-validation": { difficulty: "med", importance: "med" },
+  "product-preservation": { difficulty: "low", importance: "med" },
+  "quality-policy-org": { difficulty: "low", importance: "med" },
 };
 
 export const metaFor = (id: string): DocMeta | undefined => docMeta[id];
