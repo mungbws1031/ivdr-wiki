@@ -6,8 +6,10 @@ import { ConceptPage } from "./components/ConceptPage";
 import { WikiIndex } from "./components/WikiIndex";
 
 export default function App() {
+  // GitHub Pages 하위 경로 배포 대응 (로컬은 '/').
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         {/* 랜딩 + 딥링크 상세(drawer) */}
         <Route path="/" element={<JourneyMap />} />
