@@ -8,6 +8,7 @@ import {
   PackageCheck,
   Lightbulb,
   GraduationCap,
+  Files,
   Database,
   Image as ImageIcon,
   FlaskConical,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 import { resolveDoc, toMarkdown } from "../data/documents";
 import { stations, phaseById } from "../data/stations";
-import { prereqKindLabel, type PrereqKind } from "../data/docTree";
+import { prereqKindLabel, leafById, colorForLeaf, type PrereqKind } from "../data/docTree";
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
@@ -243,6 +244,56 @@ export function DocumentWorkspace() {
               )}
             </div>
           </div>
+        )}
+
+        {/* 미리 만들어두면 좋은 문서 (선행 문서) */}
+        {doc.prepDocs && doc.prepDocs.length > 0 && (
+          <section
+            aria-labelledby="prep-docs-heading"
+            className="overflow-hidden rounded-[var(--r-lg)]"
+            style={{ background: "var(--success-bg)", borderLeft: "6px solid var(--success)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)", marginBottom: "var(--s-6)" }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--success)" }}>
+                <Files size={20} style={{ color: "#fff" }} aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-bold" style={{ color: "var(--success)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>
+                  관련 문서
+                </div>
+                <h2 id="prep-docs-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                  미리 만들어두면 좋은 문서
+                </h2>
+              </div>
+              <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--success)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                {doc.prepDocs.length}
+              </span>
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+              이 문서를 쓰기 전에 아래 문서를 먼저 준비해두면 수월합니다. (클릭하면 이동)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {doc.prepDocs.map((pid) => {
+                const l = leafById(pid);
+                if (!l) return null;
+                const c = `var(${colorForLeaf(pid)})`;
+                return (
+                  <Link
+                    key={pid}
+                    to={`/doc/${pid}`}
+                    className="inline-flex items-center gap-2 rounded-[var(--r-full)] bg-bg transition-colors hover:bg-surface"
+                    style={{ border: "1px solid var(--border)", boxShadow: "var(--shadow-card)", padding: "7px 13px" }}
+                  >
+                    <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 8, height: 8, background: c }} />
+                    <span className="font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>
+                      {l.title}
+                    </span>
+                    <ArrowUpRight size={14} style={{ color: "var(--text-subtle)" }} aria-hidden />
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
         )}
 
         {/* 본문 2열 */}

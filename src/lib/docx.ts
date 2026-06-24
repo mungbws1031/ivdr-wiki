@@ -11,7 +11,7 @@ import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
 import type { DocTemplate } from "../data/documents";
-import { prereqKindLabel, difficultyLabel, importanceLabel } from "../data/docTree";
+import { prereqKindLabel, difficultyLabel, importanceLabel, leafById } from "../data/docTree";
 
 export const DOCX_MIME =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -27,6 +27,9 @@ function buildData(doc: DocTemplate) {
     refsLine: doc.refs.join(" · "),
     difficulty: doc.difficulty ? difficultyLabel[doc.difficulty] : "",
     importance: doc.importance ? importanceLabel[doc.importance] : "",
+    prepDocs: (doc.prepDocs ?? []).map((id) => ({
+      title: leafById(id)?.title ?? id,
+    })),
     knowledge: (doc.knowledge ?? []).map((k) => ({ item: k })),
     prerequisites: (doc.prerequisites ?? []).map((p) => ({
       kind: prereqKindLabel[p.kind],
@@ -78,6 +81,11 @@ function buildBodyXml(doc: DocTemplate): string {
   if (doc.rationale) {
     parts.push(paraXml("취지 — 왜 이 문서를 쓰는가", { bold: true, size: 26 }));
     parts.push(paraXml(doc.rationale));
+    parts.push(paraXml(""));
+  }
+  if (doc.prepDocs && doc.prepDocs.length) {
+    parts.push(paraXml("미리 만들어두면 좋은 문서", { bold: true, size: 26 }));
+    for (const id of doc.prepDocs) parts.push(paraXml(`· ${leafById(id)?.title ?? id}`));
     parts.push(paraXml(""));
   }
   if (doc.knowledge && doc.knowledge.length) {
@@ -166,6 +174,11 @@ export async function generateSampleDocx(doc: DocTemplate): Promise<Blob> {
     line(""),
     line("취지 — 왜 이 문서를 쓰는가", { heading: HeadingLevel.HEADING_2 }),
     line("{rationale}"),
+    line(""),
+    line("미리 만들어두면 좋은 문서", { heading: HeadingLevel.HEADING_2 }),
+    line("{#prepDocs}"),
+    line("· {title}"),
+    line("{/prepDocs}"),
     line(""),
     line("작성 전 알아야 할 것", { heading: HeadingLevel.HEADING_2 }),
     line("{#knowledge}"),
