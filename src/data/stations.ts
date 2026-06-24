@@ -379,7 +379,7 @@ export const transitions: TransitionMilestone[] = [
   {
     cls: "Class D",
     deadline: "2027.12",
-    detail: "NB 신청 2026.5.26 · 서면계약 2026.9.26",
+    detail: "NB 신청 2025.5.26 · 서면계약 2025.9.26",
     tone: "warning",
   },
   {
@@ -391,7 +391,7 @@ export const transitions: TransitionMilestone[] = [
   {
     cls: "Class B · A멸균",
     deadline: "2029.12",
-    detail: "가장 긴 전환 기간",
+    detail: "NB 신청 2027.5.26 · 서면계약 2027.9.26",
     tone: "info",
   },
 ];
