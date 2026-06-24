@@ -1253,6 +1253,11 @@ export function leafById(id: string): DocLeaf | undefined {
   return allLeaves().find((l) => l.id === id);
 }
 
+/** 정거장에서 써야 할 문서 목록. */
+export function leavesForStation(stationId: number): DocLeaf[] {
+  return allLeaves().filter((l) => l.stationId === stationId);
+}
+
 /** 정거장의 대표 문서(전용 템플릿) id — drawer '문서 작성하기'용. */
 export function primaryDocIdForStation(stationId: number): string {
   const detailed = allLeaves().find(

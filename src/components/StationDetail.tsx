@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen } from "lucide-react";
+import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen, ChevronRight } from "lucide-react";
 import { phaseById, type Station } from "../data/stations";
 import { concepts } from "../data/concepts";
-import { primaryDocIdForStation } from "../data/docTree";
+import { leavesForStation, metaFor, colorForLeaf } from "../data/docTree";
 import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { StatusChip } from "./StatusChip";
 import { ConceptChip } from "./ConceptChip";
+import { LevelMeter } from "./LevelMeter";
 
 /**
  * 정거장 상세 — 본문은 여기서만 (개요 오염 X).
@@ -106,15 +107,51 @@ export function StationDetail({
             <StatusChip label={station.tag.label} tone={station.tag.tone} size="md" />
           </div>
 
-          {/* 📄 문서 작성 CTA (accent 허용) */}
-          <Link
-            to={`/doc/${primaryDocIdForStation(station.id)}`}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
-            style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "11px 16px", minHeight: 44 }}
-          >
-            <FileText size={18} aria-hidden />
-            이 단계 문서 작성하기 →
-          </Link>
+          {/* 📄 이 단계에서 써야 할 문서 (전체 리스트) */}
+          {(() => {
+            const docsForStation = leavesForStation(station.id);
+            return (
+              <div
+                className="mt-4 overflow-hidden rounded-[var(--r-md)]"
+                style={{ border: "1px solid var(--border)" }}
+              >
+                <div className="flex items-center gap-2" style={{ background: "var(--surface)", padding: "10px 12px" }}>
+                  <FileText size={16} style={{ color: "var(--accent)" }} aria-hidden />
+                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>
+                    이 단계에서 써야 할 문서
+                  </span>
+                  <span
+                    className="rounded-full font-bold text-text-on-color"
+                    style={{ background: "var(--accent)", fontSize: "var(--t-xs)", padding: "1px 8px" }}
+                  >
+                    {docsForStation.length}
+                  </span>
+                </div>
+                <ul>
+                  {docsForStation.map((l) => {
+                    const m = metaFor(l.id);
+                    const c = `var(${colorForLeaf(l.id)})`;
+                    return (
+                      <li key={l.id} style={{ borderTop: "1px solid var(--border)" }}>
+                        <Link
+                          to={`/doc/${l.id}`}
+                          className="flex items-center gap-2 hover:bg-surface"
+                          style={{ padding: "9px 12px" }}
+                        >
+                          <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 8, height: 8, background: c }} />
+                          <span className="min-w-0 flex-1 font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>
+                            {l.title}
+                          </span>
+                          {m && <LevelMeter kind="importance" level={m.importance} showLabel={false} />}
+                          <ChevronRight size={15} style={{ color: "var(--text-subtle)" }} className="shrink-0" aria-hidden />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })()}
 
           {/* 🧭 지금 할 일 — accent 아님, 페이즈색 카드 */}
           <div
