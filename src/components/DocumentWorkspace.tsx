@@ -124,77 +124,125 @@ export function DocumentWorkspace() {
           </div>
         </div>
 
-        {/* 작성 전 알아야 할 것 (사전 지식 체크리스트) */}
-        {doc.knowledge && doc.knowledge.length > 0 && (
-          <section
-            aria-labelledby="knowledge-heading"
-            className="rounded-[var(--r-md)] border"
-            style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-5)", marginBottom: "var(--s-4)" }}
-          >
-            <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-1)" }}>
-              <GraduationCap size={20} style={{ color: "var(--info)" }} aria-hidden />
-              <h2 id="knowledge-heading" className="font-extrabold" style={{ fontSize: "var(--t-lg)" }}>
-                작성 전 알아야 할 것
-              </h2>
+        {/* ── 작성을 시작하기 전에 (강조 블록) ── */}
+        {((doc.knowledge?.length ?? 0) > 0 || (doc.prerequisites?.length ?? 0) > 0) && (
+          <div style={{ marginBottom: "var(--s-6)" }}>
+            <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full font-extrabold text-text-on-color"
+                style={{ background: "var(--accent)", fontSize: "var(--t-xs)", padding: "5px 13px", letterSpacing: "0.03em" }}
+              >
+                ✍️ 작성을 시작하기 전에
+              </span>
+              <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
+                아래 두 가지를 먼저 확인하세요
+              </span>
             </div>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-3)" }}>
-              이 문서를 쓰기 전에 아래 개념·결정을 먼저 이해하고 있어야 합니다.
-            </p>
-            <ul className="flex flex-col" style={{ gap: 8 }}>
-              {doc.knowledge.map((k, i) => (
-                <li key={i} className="flex items-start gap-2 text-text" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)" }}>
-                  <span aria-hidden className="mt-0.5 shrink-0 font-bold" style={{ color: "var(--info)" }}>☐</span>
-                  <span>{k}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
 
-        {/* 작성 전 준비물 */}
-        {doc.prerequisites && doc.prerequisites.length > 0 && (
-          <section
-            aria-labelledby="prereq-heading"
-            className="rounded-[var(--r-md)] border"
-            style={{ borderColor: "var(--border)", background: "var(--p2-tint)", padding: "var(--s-5)", marginBottom: "var(--s-6)" }}
-          >
-            <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-1)" }}>
-              <PackageCheck size={20} style={{ color: "var(--warning)" }} aria-hidden />
-              <h2 id="prereq-heading" className="font-extrabold" style={{ fontSize: "var(--t-lg)" }}>
-                작성 전 준비물
-              </h2>
-            </div>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-4)" }}>
-              이 문서를 쓰기 전에 아래 자료·사진·시험·선행문서를 먼저 확보하세요.
-            </p>
-            <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
-              {doc.prerequisites.map((p, i) => {
-                const st = PREREQ_STYLE[p.kind];
-                return (
-                  <div
-                    key={i}
-                    className="flex items-start gap-3 rounded-[var(--r-md)] bg-bg"
-                    style={{ border: "1px solid var(--border)", padding: "var(--s-3)" }}
-                  >
-                    <span
-                      className="grid shrink-0 place-items-center rounded-[var(--r-sm)]"
-                      style={{ width: 32, height: 32, background: "var(--surface)" }}
-                    >
-                      <st.Icon size={18} style={{ color: st.color }} aria-hidden />
+            <div className="flex flex-col" style={{ gap: "var(--s-4)" }}>
+              {/* STEP 1 · 알아야 할 것 */}
+              {doc.knowledge && doc.knowledge.length > 0 && (
+                <section
+                  aria-labelledby="knowledge-heading"
+                  className="overflow-hidden rounded-[var(--r-lg)]"
+                  style={{ background: "var(--info-bg)", borderLeft: "6px solid var(--info)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--info)" }}>
+                      <GraduationCap size={22} style={{ color: "#fff" }} aria-hidden />
                     </span>
-                    <div className="min-w-0">
-                      <span className="font-semibold" style={{ color: st.color, fontSize: "var(--t-xs)" }}>
-                        {prereqKindLabel[p.kind]}
-                      </span>
-                      <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-                        {p.label}
-                      </p>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold" style={{ color: "var(--info)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>
+                        STEP 1 · 사전 지식
+                      </div>
+                      <h2 id="knowledge-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                        작성 전 알아야 할 것
+                      </h2>
                     </div>
+                    <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--info)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                      {doc.knowledge.length}
+                    </span>
                   </div>
-                );
-              })}
+                  <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+                    이 문서를 쓰기 전에 아래 개념·결정을 먼저 이해하고 있어야 합니다.
+                  </p>
+                  <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                    {doc.knowledge.map((k, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-2.5 rounded-[var(--r-md)] bg-bg"
+                        style={{ padding: "10px 12px", border: "1px solid var(--border)" }}
+                      >
+                        <span aria-hidden className="shrink-0 rounded-[4px]" style={{ width: 18, height: 18, border: "2px solid var(--info)", marginTop: 1 }} />
+                        <span className="font-medium text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
+                          {k}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {/* STEP 2 · 준비물 */}
+              {doc.prerequisites && doc.prerequisites.length > 0 && (
+                <section
+                  aria-labelledby="prereq-heading"
+                  className="overflow-hidden rounded-[var(--r-lg)]"
+                  style={{ background: "var(--warning-bg)", borderLeft: "6px solid var(--warning)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)" }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--warning)" }}>
+                      <PackageCheck size={22} style={{ color: "#fff" }} aria-hidden />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold" style={{ color: "var(--warning)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>
+                        STEP 2 · 준비물
+                      </div>
+                      <h2 id="prereq-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                        작성 전 준비물
+                      </h2>
+                    </div>
+                    <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--warning)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                      {doc.prerequisites.length}
+                    </span>
+                  </div>
+                  <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+                    아래 자료·사진·시험·선행문서를 먼저 확보하세요.
+                  </p>
+                  <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+                    {doc.prerequisites.map((p, i) => {
+                      const st = PREREQ_STYLE[p.kind];
+                      return (
+                        <div
+                          key={i}
+                          className="flex items-start gap-3 rounded-[var(--r-md)] bg-bg"
+                          style={{ border: "1px solid var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-3)" }}
+                        >
+                          <span
+                            className="grid shrink-0 place-items-center rounded-[var(--r-sm)]"
+                            style={{ width: 34, height: 34, background: "var(--surface)" }}
+                          >
+                            <st.Icon size={19} style={{ color: st.color }} aria-hidden />
+                          </span>
+                          <div className="min-w-0">
+                            <span
+                              className="inline-block rounded-full font-bold"
+                              style={{ color: st.color, background: "var(--surface)", fontSize: 10, padding: "1px 8px" }}
+                            >
+                              {prereqKindLabel[p.kind]}
+                            </span>
+                            <p className="font-medium text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 3 }}>
+                              {p.label}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
             </div>
-          </section>
+          </div>
         )}
 
         {/* 본문 2열 */}
