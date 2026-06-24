@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen, ChevronRight } from "lucide-react";
-import { phaseById, type Station } from "../data/stations";
+import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen, ChevronRight, ClipboardCheck } from "lucide-react";
+import { phaseById, stationKnowledgeFor, type Station } from "../data/stations";
 import { concepts } from "../data/concepts";
 import { leavesForStation, metaFor, colorForLeaf } from "../data/docTree";
 import { getIcon } from "../lib/icons";
@@ -173,6 +173,35 @@ export function StationDetail({
               {station.todo}
             </p>
           </div>
+
+          {/* ✅ 이 단계에서 알아야 할 정보 (체크리스트) */}
+          {stationKnowledgeFor(station.id).length > 0 && (
+            <div
+              className="rounded-[var(--r-md)] border"
+              style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-4)", marginTop: "var(--s-4)" }}
+            >
+              <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-2)" }}>
+                <ClipboardCheck size={18} style={{ color: "var(--info)" }} aria-hidden />
+                <span className="font-bold" style={{ fontSize: "var(--t-sm)" }}>
+                  이 단계에서 알아야 할 정보
+                </span>
+              </div>
+              <ul className="flex flex-col" style={{ gap: 6 }}>
+                {stationKnowledgeFor(station.id).map((k, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-text"
+                    style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}
+                  >
+                    <span aria-hidden className="mt-0.5 shrink-0 font-bold" style={{ color: "var(--info)" }}>
+                      ☐
+                    </span>
+                    <span>{k}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* 본문 */}
           <div style={{ marginTop: "var(--s-6)" }}>
