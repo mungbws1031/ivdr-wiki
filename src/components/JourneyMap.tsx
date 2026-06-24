@@ -6,6 +6,7 @@ import { PhaseBand } from "./PhaseBand";
 import { PhaseNav } from "./PhaseNav";
 import { DecisionFork } from "./DecisionFork";
 import { TransitionTimeline } from "./TransitionTimeline";
+import { JourneyRouteMap } from "./JourneyRouteMap";
 import { StationDetail } from "./StationDetail";
 
 /**
@@ -119,6 +120,11 @@ export function JourneyMap() {
             </Link>
           </div>
         </header>
+
+        {/* ── 여정 노선도 (히어로 지도) ── */}
+        <div style={{ marginBottom: "var(--s-12)" }}>
+          <JourneyRouteMap onOpen={openStation} />
+        </div>
 
         {/* ── 5 페이즈 밴드 (+ P2 뒤 결정 갈림길 히어로) ── */}
         <div className="flex flex-col" style={{ gap: "var(--s-8)" }}>
