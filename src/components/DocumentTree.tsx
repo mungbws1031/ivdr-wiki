@@ -34,7 +34,7 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
-  const [tab, setTab] = useState<"list" | "map" | "order" | "schemes">("schemes");
+  const [tab, setTab] = useState<"list" | "map" | "order" | "schemes">("map");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -77,10 +77,10 @@ export function DocumentTree() {
           style={{ marginTop: "var(--s-8)", borderBottom: "1px solid var(--border)" }}
         >
           {([
-            { id: "schemes", label: "규제 중복", Icon: Blend },
+            { id: "map", label: "문서 구조 보기", Icon: Network },
             { id: "list", label: "목록", Icon: List },
-            { id: "map", label: "구조 파악하기", Icon: Network },
             { id: "order", label: "작성 순서", Icon: ListOrdered },
+            { id: "schemes", label: "규제 중복", Icon: Blend },
           ] as const).map((t) => {
             const active = tab === t.id;
             return (
