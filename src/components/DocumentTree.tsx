@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered, Blend } from "lucide-react";
+import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered, Blend, Repeat2 } from "lucide-react";
 import {
   docTree,
   requirementMeta,
@@ -17,6 +17,7 @@ import { LevelMeter } from "./LevelMeter";
 import { DocumentMindmap } from "./DocumentMindmap";
 import { DocumentOrder } from "./DocumentOrder";
 import { SchemeOverlap } from "./SchemeOverlap";
+import { isSharedDoc, overlapSchemes } from "../data/schemes";
 
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
 function Elbow({ color, top = 26 }: { color: string; top?: number }) {
@@ -197,12 +198,17 @@ export function DocumentTree() {
                         const sColor = `var(${phase.colorVar})`;
                         const Icon = getIcon(station.icon);
                         const req = requirementMeta[leaf.requirement];
+                        const shared = isSharedDoc(leaf.id);
                         return (
                           <div key={leaf.id} className="relative" style={{ marginBottom: "var(--s-2)" }}>
                             <Elbow color={gColor} top={26} />
                             <div
-                              className="rounded-[var(--r-md)] border bg-bg"
-                              style={{ borderColor: "var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-3)" }}
+                              className="rounded-[var(--r-md)] bg-bg"
+                              style={{
+                                border: shared ? "2px solid var(--p5)" : "1px solid var(--border)",
+                                boxShadow: shared ? "var(--shadow-pop)" : "var(--shadow-card)",
+                                padding: "var(--s-3)",
+                              }}
                             >
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                                 <StatusChip label={req.label} tone={req.tone} />
@@ -212,6 +218,16 @@ export function DocumentTree() {
                                     style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-xs)", padding: "2px 9px" }}
                                   >
                                     전용 템플릿
+                                  </span>
+                                )}
+                                {shared && (
+                                  <span
+                                    className="inline-flex items-center gap-1 rounded-full font-bold"
+                                    style={{ background: "var(--p5-tint)", color: "var(--p5)", fontSize: "var(--t-xs)", padding: "2px 9px" }}
+                                    title={`${overlapSchemes.join(" · ")} 와 중복(재사용)`}
+                                  >
+                                    <Repeat2 size={12} aria-hidden />
+                                    {overlapSchemes.join("·")} 공통
                                   </span>
                                 )}
                                 <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
@@ -292,6 +308,12 @@ export function DocumentTree() {
           </span>
           <span className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
             <Sparkles size={13} style={{ color: "var(--info)" }} aria-hidden /> 나머지는 일반 템플릿 자동 생성
+          </span>
+          <span className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
+            <span className="inline-flex items-center gap-1 rounded-full font-bold" style={{ background: "var(--p5-tint)", color: "var(--p5)", padding: "1px 8px" }}>
+              <Repeat2 size={11} aria-hidden /> 공통
+            </span>
+            = 다른 인증(ISO·MDSAP·FDA)과 중복 · 초록 테두리 강조
           </span>
         </div>
         </>

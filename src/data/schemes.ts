@@ -46,6 +46,12 @@ export function sharedDocIds(): string[] {
     .filter((id) => !ce.has(id));
 }
 
+/** 이 문서가 CE 외 다른 인증과 중복(재사용)되는가. */
+export const isSharedDoc = (id: string): boolean => !ceOnlyDocIds.includes(id);
+
+/** 공통 문서가 겹치는 다른 인증 라벨(CE는 IVDR 기본이라 제외). */
+export const overlapSchemes = ["ISO 13485", "MDSAP", "FDA"];
+
 /** FDA(US) 고유 제출문서 — 우리 IVDR 문서셋 밖. 참고 표시용(링크 없음). */
 export const fdaOnlyItems: string[] = [
   "510(k) / De Novo / PMA 제출",

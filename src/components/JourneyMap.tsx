@@ -7,6 +7,7 @@ import { PhaseNav } from "./PhaseNav";
 import { DecisionFork } from "./DecisionFork";
 import { TransitionTimeline } from "./TransitionTimeline";
 import { JourneyRouteMap } from "./JourneyRouteMap";
+import { CertStructure } from "./CertStructure";
 import { StationDetail } from "./StationDetail";
 
 /**
@@ -65,6 +66,11 @@ export function JourneyMap() {
         className="mx-auto"
         style={{ maxWidth: "var(--max-w)", padding: `var(--s-12) var(--margin) var(--s-16)` }}
       >
+        {/* ── 인증의 전체 구조 (인포그래픽) — 메인 첫 화면 ── */}
+        <div style={{ marginBottom: "var(--s-12)" }}>
+          <CertStructure onOpen={openStation} />
+        </div>
+
         {/* ── Hero: 한 줄 목표 ── */}
         <header style={{ marginBottom: "var(--s-12)" }}>
           <span
@@ -88,8 +94,6 @@ export function JourneyMap() {
               maxWidth: 760,
             }}
           >
-            글을 읽지 않고도 한눈에
-            <br />
             <span style={{ color: "var(--accent)" }}>전체 여정 · 지금 위치 · 다음 할 일</span>
           </h1>
           <p
