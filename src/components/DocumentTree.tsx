@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered } from "lucide-react";
+import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered, Blend } from "lucide-react";
 import {
   docTree,
   requirementMeta,
@@ -16,6 +16,7 @@ import { StatusChip } from "./StatusChip";
 import { LevelMeter } from "./LevelMeter";
 import { DocumentMindmap } from "./DocumentMindmap";
 import { DocumentOrder } from "./DocumentOrder";
+import { SchemeOverlap } from "./SchemeOverlap";
 
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
 function Elbow({ color, top = 26 }: { color: string; top?: number }) {
@@ -32,7 +33,7 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
-  const [tab, setTab] = useState<"list" | "map" | "order">("list");
+  const [tab, setTab] = useState<"list" | "map" | "order" | "schemes">("list");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -78,6 +79,7 @@ export function DocumentTree() {
             { id: "list", label: "목록", Icon: List },
             { id: "map", label: "구조 파악하기", Icon: Network },
             { id: "order", label: "작성 순서", Icon: ListOrdered },
+            { id: "schemes", label: "규제 중복", Icon: Blend },
           ] as const).map((t) => {
             const active = tab === t.id;
             return (
@@ -128,6 +130,9 @@ export function DocumentTree() {
             <DocumentOrder />
           </div>
         )}
+
+        {/* 규제 스킴 중복 (벤다이어그램) */}
+        {tab === "schemes" && <SchemeOverlap />}
 
         {/* 목록 (상세 트리) */}
         {tab === "list" && (
