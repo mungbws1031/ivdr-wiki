@@ -8,6 +8,7 @@ import { DecisionFork } from "./DecisionFork";
 import { TransitionTimeline } from "./TransitionTimeline";
 import { JourneyRouteMap } from "./JourneyRouteMap";
 import { CertStructure } from "./CertStructure";
+import { SchemeOverlap } from "./SchemeOverlap";
 import { StationDetail } from "./StationDetail";
 
 /**
@@ -129,6 +130,23 @@ export function JourneyMap() {
         <div style={{ marginBottom: "var(--s-12)" }}>
           <JourneyRouteMap onOpen={openStation} />
         </div>
+
+        {/* ── 규제 스킴 중복 (벤다이어그램) ── */}
+        <section
+          aria-label="규제 스킴 간 문서 중복"
+          className="rounded-[var(--r-lg)] border"
+          style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-6)", marginBottom: "var(--s-12)" }}
+        >
+          <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-1)" }}>
+            <span className="inline-flex items-center gap-1.5 rounded-full font-extrabold text-text-on-color" style={{ background: "var(--p5)", fontSize: "var(--t-xs)", padding: "4px 12px" }}>
+              규제 중복
+            </span>
+          </div>
+          <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)" }}>
+            ISO 13485 · MDSAP · CE · FDA 문서 중복
+          </h2>
+          <SchemeOverlap />
+        </section>
 
         {/* ── 5 페이즈 밴드 (+ P2 뒤 결정 갈림길 히어로) ── */}
         <div className="flex flex-col" style={{ gap: "var(--s-8)" }}>
