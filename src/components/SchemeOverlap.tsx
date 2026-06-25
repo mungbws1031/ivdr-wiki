@@ -44,16 +44,18 @@ export function SchemeOverlap() {
 
       {/* ── 벤다이어그램 ── */}
       <div style={{ overflowX: "auto" }}>
-        <svg viewBox="0 0 880 600" role="img" aria-label="규제 스킴별 문서 중복 벤다이어그램"
+        <svg viewBox="0 0 880 640" role="img" aria-label="규제 스킴별 문서 중복 벤다이어그램"
           style={{ width: "100%", minWidth: 600, height: "auto", display: "block" }}>
-          {/* 기반(ISO 13485 · MDSAP) */}
-          <rect x="40" y="338" width="800" height="232" rx="28" fill="var(--p3-tint)" stroke="var(--p3)" strokeWidth="2" />
-          <text x="440" y="500" textAnchor="middle" style={{ fontSize: 19, fontWeight: 800, fill: "var(--p3)" }}>
-            ISO 13485 — QMS 공통 기반
+          {/* MDSAP 외곽 기반 (ISO 13485를 5개국 단일 심사로 감쌈) */}
+          <rect x="34" y="352" width="812" height="262" rx="32" fill="var(--p5-tint)" stroke="var(--p5)" strokeWidth="2.5" />
+          <text x="58" y="392" style={{ fontSize: 17, fontWeight: 800, fill: "var(--p5)" }}>MDSAP</text>
+          <text x="440" y="590" textAnchor="middle" style={{ fontSize: 13, fontWeight: 700, fill: "var(--p5)" }}>
+            MDSAP — {mdsapMarkets.join(" · ")} 단일 심사
           </text>
-          <text x="440" y="528" textAnchor="middle" style={{ fontSize: 13, fontWeight: 700, fill: "var(--p5)" }}>
-            MDSAP: {mdsapMarkets.join(" · ")} 단일 심사
-          </text>
+          {/* ISO 13485 내부 기반 (MDSAP 안에 포함) */}
+          <rect x="150" y="402" width="580" height="118" rx="22" fill="var(--p3-tint)" stroke="var(--p3)" strokeWidth="2" />
+          <text x="440" y="452" textAnchor="middle" style={{ fontSize: 19, fontWeight: 800, fill: "var(--p3)" }}>ISO 13485</text>
+          <text x="440" y="478" textAnchor="middle" style={{ fontSize: 12, fontWeight: 700, fill: "var(--text-muted)" }}>QMS 공통 기반</text>
 
           {/* CE / FDA 원 (반투명 → 겹침이 진해짐) */}
           <circle cx="330" cy="250" r="198" fill="var(--p2)" fillOpacity="0.16" stroke="var(--p2)" strokeWidth="2.5" />
