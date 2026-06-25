@@ -272,6 +272,62 @@ export const concepts: WikiConcept[] = [
     relatedStationIds: [10],
     relatedConceptSlugs: ["eudamed", "srn", "doc"],
   },
+  {
+    slug: "mdsap",
+    term: "MDSAP — 의료기기 단일심사프로그램",
+    aka: ["Medical Device Single Audit Program", "단일심사"],
+    category: "standard",
+    summary: "호주·브라질·캐나다·일본·미국 5개국 규제기관이 인정하는 단일 QMS 심사 프로그램.",
+    body: [
+      "MDSAP(Medical Device Single Audit Program)는 {{iso-13485|ISO 13485}} QMS를 기반으로 호주(TGA)·브라질(ANVISA)·캐나다(Health Canada)·일본(PMDA)·미국(FDA) 5개 규제기관이 공동 인정하는 단일 심사 프로그램이다. 한 번 심사를 통과하면 5개국 시장 규제 요건을 동시에 충족한다.",
+      "MDSAP는 ISO 13485의 **상위 집합(superset)**이다 — ISO 13485 QMS에 각국 규제 챕터(호주·브라질 등 국가별 요구)를 추가 심사한다. 우리 IVDR 문서셋 75개 중 49개(QMS·설계·위험·생산·기술/성능 증거)가 MDSAP와 공통 재사용된다. EU CE 인증 준비와 병행하면 다중 시장 진출 비용을 절감할 수 있다.",
+    ],
+    refs: ["MDSAP Auditing Organizations", "ISO 13485:2016"],
+    relatedStationIds: [4],
+    relatedConceptSlugs: ["iso-13485", "pms"],
+  },
+  {
+    slug: "iec-62304",
+    term: "IEC 62304 — 의료기기 소프트웨어 수명주기",
+    aka: ["IEC 62304", "Software Lifecycle"],
+    category: "standard",
+    summary: "의료기기 소프트웨어 개발·유지보수·위험관리 국제 표준.",
+    body: [
+      "IEC 62304는 의료기기에 포함된 소프트웨어의 **수명주기 프로세스**(개발·유지보수·문제 해결)를 정의하는 국제 표준이다. 소프트웨어 안전 클래스(A·B·C)를 정하고, 클래스별로 요구되는 설계·검증·밸리데이션·형상 관리 활동을 규정한다.",
+      "IVDR에서 소프트웨어를 포함하는 IVD는 GSPR 16조 요구사항을 충족해야 하며, IEC 62304 준수가 핵심 수단이다. SW 위험 클래스가 높을수록 단위 시험·통합 시험·형상관리·SOUP(기성 소프트웨어) 관리 요건이 강화된다. {{iso-14971|ISO 14971}} 위험관리와 연계해 SW 위험을 다룬다.",
+    ],
+    refs: ["IEC 62304:2015+A1:2015", "IVDR Annex I 16"],
+    relatedStationIds: [5],
+    relatedConceptSlugs: ["iso-14971", "gspr"],
+  },
+  {
+    slug: "prrc",
+    term: "PRRC — 규제준수책임자",
+    aka: ["Person Responsible for Regulatory Compliance", "Art.15"],
+    category: "actor",
+    summary: "제조자가 지정해야 하는 규제 적합성 최종 책임자 (IVDR Art.15).",
+    body: [
+      "PRRC(Person Responsible for Regulatory Compliance, 규제준수책임자)는 IVDR Art.15가 모든 제조자에게 요구하는 역할이다. **법학·자연과학·공학 관련 학위 + 1년 이상 규제 또는 QMS 경력**(학위 없는 경우 4년 경력)을 보유해야 하며, 제조자 내부 또는 외부 전문가가 될 수 있다.",
+      "PRRC의 핵심 책임: ① 기술문서·QMS 적합성 확인, ② DoC 서명 전 검토, ③ 시판 후 의무(PMS·PSUR·바이질런스) 이행 감독, ④ EUDAMED·UDI 등록 감독, ⑤ 규제 당국 대응. 중소기업은 외부 PRRC 계약도 가능하나, 지정 사실을 문서화해야 한다.",
+    ],
+    refs: ["IVDR Art.15"],
+    relatedStationIds: [4],
+    relatedConceptSlugs: ["iso-13485", "eudamed", "pms"],
+  },
+  {
+    slug: "ssp",
+    term: "SSP — 안전성·성능 요약서",
+    aka: ["Summary of Safety and Performance", "Art.29"],
+    category: "deliverable",
+    summary: "Class C·D 기기의 안전성·성능 데이터를 일반에 공개하는 요약 문서 (EUDAMED 게시).",
+    body: [
+      "SSP(Summary of Safety and Performance, 안전성·성능 요약서)는 IVDR Art.29가 **Class C·D** 기기에 의무화한 공개 문서다. 기술문서(PER·위험 파일)의 핵심을 **일반인이 읽을 수 있는 수준**으로 요약하며, EUDAMED에 게시된다.",
+      "필수 항목(Annex III 참조): 기기 식별(UDI-DI), 의도된 목적, 분류·경로, 설계 특성 요약, 분석·임상 성능 결론, 잔여위험 및 이익-위험 결론, 적용 규정·표준, {{pms|PMS}}/PMPF 계획 요약, 개정 이력. NB가 검토·승인 후 EUDAMED에 업로드한다.",
+    ],
+    refs: ["IVDR Art.29", "Annex III"],
+    relatedStationIds: [9],
+    relatedConceptSlugs: ["pep-per", "pms", "eudamed", "doc"],
+  },
 ];
 
 export const conceptBySlug = (slug: string): WikiConcept | undefined =>

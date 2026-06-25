@@ -443,6 +443,322 @@ export const documents: DocTemplate[] = [
     relatedConceptSlugs: ["pms", "annex-iii", "annex-xiii"],
     refs: ["IVDR Art.78~81", "Annex III", "Annex XIII Part B"],
   },
+  // ── 아래부터 추가 상세 템플릿 ─────────────────────────────────────
+  {
+    id: "device-description",
+    stationId: 5,
+    docTitle: "기기 설명서·사양 (Annex II 1.1)",
+    purpose: "기기의 물리적 특성·구성·작동 원리를 문서화해 기술문서의 출발 항목을 완성한다.",
+    sections: [
+      {
+        heading: "1. 제품 식별",
+        guidance: "제품명·모델·버전·제조자·SRN·Basic UDI-DI.",
+        placeholder: "제품명: [____]\n모델/버전: [____]\n제조자: [____] / SRN: [____]\nBasic UDI-DI: [____]",
+      },
+      {
+        heading: "2. 기기 설명 및 의도된 목적",
+        guidance: "의도된 목적 정의서에서 옮겨와 기기 유형·작동 원리를 설명.",
+        placeholder: "기기 유형: [반응키트 / 분석기 / SW / 조합]\n작동 원리: [____]\n의도된 목적(요약): [____]",
+      },
+      {
+        heading: "3. 구성 및 부품 목록",
+        guidance: "시약·소모품·주요 부품·소프트웨어 버전. BOM 참조.",
+        placeholder: "구성품:\n- [부품명] Rev.[__] — [역할]\n- SW [버전]: [기능 요약]\n참조 BOM: [문서번호/위치]",
+      },
+      {
+        heading: "4. 기술 사양",
+        guidance: "분석 범위·측정 단위·보관조건·환경 조건.",
+        placeholder: "측정 범위: [____]\n검체 유형/부피: [____]\n보관 온도: [____] · 유효기간: [____]\n사용 환경 조건: [____]",
+      },
+      {
+        heading: "5. 이전 세대·유사 기기",
+        guidance: "기술 비교 — 동등성 주장 또는 변경 내역.",
+        placeholder: "이전 세대: [없음 / 제품명-버전]\n주요 변경 사항: [____]",
+      },
+    ],
+    checklist: [
+      "Basic UDI-DI·제조자 정보가 DoC·라벨과 일치하는가",
+      "구성품이 BOM과 일치하는가",
+      "의도된 목적이 정의서와 정확히 일치하는가",
+      "보관조건·유효기간이 안정성 시험 결과와 연결됐는가",
+    ],
+    relatedConceptSlugs: ["annex-ii", "gspr", "udi"],
+    refs: ["IVDR Annex II 1.1", "Art.2"],
+  },
+  {
+    id: "labelling-spec",
+    stationId: 9,
+    docTitle: "라벨 사양서 (Annex I + Art.18)",
+    purpose: "IVDR Annex I 정보 요건을 충족하는 라벨·포장 사양을 확정한다. UDI·CE·NB 번호 포함.",
+    sections: [
+      {
+        heading: "1. 제조자·연락처",
+        guidance: "제조자명·주소·웹·EU 대리인(해당 시).",
+        placeholder: "제조자: [____]\n주소: [____]\nEU 대리인: [____] (비EU 제조자)",
+      },
+      {
+        heading: "2. 기기 식별 정보",
+        guidance: "제품명·모델·배치/로트·유효기간·보관.",
+        placeholder: "제품명: [____] · 모델: [____]\nLot/Ref: [____] · 유효기간: [____]\nBasic UDI-DI: [____] · UDI 캐리어 형식: [GS1 DataMatrix / 바코드]",
+      },
+      {
+        heading: "3. 성능·용도 표시",
+        guidance: "사용 목적(축약)·주의·사용 제한.",
+        placeholder: "사용 목적(라벨 축약): [____]\n경고/주의: [____]\n취급주의 심볼(ISO 15223-1): [____]",
+      },
+      {
+        heading: "4. CE 마킹 및 NB",
+        guidance: "CE 마킹 위치·NB 식별번호.",
+        placeholder: "CE 마킹 위치: [____]\nNB 번호(해당 시): [____]\nAnnex V 크기 요건 준수: 예/아니오",
+      },
+      {
+        heading: "5. 언어",
+        guidance: "출시 국가별 요구 언어.",
+        placeholder: "출시 국가: [____]\n표기 언어: [____]",
+      },
+    ],
+    checklist: [
+      "Annex I 정보 요건 항목을 모두 포함했는가",
+      "UDI 캐리어(바코드 등)가 규격에 맞는가",
+      "CE 마킹이 Annex V 크기·위치 요건을 따르는가",
+      "라벨 문구가 DoC·IFU·기기 설명서와 일치하는가",
+      "EU 출시 국가 언어 요건을 충족했는가",
+    ],
+    relatedConceptSlugs: ["ce-marking", "udi", "doc"],
+    refs: ["IVDR Annex I (정보 요건)", "Art.18", "Annex V", "ISO 15223-1"],
+  },
+  {
+    id: "ifu",
+    stationId: 9,
+    docTitle: "사용설명서 (IFU, Annex I)",
+    purpose: "사용자가 기기를 올바르고 안전하게 사용할 수 있도록 모든 필수 정보를 제공한다.",
+    sections: [
+      {
+        heading: "1. 기기 식별 및 제조자",
+        guidance: "제품명·모델·Basic UDI-DI·제조자 연락처.",
+        placeholder: "제품명: [____] / Basic UDI-DI: [____]\n제조자: [____] / 연락처: [____]",
+      },
+      {
+        heading: "2. 의도된 목적 및 적응증",
+        guidance: "검출 대상·검체·사용자·환경·임상 결정을 명확히.",
+        placeholder: "의도된 목적: [____]\n적응증/대상 집단: [____]\n금기 사항: [____]",
+      },
+      {
+        heading: "3. 검사 원리",
+        guidance: "측정 원리·시약 반응 요약.",
+        placeholder: "검사 원리: [____]\n관련 간섭 물질: [____]",
+      },
+      {
+        heading: "4. 사용 방법 (단계별)",
+        guidance: "검체 채취→보관→검사→판독을 순서대로. 자가검사는 그림 포함 권장.",
+        placeholder: "검체 채취: [____]\n검사 절차:\n  1. [____]\n  2. [____]\n  3. [____]\n결과 판독: [____]\n음성/양성/무효 기준: [____]",
+      },
+      {
+        heading: "5. 성능 특성 요약",
+        guidance: "민감도·특이도·정밀도 등 핵심 성능 지표.",
+        placeholder: "민감도: [___]%  특이도: [___]%\n정밀도(CV%): [____]\n측정 범위: [____]",
+      },
+      {
+        heading: "6. 한계·주의·경고",
+        guidance: "결과 한계·오용 방지 경고·보관 조건.",
+        placeholder: "결과의 한계: [____]\n보관: [____] / 유효기간: [____]\n경고: [____]",
+      },
+      {
+        heading: "7. 심볼 범례",
+        guidance: "라벨에 쓰인 ISO 15223-1 심볼 설명.",
+        placeholder: "심볼 → 의미:\n[심볼] → [____]",
+      },
+    ],
+    checklist: [
+      "Annex I 정보 요건 전 항목을 IFU에서 다루는가",
+      "자가검사면 비전문가 가독성(IEC 62366 사용적합성)을 검증했는가",
+      "라벨·DoC·기기 설명서와 내용이 일치하는가",
+      "출시 국가 언어로 번역됐는가",
+      "개정 관리 이력이 있는가",
+    ],
+    relatedConceptSlugs: ["iec-62366", "gspr", "ce-marking"],
+    refs: ["IVDR Annex I (정보 요건)", "Art.18", "IEC 62366-1"],
+  },
+  {
+    id: "risk-management-file",
+    stationId: 7,
+    docTitle: "위험관리 파일·보고서 (ISO 14971)",
+    purpose: "위험 분석→평가→통제→잔여위험 평가의 전 이력을 파일로 유지하고, 결론을 보고서로 닫는다.",
+    sections: [
+      {
+        heading: "1. 파일 구조 및 색인",
+        guidance: "위험관리 계획·분석·통제·잔여위험·검토 문서 목록.",
+        placeholder: "위험관리 계획: [문서번호]\n위험 분석·통제 테이블: [____]\n잔여위험 평가 결과: [____]\nGSPR↔위험 추적표: [____]",
+      },
+      {
+        heading: "2. 잔여위험 종합 평가",
+        guidance: "통제 후 잔여위험 총량이 수용 기준 이내인지 확인.",
+        placeholder: "잔여위험 합산: [____]\n수용 기준 대비: [____]\n이익-위험 결론: [____]",
+      },
+      {
+        heading: "3. 위험관리 검토 (Production 단계)",
+        guidance: "생산·시판 후 정보를 검토해 새로운 위험이 없음을 확인.",
+        placeholder: "검토 일자: [____]\n신규 위험 발견: 없음 / [____]\n조치: [____]",
+      },
+      {
+        heading: "4. 시판 후 환류",
+        guidance: "PMS 데이터→위험 재평가 연결.",
+        placeholder: "PMS 환류 주기: [____]\n위험 재평가 트리거: [____]",
+      },
+    ],
+    checklist: [
+      "모든 위해요인이 식별·통제·잔여위험 평가됐는가",
+      "잔여위험 총량이 이익 대비 수용 가능한가",
+      "GSPR↔위험 추적이 양방향 성립하는가",
+      "시판 후 환류 경로가 위험 파일에 연결됐는가",
+    ],
+    relatedConceptSlugs: ["iso-14971", "gspr", "pms"],
+    refs: ["ISO 14971:2019", "IVDR Annex I"],
+  },
+  {
+    id: "performance-eval-report",
+    stationId: 6,
+    docTitle: "성능평가 보고서 (PER, Annex XIII)",
+    purpose: "PEP에서 설계한 3단 증거(과학·분석·임상)를 종합해 성능 결론을 확정하고 평가를 닫는다.",
+    sections: [
+      {
+        heading: "1. 과학적 타당성 결론",
+        guidance: "분석물질-임상상태 연관의 근거 요약.",
+        placeholder: "분석물질: [____]\n임상상태: [____]\n근거(문헌 수·수준): [____]\n결론: 과학적 타당성 [확립/불충분]",
+      },
+      {
+        heading: "2. 분석적 성능 결론",
+        guidance: "정밀도·정확도·검출한계·특이성 결과 요약.",
+        placeholder: "정밀도(CV%): [____] → 수용 기준: [____]\n정확도: [____]\n검출한계(LoD): [____]\n교차반응: [____]\n결론: [충족 / 미충족 — 조치]",
+      },
+      {
+        heading: "3. 임상적 성능 결론",
+        guidance: "민감도·특이도·검체·기준 방법 요약.",
+        placeholder: "민감도: [___]% (95% CI: [___~___])\n특이도: [___]%\n검체 수/출처: [____]\n기준 방법: [____]\n결론: [임상 성능 충족]",
+      },
+      {
+        heading: "4. 종합 결론 및 잔여 성능 불확도",
+        guidance: "3단 결론을 통합해 이익-위험 결론과 연결.",
+        placeholder: "성능 종합 결론: [____]\n잔여 성능 불확도: [____]\n이익-위험 결론 참조: [문서번호]\nPMPF 필요성: [필요 / 불필요]",
+      },
+    ],
+    checklist: [
+      "PEP의 모든 수용 기준을 데이터로 충족했는가",
+      "3단(과학·분석·임상) 증거가 모두 있는가",
+      "잔여 성능 불확도와 이익-위험을 연결했는가",
+      "PER 이후 PMPF 계획이 연결됐는가",
+    ],
+    relatedConceptSlugs: ["pep-per", "annex-xiii", "gspr"],
+    refs: ["IVDR Art.56", "Annex XIII"],
+  },
+  {
+    id: "quality-manual",
+    stationId: 4,
+    docTitle: "품질매뉴얼 (ISO 13485 4.2.2)",
+    purpose: "QMS 범위·적용 제외·프로세스 상호작용을 선언해 인증기관과 고객에게 QMS 체계를 한 권으로 보인다.",
+    sections: [
+      {
+        heading: "1. 회사 및 QMS 범위",
+        guidance: "제조자명·사업장·IVDR 적용 제품 범위·ISO 13485 적용 제외 항목.",
+        placeholder: "회사명: [____] / 주소: [____]\nQMS 적용 범위: [____]\n적용 제외(ISO 13485): [없음 / 7.x — 사유: ____]",
+      },
+      {
+        heading: "2. 프로세스 맵",
+        guidance: "핵심 프로세스와 상호작용(경영→실현→지원·측정).",
+        placeholder: "경영 프로세스: [경영검토, 품질방침, 목표]\n제품실현 프로세스: [설계, 구매, 생산, 검사]\n지원 프로세스: [HR, 인프라, 문서·기록]\n측정·분석·개선: [내부심사, CAPA, PMS]",
+      },
+      {
+        heading: "3. 절차 문서 목록",
+        guidance: "QMS를 구성하는 절차(SOP) 상호참조.",
+        placeholder: "QP-01 문서·기록 관리\nQP-02 CAPA\nQP-03 공급자 관리\nQP-04 불만 처리\n… (SOP 목록 계속)",
+      },
+      {
+        heading: "4. IVDR 고유 요구 연계",
+        guidance: "IVDR Art.10(8)이 요구하는 추가 프로세스 위치.",
+        placeholder: "성능평가 SOP: [SOP-__]\nPMS/PSUR SOP: [SOP-__]\nUDI/EUDAMED SOP: [SOP-__]\nPRRC 역할: [직책/성명]",
+      },
+    ],
+    checklist: [
+      "ISO 13485 4.2.2 필수 항목을 모두 포함했는가",
+      "IVDR Art.10(8) 고유 프로세스를 연결했는가",
+      "QMS 범위와 NB 심사 범위가 일치하는가",
+      "모든 SOP가 최신 개정본으로 상호참조됐는가",
+    ],
+    relatedConceptSlugs: ["iso-13485", "mdsap", "prrc"],
+    refs: ["ISO 13485:2016 4.2.2", "IVDR Art.10(8)"],
+  },
+  {
+    id: "benefit-risk",
+    stationId: 7,
+    docTitle: "이익-위험 분석서 (Annex I 1)",
+    purpose: "기기가 제공하는 임상적 이익이 잔여위험을 상회함을 증명해 GSPR 1조를 충족한다.",
+    sections: [
+      {
+        heading: "1. 이익 요약",
+        guidance: "의도된 목적에 따른 임상적 이익(진단 정확도·환자 관리 개선).",
+        placeholder: "의도된 목적 기반 이익:\n- 민감도 [___]%로 [____] 조기 진단 가능\n- [____] 관리 결정 지원\n임상 이익 근거: [PER / 문헌]",
+      },
+      {
+        heading: "2. 잔여위험 요약",
+        guidance: "위험관리 파일의 잔여위험 종합.",
+        placeholder: "잔여위험 수:\n- 허용 잔여위험: [____]\n- 모니터링 필요 위험: [____]\n참조: 위험관리 파일 [문서번호]",
+      },
+      {
+        heading: "3. 이익-위험 비교 결론",
+        guidance: "이익이 잔여위험을 상회함을 명시적으로 서술.",
+        placeholder: "결론: 이익 [____] > 잔여위험 [____]\n근거: [____]\n조건: [____] (시판 후 추가 데이터 등)",
+      },
+      {
+        heading: "4. 시판 후 업데이트 계획",
+        guidance: "PMS 데이터로 이익-위험 결론을 갱신하는 주기.",
+        placeholder: "갱신 주기: [____]\n갱신 트리거: [바이질런스 보고·PSUR]",
+      },
+    ],
+    checklist: [
+      "GSPR 1조(이익 > 위험) 충족을 명시적으로 선언했는가",
+      "이익 근거가 PER·임상 데이터에 연결됐는가",
+      "잔여위험이 위험관리 파일과 일치하는가",
+      "시판 후 갱신 계획이 PMS/PSUR와 연결됐는가",
+    ],
+    relatedConceptSlugs: ["iso-14971", "gspr", "pep-per"],
+    refs: ["IVDR Annex I 1", "Annex II", "ISO 14971:2019"],
+  },
+  {
+    id: "usability-file",
+    stationId: 7,
+    docTitle: "사용적합성 파일·보고서 (IEC 62366-1)",
+    purpose: "비전문가(자가검사·근접검사) 사용 오류를 체계적으로 줄여 GSPR 요건을 충족한다.",
+    sections: [
+      {
+        heading: "1. 사용 명세 (Use Specification)",
+        guidance: "사용자·사용 환경·사용 인터페이스·기존 지식 분석.",
+        placeholder: "사용자 프로파일: [비전문가 / 전문가 / 혼합]\n사용 환경: [가정 / 근접검사 / 실험실]\n사용 인터페이스 요소: [시각·청각·촉각]\n사용자 역량·한계: [____]",
+      },
+      {
+        heading: "2. 위험 관련 사용 시나리오",
+        guidance: "사용 오류가 위험을 초래할 수 있는 시나리오 식별.",
+        placeholder: "시나리오 1: [검체 채취 오류] → 위험: [____] → 완화: [____]\n시나리오 2: [결과 오판독] → 위험: [____] → 완화: [____]",
+      },
+      {
+        heading: "3. 형성 평가 (Formative)",
+        guidance: "초기 UI/IFU 시제품 평가 결과.",
+        placeholder: "평가 방법: [인지 워크스루 / 사용자 관찰]\n참가자 수: [____]\n주요 발견: [____]\n설계 개선: [____]",
+      },
+      {
+        heading: "4. 총괄 평가 (Summative)",
+        guidance: "최종 설계에 대한 사용자 시험 — 위험 관련 사용 오류 없음을 확인.",
+        placeholder: "참가자 수: [____] (대표 사용자)\n시험 결과: 위험 관련 오류 [0 / 발견 조치]\n결론: 사용적합성 [수용 / 조건부]",
+      },
+    ],
+    checklist: [
+      "자가검사·근접검사 여부를 반영했는가 (IEC 62366 적용 여부)",
+      "위험 관련 사용 시나리오가 ISO 14971과 연계됐는가",
+      "총괄 평가에서 허용 불가 사용 오류가 없는가",
+      "IFU·라벨 최종본에 평가 결과를 반영했는가",
+    ],
+    relatedConceptSlugs: ["iec-62366", "iso-14971", "gspr"],
+    refs: ["IEC 62366-1:2015+A1:2020", "IVDR Annex I"],
+  },
 ];
 
 export const docByStationId = (id: number): DocTemplate | undefined =>

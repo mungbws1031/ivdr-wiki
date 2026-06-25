@@ -68,14 +68,32 @@ export function DocumentWorkspace() {
       >
         {/* 헤더 */}
         <div style={{ marginBottom: "var(--s-6)" }}>
-          <Link
-            to={`/station/${station.id}`}
-            className="inline-flex items-center gap-2 font-semibold"
-            style={{ color, fontSize: "var(--t-sm)" }}
-          >
-            <Icon size={16} aria-hidden />
-            정거장 {station.id} · {phase.title}
-          </Link>
+          <div className="flex flex-wrap items-center gap-3" style={{ marginBottom: "var(--s-2)" }}>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold text-text-muted hover:text-text"
+              style={{ fontSize: "var(--t-xs)", border: "1px solid var(--border)", padding: "3px 10px" }}
+            >
+              <Compass size={13} aria-hidden />
+              여정 지도
+            </Link>
+            <Link
+              to="/documents"
+              className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold text-text-muted hover:text-text"
+              style={{ fontSize: "var(--t-xs)", border: "1px solid var(--border)", padding: "3px 10px" }}
+            >
+              <FileText size={13} aria-hidden />
+              문서 목록
+            </Link>
+            <Link
+              to={`/station/${station.id}`}
+              className="inline-flex items-center gap-1.5 font-semibold"
+              style={{ color, fontSize: "var(--t-xs)" }}
+            >
+              <Icon size={13} aria-hidden />
+              정거장 {station.id} · {phase.title}
+            </Link>
+          </div>
           <h1
             className="flex items-center gap-3 font-extrabold text-text"
             style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}

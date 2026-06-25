@@ -131,6 +131,7 @@ export const docTree: DocGroup[] = [
         refs: ["Annex II 1.1"],
         stationId: 5,
         requirement: "required",
+        detailed: true,
         prerequisites: [
           P("photo", "제품 외관·구성품 사진"),
           P("data", "기술 사양(시약·하드웨어·SW 버전)"),
@@ -167,6 +168,7 @@ export const docTree: DocGroup[] = [
         refs: ["Annex I (정보)", "Art.18"],
         stationId: 9,
         requirement: "required",
+        detailed: true,
         note: "UDI 캐리어·CE·NB 번호 포함.",
         prerequisites: [
           P("photo", "현재 라벨 시안·목업"),
@@ -180,6 +182,7 @@ export const docTree: DocGroup[] = [
         refs: ["Annex I (정보)"],
         stationId: 9,
         requirement: "required",
+        detailed: true,
         note: "자가검사는 사용적합성 검증과 연계.",
         prerequisites: [
           P("doc", "사용 절차 초안·위험관리(사용오류)"),
@@ -193,6 +196,7 @@ export const docTree: DocGroup[] = [
         refs: ["Annex I 1", "Annex II"],
         stationId: 7,
         requirement: "required",
+        detailed: true,
         prerequisites: [
           P("doc", "위험관리 파일·성능평가 결과"),
           P("data", "임상적 이익 근거(문헌·데이터)"),
@@ -360,6 +364,7 @@ export const docTree: DocGroup[] = [
         refs: ["Annex XIII", "Art.56"],
         stationId: 6,
         requirement: "required",
+        detailed: true,
         note: "PEP→데이터→PER로 종결.",
         prerequisites: [
           P("doc", "PEP·과학적타당성·분석·임상 보고서"),
@@ -419,6 +424,7 @@ export const docTree: DocGroup[] = [
         refs: ["ISO 14971:2019"],
         stationId: 7,
         requirement: "required",
+        detailed: true,
         prerequisites: [
           P("doc", "위험관리 계획"),
           P("test", "통제수단 검증 데이터"),
@@ -444,6 +450,7 @@ export const docTree: DocGroup[] = [
         refs: ["IEC 62366-1", "Annex I"],
         stationId: 7,
         requirement: "conditional",
+        detailed: true,
         note: "자가검사·근접검사 필수.",
         prerequisites: [
           P("doc", "사용 시나리오·사용자 프로파일"),
@@ -543,7 +550,7 @@ export const docTree: DocGroup[] = [
       },
       { id: "prrc", title: "규제준수책임자(PRRC) 지정", refs: ["Art.15"], stationId: 4, requirement: "required",
         prerequisites: [P("doc", "자격·경력 증빙"), P("data", "책임·권한 기술"), P("other", "조직도·위임")] },
-      { id: "quality-manual", title: "품질매뉴얼", refs: ["ISO 13485 4.2.2"], stationId: 4, requirement: "required",
+      { id: "quality-manual", title: "품질매뉴얼", refs: ["ISO 13485 4.2.2"], stationId: 4, requirement: "required", detailed: true,
         prerequisites: [P("doc", "QMS 범위·프로세스 맵"), P("other", "절차 상호참조")] },
       { id: "management-review", title: "경영검토", refs: ["ISO 13485 5.6"], stationId: 4, requirement: "required",
         prerequisites: [P("data", "품질목표·KPI·심사·불만 데이터"), P("doc", "입력 자료"), P("other", "조치 추적")] },

@@ -6,6 +6,7 @@ import {
   sharedDocIds,
   fdaOnlyItems,
   mdsapMarkets,
+  schemes,
 } from "../data/schemes";
 
 function DocChip({ id, link = true }: { id: string; link?: boolean }) {
@@ -42,8 +43,28 @@ export function SchemeOverlap() {
         CE(IVDR)·FDA는 같은 기반 위에 시장별 문서를 더합니다. <strong className="text-text">한 번 만들어 여러 스킴에 재사용</strong>되는 문서가 대부분입니다.
       </p>
 
-      {/* ── 벤다이어그램 ── */}
-      <div style={{ overflowX: "auto" }}>
+      {/* ── 모바일 컴팩트 카드 (sm 미만) ── */}
+      <div className="sm:hidden flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-5)" }}>
+        {schemes.map((s) => (
+          <div key={s.id} className="flex items-center gap-3 rounded-[var(--r-md)]"
+            style={{ border: `2px solid var(${s.colorVar})`, background: `var(${s.colorVar}-tint)`, padding: "var(--s-3) var(--s-4)" }}>
+            <span className="shrink-0 rounded-full" style={{ width: 12, height: 12, background: `var(${s.colorVar})` }} aria-hidden />
+            <div>
+              <div className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>{s.name}</div>
+              <div className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{s.sub}</div>
+            </div>
+          </div>
+        ))}
+        <div className="rounded-[var(--r-md)] text-center font-bold" style={{ background: "var(--accent-weak)", color: "var(--accent)", padding: "var(--s-3)", fontSize: "var(--t-base)" }}>
+          공통 재사용 {nShared}개 · CE 전용 {nCe}개
+        </div>
+        <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
+          가로로 돌리거나 태블릿·PC에서 전체 벤다이어그램을 확인하세요.
+        </p>
+      </div>
+
+      {/* ── 벤다이어그램 (sm 이상) ── */}
+      <div className="hidden sm:block" style={{ overflowX: "auto" }}>
         <svg viewBox="0 0 880 640" role="img" aria-label="규제 스킴별 문서 중복 벤다이어그램"
           style={{ width: "100%", minWidth: 600, height: "auto", display: "block" }}>
           {/* MDSAP 외곽 기반 (ISO 13485를 5개국 단일 심사로 감쌈) */}
