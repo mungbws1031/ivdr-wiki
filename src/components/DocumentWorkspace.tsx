@@ -24,6 +24,7 @@ import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
 import { LevelMeter } from "./LevelMeter";
+import { EffortTimeline } from "./EffortTimeline";
 
 // 준비물 종류 → 아이콘·색
 const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
@@ -90,6 +91,12 @@ export function DocumentWorkspace() {
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2" style={{ marginTop: "var(--s-3)" }}>
               <LevelMeter kind="importance" level={doc.importance} />
               <LevelMeter kind="difficulty" level={doc.difficulty} />
+            </div>
+          )}
+
+          {doc.effort && (
+            <div style={{ marginTop: "var(--s-4)" }}>
+              <EffortTimeline effort={doc.effort} />
             </div>
           )}
 

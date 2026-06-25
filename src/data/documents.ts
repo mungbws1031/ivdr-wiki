@@ -12,11 +12,13 @@ import {
   knowledgeFor,
   metaFor,
   prepDocsFor,
+  effortFor,
   difficultyLabel,
   importanceLabel,
   type DocLeaf,
   type Prerequisite,
   type Level,
+  type DocEffort,
 } from "./docTree";
 import { stations, type Station } from "./stations";
 
@@ -34,6 +36,7 @@ export interface DocTemplate {
   rationale?: string; // 이 문서를 왜 쓰는가 (취지·근본 이유)
   difficulty?: Level; // 작성 난이도
   importance?: Level; // 중요도
+  effort?: DocEffort; // 예상 소요 기간(단계별)
   prepDocs?: string[]; // 미리 만들어두면 좋은 문서(선행 잎 id)
   knowledge?: string[]; // 작성 전 알아야 할 것 (사전 지식 체크리스트)
   prerequisites?: Prerequisite[]; // 작성 전 준비물 (resolveDoc에서 잎으로부터 채움)
@@ -460,6 +463,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
     rationale: rationaleFor(leaf.id),
     difficulty: metaFor(leaf.id)?.difficulty,
     importance: metaFor(leaf.id)?.importance,
+    effort: effortFor(leaf.id),
     prepDocs: prepDocsFor(leaf.id),
     knowledge: knowledgeFor(leaf.id),
     prerequisites: leaf.prerequisites ?? [],
@@ -507,6 +511,7 @@ export function resolveDoc(id: string): DocTemplate | undefined {
       rationale: rationaleFor(id),
       difficulty: m?.difficulty,
       importance: m?.importance,
+      effort: effortFor(id),
       prepDocs: prepDocsFor(id),
       knowledge: knowledgeFor(id),
       prerequisites: leaf?.prerequisites ?? [],
@@ -527,6 +532,9 @@ export function toMarkdown(t: DocTemplate): string {
   lines.push(`> 관련 조항: ${t.refs.join(" · ")}`);
   if (t.difficulty && t.importance) {
     lines.push(`> 난이도: ${difficultyLabel[t.difficulty]} · 중요도: ${importanceLabel[t.importance]}`);
+  }
+  if (t.effort) {
+    lines.push(`> 예상 소요(추정): ${t.effort.total} — 자료확보 ${t.effort.gather} · 맥락이해 ${t.effort.context} · 작성 ${t.effort.draft} · 검토 ${t.effort.review} · RA 피드백 ${t.effort.raRounds}회`);
   }
   lines.push("");
   if (t.rationale) {

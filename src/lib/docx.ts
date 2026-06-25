@@ -27,6 +27,12 @@ function buildData(doc: DocTemplate) {
     refsLine: doc.refs.join(" · "),
     difficulty: doc.difficulty ? difficultyLabel[doc.difficulty] : "",
     importance: doc.importance ? importanceLabel[doc.importance] : "",
+    effortTotal: doc.effort?.total ?? "",
+    effortGather: doc.effort?.gather ?? "",
+    effortContext: doc.effort?.context ?? "",
+    effortDraft: doc.effort?.draft ?? "",
+    effortReview: doc.effort?.review ?? "",
+    effortRa: doc.effort ? String(doc.effort.raRounds) : "",
     prepDocs: (doc.prepDocs ?? []).map((id) => ({
       title: leafById(id)?.title ?? id,
     })),
@@ -74,6 +80,13 @@ function buildBodyXml(doc: DocTemplate): string {
     parts.push(
       paraXml(
         `난이도: ${difficultyLabel[doc.difficulty]} · 중요도: ${importanceLabel[doc.importance]}`,
+      ),
+    );
+  }
+  if (doc.effort) {
+    parts.push(
+      paraXml(
+        `예상 소요(추정): ${doc.effort.total} — 자료확보 ${doc.effort.gather} · 맥락이해 ${doc.effort.context} · 작성 ${doc.effort.draft} · 검토 ${doc.effort.review} · RA 피드백 ${doc.effort.raRounds}회`,
       ),
     );
   }
@@ -171,6 +184,7 @@ export async function generateSampleDocx(doc: DocTemplate): Promise<Blob> {
     line("목적: {purpose}"),
     line("근거: {refsLine}"),
     line("난이도: {difficulty} · 중요도: {importance}"),
+    line("예상 소요(추정): {effortTotal} — 자료확보 {effortGather} · 맥락이해 {effortContext} · 작성 {effortDraft} · 검토 {effortReview} · RA 피드백 {effortRa}회"),
     line(""),
     line("취지 — 왜 이 문서를 쓰는가", { heading: HeadingLevel.HEADING_2 }),
     line("{rationale}"),

@@ -1405,6 +1405,49 @@ export const docPrep: Record<string, string[]> = {
 
 export const prepDocsFor = (id: string): string[] => docPrep[id] ?? [];
 
+// ---------------------------------------------------------------------
+// 예상 소요 기간 — 난이도 기반 추정 프로파일(제품·조직·인력에 따라 가변).
+// 단계: 자료 확보 → 맥락 이해 → 작성 → 검토 + RA 피드백 횟수.
+// ---------------------------------------------------------------------
+export interface DocEffort {
+  gather: string; // 자료 확보
+  context: string; // 맥락 이해
+  draft: string; // 작성
+  review: string; // 검토
+  raRounds: number; // RA 피드백 횟수
+  total: string; // 총 예상 기간
+}
+
+export const effortByDifficulty: Record<Level, DocEffort> = {
+  low: {
+    gather: "2~3일",
+    context: "1~2일",
+    draft: "2~4일",
+    review: "2~3일",
+    raRounds: 1,
+    total: "약 1~2주",
+  },
+  med: {
+    gather: "1~2주",
+    context: "3~5일",
+    draft: "1~2주",
+    review: "4~5일",
+    raRounds: 2,
+    total: "약 3~5주",
+  },
+  high: {
+    gather: "3~6주",
+    context: "1~2주",
+    draft: "2~4주",
+    review: "2~3주",
+    raRounds: 3,
+    total: "약 2~4개월",
+  },
+};
+
+export const effortFor = (id: string): DocEffort =>
+  effortByDifficulty[docMeta[id]?.difficulty ?? "med"];
+
 export function allLeaves(): DocLeaf[] {
   return docTree.flatMap((g) => g.items);
 }
