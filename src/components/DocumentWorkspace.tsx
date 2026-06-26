@@ -46,7 +46,7 @@ export function DocumentWorkspace() {
       <div className="min-h-screen bg-bg">
         <PageHeader crumb="문서 작성" />
         <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin)" }}>
-          <p className="text-text-muted">해당 문서를 찾을 수 없습니다. <Link to="/" className="underline">여정 지도로</Link></p>
+          <p className="text-text-muted">해당 문서를 찾을 수 없습니다. <Link to="/ivdr" className="underline">IVDR 여정으로</Link></p>
         </main>
       </div>
     );
@@ -74,8 +74,15 @@ export function DocumentWorkspace() {
               className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold text-text-muted hover:text-text"
               style={{ fontSize: "var(--t-xs)", border: "1px solid var(--border)", padding: "3px 10px" }}
             >
+              인증 허브
+            </Link>
+            <Link
+              to="/ivdr"
+              className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold text-text-muted hover:text-text"
+              style={{ fontSize: "var(--t-xs)", border: "1px solid var(--border)", padding: "3px 10px" }}
+            >
               <Compass size={13} aria-hidden />
-              여정 지도
+              IVDR 여정
             </Link>
             <Link
               to="/documents"
@@ -86,7 +93,7 @@ export function DocumentWorkspace() {
               문서 목록
             </Link>
             <Link
-              to={`/station/${station.id}`}
+              to={`/ivdr/station/${station.id}`}
               className="inline-flex items-center gap-1.5 font-semibold"
               style={{ color, fontSize: "var(--t-xs)" }}
             >
@@ -422,7 +429,7 @@ export function DocumentWorkspace() {
 
               {/* 정거장 상세로 */}
               <Link
-                to={`/station/${station.id}`}
+                to={`/ivdr/station/${station.id}`}
                 className="inline-flex items-center justify-center gap-2 rounded-[var(--r-md)] font-semibold text-text-muted hover:bg-surface"
                 style={{ fontSize: "var(--t-sm)", padding: "10px", border: "1px solid var(--border)" }}
               >

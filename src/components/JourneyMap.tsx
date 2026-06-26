@@ -33,10 +33,10 @@ export function JourneyMap() {
     openId != null ? stations.find((s) => s.id === openId) ?? null : null;
 
   const openStation = useCallback(
-    (sid: number) => navigate(`/station/${sid}`),
+    (sid: number) => navigate(`/ivdr/station/${sid}`),
     [navigate],
   );
-  const closeStation = useCallback(() => navigate("/"), [navigate]);
+  const closeStation = useCallback(() => navigate("/ivdr"), [navigate]);
 
   // scroll-spy: 현재 화면의 페이즈 강조
   const [activePhase, setActivePhase] = useState<PhaseId | null>("p1");
@@ -122,6 +122,13 @@ export function JourneyMap() {
             >
               <Library size={18} style={{ color: "var(--info)" }} aria-hidden />
               개념 위키
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-bold text-text-muted hover:bg-surface"
+              style={{ borderColor: "var(--border)", fontSize: "var(--t-sm)", padding: "11px 18px", minHeight: 44 }}
+            >
+              ← 인증 허브
             </Link>
           </div>
         </header>

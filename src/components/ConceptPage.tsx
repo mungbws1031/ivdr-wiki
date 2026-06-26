@@ -94,7 +94,7 @@ export function ConceptPage() {
                 return (
                   <Link
                     key={s.id}
-                    to={`/station/${s.id}`}
+                    to={`/ivdr/station/${s.id}`}
                     className="flex items-center gap-3 rounded-[var(--r-md)] border bg-bg transition-[transform] hover:-translate-y-0.5"
                     style={{ borderColor: "var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-3)" }}
                   >

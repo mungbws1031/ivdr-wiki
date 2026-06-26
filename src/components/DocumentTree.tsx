@@ -237,7 +237,7 @@ export function DocumentTree() {
                                 {/* 우측 액션 */}
                                 <div className="ml-auto flex items-center gap-2">
                                   <Link
-                                    to={`/station/${station.id}`}
+                                    to={`/ivdr/station/${station.id}`}
                                     title={`정거장 ${station.id} · ${phase.title}`}
                                     className="inline-flex items-center gap-1 rounded-[var(--r-sm)] font-semibold text-text-muted hover:bg-surface"
                                     style={{ fontSize: "var(--t-xs)", padding: "4px 8px" }}
