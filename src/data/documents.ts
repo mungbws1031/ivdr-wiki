@@ -30,6 +30,8 @@ export interface DocSection {
   placeholder: string; // 채워넣기 예시/뼈대
 }
 
+export type CalcToolType = "sens-spec" | "sample-size" | "risk-matrix";
+
 export interface DocTemplate {
   id: string; // 고유 슬러그 (docTree 잎 id 와 일치)
   stationId: number; // 1..11
@@ -46,6 +48,7 @@ export interface DocTemplate {
   checklist: string[];
   relatedConceptSlugs: string[];
   refs: string[];
+  calcTools?: CalcToolType[];
 }
 
 export const documents: DocTemplate[] = [
@@ -260,6 +263,7 @@ export const documents: DocTemplate[] = [
     ],
     relatedConceptSlugs: ["pep-per", "annex-xiii", "gspr"],
     refs: ["IVDR Art.56", "Annex XIII"],
+    calcTools: ["sens-spec", "sample-size"],
   },
   {
     id: "risk-management-plan",
@@ -297,6 +301,7 @@ export const documents: DocTemplate[] = [
     ],
     relatedConceptSlugs: ["iso-14971", "gspr", "iec-62366"],
     refs: ["ISO 14971:2019", "IVDR Annex I"],
+    calcTools: ["risk-matrix"],
   },
   {
     id: "nb-application",

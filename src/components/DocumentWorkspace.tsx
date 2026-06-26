@@ -32,6 +32,9 @@ import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
 import { LevelMeter } from "./LevelMeter";
 import { EffortTimeline } from "./EffortTimeline";
+import { SensSpecCalc } from "./calcs/SensSpecCalc";
+import { SampleSizeCalc } from "./calcs/SampleSizeCalc";
+import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { InlineEditor } from "./InlineEditor";
 
 // 준비물 종류 → 아이콘·색
@@ -393,6 +396,18 @@ export function DocumentWorkspace() {
               })}
             </div>
           </section>
+        )}
+
+        {/* 계산 도구 */}
+        {doc.calcTools && doc.calcTools.length > 0 && (
+          <div style={{ marginBottom: "var(--s-6)" }}>
+            <h2 className="font-bold text-text" style={{ fontSize: "var(--t-xl)", marginBottom: "var(--s-3)" }}>
+              내장 계산 도구
+            </h2>
+            {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
+            {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
+            {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
+          </div>
         )}
 
         {/* 본문 2열 */}
