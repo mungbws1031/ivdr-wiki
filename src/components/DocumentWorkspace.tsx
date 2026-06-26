@@ -32,6 +32,7 @@ import { DocxExport } from "./DocxExport";
 import { ConceptChip } from "./ConceptChip";
 import { LevelMeter } from "./LevelMeter";
 import { EffortTimeline } from "./EffortTimeline";
+import { InlineEditor } from "./InlineEditor";
 
 // 준비물 종류 → 아이콘·색
 const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
@@ -411,24 +412,12 @@ export function DocumentWorkspace() {
                   <h2 className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>
                     {s.heading}
                   </h2>
-                  <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>
-                    {s.guidance}
-                  </p>
-                  <pre
-                    className="overflow-x-auto rounded-[var(--r-sm)] text-text"
-                    style={{
-                      background: "var(--surface)",
-                      border: "1px solid var(--border)",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "var(--t-sm)",
-                      lineHeight: "var(--lh-base)",
-                      padding: "var(--s-3)",
-                      marginTop: "var(--s-3)",
-                      whiteSpace: "pre-wrap",
-                    }}
-                  >
-                    {s.placeholder}
-                  </pre>
+                  <InlineEditor
+                    docId={doc.id}
+                    sectionIdx={i}
+                    originalPlaceholder={s.placeholder}
+                    guidance={s.guidance}
+                  />
                 </section>
               ))}
             </div>
