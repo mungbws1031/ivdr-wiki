@@ -197,7 +197,7 @@ export function ISO13485Map() {
         </footer>
       </main>
 
-      <StationDetail station={activeStation} onClose={closeStation} />
+      <StationDetail station={activeStation} onClose={closeStation} certId="iso13485" />
     </div>
   );
 }

@@ -18,8 +18,13 @@ import {
 import { resolveDoc, toMarkdown } from "../data/documents";
 import { isISO13485Doc } from "../data/schemes";
 import { useProgress, STATUS_LABEL, STATUS_NEXT, STATUS_COLOR } from "../data/progress";
-import { stations, phaseById } from "../data/stations";
+import { stations, phaseById, type Station } from "../data/stations";
+import { iso13485Stations } from "../data/iso13485/stations";
 import { prereqKindLabel, leafById, colorForLeaf, type PrereqKind } from "../data/docTree";
+
+function adaptISO13485Station(s: typeof iso13485Stations[0]): Station {
+  return { ...s, phase: s.phase as any };
+}
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
@@ -41,12 +46,23 @@ const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
 export function DocumentWorkspace() {
   const { id } = useParams();
   const doc = id ? resolveDoc(id) : undefined;
-  const station = doc ? stations.find((s) => s.id === doc.stationId) : undefined;
 
-  // Hooks must be called before any conditional returns
-  const { getStatus, setStatus } = useProgress("ivdr");
+  // Determine cert type before hooks (no conditional calls)
+  const isISODoc = (doc?.id ?? "").startsWith("iso-");
+
+  // Both hooks always called (Rules of Hooks compliant)
+  const ivdrProgress = useProgress("ivdr");
+  const isoProgress = useProgress("iso13485");
+  // Select based on doc type (iso- prefix = ISO 13485 doc)
+  const { getStatus, setStatus } = isISODoc ? isoProgress : ivdrProgress;
   const status = doc ? getStatus(doc.id) : "not_started";
   const nextStatus = STATUS_NEXT[status];
+
+  const station = doc
+    ? isISODoc
+      ? adaptISO13485Station(iso13485Stations.find((s) => s.id === doc.stationId)!)
+      : stations.find((s) => s.id === doc.stationId)
+    : undefined;
 
   if (!doc || !station) {
     return (
@@ -84,12 +100,12 @@ export function DocumentWorkspace() {
               인증 허브
             </Link>
             <Link
-              to="/ivdr"
+              to={isISODoc ? "/iso13485" : "/ivdr"}
               className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold text-text-muted hover:text-text"
               style={{ fontSize: "var(--t-xs)", border: "1px solid var(--border)", padding: "3px 10px" }}
             >
               <Compass size={13} aria-hidden />
-              IVDR 여정
+              {isISODoc ? "ISO 13485 여정" : "IVDR 여정"}
             </Link>
             <Link
               to="/documents"
@@ -100,7 +116,7 @@ export function DocumentWorkspace() {
               문서 목록
             </Link>
             <Link
-              to={`/ivdr/station/${station.id}`}
+              to={`${isISODoc ? "/iso13485" : "/ivdr"}/station/${station.id}`}
               className="inline-flex items-center gap-1.5 font-semibold"
               style={{ color, fontSize: "var(--t-xs)" }}
             >
@@ -479,7 +495,7 @@ export function DocumentWorkspace() {
 
               {/* 정거장 상세로 */}
               <Link
-                to={`/ivdr/station/${station.id}`}
+                to={`${isISODoc ? "/iso13485" : "/ivdr"}/station/${station.id}`}
                 className="inline-flex items-center justify-center gap-2 rounded-[var(--r-md)] font-semibold text-text-muted hover:bg-surface"
                 style={{ fontSize: "var(--t-sm)", padding: "10px", border: "1px solid var(--border)" }}
               >

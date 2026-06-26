@@ -4,6 +4,7 @@ import { Compass, X, BookMarked, AlertCircle, FileText, BookOpen, ChevronRight, 
 import { phaseById, stationKnowledgeFor, type Station } from "../data/stations";
 import { concepts } from "../data/concepts";
 import { leavesForStation, metaFor, colorForLeaf } from "../data/docTree";
+import { iso13485LeavesByStation } from "../data/iso13485/docTree";
 import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { StatusChip } from "./StatusChip";
@@ -17,9 +18,11 @@ import { LevelMeter } from "./LevelMeter";
 export function StationDetail({
   station,
   onClose,
+  certId,
 }: {
   station: Station | null;
   onClose: () => void;
+  certId?: "ivdr" | "iso13485";
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const open = station !== null;
@@ -109,7 +112,9 @@ export function StationDetail({
 
           {/* 📄 이 단계에서 써야 할 문서 (전체 리스트) */}
           {(() => {
-            const docsForStation = leavesForStation(station.id);
+            const docsForStation = certId === "iso13485"
+              ? iso13485LeavesByStation(station.id)
+              : leavesForStation(station.id);
             return (
               <div
                 className="mt-4 overflow-hidden rounded-[var(--r-md)]"
@@ -175,33 +180,36 @@ export function StationDetail({
           </div>
 
           {/* ✅ 이 단계에서 알아야 할 정보 (체크리스트) */}
-          {stationKnowledgeFor(station.id).length > 0 && (
-            <div
-              className="rounded-[var(--r-md)] border"
-              style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-4)", marginTop: "var(--s-4)" }}
-            >
-              <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-2)" }}>
-                <ClipboardCheck size={18} style={{ color: "var(--info)" }} aria-hidden />
-                <span className="font-bold" style={{ fontSize: "var(--t-sm)" }}>
-                  이 단계에서 알아야 할 정보
-                </span>
+          {(() => {
+            const knowledge = certId === "iso13485" ? [] : stationKnowledgeFor(station.id);
+            return knowledge.length > 0 ? (
+              <div
+                className="rounded-[var(--r-md)] border"
+                style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-4)", marginTop: "var(--s-4)" }}
+              >
+                <div className="flex items-center gap-2 text-text" style={{ marginBottom: "var(--s-2)" }}>
+                  <ClipboardCheck size={18} style={{ color: "var(--info)" }} aria-hidden />
+                  <span className="font-bold" style={{ fontSize: "var(--t-sm)" }}>
+                    이 단계에서 알아야 할 정보
+                  </span>
+                </div>
+                <ul className="flex flex-col" style={{ gap: 6 }}>
+                  {knowledge.map((k, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-text"
+                      style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}
+                    >
+                      <span aria-hidden className="mt-0.5 shrink-0 font-bold" style={{ color: "var(--info)" }}>
+                        ☐
+                      </span>
+                      <span>{k}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="flex flex-col" style={{ gap: 6 }}>
-                {stationKnowledgeFor(station.id).map((k, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 text-text"
-                    style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}
-                  >
-                    <span aria-hidden className="mt-0.5 shrink-0 font-bold" style={{ color: "var(--info)" }}>
-                      ☐
-                    </span>
-                    <span>{k}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            ) : null;
+          })()}
 
           {/* 본문 */}
           <div style={{ marginTop: "var(--s-6)" }}>
