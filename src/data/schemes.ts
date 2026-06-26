@@ -7,6 +7,7 @@
 // =====================================================================
 
 import { allLeaves } from "./docTree";
+import { allISO13485DocIds } from "./iso13485/docTree";
 
 /** CE(IVDR) 전용 — EU 시장 고유 문서(우리 문서셋 내 id). 나머지는 공통 재사용. */
 export const ceOnlyDocIds: string[] = [
@@ -63,6 +64,16 @@ export const fdaOnlyItems: string[] = [
 ];
 
 export const mdsapMarkets = ["호주", "브라질", "캐나다", "일본", "미국(FDA)"];
+
+/** ISO 13485 전용 문서 ID (공통 문서 제외). */
+export function iso13485SpecificDocIds(): string[] {
+  return allISO13485DocIds();
+}
+
+/** 이 문서가 ISO 13485 관련인가 (공통 재사용 문서 or ISO 13485 전용). */
+export function isISO13485Doc(id: string): boolean {
+  return isSharedDoc(id) || allISO13485DocIds().includes(id);
+}
 
 /** 스킴 메타(라벨·색). */
 export const schemes = [

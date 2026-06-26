@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { resolveDoc, toMarkdown } from "../data/documents";
+import { isISO13485Doc } from "../data/schemes";
 import { useProgress, STATUS_LABEL, STATUS_NEXT, STATUS_COLOR } from "../data/progress";
 import { stations, phaseById } from "../data/stations";
 import { prereqKindLabel, leafById, colorForLeaf, type PrereqKind } from "../data/docTree";
@@ -130,6 +131,25 @@ export function DocumentWorkspace() {
                 → {STATUS_LABEL[nextStatus]}
               </span>
             </button>
+          </div>
+          {/* 인증 배지 */}
+          <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+            {!doc.id.startsWith("iso-") && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full font-semibold text-text-on-color"
+                style={{ background: "var(--accent)", fontSize: "var(--t-xs)", padding: "2px 10px" }}
+              >
+                IVDR
+              </span>
+            )}
+            {isISO13485Doc(doc.id) && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full font-semibold text-text-on-color"
+                style={{ background: "var(--p3)", fontSize: "var(--t-xs)", padding: "2px 10px" }}
+              >
+                ISO 13485
+              </span>
+            )}
           </div>
           <h1
             className="flex items-center gap-3 font-extrabold text-text"
