@@ -12,7 +12,7 @@ export function CertHub() {
         <header style={{ marginBottom: "var(--s-12)", textAlign: "center" }}>
           <span
             className="inline-flex items-center gap-2 rounded-full font-semibold"
-            style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)", padding: "5px 14px" }}
+            style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)", padding: "4px 12px" }}
           >
             <Layers size={16} strokeWidth={2.5} aria-hidden />
             의료기기 인증 문서 작성 플랫폼
@@ -38,7 +38,7 @@ export function CertHub() {
         >
           <Link
             to="/ivdr"
-            className="rounded-[var(--r-lg)] border block hover:shadow-md"
+            className="rounded-[var(--r-lg)] border block hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
             style={{ borderColor: "var(--accent)", background: "var(--surface)", padding: "var(--s-8)", transition: "box-shadow 0.15s" }}
           >
             <div className="flex items-center gap-3" style={{ marginBottom: "var(--s-4)" }}>
@@ -46,7 +46,7 @@ export function CertHub() {
                 className="inline-flex items-center justify-center rounded-full shrink-0"
                 style={{ width: 48, height: 48, background: "var(--accent-weak)" }}
               >
-                <Compass size={24} style={{ color: "var(--accent)" }} />
+                <Compass size={24} style={{ color: "var(--accent)" }} aria-hidden />
               </span>
               <div>
                 <div className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>IVDR</div>
@@ -64,7 +64,7 @@ export function CertHub() {
 
           <Link
             to="/iso13485"
-            className="rounded-[var(--r-lg)] border block hover:shadow-md"
+            className="rounded-[var(--r-lg)] border block hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--p3)]"
             style={{ borderColor: "var(--p3)", background: "var(--surface)", padding: "var(--s-8)", transition: "box-shadow 0.15s" }}
           >
             <div className="flex items-center gap-3" style={{ marginBottom: "var(--s-4)" }}>
@@ -72,7 +72,7 @@ export function CertHub() {
                 className="inline-flex items-center justify-center rounded-full shrink-0"
                 style={{ width: 48, height: 48, background: "var(--p3-tint)" }}
               >
-                <CheckCircle size={24} style={{ color: "var(--p3)" }} />
+                <CheckCircle size={24} style={{ color: "var(--p3)" }} aria-hidden />
               </span>
               <div>
                 <div className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>ISO 13485</div>
@@ -103,7 +103,7 @@ export function CertHub() {
           <Link
             to="/documents"
             className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold text-text hover:bg-bg"
-            style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "9px 16px" }}
+            style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "8px 16px" }}
           >
             문서 전체 보기
           </Link>
