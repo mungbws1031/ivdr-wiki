@@ -42,6 +42,11 @@ export function DocumentWorkspace() {
   const doc = id ? resolveDoc(id) : undefined;
   const station = doc ? stations.find((s) => s.id === doc.stationId) : undefined;
 
+  // Hooks must be called before any conditional returns
+  const { getStatus, setStatus } = useProgress("ivdr");
+  const status = doc ? getStatus(doc.id) : "not_started";
+  const nextStatus = STATUS_NEXT[status];
+
   if (!doc || !station) {
     return (
       <div className="min-h-screen bg-bg">
@@ -54,9 +59,6 @@ export function DocumentWorkspace() {
   }
 
   const phase = phaseById(station.phase);
-  const { getStatus, setStatus } = useProgress("ivdr");
-  const status = getStatus(doc.id);
-  const nextStatus = STATUS_NEXT[status];
   const color = `var(${phase.colorVar})`;
   const Icon = getIcon(station.icon);
   const markdown = toMarkdown(doc);

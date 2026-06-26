@@ -15,7 +15,11 @@ function loadProgress(certId: string): ProgressMap {
 }
 
 function saveProgress(certId: string, map: ProgressMap) {
-  localStorage.setItem(storageKey(certId), JSON.stringify(map));
+  try {
+    localStorage.setItem(storageKey(certId), JSON.stringify(map));
+  } catch {
+    // localStorage quota exceeded or unavailable — ignore, progress just won't persist
+  }
 }
 
 export function useProgress(certId: "ivdr" | "iso13485") {
