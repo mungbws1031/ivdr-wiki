@@ -1,7 +1,22 @@
 import { Link } from "react-router-dom";
 import { Compass, CheckCircle, Layers } from "lucide-react";
+import { useProgress } from "../data/progress";
+import { allLeaves } from "../data/docTree";
+import { sharedDocIds } from "../data/schemes";
+import { allISO13485DocIds } from "../data/iso13485/docTree";
 
 export function CertHub() {
+  const ivdrProgress = useProgress("ivdr");
+  const isoProgress = useProgress("iso13485");
+
+  const ivdrDocIds = allLeaves().map((l) => l.id);
+  const isoSharedIds = sharedDocIds();
+  const isoSpecificIds = allISO13485DocIds();
+  const isoDocIds = [...isoSharedIds, ...isoSpecificIds];
+
+  const ivdrCount = ivdrProgress.countByStatus(ivdrDocIds);
+  const isoCount = isoProgress.countByStatus(isoDocIds);
+
   return (
     <div className="min-h-screen bg-bg">
       <main
@@ -57,6 +72,10 @@ export function CertHub() {
               5 페이즈 · 11 정거장 · 75개 문서<br />
               Regulation (EU) 2017/746 — CE 마킹 취득
             </p>
+            <div className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginBottom: "var(--s-2)" }}>
+              완료 {ivdrCount.done} / {ivdrCount.total}개
+              {ivdrCount.inProgress > 0 && ` · 작성 중 ${ivdrCount.inProgress}개`}
+            </div>
             <span className="font-bold" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>
               여정 시작 →
             </span>
@@ -83,6 +102,10 @@ export function CertHub() {
               4 페이즈 · 10 정거장 · 전용 + 공통 문서<br />
               ISO 13485:2016 — QMS 인증 취득
             </p>
+            <div className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginBottom: "var(--s-2)" }}>
+              완료 {isoCount.done} / {isoCount.total}개
+              {isoCount.inProgress > 0 && ` · 작성 중 ${isoCount.inProgress}개`}
+            </div>
             <span className="font-bold" style={{ color: "var(--p3)", fontSize: "var(--t-sm)" }}>
               여정 시작 →
             </span>

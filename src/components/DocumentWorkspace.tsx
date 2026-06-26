@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { resolveDoc, toMarkdown } from "../data/documents";
+import { useProgress, STATUS_LABEL, STATUS_NEXT, STATUS_COLOR } from "../data/progress";
 import { stations, phaseById } from "../data/stations";
 import { prereqKindLabel, leafById, colorForLeaf, type PrereqKind } from "../data/docTree";
 import { getIcon } from "../lib/icons";
@@ -53,6 +54,9 @@ export function DocumentWorkspace() {
   }
 
   const phase = phaseById(station.phase);
+  const { getStatus, setStatus } = useProgress("ivdr");
+  const status = getStatus(doc.id);
+  const nextStatus = STATUS_NEXT[status];
   const color = `var(${phase.colorVar})`;
   const Icon = getIcon(station.icon);
   const markdown = toMarkdown(doc);
@@ -100,6 +104,30 @@ export function DocumentWorkspace() {
               <Icon size={13} aria-hidden />
               정거장 {station.id} · {phase.title}
             </Link>
+          </div>
+          {/* 진행 상태 토글 */}
+          <div style={{ marginBottom: "var(--s-4)" }}>
+            <button
+              type="button"
+              onClick={() => setStatus(doc.id, nextStatus)}
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold hover:bg-surface"
+              style={{
+                fontSize: "var(--t-sm)",
+                padding: "7px 14px",
+                borderColor: STATUS_COLOR[status],
+                color: STATUS_COLOR[status],
+              }}
+            >
+              <span
+                aria-hidden
+                className="inline-block rounded-full shrink-0"
+                style={{ width: 8, height: 8, background: STATUS_COLOR[status] }}
+              />
+              {STATUS_LABEL[status]}
+              <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
+                → {STATUS_LABEL[nextStatus]}
+              </span>
+            </button>
           </div>
           <h1
             className="flex items-center gap-3 font-extrabold text-text"
