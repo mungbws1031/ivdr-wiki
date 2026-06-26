@@ -1,26 +1,32 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { CertHub } from "./components/CertHub";
 import { JourneyMap } from "./components/JourneyMap";
+import { ISO13485Map } from "./components/ISO13485Map";
 import { DocumentWorkspace } from "./components/DocumentWorkspace";
 import { DocumentTree } from "./components/DocumentTree";
 import { ConceptPage } from "./components/ConceptPage";
 import { WikiIndex } from "./components/WikiIndex";
 
 export default function App() {
-  // GitHub Pages 하위 경로 배포 대응 (로컬은 '/').
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
   return (
     <BrowserRouter basename={basename}>
       <Routes>
-        {/* 랜딩 + 딥링크 상세(drawer) */}
-        <Route path="/" element={<JourneyMap />} />
-        <Route path="/station/:id" element={<JourneyMap />} />
-        {/* 문서 트리(마스터 등록부) + 작성 워크스페이스 */}
+        {/* 인증 선택 허브 */}
+        <Route path="/" element={<CertHub />} />
+        {/* IVDR 여정 */}
+        <Route path="/ivdr" element={<JourneyMap />} />
+        <Route path="/ivdr/station/:id" element={<JourneyMap />} />
+        {/* ISO 13485 여정 */}
+        <Route path="/iso13485" element={<ISO13485Map />} />
+        <Route path="/iso13485/station/:id" element={<ISO13485Map />} />
+        {/* 공유: 문서 트리 + 작성 워크스페이스 */}
         <Route path="/documents" element={<DocumentTree />} />
         <Route path="/doc/:id" element={<DocumentWorkspace />} />
-        {/* 개념 위키 */}
+        {/* 공유: 개념 위키 */}
         <Route path="/wiki" element={<WikiIndex />} />
         <Route path="/wiki/:slug" element={<ConceptPage />} />
-        <Route path="*" element={<JourneyMap />} />
+        <Route path="*" element={<CertHub />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,114 @@
+import { Link } from "react-router-dom";
+import { Compass, CheckCircle, Layers } from "lucide-react";
+
+export function CertHub() {
+  return (
+    <div className="min-h-screen bg-bg">
+      <main
+        className="mx-auto"
+        style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin) var(--s-16)" }}
+      >
+        {/* Hero */}
+        <header style={{ marginBottom: "var(--s-12)", textAlign: "center" }}>
+          <span
+            className="inline-flex items-center gap-2 rounded-full font-semibold"
+            style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)", padding: "5px 14px" }}
+          >
+            <Layers size={16} strokeWidth={2.5} aria-hidden />
+            의료기기 인증 문서 작성 플랫폼
+          </span>
+          <h1
+            className="font-extrabold text-text"
+            style={{ fontSize: "var(--t-3xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-4)" }}
+          >
+            인증을 선택하세요
+          </h1>
+          <p
+            className="text-text-muted"
+            style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 560, margin: "var(--s-4) auto 0" }}
+          >
+            공통 문서는 한 번 작성하면 양쪽 인증에 반영됩니다.
+          </p>
+        </header>
+
+        {/* 인증 카드 */}
+        <div
+          className="grid grid-cols-1 md:grid-cols-2"
+          style={{ gap: "var(--s-6)", marginBottom: "var(--s-12)" }}
+        >
+          <Link
+            to="/ivdr"
+            className="rounded-[var(--r-lg)] border block hover:shadow-md"
+            style={{ borderColor: "var(--accent)", background: "var(--surface)", padding: "var(--s-8)", transition: "box-shadow 0.15s" }}
+          >
+            <div className="flex items-center gap-3" style={{ marginBottom: "var(--s-4)" }}>
+              <span
+                className="inline-flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 48, height: 48, background: "var(--accent-weak)" }}
+              >
+                <Compass size={24} style={{ color: "var(--accent)" }} />
+              </span>
+              <div>
+                <div className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>IVDR</div>
+                <div className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>EU 체외진단기기 규정</div>
+              </div>
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-6)" }}>
+              5 페이즈 · 11 정거장 · 75개 문서<br />
+              Regulation (EU) 2017/746 — CE 마킹 취득
+            </p>
+            <span className="font-bold" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>
+              여정 시작 →
+            </span>
+          </Link>
+
+          <Link
+            to="/iso13485"
+            className="rounded-[var(--r-lg)] border block hover:shadow-md"
+            style={{ borderColor: "var(--p3)", background: "var(--surface)", padding: "var(--s-8)", transition: "box-shadow 0.15s" }}
+          >
+            <div className="flex items-center gap-3" style={{ marginBottom: "var(--s-4)" }}>
+              <span
+                className="inline-flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 48, height: 48, background: "var(--p3-tint)" }}
+              >
+                <CheckCircle size={24} style={{ color: "var(--p3)" }} />
+              </span>
+              <div>
+                <div className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>ISO 13485</div>
+                <div className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>의료기기 품질경영시스템</div>
+              </div>
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-6)" }}>
+              4 페이즈 · 10 정거장 · 전용 + 공통 문서<br />
+              ISO 13485:2016 — QMS 인증 취득
+            </p>
+            <span className="font-bold" style={{ color: "var(--p3)", fontSize: "var(--t-sm)" }}>
+              여정 시작 →
+            </span>
+          </Link>
+        </div>
+
+        {/* 공통 문서 강조 */}
+        <section
+          className="rounded-[var(--r-lg)] border text-center"
+          style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-8)" }}
+        >
+          <div className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", marginBottom: "var(--s-2)" }}>
+            공통 문서 <span style={{ color: "var(--accent)" }}>49개</span>
+          </div>
+          <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-4)" }}>
+            QMS · 설계관리 · 위험관리 · 기술/성능 증거 — 한 번 작성, 양쪽 인증에 반영
+          </p>
+          <Link
+            to="/documents"
+            className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold text-text hover:bg-bg"
+            style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "9px 16px" }}
+          >
+            문서 전체 보기
+          </Link>
+        </section>
+      </main>
+    </div>
+  );
+}
