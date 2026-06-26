@@ -3,6 +3,7 @@
 // IVDR 여정 콘텐츠 — 부록 A (검증된 규제 사실 포함, 2026.6 기준)
 // 글/조항 수정은 이 파일에서만. 컴포넌트 코드와 분리되어 유지보수가 쉽다.
 // =====================================================================
+import { iso13485Phases } from "./iso13485/stations";
 
 export type PhaseId = "p1" | "p2" | "p3" | "p4" | "p5";
 
@@ -90,8 +91,15 @@ export const phases: Phase[] = [
   },
 ];
 
-export const phaseById = (id: PhaseId): Phase =>
-  phases.find((p) => p.id === id)!;
+export const phaseById = (id: PhaseId): Phase => {
+  const ivdrPhase = phases.find((p) => p.id === id);
+  if (ivdrPhase) return ivdrPhase;
+  // Also search ISO 13485 phases (their IDs are cast to PhaseId via adaptPhase)
+  const isoPhase = iso13485Phases.find((p) => (p.id as string) === (id as string));
+  if (isoPhase) return { ...isoPhase, id: id };
+  // Last-resort fallback so StationDetail never crashes
+  return { id, order: 0, title: String(id), subtitle: "", colorVar: "--p1", tintVar: "--p1-tint" };
+};
 
 // ---------------------------------------------------------------------
 // 11 정거장 (부록 A)

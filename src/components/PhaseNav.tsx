@@ -1,12 +1,20 @@
 import { Link } from "react-router-dom";
 import { Library, FolderTree } from "lucide-react";
-import { phases, type PhaseId } from "../data/stations";
+import { phases, type Phase, type PhaseId } from "../data/stations";
 
 /**
  * 상단 sticky 페이즈 레일 — 현재 보고 있는 페이즈를 강조(현재 위치 신호).
  * 클릭 시 해당 밴드로 스크롤. PhaseFilter/ProgressRail 의 랜딩용 경량 버전.
+ * overridePhases: IVDR 외 다른 여정(ISO 13485 등)에서 커스텀 페이즈 목록을 주입할 때 사용.
  */
-export function PhaseNav({ activePhase }: { activePhase: PhaseId | null }) {
+export function PhaseNav({
+  activePhase,
+  overridePhases,
+}: {
+  activePhase: PhaseId | null;
+  overridePhases?: Phase[];
+}) {
+  const displayPhases = overridePhases ?? phases;
   return (
     <nav
       aria-label="페이즈 빠른 이동"
@@ -21,13 +29,13 @@ export function PhaseNav({ activePhase }: { activePhase: PhaseId | null }) {
         style={{ maxWidth: "var(--max-w)", padding: "10px var(--margin)" }}
       >
         <span className="shrink-0 font-extrabold text-text" style={{ fontSize: "var(--t-sm)" }}>
-          IVDR 여정
+          {overridePhases ? "ISO 13485 여정" : "IVDR 여정"}
         </span>
         <span aria-hidden style={{ color: "var(--border-strong)" }}>
           ·
         </span>
         <ul className="flex items-center gap-1.5">
-          {phases.map((p) => {
+          {displayPhases.map((p) => {
             const color = `var(${p.colorVar})`;
             const active = activePhase === p.id;
             return (
