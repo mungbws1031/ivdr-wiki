@@ -21,6 +21,8 @@ import {
   type DocEffort,
 } from "./docTree";
 import { stations, type Station } from "./stations";
+import { iso13485DocById } from "./iso13485/documents";
+import { iso13485LeafById } from "./iso13485/docTree";
 
 export interface DocSection {
   heading: string;
@@ -817,6 +819,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
 
 /** id 로 문서 콘텐츠 해석 — 전용 템플릿 우선, 없으면 자동 생성. */
 export function resolveDoc(id: string): DocTemplate | undefined {
+  // IVDR 전용 상세 템플릿
   const leaf = leafById(id);
   const detailed = docById(id);
   if (detailed) {
@@ -833,10 +836,35 @@ export function resolveDoc(id: string): DocTemplate | undefined {
       prerequisites: leaf?.prerequisites ?? [],
     };
   }
-  if (!leaf) return undefined;
-  const station = stations.find((s) => s.id === leaf.stationId);
-  if (!station) return undefined;
-  return buildGenericDoc(leaf, station);
+  // IVDR 자동 생성 템플릿
+  if (leaf) {
+    const station = stations.find((s) => s.id === leaf.stationId);
+    if (station) return buildGenericDoc(leaf, station);
+  }
+  // ISO 13485 상세 템플릿
+  const isoDetailed = iso13485DocById(id);
+  if (isoDetailed) return isoDetailed;
+  // ISO 13485 자동 생성 템플릿
+  const isoLeaf = iso13485LeafById(id);
+  if (isoLeaf) {
+    return {
+      id: isoLeaf.id,
+      stationId: isoLeaf.stationId,
+      docTitle: isoLeaf.title,
+      purpose: isoLeaf.note ?? `ISO 13485 Clause ${isoLeaf.refs.join("·")} 요건을 충족하는 문서입니다.`,
+      sections: [
+        {
+          heading: "1. 내용",
+          guidance: "ISO 13485 요구사항에 따라 작성한다.",
+          placeholder: `[${isoLeaf.title} 내용을 여기에 작성하세요]`,
+        },
+      ],
+      checklist: [`${isoLeaf.title} 내용이 ISO 13485 Clause ${isoLeaf.refs.join("·")} 요건을 충족한다`],
+      relatedConceptSlugs: ["iso-13485"],
+      refs: isoLeaf.refs.map((r) => `ISO 13485:2016 Clause ${r}`),
+    };
+  }
+  return undefined;
 }
 
 /** 복사/.md 다운로드용 마크다운 생성. */
