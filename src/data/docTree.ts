@@ -318,9 +318,10 @@ export const docTree: DocGroup[] = [
         requirement: "required",
         detailed: true,
         prerequisites: [
-          P("doc", "의도된 목적·분류"),
-          P("data", "성능 목표(수용 기준)"),
-          P("other", "관련 공통기술규격(CS)·가이드라인"),
+          P("doc", "의도된 목적 정의서 (intended-purpose)"),
+          P("doc", "분류 근거서 — Class 확정 필요"),
+          P("data", "분석물질-임상상태 연관 주요 문헌 3편 이상"),
+          P("data", "경쟁 제품 성능 사양 벤치마크"),
         ],
       },
       {
@@ -413,9 +414,10 @@ export const docTree: DocGroup[] = [
         requirement: "required",
         detailed: true,
         prerequisites: [
-          P("doc", "의도된 목적·GSPR 목록"),
-          P("data", "위해요인·위험 상황 목록(초안)"),
-          P("other", "ISO 14971 위험 수용 기준"),
+          P("doc", "의도된 목적 정의서 — 사용자·환경 확정 필요"),
+          P("doc", "기기 설명서·사양 (Annex II 1.1)"),
+          P("data", "FMEA 또는 FTA 분석 결과 (초안)"),
+          P("data", "유사 기기 불만·바이질런스 데이터 (있을 경우)"),
         ],
       },
       {
@@ -694,8 +696,9 @@ export const docTree: DocGroup[] = [
         requirement: "required",
         detailed: true,
         prerequisites: [
-          P("doc", "QMS 절차·위험·성능 파일"),
-          P("data", "데이터 소스 목록·모니터링 지표"),
+          P("doc", "성능평가 보고서 (PER) — 기준점 성능 지표"),
+          P("doc", "위험관리 파일 — 갱신 트리거 조건"),
+          P("data", "고객 불만·바이질런스 수집 채널 (ERP/CRM)"),
         ],
       },
       {
@@ -790,7 +793,7 @@ export const docRationale: Record<string, string> = {
   "sw-validation":
     "소프트웨어 결함은 조용히 잘못된 결과를 낼 수 있다. 검증·사이버보안으로 SW가 의도대로·안전하게 동작함을 보증한다.",
   "performance-eval-plan":
-    "성능 증거를 '어떻게 모을지' 먼저 설계해야 데이터가 목적에 부합한다. 계획 없는 수집은 재작업과 불충분한 증거로 이어진다.",
+    "IVDR Annex XIII은 '증거 기반' 성능평가를 요구한다. PEP는 PER보다 먼저 작성해 NB·시험기관과 설계를 합의하는 청사진이다. MDCG 2025-5는 성능연구 유형과 절차를 명확히 하고 있다.",
   "scientific-validity":
     "측정 대상이 정말 그 임상 상태와 연관되는지가 모든 성능의 전제다. 이 전제가 무너지면 분석·임상 성능 데이터도 무의미해진다.",
   "analytical-performance":
@@ -800,7 +803,7 @@ export const docRationale: Record<string, string> = {
   "performance-eval-report":
     "흩어진 성능 증거를 하나의 결론으로 종합해 '이 기기는 의도된 목적에 충분하다'를 선언한다. NB 심사의 핵심 산출물이다.",
   "risk-management-plan":
-    "위험은 한 번이 아니라 전 수명주기에 걸쳐 관리되어야 한다. 위험-요구-성능을 추적 연결해 빠진 위험이 없도록 체계를 세운다.",
+    "IVDR Annex I GSPR 8조는 위험관리가 제품 수명 전주기에 걸쳐 수행돼야 한다고 규정한다. 위험이 없다고 주장하는 것은 NB가 수용하지 않으며, 잔여위험의 수용 근거가 명확해야 한다.",
   "risk-management-file":
     "계획대로 위험이 실제로 통제·검증되었는지 증거로 남겨야 한다. 잔여위험이 수용 가능함을 입증하는 책임 기록이다.",
   fmea:
@@ -834,7 +837,7 @@ export const docRationale: Record<string, string> = {
   "udi-assignment":
     "문제 발생 시 어떤 기기인지 전 세계적으로 즉시 식별·추적할 수 있어야 한다. 리콜·추적성의 핵심 인프라다.",
   "pms-plan":
-    "출시 전 데이터는 한계가 있다. 시판 후 실사용 데이터로 안전·성능을 계속 확인하는 능동적 감시 체계를 세운다.",
+    "IVDR 인증은 출시 시점의 결과물이 아니라 지속적 의무다. MDCG 2025-10은 MDR/IVDR 통합 PMS 지침을 제공한다. Class C·D는 매년 PSUR을 제출해야 하며, SSCP도 의무다.",
   "pms-report":
     "수집한 PMS 데이터를 정기적으로 종합·결론지어 시판 후 안전을 입증한다.",
   psur:
@@ -972,9 +975,12 @@ export const docKnowledge: Record<string, string[]> = {
     "사이버보안 위협 모델",
   ],
   "performance-eval-plan": [
-    "성능평가 3단(과학·분석·임상)의 관계",
-    "각 성능의 수용 기준 설정 방법",
-    "필요한 연구 유형",
+    "IVDR Annex XIII — 과학적 타당성·분석적 성능·임상적 성능 3단 개념",
+    "MDCG 2025-5 — 성능 연구 유형·절차 명확화 지침",
+    "LoD(검출 한계)·LoQ(정량 한계)·정밀도(반복성·재현성) 차이",
+    "민감도·특이도·PPV·NPV와 유병률의 관계",
+    "참고 측정법(Reference Standard) 비교 연구 설계",
+    "Class C·D는 임상 성능 연구가 필요 (Annex XIII Part B)",
   ],
   "scientific-validity": [
     "분석물질-임상상태 연관의 근거 수준",
@@ -997,9 +1003,12 @@ export const docKnowledge: Record<string, string[]> = {
     "결론 도출 논리",
   ],
   "risk-management-plan": [
-    "ISO 14971 위험관리 흐름",
-    "위험 수용 기준 설정 방법",
-    "위험-요구-성능 추적의 의미",
+    "ISO 14971:2019 — 위험관리 프로세스 전체 구조 (7단계)",
+    "위해요인(Hazard) vs 위험상황(Hazardous Situation) vs 위해(Harm) 구분",
+    "발생가능성(P) × 심각도(S) 위험 수용 기준 행렬 설계",
+    "IVD 특유 위해요인: 위양성·위음성 결과가 치료 결정에 미치는 영향",
+    "GSPR 8조~18조 각 조항과 위험의 연결 구조",
+    "IEC 62366 (사용적합성) — 자가검사·근접검사 제품에 필수 연계",
   ],
   "risk-management-file": [
     "위해요인→위험상황→위해 연결 방법",
@@ -1052,9 +1061,11 @@ export const docKnowledge: Record<string, string[]> = {
     "심사 단계·소요 기간",
   ],
   "declaration-of-conformity": [
-    "Annex IV 필수 기재 항목",
-    "제조자 책임의 의미",
-    "기술문서·라벨과의 일관성",
+    "IVDR Annex IV — DoC 필수 기재 항목 (제조자·기기식별·분류·규정·표준·NB·서명)",
+    "Basic UDI-DI는 기기 등록 전에 발행기관(GS1 등)에서 발급받아야 함",
+    "EU 대리인은 비EU 제조자에게만 해당",
+    "Class A(자가측정 제외)만 자기 선언 가능 — B/C/D는 NB 번호 필수",
+    "EUDAMED에 DoC 사본 업로드 의무 (2026.01부터 의무화 — EU 2024/1860)",
   ],
   "ce-marking-application": [
     "CE 부착 규칙과 크기·위치",
@@ -1082,9 +1093,12 @@ export const docKnowledge: Record<string, string[]> = {
     "라벨 캐리어 형식·판독 요건",
   ],
   "pms-plan": [
-    "능동 vs 수동 PMS 데이터",
-    "지표·주기·임계값 설정",
-    "PMS→성능→위험 환류 경로",
+    "IVDR Art.78~81 — PMS·PMPF·PSUR·바이질런스 의무 체계",
+    "MDCG 2025-10 — MDR/IVDR 통합 PMS 가이드 (2025.12 시행)",
+    "PSUR (Periodic Safety Update Report) — Class C·D 연간, 기타 2년",
+    "SSCP (Summary of Safety and Clinical Performance) — Class C·D 의무 공개",
+    "PMPF (Post-Market Performance Follow-up) — Annex XIII Part B",
+    "EUDAMED 사고 보고 의무 (심각한 사고는 15일 내)",
   ],
   "pms-report": [
     "PMS 보고 대상 등급",
@@ -1276,13 +1290,13 @@ export const docMeta: Record<string, DocMeta> = {
   "sterilization-validation": { difficulty: "high", importance: "med" },
   dmr: { difficulty: "med", importance: "med" },
   dhr: { difficulty: "low", importance: "med" },
-  "performance-eval-plan": { difficulty: "high", importance: "high" },
+  "performance-eval-plan": { difficulty: "high", importance: "high" }, // already highest level
   "scientific-validity": { difficulty: "med", importance: "high" },
   "analytical-performance": { difficulty: "high", importance: "high" },
   "clinical-performance": { difficulty: "high", importance: "high" },
   "performance-eval-report": { difficulty: "high", importance: "high" },
   "metrological-traceability": { difficulty: "high", importance: "med" },
-  "risk-management-plan": { difficulty: "med", importance: "high" },
+  "risk-management-plan": { difficulty: "high", importance: "high" },
   "risk-management-file": { difficulty: "high", importance: "high" },
   fmea: { difficulty: "high", importance: "med" },
   fta: { difficulty: "med", importance: "low" },
@@ -1370,7 +1384,7 @@ export const docPrep: Record<string, string[]> = {
   "clinical-performance-study-plan": ["performance-eval-plan", "intended-purpose"],
   "performance-eval-report": ["scientific-validity", "analytical-performance", "clinical-performance"],
   "metrological-traceability": ["analytical-performance"],
-  "risk-management-plan": ["intended-purpose"],
+  "risk-management-plan": ["intended-purpose", "device-description"],
   "risk-management-file": ["risk-management-plan", "fmea", "fta", "usability-file"],
   fmea: ["risk-management-plan", "design-outputs"],
   fta: ["risk-management-plan", "fmea"],
@@ -1402,7 +1416,7 @@ export const docPrep: Record<string, string[]> = {
   "actor-registration": [],
   "device-registration": ["actor-registration", "udi-assignment", "declaration-of-conformity"],
   "udi-assignment": ["labelling-spec"],
-  "pms-plan": ["qms-ivdr-matrix", "risk-management-file", "performance-eval-report"],
+  "pms-plan": ["qms-ivdr-matrix", "risk-management-file", "performance-eval-report", "performance-eval-plan"],
   "pms-report": ["pms-plan"],
   psur: ["pms-plan"],
   "pmpf-plan": ["performance-eval-report", "pms-plan"],
