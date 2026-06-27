@@ -20,6 +20,25 @@
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
       />
     </noscript>
+    <!-- GitHub Pages SPA 라우팅: 404.html에서 전달된 경로를 복원 -->
+    <script>
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        var search = window.location.search;
+        if (search) {
+          var p = search.match(/[?&]p=([^&]+)/);
+          var q = search.match(/[?&]q=([^&]*)/);
+          if (p) {
+            var path = decodeURIComponent(p[1]).replace(/~and~/g, '&');
+            var query = q ? '?' + decodeURIComponent(q[1]).replace(/~and~/g, '&') : '';
+            window.history.replaceState(null, null,
+              '/ivdr-wiki' + path + query + window.location.hash
+            );
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

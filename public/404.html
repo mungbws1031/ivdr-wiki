@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>IVDR 여정 위키</title>
+    <script>
+      // GitHub Pages SPA 리다이렉트 트릭
+      // /ivdr-wiki/wiki/foo → /?p=/wiki/foo 로 루트에 전달
+      var seg = 1; // pathSegmentsToKeep: repo 이름 세그먼트 수
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + seg).join('/') + '/?p=/' +
+        l.pathname.slice(1).split('/').slice(seg).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
