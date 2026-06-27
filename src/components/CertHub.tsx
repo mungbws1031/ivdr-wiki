@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers } from "lucide-react";
+import { Compass, CheckCircle, Layers, Clock } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
@@ -111,6 +111,41 @@ export function CertHub() {
             </span>
           </Link>
         </div>
+
+        {/* 규제 역사 진입점 */}
+        <Link
+          to="/history"
+          className="block rounded-[var(--r-lg)] border hover:shadow-md"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--surface)",
+            padding: "var(--s-5) var(--s-8)",
+            marginBottom: "var(--s-6)",
+            transition: "box-shadow 0.15s",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto",
+            gap: "var(--s-5)",
+            alignItems: "center",
+          }}
+        >
+          <span
+            className="inline-flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 44, height: 44, background: "var(--info-bg)" }}
+          >
+            <Clock size={20} style={{ color: "var(--info)" }} aria-hidden />
+          </span>
+          <div>
+            <div className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
+              🇰🇷 규제 역사 60년 — 한국 × 해외 동시 비교 인포그래픽
+            </div>
+            <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
+              약사법(1963)부터 EU IVDR 이중 의무(2025)까지 · 4개 시대 · 21개 사건
+            </div>
+          </div>
+          <span className="font-bold shrink-0" style={{ color: "var(--info)", fontSize: "var(--t-sm)" }}>
+            보기 →
+          </span>
+        </Link>
 
         {/* 공통 문서 강조 */}
         <section

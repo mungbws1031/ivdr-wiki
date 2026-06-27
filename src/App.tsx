@@ -6,6 +6,7 @@ import { DocumentWorkspace } from "./components/DocumentWorkspace";
 import { DocumentTree } from "./components/DocumentTree";
 import { ConceptPage } from "./components/ConceptPage";
 import { WikiIndex } from "./components/WikiIndex";
+import { HistoryPage } from "./components/HistoryPage";
 
 export default function App() {
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -26,6 +27,8 @@ export default function App() {
         {/* 공유: 개념 위키 */}
         <Route path="/wiki" element={<WikiIndex />} />
         <Route path="/wiki/:slug" element={<ConceptPage />} />
+        {/* 규제 역사 인포그래픽 */}
+        <Route path="/history" element={<HistoryPage />} />
         <Route path="*" element={<CertHub />} />
       </Routes>
     </BrowserRouter>
