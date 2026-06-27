@@ -348,6 +348,118 @@ export function DocumentWorkspace() {
           </div>
         )}
 
+        {/* ── 실험 / 인증·테스트 / 확보 자료 ── */}
+        {((doc.experiments?.length ?? 0) > 0 || (doc.certTests?.length ?? 0) > 0 || (doc.requiredData?.length ?? 0) > 0) && (
+          <div className="flex flex-col" style={{ gap: "var(--s-4)", marginBottom: "var(--s-6)" }}>
+
+            {/* 필요한 실험 */}
+            {doc.experiments && doc.experiments.length > 0 && (
+              <section
+                aria-labelledby="exp-heading"
+                className="overflow-hidden rounded-[var(--r-lg)]"
+                style={{ background: "var(--p1-tint)", borderLeft: "6px solid var(--p1)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)" }}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--p1)" }}>
+                    <FlaskConical size={22} style={{ color: "#fff" }} aria-hidden />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold" style={{ color: "var(--p1)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>선행 실험</div>
+                    <h2 id="exp-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                      문서 작성 전 필요한 실험
+                    </h2>
+                  </div>
+                  <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--p1)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                    {doc.experiments.length}
+                  </span>
+                </div>
+                <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+                  이 문서에 기재할 데이터를 얻으려면 아래 실험을 먼저 완료해야 합니다.
+                </p>
+                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                  {doc.experiments.map((e, i) => (
+                    <li key={i} className="flex items-start gap-2.5 rounded-[var(--r-md)] bg-bg" style={{ padding: "10px 12px", border: "1px solid var(--border)" }}>
+                      <span aria-hidden className="shrink-0 rounded-[4px]" style={{ width: 18, height: 18, border: "2px solid var(--p1)", marginTop: 1, flexShrink: 0 }} />
+                      <span className="font-medium text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{e}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* 필요한 인증·테스트 */}
+            {doc.certTests && doc.certTests.length > 0 && (
+              <section
+                aria-labelledby="cert-heading"
+                className="overflow-hidden rounded-[var(--r-lg)]"
+                style={{ background: "var(--p3-tint)", borderLeft: "6px solid var(--p3)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)" }}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--p3)" }}>
+                    <ListChecks size={22} style={{ color: "#fff" }} aria-hidden />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold" style={{ color: "var(--p3)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>규격 시험·인증</div>
+                    <h2 id="cert-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                      필요한 인증·테스트
+                    </h2>
+                  </div>
+                  <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--p3)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                    {doc.certTests.length}
+                  </span>
+                </div>
+                <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+                  문서를 완성하거나 제출하기 위해 통과해야 할 인증·규격 시험입니다.
+                </p>
+                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                  {doc.certTests.map((c, i) => (
+                    <li key={i} className="flex items-start gap-2.5 rounded-[var(--r-md)] bg-bg" style={{ padding: "10px 12px", border: "1px solid var(--border)" }}>
+                      <span aria-hidden className="shrink-0 rounded-[4px]" style={{ width: 18, height: 18, border: "2px solid var(--p3)", marginTop: 1, flexShrink: 0 }} />
+                      <span className="font-medium text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{c}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* 확보해야 할 자료 */}
+            {doc.requiredData && doc.requiredData.length > 0 && (
+              <section
+                aria-labelledby="data-heading"
+                className="overflow-hidden rounded-[var(--r-lg)]"
+                style={{ background: "var(--p4-tint)", borderLeft: "6px solid var(--p4)", boxShadow: "var(--shadow-card)", padding: "var(--s-5)" }}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 40, height: 40, background: "var(--p4)" }}>
+                    <BookMarked size={22} style={{ color: "#fff" }} aria-hidden />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold" style={{ color: "var(--p4)", fontSize: "var(--t-xs)", letterSpacing: "0.05em" }}>필수 자료</div>
+                    <h2 id="data-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+                      확보해야 할 자료
+                    </h2>
+                  </div>
+                  <span className="rounded-full font-extrabold text-text-on-color" style={{ background: "var(--p4)", fontSize: "var(--t-sm)", padding: "2px 12px" }}>
+                    {doc.requiredData.length}
+                  </span>
+                </div>
+                <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "var(--s-2) 0 var(--s-4)" }}>
+                  작성 시작 전 반드시 손에 쥐고 있어야 할 원시 데이터·계약서·가이드라인입니다.
+                </p>
+                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                  {doc.requiredData.map((d, i) => (
+                    <li key={i} className="flex items-start gap-2.5 rounded-[var(--r-md)] bg-bg" style={{ padding: "10px 12px", border: "1px solid var(--border)" }}>
+                      <span aria-hidden className="shrink-0 rounded-[4px]" style={{ width: 18, height: 18, border: "2px solid var(--p4)", marginTop: 1, flexShrink: 0 }} />
+                      <span className="font-medium text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+          </div>
+        )}
+
         {/* 미리 만들어두면 좋은 문서 (선행 문서) */}
         {doc.prepDocs && doc.prepDocs.length > 0 && (
           <section
