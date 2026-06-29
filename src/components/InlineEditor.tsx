@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { getDraft, setDraft, clearDraft } from "../hooks/useDraftStore";
+import { ChevronDown, ChevronRight, BookOpen } from "lucide-react";
 
 interface Props {
   docId: string;
@@ -12,10 +13,14 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
   const savedDraft = getDraft(docId, sectionIdx);
   const [value, setValue] = useState<string>(savedDraft ?? originalPlaceholder);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  // 처음 작성하는 경우 안내 박스 열려있게, 이미 초안 있으면 닫혀있게
+  const [guidanceOpen, setGuidanceOpen] = useState(savedDraft === null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isDirty = value !== originalPlaceholder;
   const hasSavedContent = savedDraft !== null;
+  const lineCount = value.split("\n").length;
+  const charCount = value.replace(/\s/g, "").length;
 
   const triggerSave = useCallback(
     (text: string) => {
@@ -27,7 +32,7 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
         timerRef.current = setTimeout(() => setSaveStatus("idle"), 1500);
       }, 400);
     },
-    [docId, sectionIdx]
+    [docId, sectionIdx],
   );
 
   useEffect(() => {
@@ -49,58 +54,53 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
     setSaveStatus("idle");
   }
 
-  const borderColor = isDirty ? "var(--info)" : "var(--border)";
-
   return (
-    <div style={{ marginTop: "var(--s-3)" }}>
-      <div
-        className="flex items-center justify-between"
-        style={{ marginBottom: "var(--s-1)" }}
-      >
-        <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-          {guidance}
-        </span>
-        <div className="flex items-center gap-3">
-          {saveStatus === "saving" && (
-            <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
-              저장 중…
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--s-2)" }}>
+
+      {/* ── 작성 안내 (눈에 띄는 접기 패널) ─────────────────── */}
+      {guidance && (
+        <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--info)" }}>
+          <button
+            onClick={() => setGuidanceOpen((v) => !v)}
+            className="w-full flex items-center gap-2 text-left"
+            style={{ background: "var(--info-bg)", padding: "var(--s-2) var(--s-3)", cursor: "pointer" }}
+          >
+            <BookOpen size={13} style={{ color: "var(--info)", flexShrink: 0 }} aria-hidden />
+            <span className="font-semibold flex-1" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>
+              작성 안내
             </span>
-          )}
-          {saveStatus === "saved" && (
-            <span style={{ fontSize: "var(--t-xs)", color: "var(--success)" }}>
-              ✓ 저장됨
-            </span>
-          )}
-          {hasSavedContent && saveStatus === "idle" && (
-            <span style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>
-              초안 보존 중
-            </span>
-          )}
-          {isDirty && (
-            <button
-              type="button"
-              onClick={handleReset}
-              className="rounded-[var(--r-sm)] text-text-muted hover:text-danger"
+            {guidanceOpen
+              ? <ChevronDown size={13} style={{ color: "var(--info)", flexShrink: 0 }} aria-hidden />
+              : <ChevronRight size={13} style={{ color: "var(--info)", flexShrink: 0 }} aria-hidden />}
+          </button>
+          {guidanceOpen && (
+            <div
               style={{
-                fontSize: "var(--t-xs)",
-                padding: "2px 8px",
-                border: "1px solid var(--border)",
-                background: "var(--surface)",
+                background: "var(--info-bg)",
+                padding: "var(--s-2) var(--s-3) var(--s-3)",
+                borderTop: "1px solid var(--info)",
               }}
             >
-              초기화
-            </button>
+              <p
+                className="text-text"
+                style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", whiteSpace: "pre-line" }}
+              >
+                {guidance}
+              </p>
+            </div>
           )}
         </div>
-      </div>
+      )}
+
+      {/* ── 에디터 ───────────────────────────────────────────── */}
       <textarea
         value={value}
         onChange={handleChange}
-        rows={Math.max(4, value.split("\n").length + 1)}
+        rows={Math.max(5, value.split("\n").length + 1)}
         className="w-full rounded-[var(--r-sm)] text-text"
         style={{
-          background: "var(--surface)",
-          border: `1px solid ${borderColor}`,
+          background: "var(--bg)",
+          border: `1.5px solid ${isDirty ? "var(--info)" : "var(--border)"}`,
           fontFamily: "var(--font-mono)",
           fontSize: "var(--t-sm)",
           lineHeight: "var(--lh-base)",
@@ -119,6 +119,38 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
           setDraft(docId, sectionIdx, e.currentTarget.value);
         }}
       />
+
+      {/* ── 하단 상태 바 ─────────────────────────────────────── */}
+      <div className="flex items-center" style={{ gap: "var(--s-3)" }}>
+        <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
+          {lineCount}줄 · {charCount}자
+        </span>
+        <div className="flex-1" />
+        {saveStatus === "saving" && (
+          <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>저장 중…</span>
+        )}
+        {saveStatus === "saved" && (
+          <span style={{ fontSize: "var(--t-xs)", color: "var(--success)" }}>✓ 저장됨</span>
+        )}
+        {hasSavedContent && saveStatus === "idle" && (
+          <span style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>초안 보존 중</span>
+        )}
+        {isDirty && (
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded-[var(--r-sm)] text-text-muted hover:text-danger"
+            style={{
+              fontSize: "var(--t-xs)",
+              padding: "2px 8px",
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+            }}
+          >
+            초기화
+          </button>
+        )}
+      </div>
     </div>
   );
 }

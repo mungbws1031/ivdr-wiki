@@ -7,6 +7,7 @@ import {
   Clock3,
   ChevronRight,
   FileText,
+  Sparkles,
 } from "lucide-react";
 import { documents } from "../data/documents";
 import { iso13485Documents } from "../data/iso13485/documents";
@@ -18,7 +19,6 @@ import {
   STATUS_COLOR,
   type DocStatus,
 } from "../data/progress";
-import { LevelMeter } from "./LevelMeter";
 import { PageHeader } from "./PageHeader";
 import type { Level } from "../data/docTree";
 
@@ -74,13 +74,21 @@ const IDS_BY_CERT: Record<CertKey, string[]> = {
   mdsap:    mdsapDocuments.map((d) => d.id),
 };
 
+const DIFFICULTY_LABEL: Record<string, { text: string; bg: string; color: string }> = {
+  low:  { text: "쉬움",   bg: "var(--success-bg)",  color: "var(--success)" },
+  med:  { text: "보통",   bg: "var(--warning-bg)",  color: "var(--warning)" },
+  high: { text: "어려움", bg: "var(--danger-bg, color-mix(in srgb,var(--text-on-color) 5%,transparent))",  color: "var(--danger, #e63)" },
+};
+
 // ── 문서 카드 ──────────────────────────────────────────────────
 function DocCard({
   doc,
   status,
+  highlight = false,
 }: {
   doc: DocEntry;
   status: DocStatus;
+  highlight?: boolean;
 }) {
   const meta = CERT_META[doc.certType];
   const color = `var(${meta.colorVar})`;
@@ -92,22 +100,31 @@ function DocCard({
   const btnLabel =
     status === "not_started" ? "작성 시작" : status === "in_progress" ? "이어서 작성" : "다시 보기";
 
+  const diff = doc.difficulty ? DIFFICULTY_LABEL[doc.difficulty] : null;
+
+  const borderColor =
+    status === "done" ? "var(--success)" :
+    status === "in_progress" ? "var(--warning)" :
+    highlight ? color : "var(--border)";
+
   return (
     <div
       className="flex flex-col rounded-[var(--r-lg)] bg-bg overflow-hidden"
-      style={{ border: `1.5px solid var(--border)`, boxShadow: "var(--shadow-card)" }}
+      style={{ border: `1.5px solid ${borderColor}`, boxShadow: "var(--shadow-card)" }}
     >
       {/* 상단: 인증 + 상태 */}
       <div
         className="flex items-center gap-2"
-        style={{ padding: "var(--s-3) var(--s-4)", background: tint, borderBottom: `1.5px solid var(--border)` }}
+        style={{ padding: "var(--s-2) var(--s-4)", background: tint, borderBottom: `1px solid var(--border)` }}
       >
-        <span
-          className="rounded-full font-bold text-text-on-color"
-          style={{ background: color, fontSize: 11, padding: "2px 9px" }}
-        >
+        <span className="rounded-full font-bold text-text-on-color" style={{ background: color, fontSize: 11, padding: "2px 9px" }}>
           {meta.label}
         </span>
+        {diff && (
+          <span className="rounded-full font-semibold" style={{ background: diff.bg, color: diff.color, fontSize: 11, padding: "2px 9px" }}>
+            {diff.text}
+          </span>
+        )}
         <div className="flex items-center gap-1 ml-auto" style={{ color: STATUS_COLOR[status], fontSize: "var(--t-xs)" }}>
           <StatusIcon size={13} aria-hidden />
           <span className="font-semibold">{STATUS_LABEL[status]}</span>
@@ -115,23 +132,13 @@ function DocCard({
       </div>
 
       {/* 본문 */}
-      <div className="flex-1 flex flex-col" style={{ padding: "var(--s-4)" }}>
+      <div className="flex-1 flex flex-col" style={{ padding: "var(--s-3) var(--s-4)" }}>
         <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-tight)", marginBottom: "var(--s-1)" }}>
           {doc.docTitle}
         </h3>
-        <p
-          className="text-text-muted flex-1"
-          style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-3)" }}
-        >
+        <p className="text-text-muted flex-1" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
           {doc.purpose}
         </p>
-        {/* 난이도·중요도 */}
-        {(doc.importance || doc.difficulty) && (
-          <div className="flex flex-wrap gap-x-4 gap-y-1" style={{ marginBottom: "var(--s-3)" }}>
-            {doc.importance && <LevelMeter kind="importance" level={doc.importance} />}
-            {doc.difficulty && <LevelMeter kind="difficulty" level={doc.difficulty} />}
-          </div>
-        )}
       </div>
 
       {/* 하단: 작성 버튼 */}
@@ -233,6 +240,14 @@ export function WriteHub() {
   const totalDone  = Object.values(certStats).reduce((s, c) => s + c.done, 0);
   const totalDocs  = ALL_DOCS.length;
 
+  // 추천 시작 문서: 중요도 높고 난이도 낮은 미작성 문서 (최대 4개)
+  const recommended = useMemo(() =>
+    ALL_DOCS
+      .filter((d) => getStatus(d) === "not_started" && d.importance === "high" && d.difficulty === "low")
+      .slice(0, 4),
+    [ivdrP, isoP],
+  );
+
   // 필터링
   const filtered = useMemo(() =>
     ALL_DOCS.filter((d) => {
@@ -323,6 +338,30 @@ export function WriteHub() {
             />
           ))}
         </div>
+
+        {/* ── 추천 시작 문서 ─────────────────────────────────── */}
+        {recommended.length > 0 && certFilter === "all" && statusFilter === "all" && (
+          <div style={{ marginBottom: "var(--s-8)" }}>
+            <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+              <Sparkles size={16} style={{ color: "var(--accent)" }} aria-hidden />
+              <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
+                여기서 시작하세요
+              </h2>
+              <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
+                — 중요도 높고 쉬운 문서 먼저 써보세요
+              </span>
+            </div>
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
+            >
+              {recommended.map((doc) => (
+                <DocCard key={doc.id} doc={doc} status={getStatus(doc)} highlight />
+              ))}
+            </div>
+            <div style={{ borderBottom: "1px solid var(--border)", marginTop: "var(--s-6)" }} />
+          </div>
+        )}
 
         {/* ── 필터 바 ────────────────────────────────────────── */}
         <div

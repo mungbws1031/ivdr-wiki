@@ -46,6 +46,7 @@ import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
+import { hasDraft } from "../hooks/useDraftStore";
 
 const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
   doc: { Icon: FileText, color: "var(--p3)" },
@@ -284,6 +285,70 @@ function PrepSection({ doc, color }: { doc: any; color: string }) {
   );
 }
 
+// ── 처음 작성자 온보딩 가이드 ──────────────────────────────────
+const GUIDE_KEY = "ivdr-first-guide-dismissed";
+
+function FirstTimeGuide({ color }: { color: string }) {
+  const [dismissed, setDismissed] = useState(() => {
+    try { return localStorage.getItem(GUIDE_KEY) === "1"; } catch { return false; }
+  });
+  if (dismissed) return null;
+
+  function dismiss() {
+    setDismissed(true);
+    try { localStorage.setItem(GUIDE_KEY, "1"); } catch {}
+  }
+
+  return (
+    <div
+      className="rounded-[var(--r-lg)] overflow-hidden"
+      style={{ border: `1.5px solid ${color}`, marginBottom: "var(--s-4)" }}
+    >
+      <div
+        className="flex items-center gap-3"
+        style={{ background: "color-mix(in srgb, " + color + " 10%, transparent)", padding: "var(--s-3) var(--s-4)", borderBottom: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}
+      >
+        <Sparkles size={16} style={{ color, flexShrink: 0 }} aria-hidden />
+        <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>
+          처음 쓰시나요? 3단계로 쉽게 작성할 수 있어요
+        </span>
+        <button
+          onClick={dismiss}
+          className="ml-auto text-text-subtle hover:text-text"
+          style={{ fontSize: "var(--t-xs)", padding: "2px 6px", lineHeight: 1 }}
+          aria-label="닫기"
+        >
+          ✕
+        </button>
+      </div>
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "var(--s-3)", padding: "var(--s-4)" }}
+      >
+        {([
+          { n: "1", title: "안내 읽기", desc: "각 섹션 상단 파란 박스에서 무엇을 써야 하는지 확인하세요" },
+          { n: "2", title: "템플릿 편집", desc: "미리 채워진 내용을 우리 기기에 맞게 수정·보완하세요. 자동 저장돼요" },
+          { n: "3", title: "완성 & 내보내기", desc: "우측 체크리스트를 모두 확인하면 MD 복사 또는 Word 내보내기로 완성하세요" },
+        ] as const).map(({ n, title, desc }) => (
+          <div key={n} className="flex gap-3 items-start">
+            <span
+              className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color"
+              style={{ width: 26, height: 26, background: color, fontSize: 12 }}
+              aria-hidden
+            >
+              {n}
+            </span>
+            <div>
+              <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 2 }}>{title}</p>
+              <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── 문서 정보 패널 (사이드바용, 접을 수 있음) ──────────────────
 function DocInfoPanel({ doc, color }: { doc: ReturnType<typeof resolveDoc> & object; color: string }) {
   const [open, setOpen] = useState(false);
@@ -495,36 +560,51 @@ export function DocumentWorkspace() {
               </div>
             )}
 
+            {/* 온보딩 가이드 (처음 작성자용, 한 번만 표시) */}
+            <FirstTimeGuide color={color} />
+
             {/* 섹션 카드들 */}
-            {doc.sections.map((s, i) => (
-              <section
-                key={i}
-                className="rounded-[var(--r-lg)] bg-bg overflow-hidden"
-                style={{ border: "1px solid var(--border)" }}
-              >
-                <div
-                  className="flex items-center gap-3"
-                  style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
+            {doc.sections.map((s, i) => {
+              const sectionWritten = hasDraft(doc.id, i);
+              return (
+                <section
+                  key={i}
+                  className="rounded-[var(--r-lg)] bg-bg overflow-hidden"
+                  style={{ border: `1.5px solid ${sectionWritten ? "var(--success)" : "var(--border)"}` }}
                 >
-                  <span
-                    className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color"
-                    style={{ width: 24, height: 24, background: color, fontSize: 11 }}
-                    aria-hidden
+                  <div
+                    className="flex items-center gap-3"
+                    style={{
+                      padding: "var(--s-3) var(--s-4)",
+                      borderBottom: `1px solid ${sectionWritten ? "color-mix(in srgb, var(--success) 25%, transparent)" : "var(--border)"}`,
+                      background: sectionWritten ? "color-mix(in srgb, var(--success) 6%, var(--surface))" : "var(--surface)",
+                    }}
                   >
-                    {i + 1}
-                  </span>
-                  <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{s.heading}</h3>
-                </div>
-                <div style={{ padding: "var(--s-4) var(--s-4)" }}>
-                  <InlineEditor
-                    docId={doc.id}
-                    sectionIdx={i}
-                    originalPlaceholder={s.placeholder}
-                    guidance={s.guidance}
-                  />
-                </div>
-              </section>
-            ))}
+                    <span
+                      className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color"
+                      style={{ width: 24, height: 24, background: sectionWritten ? "var(--success)" : color, fontSize: 11 }}
+                      aria-hidden
+                    >
+                      {sectionWritten ? "✓" : i + 1}
+                    </span>
+                    <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{s.heading}</h3>
+                    {sectionWritten && (
+                      <span className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--success)" }}>
+                        작성됨
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ padding: "var(--s-4)" }}>
+                    <InlineEditor
+                      docId={doc.id}
+                      sectionIdx={i}
+                      originalPlaceholder={s.placeholder}
+                      guidance={s.guidance}
+                    />
+                  </div>
+                </section>
+              );
+            })}
 
             {/* 작성 전 준비 확인 — 글쓰기 아래로 이동 */}
             <PrepSection doc={doc} color={color} />
