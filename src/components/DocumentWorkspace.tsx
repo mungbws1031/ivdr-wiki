@@ -105,7 +105,7 @@ function PrepSection({ doc, color }: { doc: any; color: string }) {
   return (
     <div
       className="rounded-[var(--r-lg)] overflow-hidden"
-      style={{ border: "1px solid var(--border)", marginBottom: "var(--s-5)" }}
+      style={{ border: "1px solid var(--border)" }}
     >
       {/* 아코디언 헤더 */}
       <button
@@ -284,6 +284,51 @@ function PrepSection({ doc, color }: { doc: any; color: string }) {
   );
 }
 
+// ── 문서 정보 패널 (사이드바용, 접을 수 있음) ──────────────────
+function DocInfoPanel({ doc, color }: { doc: ReturnType<typeof resolveDoc> & object; color: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center gap-2 text-left"
+        style={{ padding: "var(--s-3) var(--s-4)" }}
+      >
+        <Lightbulb size={14} style={{ color }} aria-hidden />
+        <span className="font-bold text-text flex-1" style={{ fontSize: "var(--t-sm)" }}>문서 정보</span>
+        {open ? <ChevronDown size={15} aria-hidden /> : <ChevronRight size={15} aria-hidden />}
+      </button>
+      {open && (
+        <div className="flex flex-col" style={{ gap: "var(--s-2)", padding: "0 var(--s-4) var(--s-4)", borderTop: "1px solid var(--border)" }}>
+          {(doc.difficulty || doc.importance) && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 pt-3">
+              {doc.importance && <LevelMeter kind="importance" level={doc.importance} />}
+              {doc.difficulty && <LevelMeter kind="difficulty" level={doc.difficulty} />}
+            </div>
+          )}
+          {doc.rationale && (
+            <div className="flex gap-2 rounded-[var(--r-sm)]" style={{ background: "var(--info-bg)", border: "1px solid var(--info)", padding: "var(--s-2) var(--s-3)", marginTop: "var(--s-2)" }}>
+              <Lightbulb size={13} style={{ color: "var(--info)", flexShrink: 0, marginTop: 1 }} aria-hidden />
+              <p className="text-text" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
+                <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰는가</span> {doc.rationale}
+              </p>
+            </div>
+          )}
+          {doc.intent && (
+            <div className="flex gap-2 rounded-[var(--r-sm)]" style={{ background: "var(--accent-weak)", border: "1px solid var(--accent)", padding: "var(--s-2) var(--s-3)" }}>
+              <Sparkles size={13} style={{ color: "var(--accent)", flexShrink: 0, marginTop: 1 }} aria-hidden />
+              <p className="text-text" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
+                <span className="font-bold" style={{ color: "var(--accent)" }}>기획 의도</span> {doc.intent}
+              </p>
+            </div>
+          )}
+          {doc.effort && <div style={{ marginTop: "var(--s-1)" }}><EffortTimeline effort={doc.effort} /></div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** /doc/:id — 문서 작성 워크스페이스 */
 export function DocumentWorkspace() {
   const { id } = useParams();
@@ -364,202 +409,113 @@ export function DocumentWorkspace() {
 
       <main
         className="mx-auto"
-        style={{ maxWidth: "var(--max-w)", padding: "var(--s-6) var(--margin) var(--s-16)" }}
+        style={{ maxWidth: "var(--max-w)", padding: "var(--s-4) var(--margin) var(--s-16)" }}
       >
-        {/* ── 압축 헤더 ──────────────────────────────────────── */}
-        <div
-          className="rounded-[var(--r-xl)]"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            padding: "var(--s-5) var(--s-6)",
-            marginBottom: "var(--s-5)",
-          }}
-        >
-          {/* 브레드크럼 */}
-          <div className="flex flex-wrap items-center gap-1.5" style={{ marginBottom: "var(--s-3)" }}>
-            <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 허브</Link>
-            <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
-            <Link to={journeyPath} className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>{journeyLabel} 여정</Link>
-            <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
-            <Link
-              to={`${journeyPath}/station/${station.id}`}
-              className="inline-flex items-center gap-1 font-semibold"
-              style={{ color, fontSize: "var(--t-xs)" }}
-            >
-              <Icon size={12} aria-hidden />
-              정거장 {station.id}
-            </Link>
-          </div>
-
-          {/* 제목 행 */}
-          <div className="flex flex-wrap items-start gap-3" style={{ marginBottom: "var(--s-3)" }}>
-            <div className="flex-1 min-w-0">
-              {/* 인증 배지 */}
-              <div className="flex flex-wrap gap-1.5" style={{ marginBottom: "var(--s-2)" }}>
+        {/* ── 미니 헤더: 1-2줄만 쓰고 바로 글쓰기 ─────────────── */}
+        <div className="flex flex-wrap items-start gap-x-4 gap-y-2" style={{ marginBottom: "var(--s-4)" }}>
+          {/* 왼쪽: 배지 + 브레드크럼 + 제목 + 목적 */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5" style={{ marginBottom: "var(--s-1)" }}>
+              <span
+                className="inline-flex items-center rounded-full font-bold text-text-on-color"
+                style={{ background: certBadgeColor, fontSize: 11, padding: "2px 9px" }}
+              >
+                {certBadgeLabel}
+              </span>
+              {showDualBadge && (
                 <span
                   className="inline-flex items-center rounded-full font-bold text-text-on-color"
-                  style={{ background: certBadgeColor, fontSize: 11, padding: "2px 10px" }}
+                  style={{ background: "var(--p3)", fontSize: 11, padding: "2px 9px" }}
                 >
-                  {certBadgeLabel}
+                  ISO 13485
                 </span>
-                {showDualBadge && (
-                  <span
-                    className="inline-flex items-center rounded-full font-bold text-text-on-color"
-                    style={{ background: "var(--p3)", fontSize: 11, padding: "2px 10px" }}
-                  >
-                    ISO 13485
-                  </span>
-                )}
-              </div>
-              <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)" }}>
-                {doc.docTitle}
-              </h1>
-              <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-1)", maxWidth: 640, lineHeight: "var(--lh-base)" }}>
-                {doc.purpose}
-              </p>
+              )}
+              <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }} aria-hidden>·</span>
+              <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 허브</Link>
+              <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
+              <Link to={journeyPath} className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>{journeyLabel}</Link>
+              <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
+              <Link
+                to={`${journeyPath}/station/${station.id}`}
+                className="inline-flex items-center gap-1 font-semibold"
+                style={{ color, fontSize: "var(--t-xs)" }}
+              >
+                <Icon size={11} aria-hidden />
+                정거장 {station.id}
+              </Link>
             </div>
+            <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+              {doc.docTitle}
+            </h1>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2, maxWidth: 560 }}>
+              {doc.purpose}
+            </p>
           </div>
 
-          {/* 난이도·중요도 */}
-          {doc.difficulty && doc.importance && (
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5" style={{ marginBottom: "var(--s-3)" }}>
-              <LevelMeter kind="importance" level={doc.importance} />
-              <LevelMeter kind="difficulty" level={doc.difficulty} />
-            </div>
-          )}
-
-          {/* 왜 이 문서를 쓰는가 */}
-          {(doc.rationale || doc.intent) && (
-            <div className="flex flex-col" style={{ gap: "var(--s-2)", marginBottom: "var(--s-3)" }}>
-              {doc.rationale && (
-                <div className="flex gap-2 rounded-[var(--r-md)]" style={{ background: "var(--info-bg)", border: "1px solid var(--info)", padding: "var(--s-3)" }}>
-                  <Lightbulb size={15} style={{ color: "var(--info)", flexShrink: 0, marginTop: 2 }} aria-hidden />
-                  <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-                    <span className="font-bold" style={{ color: "var(--info)" }}>왜 이 문서를 쓰는가</span>
-                    {" "}{doc.rationale}
-                  </p>
-                </div>
-              )}
-              {doc.intent && (
-                <div className="flex gap-2 rounded-[var(--r-md)]" style={{ background: "var(--accent-weak)", border: "1px solid var(--accent)", padding: "var(--s-3)" }}>
-                  <Sparkles size={15} style={{ color: "var(--accent)", flexShrink: 0, marginTop: 2 }} aria-hidden />
-                  <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-                    <span className="font-bold" style={{ color: "var(--accent)" }}>기획 의도</span>
-                    {" "}{doc.intent}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 작업 기간 */}
-          {doc.effort && (
-            <div style={{ marginBottom: "var(--s-3)" }}>
-              <EffortTimeline effort={doc.effort} />
-            </div>
-          )}
-
-          {/* 액션 바 */}
-          <div className="flex flex-wrap items-center gap-2 pt-1" style={{ borderTop: "1px solid var(--border)", paddingTop: "var(--s-3)", marginTop: "var(--s-1)" }}>
-            {/* 상태 토글 */}
+          {/* 오른쪽: 액션 버튼들 */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0" style={{ paddingTop: "var(--s-1)" }}>
             <button
               type="button"
               onClick={() => setStatus(doc.id, nextStatus)}
-              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold hover:bg-bg transition-colors"
-              style={{ fontSize: "var(--t-sm)", padding: "7px 14px", borderColor: STATUS_COLOR[status], color: STATUS_COLOR[status] }}
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold hover:bg-surface transition-colors"
+              style={{ fontSize: "var(--t-sm)", padding: "6px 12px", borderColor: STATUS_COLOR[status], color: STATUS_COLOR[status] }}
             >
-              <span aria-hidden className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: STATUS_COLOR[status] }} />
+              <span aria-hidden className="inline-block rounded-full shrink-0" style={{ width: 7, height: 7, background: STATUS_COLOR[status] }} />
               {STATUS_LABEL[status]}
-              <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>→ {STATUS_LABEL[nextStatus]}</span>
             </button>
-
-            {/* D-day 뱃지 */}
             {nearestDday && (
               <Link
                 to="/schedule"
-                className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-semibold hover:bg-bg transition-colors"
-                style={{ fontSize: "var(--t-sm)", padding: "7px 14px", border: `1px solid var(--border)`, color: "var(--text-muted)" }}
+                className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-semibold hover:bg-surface transition-colors"
+                style={{ fontSize: "var(--t-xs)", padding: "6px 10px", border: "1px solid var(--border)", color: "var(--text-muted)" }}
               >
-                <CalendarDays size={14} aria-hidden />
-                {nearestDday.diff === 0 ? "D-Day" : `D-${nearestDday.diff}`} · {nearestDday.label}
+                <CalendarDays size={13} aria-hidden />
+                {nearestDday.diff === 0 ? "D-Day" : `D-${nearestDday.diff}`}
               </Link>
             )}
-
-            <div className="flex-1" />
-
-            {/* 내보내기 */}
             <CopyMdButton markdown={markdown} filename={filename} />
             <DocxExport doc={doc} />
           </div>
         </div>
 
-        {/* ── 준비 확인 (접을 수 있음) ───────────────────────── */}
-        <PrepSection doc={doc} color={color} />
+        {/* ── 2열 레이아웃: 작성(좌) + 사이드바(우) ──────────── */}
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px] items-start">
 
-        {/* ── 계산 도구 ────────────────────────────────────── */}
-        {doc.calcTools && doc.calcTools.length > 0 && (
-          <div style={{ marginBottom: "var(--s-5)" }}>
-            <h2 className="font-bold text-text" style={{ fontSize: "var(--t-lg)", marginBottom: "var(--s-3)" }}>
-              내장 계산 도구
-            </h2>
-            {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
-            {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
-            {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
-            {doc.calcTools.includes("lod-calc") && <LodCalc />}
-          </div>
-        )}
-
-        {/* ── 2열 레이아웃: 작성 + 사이드바 ──────────────────── */}
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
-
-          {/* 작성 영역 */}
+          {/* 작성 영역 — 바로 시작 */}
           <div className="flex flex-col" style={{ gap: "var(--s-3)" }}>
-            {/* 섹션 수 헤더 */}
-            <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-1)" }}>
-              <FileText size={16} style={{ color }} aria-hidden />
-              <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
-                문서 본문
-              </h2>
-              <span className="text-text-subtle" style={{ fontSize: "var(--t-sm)" }}>
-                · {doc.sections.length}개 섹션
-              </span>
-            </div>
 
+            {/* 계산 도구 (해당 있을 때만) */}
+            {doc.calcTools && doc.calcTools.length > 0 && (
+              <div style={{ marginBottom: "var(--s-2)" }}>
+                <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-3)" }}>내장 계산 도구</h2>
+                {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
+                {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
+                {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
+                {doc.calcTools.includes("lod-calc") && <LodCalc />}
+              </div>
+            )}
+
+            {/* 섹션 카드들 */}
             {doc.sections.map((s, i) => (
               <section
                 key={i}
                 className="rounded-[var(--r-lg)] bg-bg overflow-hidden"
                 style={{ border: "1px solid var(--border)" }}
               >
-                {/* 섹션 헤딩 */}
                 <div
                   className="flex items-center gap-3"
-                  style={{
-                    padding: "var(--s-3) var(--s-5)",
-                    borderBottom: "1px solid var(--border)",
-                    background: "var(--surface)",
-                  }}
+                  style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)", background: "var(--surface)" }}
                 >
                   <span
                     className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color"
-                    style={{
-                      width: 26,
-                      height: 26,
-                      background: color,
-                      fontSize: 12,
-                    }}
+                    style={{ width: 24, height: 24, background: color, fontSize: 11 }}
                     aria-hidden
                   >
                     {i + 1}
                   </span>
-                  <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
-                    {s.heading}
-                  </h3>
+                  <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{s.heading}</h3>
                 </div>
-
-                {/* 인라인 에디터 */}
-                <div style={{ padding: "var(--s-4) var(--s-5)" }}>
+                <div style={{ padding: "var(--s-4) var(--s-4)" }}>
                   <InlineEditor
                     docId={doc.id}
                     sectionIdx={i}
@@ -569,30 +525,32 @@ export function DocumentWorkspace() {
                 </div>
               </section>
             ))}
+
+            {/* 작성 전 준비 확인 — 글쓰기 아래로 이동 */}
+            <PrepSection doc={doc} color={color} />
           </div>
 
           {/* 사이드바 (sticky) */}
           <aside
             className="flex flex-col"
-            style={{ gap: "var(--s-3)", position: "sticky", top: 80, maxHeight: "calc(100vh - 100px)", overflowY: "auto" }}
+            style={{ gap: "var(--s-3)", position: "sticky", top: 72, maxHeight: "calc(100vh - 88px)", overflowY: "auto" }}
           >
+            {/* 문서 정보 (접을 수 있음) */}
+            {(doc.rationale || doc.intent || doc.effort || doc.difficulty) && (
+              <DocInfoPanel doc={doc} color={color} />
+            )}
+
             {/* 문구 라이브러리 */}
             <SnippetLibrary certTypeKey={certTypeKey} />
 
             {/* 완료 체크리스트 */}
-            <div
-              className="rounded-[var(--r-md)]"
-              style={{ border: "1px solid var(--border)", background: "var(--surface)" }}
-            >
-              <div
-                className="flex items-center gap-2"
-                style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}
-              >
+            <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+              <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
                 <ListChecks size={15} style={{ color: "var(--success)" }} aria-hidden />
                 <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>
                 <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>{doc.checklist.length}개</span>
               </div>
-              <ul className="flex flex-col" style={{ gap: 5, padding: "var(--s-3) var(--s-4)" }}>
+              <ul className="flex flex-col" style={{ gap: 4, padding: "var(--s-3) var(--s-4)" }}>
                 {doc.checklist.map((c, i) => (
                   <li key={i} className="flex gap-2 text-text" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
                     <span aria-hidden style={{ color: "var(--text-subtle)", flexShrink: 0 }}>☐</span>
@@ -607,30 +565,20 @@ export function DocumentWorkspace() {
               const meta = CERT_META[certTypeKey];
               const today = new Date(); today.setHours(0, 0, 0, 0);
               return (
-                <div
-                  className="rounded-[var(--r-md)]"
-                  style={{ border: `1px solid var(${meta.colorVar})`, background: `var(${meta.tintVar})` }}
-                >
-                  <div
-                    className="flex items-center gap-2"
-                    style={{ padding: "var(--s-3) var(--s-4)", borderBottom: `1px solid var(${meta.colorVar})` }}
-                  >
+                <div className="rounded-[var(--r-md)]" style={{ border: `1px solid var(${meta.colorVar})`, background: `var(${meta.tintVar})` }}>
+                  <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: `1px solid var(${meta.colorVar})` }}>
                     <CalendarDays size={15} style={{ color: `var(${meta.colorVar})` }} aria-hidden />
                     <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>{meta.label} 일정</h3>
                     <Link to="/schedule" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: `var(${meta.colorVar})` }}>편집 →</Link>
                   </div>
-                  <ul className="flex flex-col" style={{ gap: 5, padding: "var(--s-3) var(--s-4)" }}>
+                  <ul className="flex flex-col" style={{ gap: 4, padding: "var(--s-3) var(--s-4)" }}>
                     {scheduleEntries.map(({ milestone, date }) => {
                       const d = new Date(date);
                       const isPast = d < today;
                       const diffDays = Math.ceil((d.getTime() - today.getTime()) / 86400000);
                       return (
                         <li key={milestone.key} className="flex items-start gap-2">
-                          <span
-                            className="shrink-0 rounded-full mt-1"
-                            style={{ width: 6, height: 6, background: isPast ? "var(--text-subtle)" : `var(${meta.colorVar})`, flexShrink: 0 }}
-                            aria-hidden
-                          />
+                          <span className="shrink-0 rounded-full mt-1" style={{ width: 6, height: 6, background: isPast ? "var(--text-subtle)" : `var(${meta.colorVar})` }} aria-hidden />
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold text-text truncate" style={{ fontSize: "var(--t-xs)" }}>{milestone.label}</div>
                             <div className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
@@ -670,11 +618,7 @@ export function DocumentWorkspace() {
               </div>
               <div className="flex flex-wrap gap-1.5" style={{ padding: "var(--s-3) var(--s-4)" }}>
                 {doc.refs.map((r) => (
-                  <span
-                    key={r}
-                    className="rounded-[var(--r-sm)] font-mono text-text-muted"
-                    style={{ background: "var(--surface)", border: "1px solid var(--border)", fontSize: 11, padding: "3px 7px" }}
-                  >
+                  <span key={r} className="rounded-[var(--r-sm)] font-mono text-text-muted" style={{ background: "var(--surface)", border: "1px solid var(--border)", fontSize: 11, padding: "3px 7px" }}>
                     {r}
                   </span>
                 ))}
