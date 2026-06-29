@@ -4,6 +4,7 @@ import { JourneyMap } from "./components/JourneyMap";
 import { ISO13485Map } from "./components/ISO13485Map";
 import { DocumentWorkspace } from "./components/DocumentWorkspace";
 import { DocumentTree } from "./components/DocumentTree";
+import { WriteHub } from "./components/WriteHub";
 import { ConceptPage } from "./components/ConceptPage";
 import { WikiIndex } from "./components/WikiIndex";
 import { HistoryPage } from "./components/HistoryPage";
@@ -25,7 +26,8 @@ export default function App() {
         {/* ISO 13485 여정 */}
         <Route path="/iso13485" element={<ISO13485Map />} />
         <Route path="/iso13485/station/:id" element={<ISO13485Map />} />
-        {/* 공유: 문서 트리 + 작성 워크스페이스 */}
+        {/* 문서 작성 허브 + 트리 + 워크스페이스 */}
+        <Route path="/write" element={<WriteHub />} />
         <Route path="/documents" element={<DocumentTree />} />
         <Route path="/doc/:id" element={<DocumentWorkspace />} />
         {/* 공유: 개념 위키 */}

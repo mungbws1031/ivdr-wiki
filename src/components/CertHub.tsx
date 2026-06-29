@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays } from "lucide-react";
+import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
@@ -268,13 +268,23 @@ export function CertHub() {
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-4)" }}>
             QMS · 설계관리 · 위험관리 · 기술/성능 증거 — 한 번 작성, 양쪽 인증에 반영
           </p>
-          <Link
-            to="/documents"
-            className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold text-text hover:bg-bg"
-            style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "8px 16px" }}
-          >
-            문서 전체 보기
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              to="/write"
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
+              style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "10px 20px" }}
+            >
+              <PenLine size={15} aria-hidden />
+              이제 문서를 써볼까?
+            </Link>
+            <Link
+              to="/documents"
+              className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-semibold text-text hover:bg-bg"
+              style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "10px 16px" }}
+            >
+              문서 전체 보기
+            </Link>
+          </div>
         </section>
 
         {/* Attribution */}

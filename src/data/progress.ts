@@ -22,7 +22,7 @@ function saveProgress(certId: string, map: ProgressMap) {
   }
 }
 
-export function useProgress(certId: "ivdr" | "iso13485") {
+export function useProgress(certId: "ivdr" | "iso13485" | "ivdd" | "mdsap") {
   const [progress, setProgress] = useState<ProgressMap>(() => loadProgress(certId));
 
   const setStatus = useCallback(
