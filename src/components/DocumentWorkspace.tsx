@@ -296,7 +296,6 @@ export function DocumentWorkspace() {
               </Link>
             )}
             <CopyMdButton markdown={markdown} filename={filename} />
-            <DocxExport doc={doc} />
           </div>
         </div>
 
@@ -411,6 +410,9 @@ export function DocumentWorkspace() {
                 ))}
               </ul>
             </div>
+
+            {/* 워드(.docx) 내보내기 — 완성 후 내보내는 도구 */}
+            <DocxExport doc={doc} />
 
             {/* 일정 패널 */}
             {scheduleEntries.length > 0 && (() => {
