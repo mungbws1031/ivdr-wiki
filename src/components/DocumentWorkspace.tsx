@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Copy,
   FileText,
+  Calculator,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown } from "../data/documents";
@@ -37,6 +38,15 @@ import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
 import { hasDraft } from "../hooks/useDraftStore";
+import type { CalcToolType } from "../data/documents";
+
+// 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
+const CALC_LABEL: Record<CalcToolType, string> = {
+  "sens-spec": "민감도·특이도",
+  "sample-size": "검체수 산출",
+  "lod-calc": "검출한계(LoD)",
+  "risk-matrix": "위험 매트릭스",
+};
 
 // ── 마크다운 복사 버튼 ──────────────────────────────────────────
 function CopyMdButton({ markdown, filename }: { markdown: string; filename: string }) {
@@ -230,6 +240,23 @@ export function DocumentWorkspace() {
                 <Icon size={11} aria-hidden />
                 정거장 {station.id}
               </Link>
+              {doc.calcTools && doc.calcTools.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    document.getElementById("calc-tools")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  title={`내장 계산기: ${doc.calcTools.map((t) => CALC_LABEL[t]).join(", ")}`}
+                  className="inline-flex items-center gap-1 rounded-full font-bold transition-colors hover:brightness-95"
+                  style={{ background: "var(--warning-bg)", color: "var(--warning)", border: "1px solid var(--warning)", fontSize: 11, padding: "2px 9px" }}
+                >
+                  <Calculator size={11} aria-hidden />
+                  계산 필요
+                  <span className="font-semibold" style={{ opacity: 0.85 }}>
+                    · {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
+                  </span>
+                </button>
+              )}
             </div>
             <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
               {doc.docTitle}
@@ -273,8 +300,14 @@ export function DocumentWorkspace() {
 
             {/* 계산 도구 (해당 있을 때만) */}
             {doc.calcTools && doc.calcTools.length > 0 && (
-              <div style={{ marginBottom: "var(--s-2)" }}>
-                <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-3)" }}>내장 계산 도구</h2>
+              <div id="calc-tools" style={{ marginBottom: "var(--s-2)", scrollMarginTop: 80 }}>
+                <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+                  <Calculator size={16} style={{ color: "var(--warning)" }} aria-hidden />
+                  <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>내장 계산 도구</h2>
+                  <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
+                    {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
+                  </span>
+                </div>
                 {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
                 {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
                 {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
