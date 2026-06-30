@@ -306,12 +306,15 @@ export function DocumentWorkspace() {
           {/* 작성 영역 — 바로 시작 */}
           <div className="flex flex-col" style={{ gap: "var(--s-3)" }}>
 
+            {/* 문서 작성 패키지 — 가장 먼저 반갑게 맞이 (가이드·소스·지침서·참고문서) */}
+            <WritingKit doc={doc} color={color} />
+
             {/* 계산 도구 (해당 있을 때만) */}
             {doc.calcTools && doc.calcTools.length > 0 && (
-              <div id="calc-tools" style={{ marginBottom: "var(--s-2)", scrollMarginTop: 80 }}>
-                <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+              <div id="calc-tools" style={{ scrollMarginTop: 80 }}>
+                <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)", marginTop: "var(--s-2)" }}>
                   <Calculator size={16} style={{ color: "var(--warning)" }} aria-hidden />
-                  <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>내장 계산 도구</h2>
+                  <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>내장 계산 도구</h2>
                   <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
                     {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
                   </span>
@@ -323,15 +326,12 @@ export function DocumentWorkspace() {
               </div>
             )}
 
-            {/* 문서 작성 세트 — 준비물(가이드·소스·지침서·참고문서)을 탭으로 묶음 */}
-            <WritingKit doc={doc} color={color} />
-
             {/* 템플릿 — 실제 작성 영역 */}
             <div className="flex items-center gap-2" style={{ marginTop: "var(--s-2)" }}>
               <FileText size={16} style={{ color }} aria-hidden />
-              <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>템플릿</h2>
+              <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>여기에 작성해요</h2>
               <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-                미리 채워진 내용을 우리 기기에 맞게 수정하세요 · 자동 저장
+                예시를 우리 기기에 맞게 고치기만 하면 돼요 · 자동 저장
               </span>
               <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
                 {doc.sections.length}개 섹션

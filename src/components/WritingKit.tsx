@@ -85,8 +85,8 @@ interface KitDoc {
 type TabKey = "guide" | "source" | "ref" | "docs";
 
 /**
- * 문서 작성 세트 — 한 문서를 쓰는 데 필요한 준비물을 4개 탭으로 묶어
- * 한눈에 보이게 한다: 가이드 · 내용 소스 · 지침서 · 참고 문서.
+ * 문서 작성 패키지 — 한 문서를 쓰는 데 필요한 준비물을 한 상자에 담아
+ * 4개 구성품 탭으로 보여준다: 가이드 · 내용 소스 · 지침서 · 참고 문서.
  */
 export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
   const counts = {
@@ -102,10 +102,10 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
 
   const TABS: { key: TabKey; label: string; Icon: LucideIcon; hint: string }[] = useMemo(
     () => [
-      { key: "guide", label: "가이드", Icon: Compass, hint: "어떻게 쓰나" },
-      { key: "source", label: "내용 소스", Icon: PackageIcon, hint: "무엇을 채우나" },
-      { key: "ref", label: "지침서", Icon: BookMarked, hint: "어떤 규정" },
-      { key: "docs", label: "참고 문서", Icon: Files, hint: "다른 문서" },
+      { key: "guide", label: "가이드", Icon: Compass, hint: "어떻게 쓰는지 먼저 볼까요" },
+      { key: "source", label: "내용 소스", Icon: PackageIcon, hint: "본문에 채울 자료·실험·테스트" },
+      { key: "ref", label: "지침서", Icon: BookMarked, hint: "따라야 할 규정·개념" },
+      { key: "docs", label: "참고 문서", Icon: Files, hint: "함께 보면 좋은 다른 문서" },
     ],
     []
   );
@@ -113,21 +113,37 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
   // 콘텐츠가 있는 탭만 노출. 가이드는 항상 노출(3단계 안내가 항상 있음).
   const visibleTabs = TABS.filter((t) => t.key === "guide" || counts[t.key] > 0);
   const [active, setActive] = useState<TabKey>("guide");
+  const activeTab = visibleTabs.find((t) => t.key === active) ?? visibleTabs[0];
+  const totalItems = counts.guide + counts.source + counts.ref + counts.docs;
 
   return (
-    <div className="rounded-[var(--r-lg)] overflow-hidden" style={{ border: `1.5px solid ${color}` }}>
-      {/* ── 헤더 + 탭 바 ───────────────────────────────────── */}
-      <div style={{ background: `color-mix(in srgb, ${color} 8%, var(--surface))`, borderBottom: `1px solid color-mix(in srgb, ${color} 25%, transparent)` }}>
-        <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4) var(--s-2)" }}>
-          <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 26, height: 26, background: color }} aria-hidden>
-            <PackageCheck size={15} style={{ color: "#fff" }} />
+    <div
+      className="rounded-[var(--r-lg)] overflow-hidden"
+      style={{ border: `1.5px solid ${color}`, boxShadow: "var(--shadow-card)" }}
+    >
+      {/* ── 패키지 뚜껑: 헤더 + 탭 바 ───────────────────────── */}
+      <div style={{ background: `color-mix(in srgb, ${color} 9%, var(--surface))`, borderBottom: `1px solid color-mix(in srgb, ${color} 22%, transparent)` }}>
+        <div className="flex items-center gap-3" style={{ padding: "var(--s-4) var(--s-4) var(--s-3)" }}>
+          <span className="grid shrink-0 place-items-center rounded-[var(--r-md)]" style={{ width: 38, height: 38, background: color }} aria-hidden>
+            <PackageIcon size={20} style={{ color: "#fff" }} />
           </span>
-          <span className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>문서 작성 세트</span>
-          <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>쓰기 전에 필요한 준비물 한눈에 보기</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>문서 작성 패키지</span>
+              {totalItems > 0 && (
+                <span className="rounded-full font-bold" style={{ background: color, color: "var(--text-on-color)", fontSize: 11, padding: "1px 9px" }}>
+                  구성품 {totalItems}
+                </span>
+              )}
+            </div>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: 1 }}>
+              이 문서 하나 완성하는 데 필요한 걸 한 상자에 담았어요 · 탭을 열어 챙겨보세요
+            </p>
+          </div>
         </div>
 
-        {/* 탭들 */}
-        <div className="flex flex-wrap gap-1" style={{ padding: "0 var(--s-3) var(--s-2)" }} role="tablist">
+        {/* 구성품 탭 */}
+        <div className="flex flex-wrap gap-1.5" style={{ padding: "0 var(--s-4) var(--s-3)" }} role="tablist">
           {visibleTabs.map((t) => {
             const on = active === t.key;
             return (
@@ -136,16 +152,17 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setActive(t.key)}
-                className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-[var(--r-full)] font-semibold transition-all"
                 style={{
                   fontSize: "var(--t-sm)",
-                  padding: "6px 12px",
+                  padding: "7px 14px",
                   background: on ? color : "var(--bg)",
                   color: on ? "var(--text-on-color)" : "var(--text-muted)",
                   border: `1px solid ${on ? color : "var(--border)"}`,
+                  boxShadow: on ? "var(--shadow-card)" : "none",
                 }}
               >
-                <t.Icon size={14} aria-hidden />
+                <t.Icon size={15} aria-hidden />
                 {t.label}
                 {counts[t.key] > 0 && (
                   <span
@@ -166,19 +183,28 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
         </div>
       </div>
 
-      {/* ── 탭 패널 ────────────────────────────────────────── */}
+      {/* ── 패키지 속 내용: 탭 패널 ─────────────────────────── */}
       <div style={{ padding: "var(--s-4)", background: "var(--bg)" }}>
+        {/* 활성 탭 한 줄 안내 */}
+        {activeTab && (
+          <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)" }}>
+            <span className="rounded-full" style={{ width: 6, height: 6, background: color }} aria-hidden />
+            <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>{activeTab.label}</span>
+            <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>· {activeTab.hint}</span>
+          </div>
+        )}
+
         {/* ▸ 가이드 */}
         {active === "guide" && (
           <div className="flex flex-col" style={{ gap: "var(--s-4)" }}>
             {/* 3단계 작성 흐름 */}
             <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "var(--s-3)" }}>
               {([
-                { n: "1", title: "준비물 확인", desc: "이 세트의 탭들을 훑어 규정·소스·참고 문서를 먼저 챙기세요" },
-                { n: "2", title: "템플릿 채우기", desc: "아래 템플릿의 미리 채워진 내용을 우리 기기에 맞게 수정하면 자동 저장돼요" },
-                { n: "3", title: "완성 & 내보내기", desc: "우측 체크리스트를 확인하고 MD 복사 또는 Word로 내보내세요" },
+                { n: "1", title: "준비물 챙기기", desc: "위 탭들을 둘러보며 규정·자료·참고 문서를 먼저 챙겨요" },
+                { n: "2", title: "템플릿 채우기", desc: "아래 템플릿에 예시가 미리 들어 있어요. 우리 기기에 맞게 고치면 자동 저장돼요" },
+                { n: "3", title: "완성하고 내보내기", desc: "오른쪽 체크리스트를 확인하고 MD 복사나 Word로 내보내면 끝이에요" },
               ] as const).map(({ n, title, desc }) => (
-                <div key={n} className="flex gap-3 items-start rounded-[var(--r-md)] bg-bg" style={{ border: "1px solid var(--border)", padding: "var(--s-3)" }}>
+                <div key={n} className="flex gap-3 items-start rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)", padding: "var(--s-3)" }}>
                   <span className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color" style={{ width: 26, height: 26, background: color, fontSize: 12 }} aria-hidden>{n}</span>
                   <div>
                     <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 2 }}>{title}</p>
