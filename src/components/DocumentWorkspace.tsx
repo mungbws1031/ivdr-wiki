@@ -240,23 +240,6 @@ export function DocumentWorkspace() {
                 <Icon size={11} aria-hidden />
                 정거장 {station.id}
               </Link>
-              {doc.calcTools && doc.calcTools.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    document.getElementById("calc-tools")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                  title={`내장 계산기: ${doc.calcTools.map((t) => CALC_LABEL[t]).join(", ")}`}
-                  className="inline-flex items-center gap-1 rounded-full font-bold transition-colors hover:brightness-95"
-                  style={{ background: "var(--warning-bg)", color: "var(--warning)", border: "1px solid var(--warning)", fontSize: 11, padding: "2px 9px" }}
-                >
-                  <Calculator size={11} aria-hidden />
-                  계산 필요
-                  <span className="font-semibold" style={{ opacity: 0.85 }}>
-                    · {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
-                  </span>
-                </button>
-              )}
             </div>
             <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
               {doc.docTitle}
@@ -264,6 +247,31 @@ export function DocumentWorkspace() {
             <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2, maxWidth: 560 }}>
               {doc.purpose}
             </p>
+
+            {/* 계산 필요 — 계산기를 개별 칩으로 가지런히 배열 (클릭 시 계산 영역으로 스크롤) */}
+            {doc.calcTools && doc.calcTools.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5" style={{ marginTop: "var(--s-3)" }}>
+                <span
+                  className="inline-flex items-center gap-1 rounded-full font-bold text-text-on-color"
+                  style={{ background: "var(--warning)", fontSize: 11, padding: "3px 10px" }}
+                >
+                  <Calculator size={12} aria-hidden />
+                  계산 필요
+                </span>
+                {doc.calcTools.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => document.getElementById("calc-tools")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    title={`${CALC_LABEL[t]} 계산기로 이동`}
+                    className="inline-flex items-center rounded-full font-semibold transition-[filter] hover:brightness-95"
+                    style={{ background: "var(--warning-bg)", color: "var(--warning)", border: "1px solid var(--warning)", fontSize: 11, padding: "3px 10px" }}
+                  >
+                    {CALC_LABEL[t]}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 오른쪽: 액션 버튼들 */}
