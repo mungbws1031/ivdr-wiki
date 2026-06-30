@@ -1,25 +1,16 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
-  FileText,
   ListChecks,
-  BookMarked,
   ArrowUpRight,
   Compass,
-  PackageCheck,
   Lightbulb,
-  GraduationCap,
-  Files,
-  Database,
-  Image as ImageIcon,
-  FlaskConical,
-  Paperclip,
   Sparkles,
   CalendarDays,
   ChevronDown,
   ChevronRight,
   Copy,
-  type LucideIcon,
+  FileText,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown } from "../data/documents";
@@ -29,7 +20,6 @@ import { stations, phaseById, type Station } from "../data/stations";
 import { iso13485Stations } from "../data/iso13485/stations";
 import { ivddStations } from "../data/ivdd/stations";
 import { mdsapStations } from "../data/mdsap/stations";
-import { prereqKindLabel, leafById, colorForLeaf, type PrereqKind } from "../data/docTree";
 
 function adaptISO13485Station(s: typeof iso13485Stations[0]): Station {
   return { ...s, phase: s.phase as any };
@@ -37,7 +27,6 @@ function adaptISO13485Station(s: typeof iso13485Stations[0]): Station {
 import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { DocxExport } from "./DocxExport";
-import { ConceptChip } from "./ConceptChip";
 import { LevelMeter } from "./LevelMeter";
 import { EffortTimeline } from "./EffortTimeline";
 import { SensSpecCalc } from "./calcs/SensSpecCalc";
@@ -46,15 +35,8 @@ import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
+import { WritingKit } from "./WritingKit";
 import { hasDraft } from "../hooks/useDraftStore";
-
-const PREREQ_STYLE: Record<PrereqKind, { Icon: LucideIcon; color: string }> = {
-  doc: { Icon: FileText, color: "var(--p3)" },
-  data: { Icon: Database, color: "var(--p1)" },
-  photo: { Icon: ImageIcon, color: "var(--p4)" },
-  test: { Icon: FlaskConical, color: "var(--p2)" },
-  other: { Icon: Paperclip, color: "var(--text-muted)" },
-};
 
 // ── 마크다운 복사 버튼 ──────────────────────────────────────────
 function CopyMdButton({ markdown, filename }: { markdown: string; filename: string }) {
@@ -86,266 +68,6 @@ function CopyMdButton({ markdown, filename }: { markdown: string; filename: stri
       <Copy size={14} aria-hidden />
       {copied ? "복사됨!" : "MD 복사"}
     </button>
-  );
-}
-
-// ── 접을 수 있는 준비 섹션 ──────────────────────────────────────
-function PrepSection({ doc, color }: { doc: any; color: string }) {
-  const knowledgeCount = doc.knowledge?.length ?? 0;
-  const prereqCount = doc.prerequisites?.length ?? 0;
-  const expCount = doc.experiments?.length ?? 0;
-  const certCount = doc.certTests?.length ?? 0;
-  const dataCount = doc.requiredData?.length ?? 0;
-  const prepDocCount = doc.prepDocs?.length ?? 0;
-  const totalCount = knowledgeCount + prereqCount + expCount + certCount + dataCount + prepDocCount;
-
-  const [open, setOpen] = useState(false);
-
-  if (totalCount === 0) return null;
-
-  return (
-    <div
-      className="rounded-[var(--r-lg)] overflow-hidden"
-      style={{ border: "1px solid var(--border)" }}
-    >
-      {/* 아코디언 헤더 */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center gap-3 text-left"
-        style={{ padding: "var(--s-4) var(--s-5)", background: "var(--surface)" }}
-      >
-        <span
-          className="grid shrink-0 place-items-center rounded-full"
-          style={{ width: 32, height: 32, background: color }}
-          aria-hidden
-        >
-          <PackageCheck size={17} style={{ color: "#fff" }} />
-        </span>
-        <div className="flex-1 min-w-0">
-          <span className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>
-            작성 전 준비 확인
-          </span>
-          <span className="ml-2 text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
-            지식 {knowledgeCount}
-            {prereqCount > 0 && ` · 준비물 ${prereqCount}`}
-            {(expCount + certCount + dataCount) > 0 && ` · 실험·테스트·자료 ${expCount + certCount + dataCount}`}
-            {prepDocCount > 0 && ` · 선행문서 ${prepDocCount}`}
-          </span>
-        </div>
-        <span className="text-text-subtle shrink-0">
-          {open ? <ChevronDown size={18} aria-hidden /> : <ChevronRight size={18} aria-hidden />}
-        </span>
-      </button>
-
-      {open && (
-        <div style={{ padding: "var(--s-5)", background: "var(--bg)" }} className="flex flex-col">
-          <div className="flex flex-col" style={{ gap: "var(--s-4)" }}>
-            {/* 사전 지식 */}
-            {doc.knowledge && doc.knowledge.length > 0 && (
-              <div
-                className="rounded-[var(--r-md)] overflow-hidden"
-                style={{ border: "1px solid var(--border)", background: "var(--info-bg)" }}
-              >
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <GraduationCap size={16} style={{ color: "var(--info)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>사전 지식</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--info)", fontSize: 11, padding: "1px 8px" }}>{doc.knowledge.length}</span>
-                </div>
-                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.knowledge.map((k: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 rounded-[var(--r-sm)] bg-bg" style={{ padding: "8px 10px", border: "1px solid var(--border)" }}>
-                      <span aria-hidden className="shrink-0 rounded-[3px] mt-0.5" style={{ width: 15, height: 15, border: "2px solid var(--info)", flexShrink: 0 }} />
-                      <span className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{k}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* 준비물 */}
-            {doc.prerequisites && doc.prerequisites.length > 0 && (
-              <div
-                className="rounded-[var(--r-md)] overflow-hidden"
-                style={{ border: "1px solid var(--border)", background: "var(--warning-bg)" }}
-              >
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <PackageCheck size={16} style={{ color: "var(--warning)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>준비물</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--warning)", fontSize: 11, padding: "1px 8px" }}>{doc.prerequisites.length}</span>
-                </div>
-                <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.prerequisites.map((p: any, i: number) => {
-                    const st = PREREQ_STYLE[p.kind as PrereqKind];
-                    return (
-                      <div key={i} className="flex items-start gap-2 rounded-[var(--r-sm)] bg-bg" style={{ border: "1px solid var(--border)", padding: "8px 10px" }}>
-                        <span className="grid shrink-0 place-items-center rounded-[var(--r-sm)]" style={{ width: 28, height: 28, background: "var(--surface)" }}>
-                          <st.Icon size={15} style={{ color: st.color }} aria-hidden />
-                        </span>
-                        <div className="min-w-0">
-                          <span className="inline-block rounded-full font-bold" style={{ color: st.color, fontSize: 10, background: "var(--surface)", padding: "0px 6px" }}>{prereqKindLabel[p.kind as PrereqKind]}</span>
-                          <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2 }}>{p.label}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* 필요한 실험 */}
-            {doc.experiments && doc.experiments.length > 0 && (
-              <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--p1-tint)" }}>
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <FlaskConical size={16} style={{ color: "var(--p1)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>선행 실험</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--p1)", fontSize: 11, padding: "1px 8px" }}>{doc.experiments.length}</span>
-                </div>
-                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.experiments.map((e: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 rounded-[var(--r-sm)] bg-bg" style={{ padding: "8px 10px", border: "1px solid var(--border)" }}>
-                      <span aria-hidden className="shrink-0 rounded-[3px] mt-0.5" style={{ width: 15, height: 15, border: "2px solid var(--p1)", flexShrink: 0 }} />
-                      <span className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{e}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* 인증·테스트 */}
-            {doc.certTests && doc.certTests.length > 0 && (
-              <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--p3-tint)" }}>
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <ListChecks size={16} style={{ color: "var(--p3)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>인증·테스트</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--p3)", fontSize: 11, padding: "1px 8px" }}>{doc.certTests.length}</span>
-                </div>
-                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.certTests.map((c: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 rounded-[var(--r-sm)] bg-bg" style={{ padding: "8px 10px", border: "1px solid var(--border)" }}>
-                      <span aria-hidden className="shrink-0 rounded-[3px] mt-0.5" style={{ width: 15, height: 15, border: "2px solid var(--p3)", flexShrink: 0 }} />
-                      <span className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{c}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* 확보 자료 */}
-            {doc.requiredData && doc.requiredData.length > 0 && (
-              <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--p4-tint)" }}>
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <BookMarked size={16} style={{ color: "var(--p4)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>확보 자료</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--p4)", fontSize: 11, padding: "1px 8px" }}>{doc.requiredData.length}</span>
-                </div>
-                <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.requiredData.map((d: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 rounded-[var(--r-sm)] bg-bg" style={{ padding: "8px 10px", border: "1px solid var(--border)" }}>
-                      <span aria-hidden className="shrink-0 rounded-[3px] mt-0.5" style={{ width: 15, height: 15, border: "2px solid var(--p4)", flexShrink: 0 }} />
-                      <span className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* 선행 문서 */}
-            {doc.prepDocs && doc.prepDocs.length > 0 && (
-              <div className="rounded-[var(--r-md)] overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--success-bg)" }}>
-                <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <Files size={16} style={{ color: "var(--success)" }} aria-hidden />
-                  <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>먼저 만들면 좋은 문서</span>
-                  <span className="ml-auto rounded-full font-semibold text-text-on-color" style={{ background: "var(--success)", fontSize: 11, padding: "1px 8px" }}>{doc.prepDocs.length}</span>
-                </div>
-                <div className="flex flex-wrap gap-2" style={{ padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.prepDocs.map((pid: string) => {
-                    const l = leafById(pid);
-                    if (!l) return null;
-                    const c = `var(${colorForLeaf(pid)})`;
-                    return (
-                      <Link
-                        key={pid}
-                        to={`/doc/${pid}`}
-                        className="inline-flex items-center gap-2 rounded-[var(--r-full)] bg-bg transition-colors hover:bg-surface"
-                        style={{ border: "1px solid var(--border)", padding: "6px 12px" }}
-                      >
-                        <span aria-hidden className="inline-block shrink-0 rounded-full" style={{ width: 7, height: 7, background: c }} />
-                        <span className="font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{l.title}</span>
-                        <ArrowUpRight size={13} style={{ color: "var(--text-subtle)" }} aria-hidden />
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── 처음 작성자 온보딩 가이드 ──────────────────────────────────
-const GUIDE_KEY = "ivdr-first-guide-dismissed";
-
-function FirstTimeGuide({ color }: { color: string }) {
-  const [dismissed, setDismissed] = useState(() => {
-    try { return localStorage.getItem(GUIDE_KEY) === "1"; } catch { return false; }
-  });
-  if (dismissed) return null;
-
-  function dismiss() {
-    setDismissed(true);
-    try { localStorage.setItem(GUIDE_KEY, "1"); } catch {}
-  }
-
-  return (
-    <div
-      className="rounded-[var(--r-lg)] overflow-hidden"
-      style={{ border: `1.5px solid ${color}`, marginBottom: "var(--s-4)" }}
-    >
-      <div
-        className="flex items-center gap-3"
-        style={{ background: "color-mix(in srgb, " + color + " 10%, transparent)", padding: "var(--s-3) var(--s-4)", borderBottom: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}
-      >
-        <Sparkles size={16} style={{ color, flexShrink: 0 }} aria-hidden />
-        <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>
-          처음 쓰시나요? 3단계로 쉽게 작성할 수 있어요
-        </span>
-        <button
-          onClick={dismiss}
-          className="ml-auto text-text-subtle hover:text-text"
-          style={{ fontSize: "var(--t-xs)", padding: "2px 6px", lineHeight: 1 }}
-          aria-label="닫기"
-        >
-          ✕
-        </button>
-      </div>
-      <div
-        className="grid"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "var(--s-3)", padding: "var(--s-4)" }}
-      >
-        {([
-          { n: "1", title: "안내 읽기", desc: "각 섹션 상단 파란 박스에서 무엇을 써야 하는지 확인하세요" },
-          { n: "2", title: "템플릿 편집", desc: "미리 채워진 내용을 우리 기기에 맞게 수정·보완하세요. 자동 저장돼요" },
-          { n: "3", title: "완성 & 내보내기", desc: "우측 체크리스트를 모두 확인하면 MD 복사 또는 Word 내보내기로 완성하세요" },
-        ] as const).map(({ n, title, desc }) => (
-          <div key={n} className="flex gap-3 items-start">
-            <span
-              className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color"
-              style={{ width: 26, height: 26, background: color, fontSize: 12 }}
-              aria-hidden
-            >
-              {n}
-            </span>
-            <div>
-              <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 2 }}>{title}</p>
-              <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>{desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -560,8 +282,20 @@ export function DocumentWorkspace() {
               </div>
             )}
 
-            {/* 온보딩 가이드 (처음 작성자용, 한 번만 표시) */}
-            <FirstTimeGuide color={color} />
+            {/* 문서 작성 세트 — 준비물(가이드·소스·지침서·참고문서)을 탭으로 묶음 */}
+            <WritingKit doc={doc} color={color} />
+
+            {/* 템플릿 — 실제 작성 영역 */}
+            <div className="flex items-center gap-2" style={{ marginTop: "var(--s-2)" }}>
+              <FileText size={16} style={{ color }} aria-hidden />
+              <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>템플릿</h2>
+              <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
+                미리 채워진 내용을 우리 기기에 맞게 수정하세요 · 자동 저장
+              </span>
+              <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
+                {doc.sections.length}개 섹션
+              </span>
+            </div>
 
             {/* 섹션 카드들 */}
             {doc.sections.map((s, i) => {
@@ -605,9 +339,6 @@ export function DocumentWorkspace() {
                 </section>
               );
             })}
-
-            {/* 작성 전 준비 확인 — 글쓰기 아래로 이동 */}
-            <PrepSection doc={doc} color={color} />
           </div>
 
           {/* 사이드바 (sticky) */}
@@ -675,35 +406,6 @@ export function DocumentWorkspace() {
                 </div>
               );
             })()}
-
-            {/* 관련 개념 */}
-            {doc.relatedConceptSlugs.length > 0 && (
-              <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)" }}>
-                <div style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                  <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>관련 개념</h3>
-                </div>
-                <div className="flex flex-wrap gap-1.5" style={{ padding: "var(--s-3) var(--s-4)" }}>
-                  {doc.relatedConceptSlugs.map((slug) => (
-                    <ConceptChip key={slug} slug={slug} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 관련 조항 */}
-            <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)" }}>
-              <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                <BookMarked size={14} style={{ color: "var(--text-muted)" }} aria-hidden />
-                <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>관련 조항</h3>
-              </div>
-              <div className="flex flex-wrap gap-1.5" style={{ padding: "var(--s-3) var(--s-4)" }}>
-                {doc.refs.map((r) => (
-                  <span key={r} className="rounded-[var(--r-sm)] font-mono text-text-muted" style={{ background: "var(--surface)", border: "1px solid var(--border)", fontSize: 11, padding: "3px 7px" }}>
-                    {r}
-                  </span>
-                ))}
-              </div>
-            </div>
 
             {/* 정거장 링크 */}
             <Link
