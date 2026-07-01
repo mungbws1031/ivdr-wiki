@@ -302,7 +302,7 @@ export const docTree: DocGroup[] = [
         prerequisites: [P("test", "밀봉·무결성·노화 시험"), P("data", "포장 사양·공정 파라미터"), P("doc", "운송 시뮬레이션")] },
       { id: "product-preservation", title: "취급·보관·포장·배송 관리", refs: ["ISO 13485 7.5.11"], stationId: 5, requirement: "required",
         prerequisites: [P("doc", "보관·취급 조건"), P("data", "콜드체인·유효기간 관리"), P("other", "배송 검증")] },
-      { id: "transport-validation", title: "운송(수송) 밸리데이션 (ASTM D4169/ISTA)", refs: ["ISO 13485 7.5.11", "IVDR Annex I 9", "ASTM D4169", "ISTA 3A"], stationId: 5, requirement: "ifApplicable", note: "운송 중 온도 이탈·진동·낙하가 시약·기기 성능에 영향을 줄 때 (대부분의 IVD 시약 해당).",
+      { id: "transport-validation", title: "운송(수송) 밸리데이션 (ISTA 3A)", refs: ["ISTA 3A"], stationId: 5, requirement: "ifApplicable", note: "소형 IVD는 대개 택배 발송이라 ISTA 3A로 검증한다(팔레트·맞춤 사이클은 ASTM D4169). 운송 중 온도 이탈·진동·낙하가 시약·기기 성능에 영향을 줄 때 해당.",
         prerequisites: [P("test", "운송 시뮬레이션(진동·낙하·온도) 시험 데이터"), P("data", "콜드체인 온도 모니터링 로그"), P("doc", "포장 사양·안정성 시험 결과")] },
     ],
   },
@@ -1159,7 +1159,7 @@ export const docKnowledge: Record<string, string[]> = {
   "packaging-validation": ["ISO 11607-1(설계) vs -2(공정)", "밀봉 강도·무결성 시험", "노화·운송 시뮬레이션"],
   "qms-software-validation": ["4.1.6 QMS SW 밸리데이션 요구", "위험 기반 범위 설정", "변경·업그레이드 시 재밸리데이션"],
   "product-preservation": ["보관·취급 조건 정의", "콜드체인·모니터링", "배송 포장·검증"],
-  "transport-validation": ["최악 조건 운송 경로·계절 온도 프로파일 정의", "ASTM D4169/ISTA 시험 시퀀스(진동·낙하·압력)", "콜드체인 온도 모니터링·수용 기준", "운송 후 성능·안정성 재확인 방법"],
+  "transport-validation": ["최악 조건 운송 경로·계절 온도 프로파일 정의", "ISTA 3A 시험 시퀀스(진동·낙하·압력)", "콜드체인 온도 모니터링·수용 기준", "운송 후 성능·안정성 재확인 방법"],
   "quality-policy-org": ["품질방침·목표 수립", "책임·권한·경영대리인 지정", "조직 변경 관리"],
 };
 
