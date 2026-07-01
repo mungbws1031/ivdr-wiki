@@ -34,6 +34,7 @@ import { SensSpecCalc } from "./calcs/SensSpecCalc";
 import { SampleSizeCalc } from "./calcs/SampleSizeCalc";
 import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
+import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
@@ -46,6 +47,7 @@ const CALC_LABEL: Record<CalcToolType, string> = {
   "sample-size": "검체수 산출",
   "lod-calc": "검출한계(LoD)",
   "risk-matrix": "위험 매트릭스",
+  "mkt": "평균동력학적온도(MKT)",
 };
 
 // ── 마크다운 복사 버튼 ──────────────────────────────────────────
@@ -322,6 +324,7 @@ export function DocumentWorkspace() {
                 {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
                 {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
                 {doc.calcTools.includes("lod-calc") && <LodCalc />}
+                {doc.calcTools.includes("mkt") && <MktCalc />}
               </div>
             )}
 

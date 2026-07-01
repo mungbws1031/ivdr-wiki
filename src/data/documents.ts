@@ -32,7 +32,7 @@ export interface DocSection {
   placeholder: string; // 채워넣기 예시/뼈대
 }
 
-export type CalcToolType = "sens-spec" | "sample-size" | "risk-matrix" | "lod-calc";
+export type CalcToolType = "sens-spec" | "sample-size" | "risk-matrix" | "lod-calc" | "mkt";
 
 export interface DocTemplate {
   id: string; // 고유 슬러그 (docTree 잎 id 와 일치)
@@ -1089,6 +1089,11 @@ export const docById = (id: string): DocTemplate | undefined =>
   documents.find((d) => d.id === id);
 
 /** 전용 템플릿이 없는 잎은 일반 템플릿을 자동 생성한다. */
+// 전용 템플릿이 없는(자동 생성) 문서에 내장 계산기를 붙이는 매핑
+const GENERIC_CALC_TOOLS: Record<string, CalcToolType[]> = {
+  "transport-validation": ["mkt"],
+};
+
 function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
   return {
     id: leaf.id,
@@ -1097,6 +1102,7 @@ function buildGenericDoc(leaf: DocLeaf, station: Station): DocTemplate {
     purpose:
       leaf.note ??
       `${station.title} 단계의 산출 문서입니다. ${station.oneLine}`,
+    calcTools: GENERIC_CALC_TOOLS[leaf.id],
     rationale: rationaleFor(leaf.id),
     difficulty: metaFor(leaf.id)?.difficulty,
     importance: metaFor(leaf.id)?.importance,
