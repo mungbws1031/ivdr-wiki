@@ -69,7 +69,7 @@ export function CertHub() {
               </div>
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-6)" }}>
-              5 페이즈 · 11 정거장 · 75개 문서<br />
+              5 페이즈 · 11 정거장 · {ivdrDocIds.length}개 문서<br />
               Regulation (EU) 2017/746 — CE 마킹 취득
             </p>
             <div className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginBottom: "var(--s-2)" }}>
@@ -263,7 +263,7 @@ export function CertHub() {
           style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-8)" }}
         >
           <div className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", marginBottom: "var(--s-2)" }}>
-            공통 문서 <span style={{ color: "var(--accent)" }}>49개</span>
+            공통 문서 <span style={{ color: "var(--accent)" }}>{isoSharedIds.length}개</span>
           </div>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-4)" }}>
             QMS · 설계관리 · 위험관리 · 기술/성능 증거 — 한 번 작성, 양쪽 인증에 반영
