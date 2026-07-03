@@ -18,7 +18,7 @@ import {
   Home,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
-import { resolveDoc, toMarkdown } from "../data/documents";
+import { resolveDoc, toMarkdown, type DocTemplate } from "../data/documents";
 import { isISO13485Doc } from "../data/schemes";
 import { useProgress, STATUS_LABEL, STATUS_NEXT, STATUS_COLOR } from "../data/progress";
 import { stations, phaseById, type Station } from "../data/stations";
@@ -42,7 +42,7 @@ import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
-import { hasDraft } from "../hooks/useDraftStore";
+import { hasDraft, docWithDrafts } from "../hooks/useDraftStore";
 import type { CalcToolType } from "../data/documents";
 
 // 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
@@ -55,9 +55,11 @@ const CALC_LABEL: Record<CalcToolType, string> = {
 };
 
 // ── 마크다운 복사 버튼 ──────────────────────────────────────────
-function CopyMdButton({ markdown, filename }: { markdown: string; filename: string }) {
+// 클릭 시점에 저장된 초안을 반영해 마크다운을 생성한다(빈 템플릿이 아닌 실제 작성 내용).
+function CopyMdButton({ doc, filename }: { doc: DocTemplate; filename: string }) {
   const [copied, setCopied] = useState(false);
   const handle = () => {
+    const markdown = toMarkdown(docWithDrafts(doc));
     navigator.clipboard.writeText(markdown).catch(() => {
       const ta = document.createElement("textarea");
       ta.value = markdown;
@@ -220,7 +222,6 @@ export function DocumentWorkspace() {
   const phase = phaseById(station.phase);
   const color = isIVDDDoc ? "var(--p2)" : isMDSAPDoc ? "var(--p4)" : `var(${phase.colorVar})`;
   const Icon = getIcon(station.icon);
-  const markdown = toMarkdown(doc);
   const certPrefix = isISODoc ? "ISO13485" : isIVDDDoc ? "IVDD" : isMDSAPDoc ? "MDSAP" : "IVDR";
   const filename = `${certPrefix}-${String(station.id).padStart(2, "0")}-${doc.docTitle}.md`;
   const journeyPath = isISODoc ? "/iso13485" : isIVDDDoc ? "/ivdd" : isMDSAPDoc ? "/mdsap" : "/ivdr";
@@ -340,7 +341,7 @@ export function DocumentWorkspace() {
                 {nearestDday.diff === 0 ? "D-Day" : `D-${nearestDday.diff}`}
               </Link>
             )}
-            <CopyMdButton markdown={markdown} filename={filename} />
+            <CopyMdButton doc={doc} filename={filename} />
           </div>
         </div>
 
