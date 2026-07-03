@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { FileType2, Upload, Download, Loader2, Check, AlertCircle } from "lucide-react";
 import type { DocTemplate } from "../data/documents";
+import { docWithDrafts } from "../hooks/useDraftStore";
 
 // 무거운 워드 라이브러리(docx/docxtemplater/pizzip)는 사용할 때만 동적 로드.
 const loadDocx = () => import("../lib/docx");
@@ -42,7 +43,8 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
     try {
       const { fillUploadedDocx, downloadBlob } = await loadDocx();
       const buf = await file.arrayBuffer();
-      const { blob, mode } = await fillUploadedDocx(buf, doc);
+      // 저장된 초안(실제 작성 내용)을 반영해 채운다.
+      const { blob, mode } = await fillUploadedDocx(buf, docWithDrafts(doc));
       downloadBlob(blob, `완성-${safeName}.docx`);
       setState({
         kind: "done",
