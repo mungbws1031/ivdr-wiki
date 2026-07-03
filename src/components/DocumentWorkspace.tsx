@@ -12,6 +12,10 @@ import {
   Copy,
   FileText,
   Calculator,
+  FileQuestion,
+  Files,
+  PenLine,
+  Home,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown } from "../data/documents";
@@ -164,11 +168,50 @@ export function DocumentWorkspace() {
     : undefined;
 
   if (!doc || !station) {
+    const NAV = [
+      { to: "/documents", Icon: Files, label: "문서 전체 보기", desc: "모든 문서를 트리로", primary: true },
+      { to: "/write", Icon: PenLine, label: "문서 작성 허브", desc: "바로 쓸 문서 고르기" },
+      { to: "/", Icon: Home, label: "인증 허브", desc: "처음으로" },
+    ];
     return (
       <div className="min-h-screen bg-bg">
         <PageHeader crumb="문서 작성" />
-        <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin)" }}>
-          <p className="text-text-muted">해당 문서를 찾을 수 없습니다. <Link to="/ivdr" className="underline">IVDR 여정으로</Link></p>
+        <main className="mx-auto" style={{ maxWidth: 640, padding: "var(--s-16) var(--margin)" }}>
+          <div className="flex flex-col items-center text-center">
+            <span
+              className="grid place-items-center rounded-full"
+              style={{ width: 64, height: 64, background: "var(--surface)", border: "1px solid var(--border)", marginBottom: "var(--s-5)" }}
+              aria-hidden
+            >
+              <FileQuestion size={30} style={{ color: "var(--text-muted)" }} />
+            </span>
+            <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginBottom: "var(--s-2)", wordBreak: "keep-all" }}>
+              문서를 찾을 수 없어요
+            </h1>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", maxWidth: 440, marginBottom: "var(--s-6)", wordBreak: "keep-all" }}>
+              주소가 바뀌었거나 오타가 있을 수 있어요. 아래에서 이어가 보세요.
+            </p>
+            <div className="grid w-full gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              {NAV.map(({ to, Icon: NavIcon, label, desc, primary }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="flex items-center gap-3 rounded-[var(--r-md)] text-left transition-colors hover:bg-surface"
+                  style={{
+                    padding: "var(--s-3) var(--s-4)",
+                    border: `1px solid ${primary ? "var(--accent)" : "var(--border)"}`,
+                    background: primary ? "var(--accent-weak)" : "var(--bg)",
+                  }}
+                >
+                  <NavIcon size={18} style={{ color: primary ? "var(--accent)" : "var(--text-muted)", flexShrink: 0 }} aria-hidden />
+                  <span className="min-w-0">
+                    <span className="block font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>{label}</span>
+                    <span className="block text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>{desc}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
         </main>
       </div>
     );
@@ -243,10 +286,10 @@ export function DocumentWorkspace() {
                 정거장 {station.id}
               </Link>
             </div>
-            <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)" }}>
+            <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", lineHeight: "var(--lh-tight)", wordBreak: "keep-all" }}>
               {doc.docTitle}
             </h1>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2, maxWidth: 560 }}>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2, maxWidth: 560, wordBreak: "keep-all" }}>
               {doc.purpose}
             </p>
 
