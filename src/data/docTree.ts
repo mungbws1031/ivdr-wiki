@@ -302,6 +302,8 @@ export const docTree: DocGroup[] = [
         prerequisites: [P("test", "밀봉·무결성·노화 시험"), P("data", "포장 사양·공정 파라미터"), P("doc", "운송 시뮬레이션")] },
       { id: "product-preservation", title: "취급·보관·포장·배송 관리", refs: ["ISO 13485 7.5.11"], stationId: 5, requirement: "required",
         prerequisites: [P("doc", "보관·취급 조건"), P("data", "콜드체인·유효기간 관리"), P("other", "배송 검증")] },
+      { id: "transport-validation", title: "운송(수송) 밸리데이션 (ISTA 3A)", refs: ["ISTA 3A"], stationId: 5, requirement: "ifApplicable", note: "소형 IVD는 대개 택배 발송이라 ISTA 3A로 검증한다(팔레트·맞춤 사이클은 ASTM D4169). 운송 중 온도 이탈·진동·낙하가 시약·기기 성능에 영향을 줄 때 해당.",
+        prerequisites: [P("test", "운송 시뮬레이션(진동·낙하·온도) 시험 데이터"), P("data", "콜드체인 온도 모니터링 로그"), P("doc", "포장 사양·안정성 시험 결과")] },
     ],
   },
   {
@@ -902,6 +904,8 @@ export const docRationale: Record<string, string> = {
     "QMS를 돌리는 소프트웨어가 오작동하면 품질기록·추적성이 통째로 흔들린다. 사용 전 의도대로 동작함을 검증해 시스템 신뢰성을 확보한다.",
   "product-preservation":
     "유통 과정에서 제품이 손상·변질되면 사용 시점 성능을 보장할 수 없다. 보존 조건을 통제해 출하 후에도 품질을 유지한다.",
+  "transport-validation":
+    "IVD 시약·기기는 운송 중 온도 이탈·진동·충격을 겪는다. 실제 배송 스트레스를 재현해 도착 시점에도 성능·안정성이 유지됨을 입증, 유통 후 오작동과 오진단 위해를 막는다.",
   "quality-policy-org":
     "품질방침과 책임·권한이 명확해야 QMS가 실제로 작동한다. 누가 무엇을 책임지는지 못 박아 일관된 품질 운영의 토대를 만든다.",
 };
@@ -1155,6 +1159,7 @@ export const docKnowledge: Record<string, string[]> = {
   "packaging-validation": ["ISO 11607-1(설계) vs -2(공정)", "밀봉 강도·무결성 시험", "노화·운송 시뮬레이션"],
   "qms-software-validation": ["4.1.6 QMS SW 밸리데이션 요구", "위험 기반 범위 설정", "변경·업그레이드 시 재밸리데이션"],
   "product-preservation": ["보관·취급 조건 정의", "콜드체인·모니터링", "배송 포장·검증"],
+  "transport-validation": ["최악 조건 운송 경로·계절 온도 프로파일 정의", "ISTA 3A 시험 시퀀스(진동·낙하·압력)", "콜드체인 온도 모니터링·수용 기준", "운송 후 성능·안정성 재확인 방법"],
   "quality-policy-org": ["품질방침·목표 수립", "책임·권한·경영대리인 지정", "조직 변경 관리"],
 };
 
@@ -1207,7 +1212,7 @@ export const docOrder: OrderStep[] = [
     step: 6,
     title: "생산·공정 검증",
     why: "양산 공정이 일관된 결과를 내는지 검증한다.",
-    docIds: ["process-validation", "sterilization-validation", "packaging-validation", "dmr", "dhr", "product-preservation"],
+    docIds: ["process-validation", "sterilization-validation", "packaging-validation", "dmr", "dhr", "product-preservation", "transport-validation"],
   },
   {
     step: 7,
@@ -1337,6 +1342,7 @@ export const docMeta: Record<string, DocMeta> = {
   "packaging-validation": { difficulty: "high", importance: "med" },
   "qms-software-validation": { difficulty: "med", importance: "med" },
   "product-preservation": { difficulty: "low", importance: "med" },
+  "transport-validation": { difficulty: "med", importance: "med" },
   "quality-policy-org": { difficulty: "low", importance: "med" },
 };
 
@@ -1377,6 +1383,7 @@ export const docPrep: Record<string, string[]> = {
   dmr: ["design-outputs"],
   dhr: ["dmr", "process-validation"],
   "product-preservation": ["stability-study", "dmr"],
+  "transport-validation": ["packaging-validation", "stability-study", "product-preservation"],
   "performance-eval-plan": ["intended-purpose", "classification-rationale"],
   "scientific-validity": ["performance-eval-plan"],
   "analytical-performance": ["performance-eval-plan"],

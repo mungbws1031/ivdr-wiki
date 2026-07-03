@@ -157,7 +157,7 @@ export function SchemeOverlap() {
 
         {/* 안내 */}
         <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-          분류 기준: 우리 문서셋(75) 중 EU 고유 문서를 CE 전용으로, 나머지(QMS·설계·위험·생산·기술/성능 증거)를 공통으로 보았습니다.
+          분류 기준: 우리 문서셋({shared.length + nCe}) 중 EU 고유 문서를 CE 전용으로, 나머지(QMS·설계·위험·생산·기술/성능 증거)를 공통으로 보았습니다.
           MDSAP는 별도 고유 문서보다 ISO 13485 QMS + 국가별 규제 챕터를 단일 심사로 묶는 프로그램입니다. 동일 문서라도 서식·언어·제출처는 스킴별로 다를 수 있습니다.
         </p>
       </div>
