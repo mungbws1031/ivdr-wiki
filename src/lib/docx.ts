@@ -221,6 +221,61 @@ export async function generateSampleDocx(doc: DocTemplate): Promise<Blob> {
   return Packer.toBlob(document);
 }
 
+/** 템플릿 업로드 없이 바로 받는 완성본 .docx — 문서 내용을 그대로 워드 문서로 생성한다. */
+export async function generateFinishedDocx(doc: DocTemplate): Promise<Blob> {
+  const h1 = (text: string) =>
+    new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun({ text, bold: true })] });
+  const h2 = (text: string) =>
+    new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun({ text, bold: true })] });
+  const p = (text: string) =>
+    new Paragraph({ children: text.split("\n").flatMap((line, i) => (i === 0 ? [new TextRun(line)] : [new TextRun({ text: line, break: 1 })])) });
+  const bullet = (text: string) => new Paragraph({ bullet: { level: 0 }, children: [new TextRun(text)] });
+  const blank = () => new Paragraph({ children: [] });
+
+  const children: Paragraph[] = [h1(doc.docTitle), p(`목적: ${doc.purpose}`), p(`근거: ${doc.refs.join(" · ")}`)];
+
+  if (doc.difficulty && doc.importance) {
+    children.push(p(`난이도: ${difficultyLabel[doc.difficulty]} · 중요도: ${importanceLabel[doc.importance]}`));
+  }
+  if (doc.effort) {
+    children.push(
+      p(
+        `예상 소요(추정): ${doc.effort.total} — 자료확보 ${doc.effort.gather} · 맥락이해 ${doc.effort.context} · 작성 ${doc.effort.draft} · 검토 ${doc.effort.review} · RA 피드백 ${doc.effort.raRounds}회`,
+      ),
+    );
+  }
+  children.push(blank());
+
+  if (doc.rationale) {
+    children.push(h2("취지 — 왜 이 문서를 쓰는가"), p(doc.rationale), blank());
+  }
+  if (doc.prepDocs && doc.prepDocs.length) {
+    children.push(h2("미리 만들어두면 좋은 문서"));
+    for (const id of doc.prepDocs) children.push(bullet(leafById(id)?.title ?? id));
+    children.push(blank());
+  }
+  if (doc.knowledge && doc.knowledge.length) {
+    children.push(h2("작성 전 알아야 할 것"));
+    for (const k of doc.knowledge) children.push(bullet(k));
+    children.push(blank());
+  }
+  if (doc.prerequisites && doc.prerequisites.length) {
+    children.push(h2("작성 전 준비물"));
+    for (const pr of doc.prerequisites) children.push(bullet(`(${prereqKindLabel[pr.kind]}) ${pr.label}`));
+    children.push(blank());
+  }
+
+  for (const s of doc.sections) {
+    children.push(h2(s.heading), p(s.placeholder), blank());
+  }
+
+  children.push(h2("완료 체크리스트"));
+  for (const c of doc.checklist) children.push(bullet(c));
+
+  const document = new Document({ sections: [{ children }] });
+  return Packer.toBlob(document);
+}
+
 /** Blob 다운로드 트리거. */
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
