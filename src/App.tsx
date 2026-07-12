@@ -12,6 +12,7 @@ import { IVDDMap } from "./components/IVDDMap";
 import { MDSAPMap } from "./components/MDSAPMap";
 import { PrepNotePage } from "./components/PrepNotePage";
 import { SchedulePlanner } from "./components/SchedulePlanner";
+import { EddieTodayScreen } from "./eddie/EddieTodayScreen";
 
 export default function App() {
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -45,6 +46,9 @@ export default function App() {
         <Route path="/prep-notes" element={<PrepNotePage />} />
         {/* 프로젝트 일정 플래너 */}
         <Route path="/schedule" element={<SchedulePlanner />} />
+        {/* 에디의 하루 · 오늘 탭 시안 (별도 브랜드) */}
+        <Route path="/eddie" element={<EddieTodayScreen />} />
+        <Route path="/eddie/today" element={<EddieTodayScreen />} />
         <Route path="*" element={<CertHub />} />
       </Routes>
     </BrowserRouter>
