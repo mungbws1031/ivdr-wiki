@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Signal, Wifi, BatteryFull } from "lucide-react";
 import "./eddie.css";
 import { EddieClock } from "./components/EddieClock";
@@ -7,20 +8,74 @@ import { TopTasks } from "./components/TopTasks";
 import { MedicationCard } from "./components/MedicationCard";
 import { BottomTabBar } from "./components/BottomTabBar";
 import { QuickCaptureFab } from "./components/QuickCaptureFab";
+import { TaskSuggestModal } from "./components/TaskSuggestModal";
+import { RecoveryModal, type RecoveryAction } from "./components/RecoveryModal";
 import { HIDDEN_TASK_COUNT, MEDS, TASKS, TIMELINE } from "./data";
+import type { TimelineBlock, TodayTask } from "./data";
+import type { SuggestedSlot } from "./suggest";
 import { formatHHMM, useNow } from "./useNow";
 
 /**
  * 에디의 하루 · '오늘 탭' 화면 (390×844).
  * 구성: 에디 시계 + 출발 카운트다운 + 오늘 타임라인 + 할 일 3개 + 복약 카드.
+ * + 우선 설계 화면 2·3순위 모달: 할 일→타임블록 제안 / 실패·회복.
  *
  * 금지 패턴 준수:
  *  - 자책 문구 없음(놓침·이월은 담백/회복 톤).
  *  - 빠른 시계 오프셋 비노출(EddieClock).
- *  - 자동 배치 없음(할 일은 '시간 정하기' 제안 진입점만).
+ *  - 자동 배치 없음(할 일은 제안 모달에서 직접 수락해야 배치됨, R-07).
  *  - 정서적 과의존 유도 카피 없음(담백한 격려).
  */
 export function EddieTodayScreen() {
+  const [timeline, setTimeline] = useState<TimelineBlock[]>(TIMELINE);
+  const [tasks, setTasks] = useState<TodayTask[]>(TASKS);
+
+  const [suggestTask, setSuggestTask] = useState<TodayTask | null>(null);
+  const [recoveryBlock, setRecoveryBlock] = useState<TimelineBlock | null>(null);
+
+  // 할 일 → 타임블록 제안: 수락해야만 실제로 생긴다(자동 배치 금지, R-07).
+  const acceptSuggestion = (task: TodayTask, slot: SuggestedSlot) => {
+    const newBlock: TimelineBlock = {
+      id: `sug-${task.id}`,
+      time: slot.start,
+      span: `${task.estimateMin ?? 20}분`,
+      title: task.title,
+      status: "planned",
+      tag: "할일",
+    };
+    setTimeline((prev) => sortByTime([...prev.filter((b) => b.id !== newBlock.id), newBlock]));
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, scheduledAt: slot.start } : t)),
+    );
+    setSuggestTask(null);
+  };
+
+  const deferTaskToTomorrow = (task: TodayTask) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, deferredToTomorrow: true } : t)),
+    );
+    setSuggestTask(null);
+  };
+
+  // 실패·회복: 어떤 선택도 비난 없이 처리(R-02). 스트릭은 리셋되지 않음.
+  const resolveRecovery = (block: TimelineBlock, action: RecoveryAction) => {
+    setTimeline((prev) =>
+      prev.map((b) => {
+        if (b.id !== block.id) return b;
+        switch (action) {
+          case "now":
+            return { ...b, status: "done", recovered: true };
+          case "evening":
+            return { ...b, status: "deferred", time: "저녁", span: "재배치됨" };
+          case "tomorrow":
+            return { ...b, status: "deferred", time: "내일", span: "이월됨" };
+          case "pass":
+            return { ...b, status: "skipped", span: "패스" };
+        }
+      }),
+    );
+  };
+
   return (
     <div className="grid min-h-[100dvh] w-full place-items-center bg-[#EFE7DD] p-0 sm:p-6">
       {/* 디바이스 프레임 */}
@@ -33,8 +88,12 @@ export function EddieTodayScreen() {
 
           <div className="space-y-5">
             <DepartureCountdown />
-            <TodayTimeline blocks={TIMELINE} />
-            <TopTasks tasks={TASKS} hiddenCount={HIDDEN_TASK_COUNT} />
+            <TodayTimeline blocks={timeline} onRecover={setRecoveryBlock} />
+            <TopTasks
+              tasks={tasks}
+              hiddenCount={HIDDEN_TASK_COUNT}
+              onSchedule={setSuggestTask}
+            />
             <MedicationCard meds={MEDS} />
             <Footer />
           </div>
@@ -42,9 +101,42 @@ export function EddieTodayScreen() {
 
         <QuickCaptureFab />
         <BottomTabBar active="today" />
+
+        {/* 우선 설계 화면 2순위 — 할 일→타임블록 제안 모달 */}
+        <TaskSuggestModal
+          task={suggestTask}
+          open={suggestTask !== null}
+          onClose={() => setSuggestTask(null)}
+          onAccept={acceptSuggestion}
+          onDefer={deferTaskToTomorrow}
+        />
+
+        {/* 우선 설계 화면 3순위 — 실패·회복 모달(Flow 4, 가장 중요) */}
+        <RecoveryModal
+          block={recoveryBlock}
+          open={recoveryBlock !== null}
+          onClose={() => setRecoveryBlock(null)}
+          onResolve={resolveRecovery}
+        />
       </div>
     </div>
   );
+}
+
+/** "HH:MM" 블록을 앞쪽에, 단어 라벨("저녁"·"내일" 등)은 뒤로 보내는 정렬. */
+function sortByTime(blocks: TimelineBlock[]): TimelineBlock[] {
+  const parse = (s: string): number | null => {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(s);
+    return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
+  };
+  return [...blocks].sort((a, b) => {
+    const pa = parse(a.time);
+    const pb = parse(b.time);
+    if (pa !== null && pb !== null) return pa - pb;
+    if (pa !== null) return -1;
+    if (pb !== null) return 1;
+    return 0;
+  });
 }
 
 /** iOS 풍 상태바(목업) — 모바일 프레임 현실감. */

@@ -101,6 +101,16 @@
   .eddie-bob { animation: none; }
 }
 
+/* 바텀시트 등장 — 아래에서 부드럽게 */
+@keyframes eddie-sheet-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.eddie-sheet-rise { animation: eddie-sheet-rise 220ms ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .eddie-sheet-rise { animation: none; }
+}
+
 /* 디바이스 프레임 안 스크롤 영역 — 스크롤바 은은하게 */
 .eddie-scroll::-webkit-scrollbar { width: 6px; }
 .eddie-scroll::-webkit-scrollbar-thumb {

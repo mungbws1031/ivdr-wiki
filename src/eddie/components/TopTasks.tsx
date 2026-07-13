@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, CalendarClock, ChevronDown } from "lucide-react";
+import { Check, CalendarClock, ChevronDown, Clock3, Moon } from "lucide-react";
 import { SectionTitle } from "./TodayTimeline";
 import type { TodayTask } from "../data";
 
@@ -64,16 +64,30 @@ export function TopTasks({
                 {t.title}
               </span>
 
-              {/* 시간 정하기(제안 진입점) — 미완료일 때만 */}
+              {/* 상태별 우측 표시 — 미완료일 때만 */}
               {!isDone && (
-                <button
-                  type="button"
-                  onClick={() => onSchedule?.(t)}
-                  className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-primary-weak)] px-2.5 text-[12px] font-bold text-[var(--e-primary-deep)]"
-                >
-                  <CalendarClock size={14} strokeWidth={2.4} aria-hidden />
-                  시간 정하기
-                </button>
+                <>
+                  {t.scheduledAt ? (
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-done-bg)] px-2.5 py-1.5 text-[12px] font-bold text-[var(--e-done)]">
+                      <Clock3 size={14} strokeWidth={2.4} aria-hidden />
+                      {t.scheduledAt}에 예정
+                    </span>
+                  ) : t.deferredToTomorrow ? (
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-deferred-bg)] px-2.5 py-1.5 text-[12px] font-bold text-[var(--e-text-muted)]">
+                      <Moon size={14} strokeWidth={2.4} aria-hidden />
+                      내일로 이월
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onSchedule?.(t)}
+                      className="inline-flex min-h-[36px] shrink-0 items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-primary-weak)] px-2.5 text-[12px] font-bold text-[var(--e-primary-deep)]"
+                    >
+                      <CalendarClock size={14} strokeWidth={2.4} aria-hidden />
+                      시간 정하기
+                    </button>
+                  )}
+                </>
               )}
             </li>
           );
