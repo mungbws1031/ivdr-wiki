@@ -8,8 +8,12 @@
 /** 에디 감정 상태 — 블록 상태에 종속(IA §3). 과장 없는 4종. */
 export type EddieMood = "calm" | "happy" | "cheer" | "night";
 
-/** 타임블록 상태 — 색+아이콘+라벨 병행. '놓침'은 종착역이 아니라 회복 가능. */
-export type BlockStatus = "done" | "active" | "planned" | "missed" | "deferred";
+/**
+ * 타임블록 상태 — 색+아이콘+라벨 병행. '놓침'은 종착역이 아니라 회복 가능.
+ * 상태 다이어그램(IA §3): Planned→Active→Done / Active→Missed→Recovering→Done
+ * / Missed→Deferred→Planned / Missed→Skipped(비난 없음).
+ */
+export type BlockStatus = "done" | "active" | "planned" | "missed" | "deferred" | "skipped";
 
 export interface TimelineBlock {
   id: string;
@@ -21,6 +25,8 @@ export interface TimelineBlock {
   status: BlockStatus;
   /** 카테고리 태그(개인/업무/루틴 등) — 선택 */
   tag?: string;
+  /** Recovering 경로를 거쳐 완료됐는지 — '그냥 완료'와 다르게 담백히 축하(IA §3). */
+  recovered?: boolean;
 }
 
 export interface TodayTask {
@@ -29,6 +35,10 @@ export interface TodayTask {
   done: boolean;
   /** 예상 소요(분) — 블록 제안 시 참고 */
   estimateMin?: number;
+  /** 제안 수락으로 배정된 시각 라벨(있으면 '시간 정하기' 대신 표시) */
+  scheduledAt?: string;
+  /** 부드러운 이월 표시(자책 없음, FR-205) */
+  deferredToTomorrow?: boolean;
 }
 
 export type MedStatus = "planned" | "done" | "missed";

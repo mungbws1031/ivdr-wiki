@@ -6,6 +6,8 @@ import {
   Play,
   Circle,
   RotateCcw,
+  Sparkles,
+  X,
 } from "lucide-react";
 import type { BlockStatus, TimelineBlock } from "../data";
 
@@ -16,7 +18,7 @@ interface StatusMeta {
   Icon: ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
 }
 
-/** 색 + 아이콘 + 라벨을 항상 함께(색맹 배려, WCAG). 놓침·이월은 회색 계열. */
+/** 색 + 아이콘 + 라벨을 항상 함께(색맹 배려, WCAG). 놓침·이월·패스는 회색 계열. */
 const STATUS: Record<BlockStatus, StatusMeta> = {
   done: { label: "완료", color: "var(--e-done)", bg: "var(--e-done-bg)", Icon: Check },
   active: { label: "지금", color: "var(--e-active)", bg: "var(--e-active-bg)", Icon: Play },
@@ -28,26 +30,42 @@ const STATUS: Record<BlockStatus, StatusMeta> = {
     bg: "var(--e-deferred-bg)",
     Icon: CornerDownRight,
   },
+  skipped: { label: "패스", color: "var(--e-deferred)", bg: "var(--e-deferred-bg)", Icon: X },
 };
 
-export function TodayTimeline({ blocks }: { blocks: TimelineBlock[] }) {
+export function TodayTimeline({
+  blocks,
+  onRecover,
+}: {
+  blocks: TimelineBlock[];
+  onRecover?: (block: TimelineBlock) => void;
+}) {
   return (
     <section className="px-4" aria-label="오늘 타임라인">
       <SectionTitle title="오늘 하루" hint="흐름만 가볍게 훑어봐" />
 
       <ol className="relative mt-3">
         {blocks.map((b, i) => (
-          <TimelineRow key={b.id} block={b} last={i === blocks.length - 1} />
+          <TimelineRow key={b.id} block={b} last={i === blocks.length - 1} onRecover={onRecover} />
         ))}
       </ol>
     </section>
   );
 }
 
-function TimelineRow({ block, last }: { block: TimelineBlock; last: boolean }) {
+function TimelineRow({
+  block,
+  last,
+  onRecover,
+}: {
+  block: TimelineBlock;
+  last: boolean;
+  onRecover?: (block: TimelineBlock) => void;
+}) {
   const meta = STATUS[block.status];
   const active = block.status === "active";
-  const dimmed = block.status === "missed" || block.status === "deferred";
+  const dimmed =
+    block.status === "missed" || block.status === "deferred" || block.status === "skipped";
 
   return (
     <li className="relative flex gap-3">
@@ -93,6 +111,15 @@ function TimelineRow({ block, last }: { block: TimelineBlock; last: boolean }) {
         >
           <div className="flex items-center gap-2">
             <StatusPill meta={meta} />
+            {block.status === "done" && block.recovered && (
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold"
+                style={{ background: "var(--e-primary-weak)", color: "var(--e-primary-deep)" }}
+              >
+                <Sparkles size={11} strokeWidth={2.6} aria-hidden />
+                회복
+              </span>
+            )}
             {block.tag && (
               <span className="text-[11px] font-semibold text-[var(--e-text-subtle)]">
                 {block.tag}
@@ -119,7 +146,8 @@ function TimelineRow({ block, last }: { block: TimelineBlock; last: boolean }) {
           {block.status === "missed" && (
             <button
               type="button"
-              className="mt-1.5 inline-flex min-h-[36px] items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-missed-bg)] px-2.5 text-[12px] font-bold text-[var(--e-text-muted)]"
+              onClick={() => onRecover?.(block)}
+              className="mt-1.5 inline-flex min-h-[36px] items-center gap-1 rounded-[var(--e-r-sm)] bg-[var(--e-missed-bg)] px-2.5 text-[12px] font-bold text-[var(--e-text-muted)] active:opacity-80"
             >
               괜찮아 — 지금 할래? 옮길래?
               <ChevronRight size={14} strokeWidth={2.4} aria-hidden />
