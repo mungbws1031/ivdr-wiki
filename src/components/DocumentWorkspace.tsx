@@ -16,6 +16,8 @@ import {
   Files,
   PenLine,
   Home,
+  Square,
+  CheckSquare,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown, type DocTemplate } from "../data/documents";
@@ -42,7 +44,7 @@ import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
-import { hasDraft, docWithDrafts } from "../hooks/useDraftStore";
+import { hasDraft, docWithDrafts, getCheck, setCheck, countChecks, useStoreVersion } from "../hooks/useDraftStore";
 import type { CalcToolType } from "../data/documents";
 
 // 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
@@ -53,6 +55,93 @@ const CALC_LABEL: Record<CalcToolType, string> = {
   "risk-matrix": "위험 매트릭스",
   "mkt": "평균동력학적온도(MKT)",
 };
+
+// ── 작성 진척 바 (헤더) — 실제로 채운 섹션 수를 실시간 표시 ─────────
+function SectionProgress({ doc, color }: { doc: DocTemplate; color: string }) {
+  useStoreVersion(); // 초안 변경 시 리렌더
+  const total = doc.sections.length;
+  const written = doc.sections.reduce((n, _s, i) => (hasDraft(doc.id, i) ? n + 1 : n), 0);
+  const pct = total > 0 ? Math.round((written / total) * 100) : 0;
+  const done = written === total && total > 0;
+  return (
+    <div className="flex items-center gap-2.5" style={{ marginTop: "var(--s-3)", maxWidth: 420 }}>
+      <div
+        className="relative flex-1 overflow-hidden rounded-full"
+        style={{ height: 7, background: "var(--surface-2)" }}
+        role="progressbar"
+        aria-valuenow={written}
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-label={`섹션 ${written}/${total} 작성됨`}
+      >
+        <div
+          className="absolute inset-y-0 left-0 rounded-full"
+          style={{ width: `${pct}%`, background: done ? "var(--success)" : color, transition: "width .35s ease" }}
+        />
+      </div>
+      <span
+        className="font-bold shrink-0"
+        style={{ fontSize: "var(--t-xs)", color: done ? "var(--success)" : "var(--text-muted)" }}
+      >
+        {done ? "✓ 섹션 완료" : `섹션 ${written}/${total}`}
+      </span>
+    </div>
+  );
+}
+
+// ── 완료 체크리스트 (인터랙티브) — 클릭해 체크·저장 ────────────────
+function CompletionChecklist({ doc }: { doc: DocTemplate }) {
+  useStoreVersion(); // 체크 변경 시 리렌더
+  const total = doc.checklist.length;
+  const checked = countChecks(doc.id, total);
+  const allDone = checked === total && total > 0;
+  return (
+    <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+      <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
+        <ListChecks size={15} style={{ color: allDone ? "var(--success)" : "var(--text-muted)" }} aria-hidden />
+        <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>
+        <span
+          className="ml-auto font-bold"
+          style={{ fontSize: "var(--t-xs)", color: allDone ? "var(--success)" : "var(--text-subtle)" }}
+        >
+          {checked}/{total}
+        </span>
+      </div>
+      <ul className="flex flex-col" style={{ padding: "var(--s-2) var(--s-2)" }}>
+        {doc.checklist.map((c, i) => {
+          const on = getCheck(doc.id, i);
+          return (
+            <li key={i}>
+              <button
+                type="button"
+                onClick={() => setCheck(doc.id, i, !on)}
+                className="w-full flex items-start gap-2 rounded-[var(--r-sm)] text-left transition-colors hover:bg-bg"
+                style={{ padding: "6px 8px" }}
+                aria-pressed={on}
+              >
+                {on ? (
+                  <CheckSquare size={15} style={{ color: "var(--success)", flexShrink: 0, marginTop: 1 }} aria-hidden />
+                ) : (
+                  <Square size={15} style={{ color: "var(--text-subtle)", flexShrink: 0, marginTop: 1 }} aria-hidden />
+                )}
+                <span
+                  style={{
+                    fontSize: "var(--t-xs)",
+                    lineHeight: "var(--lh-base)",
+                    color: on ? "var(--text-subtle)" : "var(--text)",
+                    textDecoration: on ? "line-through" : "none",
+                  }}
+                >
+                  {c}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
 
 // ── 마크다운 복사 버튼 ──────────────────────────────────────────
 // 클릭 시점에 저장된 초안을 반영해 마크다운을 생성한다(빈 템플릿이 아닌 실제 작성 내용).
@@ -294,6 +383,9 @@ export function DocumentWorkspace() {
               {doc.purpose}
             </p>
 
+            {/* 작성 진척 — 실제 채운 섹션 수 (수동 상태 배지와 별개로 실시간 반영) */}
+            <SectionProgress doc={doc} color={color} />
+
             {/* 계산 필요 — 계산기를 개별 칩으로 가지런히 배열 (클릭 시 계산 영역으로 스크롤) */}
             {doc.calcTools && doc.calcTools.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5" style={{ marginTop: "var(--s-3)" }}>
@@ -441,22 +533,8 @@ export function DocumentWorkspace() {
             {/* 문구 라이브러리 */}
             <SnippetLibrary certTypeKey={certTypeKey} />
 
-            {/* 완료 체크리스트 */}
-            <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
-              <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
-                <ListChecks size={15} style={{ color: "var(--success)" }} aria-hidden />
-                <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>
-                <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>{doc.checklist.length}개</span>
-              </div>
-              <ul className="flex flex-col" style={{ gap: 4, padding: "var(--s-3) var(--s-4)" }}>
-                {doc.checklist.map((c, i) => (
-                  <li key={i} className="flex gap-2 text-text" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-                    <span aria-hidden style={{ color: "var(--text-subtle)", flexShrink: 0 }}>☐</span>
-                    <span>{c}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* 완료 체크리스트 (클릭해 체크·저장) */}
+            <CompletionChecklist doc={doc} />
 
             {/* 워드(.docx) 내보내기 — 완성 후 내보내는 도구 */}
             <DocxExport doc={doc} />
