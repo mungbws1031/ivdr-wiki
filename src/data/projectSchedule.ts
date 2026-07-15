@@ -75,3 +75,14 @@ export function getScheduleForCert(store: ScheduleStore, certType: string): Arra
     .map((m) => ({ milestone: m, date: store[m.key] ?? "" }))
     .filter((item) => item.date !== "");
 }
+
+/**
+ * "YYYY-MM-DD" 날짜 문자열을 로컬 자정 기준 Date로 파싱한다.
+ * new Date("YYYY-MM-DD")는 UTC 자정으로 해석돼, 로컬 자정 today와 비교 시
+ * 시간대(예: KST +9)에 따라 D-day가 하루 어긋날 수 있어 이를 방지한다.
+ */
+export function parseLocalDate(s: string): Date {
+  const [y, m, d] = s.split("-").map(Number);
+  if (!y || !m || !d) return new Date(NaN);
+  return new Date(y, m - 1, d);
+}
