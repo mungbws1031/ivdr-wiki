@@ -1,15 +1,71 @@
-# IVDR 여정 위키 (v1)
+# IVDR 여정 위키
 
-처음 보는 사람이 **글을 읽지 않고도** 한눈에 "전체 여정 + 지금 위치 + 다음 할 일"을
-파악하는 IVDR 인증 가이드. `ivdr-wiki-spec.md` 스펙 구현.
+체외진단 의료기기(IVD) 인증을 **처음 하는 사람이 글을 길게 읽지 않고도** "전체 여정 · 지금 위치 · 다음 할 일"을 한눈에 파악하고, 필요한 **제출 문서를 실제로 작성·내보내기**까지 할 수 있는 가이드 웹앱.
 
-> 판정 기준: *"3초 안에 전체 그림이 들어오는가?"*
+**배포:** https://mungbws1031.github.io/ivdr-wiki/
+
+> 판정 기준: *"3초 안에 전체 그림이 들어오는가?"* — 랜딩은 읽는 문서가 아니라 보는 지도다.
+
+---
+
+## 무엇을 하는가
+
+### 1. 4개 인증 여정 지도
+규제/인증 전 과정을 **페이즈 → 정거장** 구조의 시각 지도로 보여준다. 카드를 누르면 상세(본문·🧭지금 할 일·관련 조항)가 drawer로 점진적으로 열린다.
+
+| 인증 | 규정 | 정거장 | 문서 |
+|------|------|:---:|:---:|
+| **IVDR** | Regulation (EU) 2017/746 — CE 마킹 | 11 | 76 |
+| **ISO 13485** | ISO 13485:2016 — QMS 인증 | 10 | 전용 + 공통 |
+| **IVDD** | 98/79/EC — IVDR 전환 대응 | 7 | 전용 + 공통 |
+| **MDSAP** | 5개국(호주·브라질·캐나다·일본·미국) 단일 심사 | 7 | 전용 + 공통 |
+
+**공통 문서**(QMS·설계·위험·성능/기술 증거)는 한 번 작성하면 여러 인증에 재사용된다. 인증 간 문서 중복 관계는 `SchemeOverlap`에서 시각화한다.
+
+### 2. 문서 작성 워크스페이스 (`/doc/:id`)
+각 제출 문서마다 **"문서 작성 패키지"** 를 제공한다 — 한 문서를 쓰는 데 필요한 것을 한곳에 모은 탭 구성:
+
+- **가이드** — 3단계 작성 흐름 · 왜 쓰는가 · 작성 전 알아둘 것
+- **내용 소스** — 확보할 자료 · 준비물 · 선행 실험 · 인증·테스트
+- **지침서** — 근거 규정·조항 · 관련 개념(위키)
+- **참고 문서** — 먼저 만들면 좋은 선행 문서
+
+그 아래 **템플릿**을 인라인 편집기로 채운다. 입력은 `localStorage`에 **자동 저장**되고, 헤더의 **작성 진척 바**(섹션 n/m)와 사이드바의 **완료 체크리스트**(클릭해 체크·저장)로 진행도를 실시간 표시한다.
+
+### 3. 내보내기 — 작성한 내용 그대로
+- **MD 복사** — 작성한 내용을 마크다운으로 클립보드에 복사
+- **완성본 .docx 받기** — 템플릿 업로드 없이 바로 워드 완성본 다운로드
+- **내 워드 템플릿 채우기** — 회사 서식(.docx)에 표시자를 넣어 올리면 자동으로 내용을 채움
+
+모든 처리는 **브라우저에서만** 이뤄진다(서버 업로드 없음). `docx` / `docxtemplater` / `pizzip`은 사용할 때만 동적 로드된다.
+
+### 4. 내장 계산기 5종
+성능·위험·운송 관련 문서에는 해당 계산기가 문서 페이지에 내장되며, 헤더에 **"🧮 계산 필요"** 배지가 표시된다.
+
+| 계산기 | 용도 | 쓰이는 문서 |
+|--------|------|------|
+| 민감도·특이도 | 2×2 혼동행렬 → Se/Sp + 95% CI | 성능평가·이익위험 |
+| 검체수 산출 | 목표 성능·허용오차 → 최소 검체 수(Wilson) | 성능평가 |
+| 검출한계(LoD) | 농도별 검출률 → LoD 추정 | 성능평가·분석성능 |
+| 위험 매트릭스 | 발생확률 × 심각도 → 위험 등급 | 위험관리 |
+| MKT(평균 동력학적 온도) | 운송·보관 온도 로그 → 실효 온도·라벨 범위 판정 | 운송 밸리데이션 |
+
+### 5. 그 외
+- **개념 위키** (`/wiki`) — IVDR 조항·부속서·표준·핵심 개념 30여 개. 본문·템플릿의 용어를 누르면 연결된다.
+- **규제 역사** (`/history`) — 한국 의료기기 문서화 제도 60년 인포그래픽
+- **일정 플래너** (`/schedule`) — 인증별 마일스톤 날짜 설정 → 문서 페이지에 D-day로 반영
+- **사전 준비 체크리스트** (`/prep-notes`) — 인증별로 미리 준비해 둘 자료 목록
+- **문구 라이브러리** — 자주 쓰는 규제 문구 39종 + 내 문구 추가 + 구글 드라이브에서 가져오기
+
+---
 
 ## 스택
 
-- React 19 + Vite 6 + TypeScript + Tailwind CSS v4
+- **React 19** + **Vite 6** + **TypeScript 5.7** + **Tailwind CSS v4**
+- 라우팅(딥링크·코드 스플리팅): `react-router-dom` 7 — 라우트는 `React.lazy` + `Suspense`로 지연 로딩
+- 워드 내보내기: `docx` · `docxtemplater` · `pizzip` (동적 로드)
 - 아이콘: `lucide-react`
-- 라우팅(딥링크): `react-router-dom`
+- 저장소: 브라우저 `localStorage` (초안·체크·진척·일정) — 백엔드 없음
 - 디자인 토큰: `src/styles/tokens.css` → `src/index.css`의 `@theme inline`으로 Tailwind에 연결
 
 ## 실행
@@ -17,50 +73,51 @@
 ```bash
 npm install
 npm run dev        # 개발 서버 (http://localhost:5173)
-npm run build      # 타입체크 + 프로덕션 빌드
+npm run build      # 타입체크(tsc -b) + 프로덕션 빌드
 npm run preview    # 빌드 결과 미리보기
+npm run typecheck  # 타입체크만
 ```
 
-## 구조
+## 배포
+
+`main`에 푸시하면 GitHub Actions(`.github/workflows/deploy.yml`)가 빌드 후 **GitHub Pages**에 배포한다. `vite.config.ts`의 `base`는 빌드 시 `/ivdr-wiki/`로 설정된다.
+
+## 프로젝트 구조
 
 ```
 src/
-├─ index.css            # Tailwind + tokens.css 연결 (@theme inline) + 베이스
-├─ styles/tokens.css    # 70:25:5 + 8pt + AAA + 페이즈 5색 디자인 토큰
-├─ data/stations.ts     # ⭐ 콘텐츠 단일 출처 — 5 페이즈·11 정거장·전환 기한
-├─ lib/icons.tsx        # lucide kebab 이름 → 컴포넌트 매핑
-└─ components/
-   ├─ JourneyMap.tsx       # 랜딩 전체 지도 (scroll-spy, 딥링크 drawer)
-   ├─ PhaseNav.tsx         # sticky 페이즈 레일 (현재 위치 강조)
-   ├─ PhaseBand.tsx        # 페이즈 틴트 밴드 + 카드 그리드 (게슈탈트 공통영역)
-   ├─ StationCard.tsx      # 글랜서블 최소 단위 (번호·아이콘·상태칩·한 줄)
-   ├─ DecisionFork.tsx     # St2 분류 갈림길 히어로 (3갈래)
-   ├─ StationDetail.tsx    # 상세 drawer (본문·🧭지금할일·조항) — 점진적 공개
-   ├─ TransitionTimeline.tsx # 클래스별 전환 기한 타임라인
-   └─ StatusChip.tsx       # 색+아이콘+라벨 3중 신호 (IEC 62366)
+├─ App.tsx                  # 라우트 정의 (lazy + Suspense)
+├─ index.css                # Tailwind + tokens.css 연결(@theme inline) + 베이스
+├─ styles/tokens.css        # 70:25:5 · 8pt · AAA · 페이즈 5색 디자인 토큰
+├─ data/                    # ⭐ 콘텐츠 단일 출처
+│  ├─ stations.ts           #   IVDR 5 페이즈·11 정거장·전환 기한
+│  ├─ documents.ts          #   IVDR 문서 템플릿 + resolveDoc()/toMarkdown()
+│  ├─ docTree.ts            #   IVDR 제출 문서 트리 + 준비물·취지·지식 메타
+│  ├─ concepts.ts           #   개념 위키 항목
+│  ├─ snippets.ts           #   문구 라이브러리
+│  ├─ schemes.ts            #   인증 간 공통/전용 문서 관계
+│  ├─ progress.ts           #   문서 상태(미작성/작성중/완료) 관리
+│  ├─ projectSchedule.ts    #   마일스톤·일정 + parseLocalDate()
+│  └─ iso13485/ · ivdd/ · mdsap/   # 인증별 stations·documents·docTree
+├─ hooks/useDraftStore.ts   # 초안·체크 저장 + docWithDrafts() + useStoreVersion()
+├─ lib/
+│  ├─ docx.ts               #   워드 생성/채우기 (완성본·샘플·업로드)
+│  ├─ googleDrive.ts        #   드라이브에서 문구 가져오기
+│  └─ icons.tsx             #   lucide kebab 이름 → 컴포넌트 매핑
+└─ components/              # 여정 지도·문서 워크스페이스·패키지·계산기 등 (calcs/ 포함)
 ```
 
-**콘텐츠 수정은 `src/data/stations.ts` 한 곳에서만** 한다 — 글/조항 변경이 컴포넌트
-코드와 분리되어 유지보수가 쉽다.
+**콘텐츠 수정은 `src/data/`에서만** 한다 — 글·조항·문서 템플릿이 컴포넌트 코드와 분리돼 있어, 규제 내용이 바뀌어도 데이터 한 곳만 고치면 된다. 인증별 데이터는 각 하위 폴더(`iso13485/` 등)에 같은 구조로 있다.
 
-## 디자인 원칙 (스펙 §2·§6 준수)
+## 디자인 원칙
 
 - **Map-first** — 랜딩은 시각 지도, 본문은 카드 클릭 시 drawer로 점진 공개
-- **5단계 청킹** — 11정거장을 5 페이즈로 묶고 `--p1`~`--p5` 색상 코딩
-- **70:25:5** — SU Red(`--accent`)는 현재 위치/CTA에만. 페이즈색·상태색과 역할 분리
-- **3중 신호** — 모든 상태는 색 + 아이콘 + 라벨(텍스트). 색 단독 금지
-- **접근성** — AAA 본문 대비, 48px 터치 타깃, focus-ring, `prefers-reduced-motion` 존중,
-  키보드(`tab`/`enter`/`esc`) 지원
+- **5단계 청킹** — 정거장을 페이즈로 묶고 `--p1`~`--p5` 색으로 코딩
+- **70:25:5** — 액센트(SU Red)는 현재 위치·주요 CTA에만. 페이즈색·상태색과 역할 분리
+- **3중 신호** (IEC 62366) — 모든 상태는 색 + 아이콘 + 라벨. 색 단독 금지
+- **접근성** — AAA 본문 대비, 48px 터치 타깃, focus-ring, 키보드 지원, `prefers-reduced-motion` 존중
+- **한글 조판** — 제목·본문에 `word-break: keep-all`로 단어 단위 줄바꿈
 
-## 구현 상태
+---
 
-- [x] tokens.css → Tailwind 테마 연결, 베이스 레이아웃
-- [x] `stations.ts` 데이터 (부록 A 전체)
-- [x] StationCard → PhaseBand → **JourneyMap (랜딩 완성)**
-- [x] DecisionFork (St2 히어로)
-- [x] StationDetail drawer + 딥링크 (`/station/:id`)
-- [x] PhaseNav (sticky 현재 위치 레일 + scroll-spy)
-- [x] TransitionTimeline (전환 기한)
-- [ ] PhaseFilter (페이즈 필터 토글) — 후속
-- [ ] ProgressRail 완전판(정거장 단위 진행도) — 후속
-```
+> ⚠️ 본 앱은 **정보 제공용**이며 법적 자문이 아니다. 규제 사실은 작성 시점(2026.6 확인) 기준이며, 실제 제출 전 최신 관보·NB 요건으로 재확인해야 한다.
