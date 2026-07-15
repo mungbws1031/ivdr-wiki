@@ -8,6 +8,7 @@ import {
   type ScheduleStore,
   loadSchedule,
   saveSchedule,
+  parseLocalDate,
 } from "../data/projectSchedule";
 
 // =====================================================================
@@ -35,7 +36,7 @@ function Timeline({ store }: { store: ScheduleStore }) {
     for (const m of MILESTONES) {
       const raw = store[m.key];
       if (!raw) continue;
-      const d = new Date(raw);
+      const d = parseLocalDate(raw);
       if (!isNaN(d.getTime())) list.push({ milestone: m, date: d, dateStr: raw });
     }
     return list.sort((a, b) => a.date.getTime() - b.date.getTime());

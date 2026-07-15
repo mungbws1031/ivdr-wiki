@@ -19,7 +19,7 @@ import {
   Square,
   CheckSquare,
 } from "lucide-react";
-import { loadSchedule, getScheduleForCert, CERT_META } from "../data/projectSchedule";
+import { loadSchedule, getScheduleForCert, CERT_META, parseLocalDate } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown, type DocTemplate } from "../data/documents";
 import { isISO13485Doc } from "../data/schemes";
 import { useProgress, STATUS_LABEL, STATUS_NEXT, STATUS_COLOR } from "../data/progress";
@@ -248,15 +248,24 @@ export function DocumentWorkspace() {
     }
   })();
 
-  const station = doc
-    ? isISODoc
-      ? adaptISO13485Station(iso13485Stations.find((s) => s.id === doc.stationId)!)
-      : isIVDDDoc
-      ? ({ ...ivddStations.find((s) => s.id === doc.stationId)!, phase: "p1" as any } as any)
-      : isMDSAPDoc
-      ? ({ ...mdsapStations.find((s) => s.id === doc.stationId)!, phase: "p1" as any } as any)
-      : stations.find((s) => s.id === doc.stationId)
-    : undefined;
+  // 정거장 조회 — 매칭되는 정거장이 없으면 undefined로 두어 아래 not-found 가드가 처리한다.
+  // (논-널 단언 대신 안전 처리 — stationId 불일치 시 깨진 렌더 대신 친절한 안내 화면)
+  const station: Station | undefined = (() => {
+    if (!doc) return undefined;
+    if (isISODoc) {
+      const s = iso13485Stations.find((s) => s.id === doc.stationId);
+      return s ? adaptISO13485Station(s) : undefined;
+    }
+    if (isIVDDDoc) {
+      const s = ivddStations.find((s) => s.id === doc.stationId);
+      return s ? ({ ...s, phase: "p1" as any } as Station) : undefined;
+    }
+    if (isMDSAPDoc) {
+      const s = mdsapStations.find((s) => s.id === doc.stationId);
+      return s ? ({ ...s, phase: "p1" as any } as Station) : undefined;
+    }
+    return stations.find((s) => s.id === doc.stationId);
+  })();
 
   if (!doc || !station) {
     const NAV = [
@@ -322,7 +331,7 @@ export function DocumentWorkspace() {
     const today = new Date(); today.setHours(0,0,0,0);
     const upcoming = scheduleEntries
       .map(({ milestone, date }) => {
-        const d = new Date(date);
+        const d = parseLocalDate(date);
         return { label: milestone.label, diff: Math.ceil((d.getTime() - today.getTime()) / 86400000) };
       })
       .filter(x => x.diff >= 0)
@@ -552,7 +561,7 @@ export function DocumentWorkspace() {
                   </div>
                   <ul className="flex flex-col" style={{ gap: 4, padding: "var(--s-3) var(--s-4)" }}>
                     {scheduleEntries.map(({ milestone, date }) => {
-                      const d = new Date(date);
+                      const d = parseLocalDate(date);
                       const isPast = d < today;
                       const diffDays = Math.ceil((d.getTime() - today.getTime()) / 86400000);
                       return (
