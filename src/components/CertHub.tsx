@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine } from "lucide-react";
+import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
@@ -45,6 +45,92 @@ export function CertHub() {
             공통 문서는 한 번 작성하면 양쪽 인증에 반영됩니다.
           </p>
         </header>
+
+        {/* 처음이신가요? — 3단계 오리엔테이션 (규제가 처음이어도 30초면 감 잡을 수 있게) */}
+        <section
+          className="rounded-[var(--r-lg)] border"
+          style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-6) var(--s-8)", marginBottom: "var(--s-6)" }}
+        >
+          <div className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)", letterSpacing: "0.02em", marginBottom: "var(--s-4)", textTransform: "uppercase" }}>
+            처음이신가요? 이 앱은 이렇게 씁니다
+          </div>
+          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--s-5)" }}>
+            {([
+              { Icon: MapPinned, step: "1", title: "인증 선택 & 여정 확인", desc: "아래에서 내 상황에 맞는 인증을 고르면, 전체 여정과 지금 할 일이 지도로 보입니다." },
+              { Icon: FileEdit, step: "2", title: "정거장별 문서 작성", desc: "각 정거장의 문서 페이지에서 가이드를 보며 템플릿을 채웁니다. 자동 저장돼요." },
+              { Icon: Download, step: "3", title: "완성본 내보내기", desc: "MD 복사 또는 워드(.docx)로 바로 받아 제출·공유합니다." },
+            ] as const).map(({ Icon, step, title, desc }) => (
+              <div key={step} className="flex gap-3">
+                <span
+                  className="inline-flex items-center justify-center rounded-full shrink-0 font-bold"
+                  style={{ width: 28, height: 28, background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)" }}
+                  aria-hidden
+                >
+                  {step}
+                </span>
+                <div>
+                  <div className="flex items-center gap-1.5 font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 3 }}>
+                    <Icon size={14} style={{ color: "var(--text-muted)" }} aria-hidden />
+                    {title}
+                  </div>
+                  <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 어느 인증인지 모르겠다면 — 상황별 추천 (규제 초심자를 위한 진입 가이드) */}
+        <section
+          className="rounded-[var(--r-lg)] border"
+          style={{ borderColor: "var(--info)", background: "var(--info-bg)", padding: "var(--s-6) var(--s-8)", marginBottom: "var(--s-6)" }}
+        >
+          <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-4)" }}>
+            <HelpCircle size={17} style={{ color: "var(--info)" }} aria-hidden />
+            <span className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>어느 인증이 필요한지 모르겠다면?</span>
+          </div>
+          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "var(--s-4)" }}>
+            {([
+              {
+                situation: "EU에 처음 출시하는 신제품이다",
+                answer: "IVDR",
+                detail: "CE 마킹을 받으려면 IVDR이 필수입니다. QMS 기반으로 ISO 13485도 함께 준비하세요.",
+                to: "/ivdr",
+                color: "var(--accent)",
+              },
+              {
+                situation: "이미 IVDD 인증이 있고, IVDR 전환 기한이 다가온다",
+                answer: "IVDD → IVDR",
+                detail: "먼저 IVDD 여정에서 내 클래스의 전환 기한을 확인한 뒤 IVDR로 넘어가세요.",
+                to: "/ivdd",
+                color: "var(--p2)",
+              },
+              {
+                situation: "EU 외에 미국·캐나다·호주 등에도 동시 진출하고 싶다",
+                answer: "MDSAP",
+                detail: "ISO 13485 QMS를 기반으로 5개국 규제를 한 번의 심사로 동시에 충족합니다.",
+                to: "/mdsap",
+                color: "var(--p4)",
+              },
+            ] as const).map((r) => (
+              <Link
+                key={r.answer}
+                to={r.to}
+                className="flex flex-col rounded-[var(--r-md)] hover:shadow-sm transition-shadow"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)", padding: "var(--s-4)" }}
+              >
+                <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-2)" }}>
+                  "{r.situation}"
+                </p>
+                <div className="flex items-center gap-1.5 font-extrabold" style={{ color: r.color, fontSize: "var(--t-base)", marginBottom: 4 }}>
+                  {r.answer}
+                  <ArrowRight size={15} aria-hidden />
+                </div>
+                <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>{r.detail}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         {/* 인증 카드 */}
         <div
