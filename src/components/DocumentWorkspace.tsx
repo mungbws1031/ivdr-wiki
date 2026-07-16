@@ -32,6 +32,7 @@ function adaptISO13485Station(s: typeof iso13485Stations[0]): Station {
   return { ...s, phase: s.phase as any };
 }
 import { getIcon } from "../lib/icons";
+import { renderRich } from "../lib/richText";
 import { PageHeader } from "./PageHeader";
 import { DocxExport } from "./DocxExport";
 import { LevelMeter } from "./LevelMeter";
@@ -204,7 +205,7 @@ function DocInfoPanel({ doc, color }: { doc: ReturnType<typeof resolveDoc> & obj
             <div className="flex gap-2 rounded-[var(--r-sm)]" style={{ background: "var(--info-bg)", border: "1px solid var(--info)", padding: "var(--s-2) var(--s-3)", marginTop: "var(--s-2)" }}>
               <Lightbulb size={13} style={{ color: "var(--info)", flexShrink: 0, marginTop: 1 }} aria-hidden />
               <p className="text-text" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-                <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰는가</span> {doc.rationale}
+                <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰는가</span> {renderRich(doc.rationale)}
               </p>
             </div>
           )}

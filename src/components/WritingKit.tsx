@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ConceptChip } from "./ConceptChip";
+import { renderRich } from "../lib/richText";
 import {
   prereqKindLabel,
   leafById,
@@ -220,7 +221,7 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
                 <Lightbulb size={15} style={{ color: "var(--info)", flexShrink: 0, marginTop: 1 }} aria-hidden />
                 <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
                   <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰는가 </span>
-                  {doc.rationale}
+                  {renderRich(doc.rationale)}
                 </p>
               </div>
             )}
