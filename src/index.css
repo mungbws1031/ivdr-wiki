@@ -91,6 +91,9 @@ body {
   line-height: var(--lh-base);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* 한글 단어 중간에서 줄바꿈되지 않도록(예: "패키/지") 전체에 적용 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 * {

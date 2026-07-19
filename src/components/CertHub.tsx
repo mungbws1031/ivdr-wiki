@@ -40,7 +40,7 @@ export function CertHub() {
           </h1>
           <p
             className="text-text-muted"
-            style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 560, margin: "var(--s-4) auto 0" }}
+            style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 680, margin: "var(--s-4) auto 0" }}
           >
             공통 문서는 한 번 작성하면 양쪽 인증에 반영됩니다.
           </p>
