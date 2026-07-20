@@ -148,6 +148,31 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
+  /* 성공 대축하 모드 */
+  .overlay .card.win {
+    background: linear-gradient(160deg, #fffdf5, #fff1bd);
+    box-shadow: 0 0 0 6px #ffd75e, 0 14px 44px rgba(255, 170, 0, .5);
+  }
+  .overlay .card.win h2 {
+    background: linear-gradient(90deg, #ff5f6d, #ff9a3d, #2fbf71, #4f9cf7, #9b6ef3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: praisePulse .7s ease-in-out infinite alternate;
+  }
+  @keyframes praisePulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+  }
+  .overlay .card.win .big { animation: tada 1s ease infinite; }
+  @keyframes tada {
+    0%, 100% { transform: scale(1) rotate(0); }
+    20% { transform: scale(1.25) rotate(-8deg); }
+    40% { transform: scale(1.25) rotate(8deg); }
+    60% { transform: scale(1.18) rotate(-5deg); }
+    80% { transform: scale(1.1) rotate(5deg); }
+  }
+
   /* 콘페티 */
   .confetti {
     position: fixed;
@@ -176,9 +201,11 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: clamp(10px, 4vh, 40px);
+    gap: clamp(10px, 3vh, 28px);
+    overflow-y: auto;
   }
+  #menu .logo { margin-top: auto; }
+  #menu #trophyBtn { margin-bottom: auto; flex-shrink: 0; }
   #menu .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -200,7 +227,7 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    min-height: 130px;
+    min-height: 116px;
   }
   .gamecard:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,.13); }
   .gamecard .emoji { font-size: clamp(44px, 11vw, 60px); }
@@ -216,6 +243,92 @@
     color: #7a4c00;
   }
   #trophyBtn:active { box-shadow: 0 2px 0 #cf8420; }
+
+  /* ---------- 비행기 슈팅 ---------- */
+  #plane .stage {
+    flex: 1;
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(#16255c, #35509e 65%, #5f7fc9);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.35);
+    touch-action: none;
+    cursor: pointer;
+  }
+  #plane canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #plane .hint {
+    position: absolute;
+    left: 0; right: 0; top: 10%;
+    text-align: center;
+    font-size: clamp(17px, 4.4vw, 22px);
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,.45);
+    pointer-events: none;
+  }
+
+  /* ---------- 버블 팡팡 ---------- */
+  #bubble .pond {
+    flex: 1;
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(#c9f0ff, #8ddcf8 55%, #5fc0ea);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.5);
+  }
+  .bub {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.85);
+    box-shadow: inset -6px -8px 14px rgba(0,0,0,.08), inset 6px 8px 14px rgba(255,255,255,.5);
+    cursor: pointer;
+    will-change: transform;
+  }
+  .bub.pop {
+    transition: transform .16s, opacity .16s;
+    transform: scale(1.7) !important;
+    opacity: 0;
+  }
+
+  /* ---------- 사진 퍼즐 ---------- */
+  #puzzle .hud { align-items: center; }
+  #puzRef {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #fff;
+    box-shadow: 0 3px 0 rgba(0,0,0,.15);
+  }
+  .puzwrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 8px;
+    min-height: 0;
+  }
+  .puzboard {
+    display: grid;
+    gap: 4px;
+    background: rgba(255,255,255,.75);
+    padding: 6px;
+    border-radius: 18px;
+    box-shadow: 0 6px 0 rgba(0,0,0,.12);
+  }
+  .ptile {
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .ptile.sel {
+    outline: 4px solid #ff8a3d;
+    transform: scale(1.06);
+    z-index: 1;
+  }
 
   /* ---------- 트로피 방 ---------- */
   #trophy .body {
@@ -463,9 +576,74 @@
       <span class="name">숫자 세기</span>
       <span class="best" id="bestQuiz"></span>
     </button>
+    <button class="gamecard" data-game="plane">
+      <span class="emoji">🚀</span>
+      <span class="name">비행기 슈팅</span>
+      <span class="best" id="bestPlane"></span>
+    </button>
+    <button class="gamecard" data-game="bubble">
+      <span class="emoji">🫧</span>
+      <span class="name">버블 팡팡</span>
+      <span class="best" id="bestBubble"></span>
+    </button>
+    <button class="gamecard" data-game="puzzle" style="grid-column: span 2">
+      <span class="emoji">🧩</span>
+      <span class="name">사진 퍼즐</span>
+      <span class="best" id="bestPuzzle"></span>
+    </button>
   </div>
   <button class="bigbtn" id="trophyBtn">🏆 트로피 방</button>
   </div>
+</div>
+
+<!-- ================= 비행기 슈팅 ================= -->
+<div id="plane" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home">🏠</button>
+    <div class="title">🚀 비행기 슈팅</div>
+    <div style="width:64px"></div>
+  </div>
+  <div class="hud">
+    <div class="pill" id="planeLevel">레벨 1</div>
+    <div class="pill" id="planeScore">⭐ 0</div>
+    <div class="pill" id="planeTarget">🎯 15</div>
+  </div>
+  <div class="stage sky" id="planeStage">
+    <canvas id="planeCanvas"></canvas>
+    <div class="hint" id="planeHint">손가락을 움직여서 조종해요!<br>총알은 자동으로 나가요 ✨</div>
+  </div>
+</div>
+
+<!-- ================= 버블 팡팡 ================= -->
+<div id="bubble" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home">🏠</button>
+    <div class="title">🫧 버블 팡팡</div>
+    <div style="width:64px"></div>
+  </div>
+  <div class="hud">
+    <div class="pill" id="bubLevel">레벨 1</div>
+    <div class="pill" id="bubTime">⏰ 30</div>
+    <div class="pill" id="bubScore">⭐ 0</div>
+    <div class="pill" id="bubTarget">🎯 15</div>
+  </div>
+  <div class="pond" id="bubPond"></div>
+</div>
+
+<!-- ================= 사진 퍼즐 ================= -->
+<div id="puzzle" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home">🏠</button>
+    <div class="title">🧩 사진 퍼즐</div>
+    <button class="iconbtn" id="puzPick">📷</button>
+  </div>
+  <div class="hud">
+    <div class="pill" id="puzLevel">레벨 1</div>
+    <div class="pill" id="puzMoves">바꾼 횟수 0</div>
+    <img id="puzRef" alt="완성 그림" />
+  </div>
+  <div class="puzwrap"><div class="puzboard" id="puzBoard"></div></div>
+  <input type="file" id="puzFile" accept="image/*" style="display:none" />
 </div>
 
 <!-- ================= 트로피 방 ================= -->
@@ -643,6 +821,57 @@ function confetti(n = 30) {
   }
 }
 
+/* ---------- 칭찬 대폭발 ---------- */
+const PRAISES = [
+  '우와~ 대박!! 🎉', '천재 아니야?! 🤩', '최고야 최고! 👍', '완전 멋져! ✨',
+  '박수 짝짝짝! 👏', '우리 챔피언! 🏆', '진짜 잘한다! 💯', '와, 놀라운데?! 🚀',
+  '짱이야 짱! 🌟', '반짝반짝 빛나!! 💎',
+];
+const praise = () => PRAISES[Math.floor(Math.random() * PRAISES.length)];
+function speak(text) {
+  if (muted) return;
+  try {
+    const clean = text.replace(/[^\p{L}\p{N}\s!?~,.]/gu, '').trim();
+    if (!clean || !window.speechSynthesis) return;
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang = 'ko-KR';
+    u.pitch = 1.3;
+    u.rate = 0.95;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch {}
+}
+function applause() {
+  if (muted) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    for (let i = 0; i < 12; i++) {
+      const t = audioCtx.currentTime + i * 0.085 + Math.random() * 0.03;
+      const dur = 0.06;
+      const buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * dur), audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let j = 0; j < d.length; j++) d[j] = (Math.random() * 2 - 1) * (1 - j / d.length);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const bp = audioCtx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 900 + Math.random() * 700;
+      const g = audioCtx.createGain();
+      g.gain.value = 0.22;
+      src.connect(bp).connect(g).connect(audioCtx.destination);
+      src.start(t);
+    }
+  } catch {}
+}
+function celebrate(msg) {
+  sfx.win();
+  applause();
+  confetti(70);
+  setTimeout(() => confetti(50), 550);
+  speak(msg);
+}
+
 /* ---------- 레벨 잠금/클리어 ---------- */
 const MAX_LEVEL = 3;
 const unlockedLv = (g) => Math.min(MAX_LEVEL, Number(store.get('unlock:' + g) || 1));
@@ -654,8 +883,8 @@ function clearLevel(g, lv) {
 
 /* ---------- 화면 전환 ---------- */
 let current = 'menu';
-const games = { memory: null, mole: null, runner: null, quiz: null }; // start functions (level 인자)
-const stoppers = { memory: null, mole: null, runner: null, quiz: null }; // cleanup functions
+const games = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null }; // start functions (level 인자)
+const stoppers = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null }; // cleanup functions
 function show(id) {
   if (stoppers[current]) { stoppers[current](); }
   document.querySelectorAll('.screen').forEach((s) => s.classList.remove('on'));
@@ -673,6 +902,9 @@ const TRO_GAMES = [
   { key: 'mole', emoji: '🐹', name: '두더지 잡기', best: 'best:mole' },
   { key: 'runner', emoji: '🦖', name: '점프 공룡', best: 'best:runner' },
   { key: 'quiz', emoji: '🍎', name: '숫자 세기', best: 'best:quiz' },
+  { key: 'plane', emoji: '🚀', name: '비행기 슈팅', best: 'best:plane' },
+  { key: 'bubble', emoji: '🫧', name: '버블 팡팡', best: 'best:bubble' },
+  { key: 'puzzle', emoji: '🧩', name: '사진 퍼즐', best: null },
 ];
 function renderTrophy() {
   const list = $('#troList');
@@ -699,8 +931,7 @@ function renderTrophy() {
   const champ = $('#troChamp');
   if (cups === TRO_GAMES.length) {
     champ.innerHTML = '<div class="champbox">👑 미니게임 챔피언! 👑<small>트로피를 전부 다 모았어!</small></div>';
-    sfx.win();
-    confetti(60);
+    celebrate('우와, 미니게임 챔피언이야! 정말 정말 대단해!');
   } else {
     champ.innerHTML = `<div class="pill" style="display:inline-block">🏆 ${cups} / ${TRO_GAMES.length} 모았어! 레벨 3까지 깨면 트로피를 받아요</div>`;
   }
@@ -708,7 +939,7 @@ function renderTrophy() {
 $('#trophyBtn').addEventListener('pointerdown', () => { sfx.tap(); show('trophy'); });
 
 /* ---------- 레벨 선택 ---------- */
-const GAME_EMOJI = { memory: '🐘', mole: '🐹', runner: '🦖', quiz: '🍎' };
+const GAME_EMOJI = { memory: '🐘', mole: '🐹', runner: '🦖', quiz: '🍎', plane: '🚀', bubble: '🫧', puzzle: '🧩' };
 const lvOverlay = $('#lvOverlay');
 function showLevelSelect(g) {
   $('#lvEmoji').textContent = GAME_EMOJI[g];
@@ -755,6 +986,9 @@ function refreshBests() {
   set('#bestMole', 'mole', 'best:mole', '점');
   set('#bestRunner', 'runner', 'best:runner', '점');
   set('#bestQuiz', 'quiz', 'best:quiz', '점');
+  set('#bestPlane', 'plane', 'best:plane', '점');
+  set('#bestBubble', 'bubble', 'best:bubble', '점');
+  set('#bestPuzzle', 'puzzle', null, '');
 }
 refreshBests();
 
@@ -762,13 +996,14 @@ refreshBests();
 const overlay = $('#overlay');
 let retryFn = null;
 let nextFn = null;
-function showOverlay({ emoji, title, text, onRetry, onNext }) {
+function showOverlay({ emoji, title, text, onRetry, onNext, win }) {
   $('#ovEmoji').textContent = emoji;
   $('#ovTitle').textContent = title;
   $('#ovText').textContent = text;
   retryFn = onRetry;
   nextFn = onNext || null;
   $('#ovNext').style.display = nextFn ? '' : 'none';
+  overlay.querySelector('.card').classList.toggle('win', !!win);
   overlay.classList.add('on');
 }
 function hideOverlay() {
@@ -839,12 +1074,13 @@ games.memory = function startMemory(level = 1) {
         if (matched === pairsN) {
           clearLevel('memory', level);
           setTimeout(() => {
-            sfx.win();
-            confetti(50);
+            const p = praise();
+            celebrate(p);
             showOverlay({
               emoji: '🎉',
-              title: `레벨 ${level} 성공!`,
-              text: `${moves}번 만에 다 맞췄어요!`,
+              title: p,
+              text: `레벨 ${level} 성공! ${moves}번 만에 다 맞췄어요!`,
+              win: true,
               onRetry: () => startMemory(level),
               onNext: level < MAX_LEVEL ? () => startMemory(level + 1) : null,
             });
@@ -948,19 +1184,21 @@ window.addEventListener('resize', () => {
         clearTimers();
         const isBest = saveBest('mole', score);
         const success = score >= conf.target;
+        let p = '';
         if (success) {
           clearLevel('mole', moleLv);
-          sfx.win();
-          confetti(40);
+          p = praise();
+          celebrate(p);
         } else {
           sfx.bad();
         }
         showOverlay({
           emoji: success ? (isBest ? '👑' : '🎉') : '🐹',
-          title: success ? `레벨 ${moleLv} 성공!` : '조금만 더!',
+          title: success ? p : '조금만 더!',
           text: success
-            ? `두더지를 ${score}마리나 잡았어요!`
+            ? `레벨 ${moleLv} 성공! 두더지를 ${score}마리나 잡았어요!`
             : `${score}마리 잡았어요. ${conf.target}마리 잡으면 성공!`,
+          win: success,
           onRetry: () => games.mole(moleLv),
           onNext: success && moleLv < MAX_LEVEL ? () => games.mole(moleLv + 1) : null,
         });
@@ -1041,12 +1279,13 @@ window.addEventListener('resize', () => {
       stop();
       clearLevel('runner', runLv);
       saveBest('runner', Math.floor(state.score));
-      sfx.win();
-      confetti(40);
+      const p = praise();
+      celebrate(p);
       showOverlay({
         emoji: '🎉',
-        title: `레벨 ${runLv} 성공!`,
-        text: `${conf.target}점까지 달렸어요!`,
+        title: p,
+        text: `레벨 ${runLv} 성공! ${conf.target}점까지 달렸어요!`,
+        win: true,
         onRetry: () => games.runner(runLv),
         onNext: runLv < MAX_LEVEL ? () => games.runner(runLv + 1) : null,
       });
@@ -1207,20 +1446,22 @@ window.addEventListener('resize', () => {
   function finish() {
     const isBest = saveBest('quiz', score);
     const success = score >= PASS;
+    let p = '';
     if (success) {
       clearLevel('quiz', quizLv);
-      sfx.win();
-      confetti(40);
+      p = praise();
+      celebrate(p);
     } else {
       sfx.bad();
     }
     const stars = score >= 9 ? '🌟🌟🌟' : score >= 6 ? '🌟🌟' : '🌟';
     showOverlay({
       emoji: success ? (isBest ? '👑' : '🎉') : '🍎',
-      title: success ? `레벨 ${quizLv} 성공!` : '조금만 더!',
+      title: success ? p : '조금만 더!',
       text: success
-        ? `10문제 중에 ${score}개를 맞혔어요! ${stars}`
+        ? `레벨 ${quizLv} 성공! 10문제 중에 ${score}개를 맞혔어요! ${stars}`
         : `${score}개 맞혔어요. ${PASS}개 맞히면 성공!`,
+      win: success,
       onRetry: () => games.quiz(quizLv),
       onNext: success && quizLv < MAX_LEVEL ? () => games.quiz(quizLv + 1) : null,
     });
@@ -1233,6 +1474,430 @@ window.addEventListener('resize', () => {
     $('#quizLevel').textContent = '레벨 ' + level;
     $('#quizScore').textContent = '⭐ 0';
     nextRound();
+  };
+})();
+
+/* ============================================================
+   5. 비행기 슈팅 (손가락으로 조종, 자동 발사)
+============================================================ */
+(function setupPlane() {
+  const stage = $('#planeStage');
+  const canvas = $('#planeCanvas');
+  const ctx = canvas.getContext('2d');
+  // 레벨별: 적 등장 간격(ms) / 적 속도 / 목표 격추 수
+  const CONF = [
+    { spawn: 1300, espd: 1.3, target: 15 },
+    { spawn: 1000, espd: 1.8, target: 30 },
+    { spawn: 800, espd: 2.3, target: 45 },
+  ];
+  const ENEMIES = ['🛸', '👾', '🎈'];
+  let conf = CONF[0];
+  let lv = 1;
+  let raf = null;
+  let running = false;
+  let px = 0, targetX = 0, score = 0;
+  let bullets = [], enemies = [], booms = [], bgStars = [];
+  let lastFire = 0, lastSpawn = 0;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = stage.clientWidth * dpr;
+    canvas.height = stage.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function steer(e) {
+    const r = stage.getBoundingClientRect();
+    targetX = e.clientX - r.left;
+    $('#planeHint').style.display = 'none';
+  }
+  stage.addEventListener('pointerdown', steer);
+  stage.addEventListener('pointermove', steer);
+
+  function stop() {
+    running = false;
+    cancelAnimationFrame(raf);
+    raf = null;
+  }
+  stoppers.plane = stop;
+
+  function loop(ts) {
+    const W = stage.clientWidth;
+    const H = stage.clientHeight;
+    const size = Math.max(36, Math.min(54, W * 0.11));
+    const planeY = H - size;
+    px += (targetX - px) * 0.22;
+    px = Math.max(size / 2, Math.min(W - size / 2, px));
+
+    if (ts - lastFire > 320) { lastFire = ts; bullets.push({ x: px, y: planeY - size * 0.6 }); }
+    if (ts - lastSpawn > conf.spawn) {
+      lastSpawn = ts;
+      enemies.push({
+        x: size / 2 + Math.random() * (W - size),
+        y: -30,
+        vy: conf.espd + Math.random() * 0.6,
+        ph: Math.random() * 6.28,
+        em: ENEMIES[Math.floor(Math.random() * ENEMIES.length)],
+      });
+    }
+
+    bullets.forEach((b) => { b.y -= 8; });
+    enemies.forEach((en) => { en.y += en.vy; en.x += Math.sin(en.y / 40 + en.ph) * 0.8; });
+    for (const en of enemies) {
+      for (const b of bullets) {
+        if (!en.dead && !b.dead && Math.abs(b.x - en.x) < size * 0.45 && Math.abs(b.y - en.y) < size * 0.45) {
+          en.dead = true;
+          b.dead = true;
+          booms.push({ x: en.x, y: en.y, t: 12 });
+          score++;
+          sfx.bonk();
+        }
+      }
+    }
+    bullets = bullets.filter((b) => !b.dead && b.y > -20);
+    enemies = enemies.filter((en) => !en.dead && en.y < H + 40);
+    $('#planeScore').textContent = '⭐ ' + score;
+
+    // 그리기
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    bgStars.forEach((s) => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill(); });
+    ctx.fillStyle = '#ffe066';
+    bullets.forEach((b) => { ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, 7); ctx.fill(); });
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = size * 0.9 + 'px sans-serif';
+    enemies.forEach((en) => ctx.fillText(en.em, en.x, en.y));
+    booms.forEach((bm) => { ctx.fillText('💥', bm.x, bm.y); bm.t--; });
+    booms = booms.filter((bm) => bm.t > 0);
+    ctx.save();
+    ctx.translate(px, planeY);
+    ctx.rotate(-Math.PI / 4); // 🚀가 위를 보게
+    ctx.font = size + 'px sans-serif';
+    ctx.fillText('🚀', 0, 0);
+    ctx.restore();
+
+    if (score >= conf.target) {
+      stop();
+      clearLevel('plane', lv);
+      saveBest('plane', score);
+      const p = praise();
+      celebrate(p);
+      showOverlay({
+        emoji: '🎉',
+        title: p,
+        text: `레벨 ${lv} 성공! 우주선을 ${score}대나 맞혔어요!`,
+        win: true,
+        onRetry: () => games.plane(lv),
+        onNext: lv < MAX_LEVEL ? () => games.plane(lv + 1) : null,
+      });
+      return;
+    }
+    const crash = enemies.some((en) => Math.abs(en.x - px) < size * 0.5 && Math.abs(en.y - planeY) < size * 0.5);
+    if (crash) {
+      stop();
+      saveBest('plane', score);
+      sfx.bad();
+      showOverlay({
+        emoji: '🚀',
+        title: '아이쿠! 부딪혔어!',
+        text: `${score}대 맞혔어요. ${conf.target}대 맞히면 성공!`,
+        onRetry: () => games.plane(lv),
+      });
+      return;
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  games.plane = function startPlane(level = 1) {
+    stop();
+    resize();
+    lv = level;
+    conf = CONF[level - 1];
+    score = 0;
+    bullets = []; enemies = []; booms = [];
+    lastFire = 0; lastSpawn = 0;
+    px = targetX = stage.clientWidth / 2;
+    bgStars = Array.from({ length: 26 }, () => ({
+      x: Math.random() * stage.clientWidth,
+      y: Math.random() * stage.clientHeight,
+      r: 0.6 + Math.random() * 1.8,
+    }));
+    $('#planeLevel').textContent = '레벨 ' + level;
+    $('#planeScore').textContent = '⭐ 0';
+    $('#planeTarget').textContent = '🎯 ' + conf.target;
+    $('#planeHint').style.display = '';
+    running = true;
+    raf = requestAnimationFrame(loop);
+  };
+})();
+
+/* ============================================================
+   6. 버블 팡팡 (올라오는 방울을 탭해서 터뜨리기)
+============================================================ */
+(function setupBubble() {
+  const pond = $('#bubPond');
+  // 레벨별: 방울 등장 간격(ms) / 올라가는 시간(ms) / 목표 개수 / 폭탄 확률
+  const CONF = [
+    { spawn: 900, rise: 7000, target: 15, bomb: 0 },
+    { spawn: 700, rise: 5500, target: 25, bomb: 0 },
+    { spawn: 550, rise: 4200, target: 30, bomb: 0.2 },
+  ];
+  const ANIMALS = ['🐠', '🐟', '🐡', '🦀', '🐙', '🐢', '⭐', '🦄'];
+  let conf = CONF[0];
+  let lv = 1, score = 0, timeLeft = 30;
+  let spawnId = null, timerId = null;
+
+  function clearAll() {
+    clearInterval(spawnId);
+    clearInterval(timerId);
+    spawnId = timerId = null;
+    pond.querySelectorAll('.bub').forEach((b) => b.remove());
+  }
+  stoppers.bubble = clearAll;
+
+  function spawnBub() {
+    const H = pond.clientHeight;
+    const W = pond.clientWidth;
+    const d = 54 + Math.random() * 36;
+    const isBomb = Math.random() < conf.bomb;
+    const el = document.createElement('div');
+    el.className = 'bub';
+    el.style.width = el.style.height = d + 'px';
+    el.style.left = Math.random() * Math.max(1, W - d) + 'px';
+    el.style.bottom = -d + 'px';
+    el.style.fontSize = d * 0.5 + 'px';
+    if (isBomb) {
+      el.style.background = 'radial-gradient(circle at 30% 30%, #888, #222)';
+      el.textContent = '💣';
+    } else {
+      const hue = Math.floor(Math.random() * 360);
+      el.style.background = `radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), hsla(${hue}, 85%, 70%, .8))`;
+      el.textContent = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
+    }
+    pond.appendChild(el);
+    const anim = el.animate(
+      [{ transform: 'translateY(0)' }, { transform: `translateY(-${H + d * 2}px)` }],
+      { duration: conf.rise + Math.random() * 1200, easing: 'linear' }
+    );
+    anim.onfinish = () => el.remove();
+    el.addEventListener('pointerdown', () => {
+      if (el.classList.contains('pop')) return;
+      el.style.transform = getComputedStyle(el).transform; // 지금 위치에 고정
+      anim.cancel();
+      el.classList.add('pop');
+      if (isBomb) {
+        score = Math.max(0, score - 2);
+        el.textContent = '💥';
+        sfx.bad();
+      } else {
+        score++;
+        el.textContent = '✨';
+        sfx.bonk();
+      }
+      $('#bubScore').textContent = '⭐ ' + score;
+      setTimeout(() => el.remove(), 200);
+    });
+  }
+
+  games.bubble = function startBubble(level = 1) {
+    clearAll();
+    lv = level;
+    conf = CONF[level - 1];
+    score = 0;
+    timeLeft = 30;
+    $('#bubLevel').textContent = '레벨 ' + level;
+    $('#bubScore').textContent = '⭐ 0';
+    $('#bubTime').textContent = '⏰ 30';
+    $('#bubTarget').textContent = '🎯 ' + conf.target;
+    spawnBub();
+    spawnId = setInterval(spawnBub, conf.spawn);
+    timerId = setInterval(() => {
+      timeLeft--;
+      $('#bubTime').textContent = '⏰ ' + timeLeft;
+      if (timeLeft <= 0) {
+        clearAll();
+        const isBest = saveBest('bubble', score);
+        const success = score >= conf.target;
+        let p = '';
+        if (success) {
+          clearLevel('bubble', lv);
+          p = praise();
+          celebrate(p);
+        } else {
+          sfx.bad();
+        }
+        showOverlay({
+          emoji: success ? (isBest ? '👑' : '🎉') : '🫧',
+          title: success ? p : '조금만 더!',
+          text: success
+            ? `레벨 ${lv} 성공! 방울을 ${score}개나 터뜨렸어요!`
+            : `${score}개 터뜨렸어요. ${conf.target}개면 성공!`,
+          win: success,
+          onRetry: () => games.bubble(lv),
+          onNext: success && lv < MAX_LEVEL ? () => games.bubble(lv + 1) : null,
+        });
+      }
+    }, 1000);
+  };
+})();
+
+/* ============================================================
+   7. 사진 퍼즐 (두 조각을 차례로 탭하면 자리 바꾸기)
+   📷 버튼으로 내 사진 선택 — 사진은 이 기기에만 저장됨
+============================================================ */
+(function setupPuzzle() {
+  const board = $('#puzBoard');
+  const wrap = document.querySelector('#puzzle .puzwrap');
+  const refImg = $('#puzRef');
+  const fileInput = $('#puzFile');
+  let lv = 1, colsN = 2;
+  let imgURL = null;
+  let perm = [], sel = -1, moves = 0, done = false;
+
+  function defaultImage() {
+    const c = document.createElement('canvas');
+    c.width = c.height = 600;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, 0, 600);
+    grad.addColorStop(0, '#8ec9ff');
+    grad.addColorStop(0.68, '#cef0da');
+    grad.addColorStop(1, '#8bd06b');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 600, 600);
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    const put = (em, x, y, s) => { g.font = s + 'px sans-serif'; g.fillText(em, x, y); };
+    put('☀️', 95, 95, 110);
+    put('🌈', 330, 130, 190);
+    put('☁️', 520, 90, 85);
+    put('🦋', 320, 285, 75);
+    put('🦖', 170, 430, 175);
+    put('🦕', 450, 410, 150);
+    put('🌳', 75, 510, 105);
+    put('🌷', 530, 540, 70);
+    return c.toDataURL('image/png');
+  }
+
+  function setImage(url) {
+    imgURL = url;
+    refImg.src = url;
+  }
+
+  function paint(t, piece, tileSize) {
+    const r = Math.floor(piece / colsN);
+    const c = piece % colsN;
+    t.style.backgroundImage = `url(${imgURL})`;
+    t.style.backgroundSize = `${tileSize * colsN}px ${tileSize * colsN}px`;
+    t.style.backgroundPosition = `-${c * tileSize}px -${r * tileSize}px`;
+  }
+
+  function buildBoard() {
+    board.innerHTML = '';
+    sel = -1;
+    moves = 0;
+    done = false;
+    $('#puzMoves').textContent = '바꾼 횟수 0';
+    const n = colsN * colsN;
+    perm = shuffle(Array.from({ length: n }, (_, i) => i));
+    if (perm.every((v, i) => v === i)) [perm[0], perm[1]] = [perm[1], perm[0]];
+    const side = Math.min(wrap.clientWidth, wrap.clientHeight) - 16;
+    const tileSize = Math.floor((side - 12 - 4 * (colsN - 1)) / colsN);
+    board.style.gridTemplateColumns = `repeat(${colsN}, ${tileSize}px)`;
+    board.style.gridAutoRows = tileSize + 'px';
+    for (let pos = 0; pos < n; pos++) {
+      const t = document.createElement('div');
+      t.className = 'ptile';
+      paint(t, perm[pos], tileSize);
+      t.addEventListener('pointerdown', () => tapTile(pos, tileSize));
+      board.appendChild(t);
+    }
+  }
+
+  function tapTile(i, tileSize) {
+    if (done) return;
+    const tiles = [...board.children];
+    if (sel === -1) {
+      sel = i;
+      tiles[i].classList.add('sel');
+      sfx.tap();
+      return;
+    }
+    if (sel === i) {
+      tiles[i].classList.remove('sel');
+      sel = -1;
+      sfx.tap();
+      return;
+    }
+    const a = sel;
+    tiles[a].classList.remove('sel');
+    sel = -1;
+    [perm[a], perm[i]] = [perm[i], perm[a]];
+    paint(tiles[a], perm[a], tileSize);
+    paint(tiles[i], perm[i], tileSize);
+    moves++;
+    $('#puzMoves').textContent = '바꾼 횟수 ' + moves;
+    if (perm[a] === a || perm[i] === i) sfx.good(); else sfx.tap();
+    if (perm.every((v, idx) => v === idx)) {
+      done = true;
+      clearLevel('puzzle', lv);
+      setTimeout(() => {
+        const p = praise();
+        celebrate(p);
+        showOverlay({
+          emoji: '🧩',
+          title: p,
+          text: `레벨 ${lv} 성공! ${moves}번 만에 사진을 완성했어요!`,
+          win: true,
+          onRetry: () => games.puzzle(lv),
+          onNext: lv < MAX_LEVEL ? () => games.puzzle(lv + 1) : null,
+        });
+      }, 400);
+    }
+  }
+
+  async function loadBitmap(file) {
+    if (window.createImageBitmap) {
+      try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch {}
+      try { return await createImageBitmap(file); } catch {}
+    }
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  fileInput.addEventListener('change', async () => {
+    const f = fileInput.files && fileInput.files[0];
+    fileInput.value = '';
+    if (!f) return;
+    try {
+      const bmp = await loadBitmap(f);
+      const w = bmp.width || bmp.naturalWidth;
+      const h = bmp.height || bmp.naturalHeight;
+      const s = Math.min(w, h);
+      const c = document.createElement('canvas');
+      c.width = c.height = 600;
+      const g = c.getContext('2d');
+      g.drawImage(bmp, (w - s) / 2, (h - s) / 2, s, s, 0, 0, 600, 600);
+      const url = c.toDataURL('image/jpeg', 0.85);
+      setImage(url);
+      store.set('puzzleimg', url); // 이 기기(localStorage)에만 저장
+      buildBoard();
+      sfx.good();
+    } catch {
+      sfx.bad();
+    }
+  });
+  $('#puzPick').addEventListener('pointerdown', () => { sfx.tap(); fileInput.click(); });
+
+  games.puzzle = function startPuzzle(level = 1) {
+    lv = level;
+    colsN = [2, 3, 4][level - 1];
+    $('#puzLevel').textContent = '레벨 ' + level;
+    if (!imgURL) setImage(store.get('puzzleimg') || defaultImage());
+    buildBoard();
   };
 })();
 
