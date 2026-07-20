@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight } from "lucide-react";
+import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight, Library } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
 import { allISO13485DocIds } from "../data/iso13485/docTree";
+import { concepts } from "../data/concepts";
 
 export function CertHub() {
   const ivdrProgress = useProgress("ivdr");
@@ -336,6 +337,41 @@ export function CertHub() {
             </div>
             <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
               약사법(1963)부터 EU IVDR 이중 의무(2025)까지 · 4개 시대 · 21개 사건
+            </div>
+          </div>
+          <span className="font-bold shrink-0" style={{ color: "var(--info)", fontSize: "var(--t-sm)" }}>
+            보기 →
+          </span>
+        </Link>
+
+        {/* 개념 위키 진입점 */}
+        <Link
+          to="/wiki"
+          className="block rounded-[var(--r-lg)] border hover:shadow-md"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--surface)",
+            padding: "var(--s-5) var(--s-8)",
+            marginBottom: "var(--s-6)",
+            transition: "box-shadow 0.15s",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto",
+            gap: "var(--s-5)",
+            alignItems: "center",
+          }}
+        >
+          <span
+            className="inline-flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 44, height: 44, background: "var(--info-bg)" }}
+          >
+            <Library size={20} style={{ color: "var(--info)" }} aria-hidden />
+          </span>
+          <div>
+            <div className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
+              개념 위키 — 용어·부속서·표준 한눈에
+            </div>
+            <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
+              GSPR·UDI·NB 같은 낯선 용어를 검색·카테고리별로 정리 · 총 {concepts.length}개 개념
             </div>
           </div>
           <span className="font-bold shrink-0" style={{ color: "var(--info)", fontSize: "var(--t-sm)" }}>
