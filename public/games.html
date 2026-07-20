@@ -68,8 +68,38 @@
     cursor: pointer;
   }
   .bigbtn.blue { background: #4f9cf7; box-shadow: 0 6px 0 #2f77d0; }
+  .bigbtn.green { background: #43b649; box-shadow: 0 6px 0 #2f8f35; }
   .bigbtn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d96a20; }
   .bigbtn.blue:active { box-shadow: 0 2px 0 #2f77d0; }
+  .bigbtn.green:active { box-shadow: 0 2px 0 #2f8f35; }
+
+  /* 레벨 선택 */
+  .lvrow {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .lvbtn {
+    width: clamp(80px, 21vw, 108px);
+    height: clamp(80px, 21vw, 108px);
+    border: none;
+    border-radius: 24px;
+    font-size: clamp(30px, 8vw, 42px);
+    font-weight: 800;
+    color: #fff;
+    background: #ff8a3d;
+    box-shadow: 0 6px 0 #d96a20;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+  }
+  .lvbtn .stars { font-size: clamp(13px, 3.5vw, 17px); min-height: 1.2em; }
+  .lvbtn:disabled { background: #c9c9c9; box-shadow: 0 6px 0 #a5a5a5; }
+  .lvbtn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #d96a20; }
 
   .hud {
     display: flex;
@@ -181,16 +211,12 @@
   #memory .board {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     align-content: center;
-    max-width: 480px;
+    justify-content: center;
     width: 100%;
     margin: 0 auto;
     padding-bottom: 8px;
-  }
-  @media (min-aspect-ratio: 5/4) {
-    #memory .board { grid-template-columns: repeat(4, 1fr); max-width: 640px; }
   }
   .mcard {
     aspect-ratio: 3/3.4;
@@ -288,6 +314,14 @@
   }
 
   /* ---------- 숫자 세기 퀴즈 ---------- */
+  #quiz .task {
+    text-align: center;
+    font-size: clamp(18px, 4.6vw, 24px);
+    font-weight: 800;
+    color: #4a3423;
+    padding-bottom: 8px;
+    text-shadow: 0 2px 0 rgba(255,255,255,.5);
+  }
   #quiz .fruitbox {
     flex: 1;
     display: flex;
@@ -353,7 +387,7 @@
     <button class="gamecard" data-game="memory">
       <span class="emoji">🐘</span>
       <span class="name">카드 짝맞추기</span>
-      <span class="best"></span>
+      <span class="best" id="bestMemory"></span>
     </button>
     <button class="gamecard" data-game="mole">
       <span class="emoji">🐹</span>
@@ -381,7 +415,10 @@
     <div class="title">🐘 카드 짝맞추기</div>
     <div style="width:64px"></div>
   </div>
-  <div class="hud"><div class="pill" id="memMoves">넘긴 횟수 0</div></div>
+  <div class="hud">
+    <div class="pill" id="memLevel">레벨 1</div>
+    <div class="pill" id="memMoves">넘긴 횟수 0</div>
+  </div>
   <div class="board" id="memBoard"></div>
 </div>
 
@@ -393,8 +430,10 @@
     <div style="width:64px"></div>
   </div>
   <div class="hud">
+    <div class="pill" id="moleLevel">레벨 1</div>
     <div class="pill" id="moleTime">⏰ 30</div>
     <div class="pill" id="moleScore">⭐ 0</div>
+    <div class="pill" id="moleTarget">🎯 10</div>
   </div>
   <div class="field" id="moleField"></div>
 </div>
@@ -406,7 +445,11 @@
     <div class="title">🦖 점프 공룡</div>
     <div style="width:64px"></div>
   </div>
-  <div class="hud"><div class="pill" id="runScore">⭐ 0</div></div>
+  <div class="hud">
+    <div class="pill" id="runLevel">레벨 1</div>
+    <div class="pill" id="runScore">⭐ 0</div>
+    <div class="pill" id="runTarget">🎯 15</div>
+  </div>
   <div class="stage" id="runStage">
     <canvas id="runCanvas"></canvas>
     <div class="hint" id="runHint">화면을 콕! 누르면 점프해요</div>
@@ -421,9 +464,11 @@
     <div style="width:64px"></div>
   </div>
   <div class="hud">
+    <div class="pill" id="quizLevel">레벨 1</div>
     <div class="pill" id="quizRound">1 / 10 문제</div>
     <div class="pill" id="quizScore">⭐ 0</div>
   </div>
+  <div class="task" id="quizTask">과일이 몇 개야?</div>
   <div class="fruitbox" id="fruitBox"></div>
   <div class="answers" id="quizAnswers"></div>
 </div>
@@ -435,8 +480,21 @@
     <h2 id="ovTitle">참 잘했어요!</h2>
     <p id="ovText"></p>
     <div class="row">
+      <button class="bigbtn green" id="ovNext" style="display:none">👉 다음 레벨</button>
       <button class="bigbtn" id="ovRetry">🔄 다시 하기</button>
       <button class="bigbtn blue" id="ovHome">🏠 처음으로</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 레벨 선택 ================= -->
+<div class="overlay" id="lvOverlay">
+  <div class="card">
+    <div class="big" id="lvEmoji">🐘</div>
+    <h2>레벨을 골라 봐!</h2>
+    <div class="lvrow" id="lvBtns"></div>
+    <div class="row">
+      <button class="bigbtn blue" id="lvHome">🏠 처음으로</button>
     </div>
   </div>
 </div>
@@ -512,9 +570,18 @@ function confetti(n = 30) {
   }
 }
 
+/* ---------- 레벨 잠금/클리어 ---------- */
+const MAX_LEVEL = 3;
+const unlockedLv = (g) => Math.min(MAX_LEVEL, Number(store.get('unlock:' + g) || 1));
+const clearedLv = (g) => Number(store.get('clear:' + g) || 0);
+function clearLevel(g, lv) {
+  if (lv > clearedLv(g)) store.set('clear:' + g, String(lv));
+  if (lv >= unlockedLv(g) && lv < MAX_LEVEL) store.set('unlock:' + g, String(lv + 1));
+}
+
 /* ---------- 화면 전환 ---------- */
 let current = 'menu';
-const games = { memory: null, mole: null, runner: null, quiz: null }; // start functions
+const games = { memory: null, mole: null, runner: null, quiz: null }; // start functions (level 인자)
 const stoppers = { memory: null, mole: null, runner: null, quiz: null }; // cleanup functions
 function show(id) {
   if (stoppers[current]) { stoppers[current](); }
@@ -523,8 +590,37 @@ function show(id) {
   hideOverlay();
   current = id;
   if (id === 'menu') refreshBests();
-  else games[id]();
+  else showLevelSelect(id);
 }
+
+/* ---------- 레벨 선택 ---------- */
+const GAME_EMOJI = { memory: '🐘', mole: '🐹', runner: '🦖', quiz: '🍎' };
+const lvOverlay = $('#lvOverlay');
+function showLevelSelect(g) {
+  $('#lvEmoji').textContent = GAME_EMOJI[g];
+  const wrap = $('#lvBtns');
+  wrap.innerHTML = '';
+  const ul = unlockedLv(g);
+  const cl = clearedLv(g);
+  for (let lv = 1; lv <= MAX_LEVEL; lv++) {
+    const b = document.createElement('button');
+    b.className = 'lvbtn';
+    if (lv > ul) {
+      b.disabled = true;
+      b.innerHTML = '<span>🔒</span><span class="stars"></span>';
+    } else {
+      b.innerHTML = `<span>${lv}</span><span class="stars">${lv <= cl ? '⭐' : ''}</span>`;
+      b.addEventListener('pointerdown', () => {
+        sfx.tap();
+        lvOverlay.classList.remove('on');
+        games[g](lv);
+      });
+    }
+    wrap.appendChild(b);
+  }
+  lvOverlay.classList.add('on');
+}
+$('#lvHome').addEventListener('pointerdown', () => { sfx.tap(); show('menu'); });
 document.querySelectorAll('.gamecard').forEach((btn) => {
   btn.addEventListener('pointerdown', () => { sfx.tap(); show(btn.dataset.game); });
 });
@@ -533,28 +629,40 @@ document.querySelectorAll('.home').forEach((btn) => {
 });
 
 function refreshBests() {
-  const set = (id, key, label) => {
-    const v = store.get(key);
-    $(id).textContent = v ? `👑 최고 ${v}${label}` : '';
+  const set = (id, game, key, label) => {
+    const parts = [];
+    const v = key && store.get(key);
+    if (v) parts.push(`👑 ${v}${label}`);
+    const stars = '⭐'.repeat(clearedLv(game));
+    if (stars) parts.push(stars);
+    $(id).textContent = parts.join(' ');
   };
-  set('#bestMole', 'best:mole', '점');
-  set('#bestRunner', 'best:runner', '점');
-  set('#bestQuiz', 'best:quiz', '점');
+  set('#bestMemory', 'memory', null, '');
+  set('#bestMole', 'mole', 'best:mole', '점');
+  set('#bestRunner', 'runner', 'best:runner', '점');
+  set('#bestQuiz', 'quiz', 'best:quiz', '점');
 }
 refreshBests();
 
 /* ---------- 결과 오버레이 ---------- */
 const overlay = $('#overlay');
 let retryFn = null;
-function showOverlay({ emoji, title, text, onRetry }) {
+let nextFn = null;
+function showOverlay({ emoji, title, text, onRetry, onNext }) {
   $('#ovEmoji').textContent = emoji;
   $('#ovTitle').textContent = title;
   $('#ovText').textContent = text;
   retryFn = onRetry;
+  nextFn = onNext || null;
+  $('#ovNext').style.display = nextFn ? '' : 'none';
   overlay.classList.add('on');
 }
-function hideOverlay() { overlay.classList.remove('on'); }
-$('#ovRetry').addEventListener('pointerdown', () => { sfx.tap(); hideOverlay(); if (retryFn) retryFn(); });
+function hideOverlay() {
+  overlay.classList.remove('on');
+  lvOverlay.classList.remove('on');
+}
+$('#ovRetry').addEventListener('pointerdown', () => { sfx.tap(); overlay.classList.remove('on'); if (retryFn) retryFn(); });
+$('#ovNext').addEventListener('pointerdown', () => { sfx.tap(); overlay.classList.remove('on'); if (nextFn) nextFn(); });
 $('#ovHome').addEventListener('pointerdown', () => { sfx.tap(); show('menu'); });
 
 /* 최고점수 갱신 - 갱신되었으면 true */
@@ -567,17 +675,33 @@ function saveBest(key, score) {
 /* ============================================================
    1. 카드 짝맞추기
 ============================================================ */
-games.memory = function startMemory() {
+games.memory = function startMemory(level = 1) {
   const board = $('#memBoard');
   board.innerHTML = '';
+  const pairsN = [4, 6, 8][level - 1];
+  const cols = [2, 3, 4][level - 1]; // 항상 4줄
   const pool = ['🐘', '🦁', '🐼', '🐸', '🐙', '🦊', '🐢', '🐝', '🦄', '🐳'];
-  const picks = shuffle(pool).slice(0, 6);
+  const picks = shuffle(pool).slice(0, pairsN);
   const deck = shuffle([...picks, ...picks]);
   let first = null;
   let lock = false;
   let moves = 0;
   let matched = 0;
+  $('#memLevel').textContent = '레벨 ' + level;
   $('#memMoves').textContent = '넘긴 횟수 0';
+
+  // 세로 4줄이 화면을 넘지 않게 카드 크기를 계산
+  function fitBoard() {
+    const gap = 10;
+    const w = board.clientWidth;
+    const h = board.clientHeight;
+    const cardW = Math.min(
+      140,
+      (w - gap * (cols - 1)) / cols,
+      ((h - gap * 3) / 4) / (3.4 / 3)
+    );
+    board.style.gridTemplateColumns = `repeat(${cols}, ${Math.floor(cardW)}px)`;
+  }
 
   deck.forEach((emoji) => {
     const card = document.createElement('div');
@@ -598,14 +722,17 @@ games.memory = function startMemory() {
         matched++;
         sfx.good();
         confetti(6);
-        if (matched === 6) {
+        if (matched === pairsN) {
+          clearLevel('memory', level);
           setTimeout(() => {
             sfx.win();
             confetti(50);
             showOverlay({
-              emoji: '🎉', title: '다 맞췄어!',
-              text: `${moves}번 만에 성공했어요!`,
-              onRetry: startMemory,
+              emoji: '🎉',
+              title: `레벨 ${level} 성공!`,
+              text: `${moves}번 만에 다 맞췄어요!`,
+              onRetry: () => startMemory(level),
+              onNext: level < MAX_LEVEL ? () => startMemory(level + 1) : null,
             });
           }, 500);
         }
@@ -621,7 +748,13 @@ games.memory = function startMemory() {
     });
     board.appendChild(card);
   });
+  fitBoard();
+  memFit = fitBoard;
 };
+let memFit = null;
+window.addEventListener('resize', () => {
+  if (current === 'memory' && memFit) memFit();
+});
 
 /* ============================================================
    2. 두더지 잡기
@@ -636,6 +769,14 @@ games.memory = function startMemory() {
     field.appendChild(h);
     holes.push(h);
   }
+  // 레벨별: 두더지가 떠 있는 시간 / 등장 간격 / 목표 마릿수
+  const CONF = [
+    { up: 1200, gap: 560, target: 10 },
+    { up: 880, gap: 430, target: 15 },
+    { up: 640, gap: 320, target: 20 },
+  ];
+  let conf = CONF[0];
+  let moleLv = 1;
   let score = 0;
   let timeLeft = 30;
   let timerId = null;
@@ -664,8 +805,8 @@ games.memory = function startMemory() {
   });
 
   function popLoop() {
-    const upTime = Math.max(500, 1100 - score * 30);   // 점점 빨라짐
-    const gap = Math.max(220, 450 - score * 10);
+    const upTime = Math.max(420, conf.up - score * 20);   // 점수 오르면 더 빨라짐
+    const gap = Math.max(180, conf.gap - score * 8);
     const hidden = holes.filter((h) => !h.classList.contains('up'));
     const hole = hidden[Math.floor(Math.random() * hidden.length)];
     if (hole) {
@@ -675,12 +816,16 @@ games.memory = function startMemory() {
     popId = setTimeout(popLoop, gap + Math.random() * 300);
   }
 
-  games.mole = function startMole() {
+  games.mole = function startMole(level = 1) {
     clearTimers();
+    moleLv = level;
+    conf = CONF[level - 1];
     score = 0;
     timeLeft = 30;
+    $('#moleLevel').textContent = '레벨 ' + level;
     $('#moleScore').textContent = '⭐ 0';
     $('#moleTime').textContent = '⏰ 30';
+    $('#moleTarget').textContent = '🎯 ' + conf.target;
     popLoop();
     timerId = setInterval(() => {
       timeLeft--;
@@ -688,13 +833,22 @@ games.memory = function startMemory() {
       if (timeLeft <= 0) {
         clearTimers();
         const isBest = saveBest('mole', score);
-        sfx.win();
-        confetti(40);
+        const success = score >= conf.target;
+        if (success) {
+          clearLevel('mole', moleLv);
+          sfx.win();
+          confetti(40);
+        } else {
+          sfx.bad();
+        }
         showOverlay({
-          emoji: isBest ? '👑' : '🐹',
-          title: isBest ? '최고 기록이야!' : '끝!',
-          text: `두더지를 ${score}마리 잡았어요!`,
-          onRetry: games.mole,
+          emoji: success ? (isBest ? '👑' : '🎉') : '🐹',
+          title: success ? `레벨 ${moleLv} 성공!` : '조금만 더!',
+          text: success
+            ? `두더지를 ${score}마리나 잡았어요!`
+            : `${score}마리 잡았어요. ${conf.target}마리 잡으면 성공!`,
+          onRetry: () => games.mole(moleLv),
+          onNext: success && moleLv < MAX_LEVEL ? () => games.mole(moleLv + 1) : null,
         });
       }
     }, 1000);
@@ -710,6 +864,15 @@ games.memory = function startMemory() {
   const ctx = canvas.getContext('2d');
   let raf = null;
   let running = false;
+
+  // 레벨별: 시작/최고 속도, 장애물 간격 배율, 목표 점수
+  const CONF = [
+    { base: 4.5, max: 7, spawn: 1.0, target: 15 },
+    { base: 5.5, max: 9, spawn: 0.85, target: 30 },
+    { base: 6.5, max: 11, spawn: 0.7, target: 50 },
+  ];
+  let conf = CONF[0];
+  let runLv = 1;
 
   const state = {
     y: 0, vy: 0, score: 0, speed: 0,
@@ -756,12 +919,29 @@ games.memory = function startMemory() {
     state.y += state.vy;
     if (state.y < 0) { state.y = 0; state.vy = 0; }
     state.score += state.speed * 0.02;
-    state.speed = Math.min(9, 4.5 + state.score * 0.006);
+    state.speed = Math.min(conf.max, conf.base + state.score * 0.008);
     $('#runScore').textContent = '⭐ ' + Math.floor(state.score);
+
+    // 목표 점수에 닿으면 레벨 클리어
+    if (Math.floor(state.score) >= conf.target) {
+      stop();
+      clearLevel('runner', runLv);
+      saveBest('runner', Math.floor(state.score));
+      sfx.win();
+      confetti(40);
+      showOverlay({
+        emoji: '🎉',
+        title: `레벨 ${runLv} 성공!`,
+        text: `${conf.target}점까지 달렸어요!`,
+        onRetry: () => games.runner(runLv),
+        onNext: runLv < MAX_LEVEL ? () => games.runner(runLv + 1) : null,
+      });
+      return;
+    }
 
     // 장애물 스폰
     state.lastSpawn += state.speed;
-    const spawnGap = 320 + Math.random() * 260;
+    const spawnGap = (320 + Math.random() * 260) * conf.spawn;
     if (state.lastSpawn > spawnGap) {
       state.lastSpawn = 0;
       state.obstacles.push({ x: W + 40, emoji: Math.random() < 0.75 ? '🌵' : '🪨' });
@@ -811,20 +991,24 @@ games.memory = function startMemory() {
       showOverlay({
         emoji: isBest ? '👑' : '🦖',
         title: isBest ? '최고 기록이야!' : '아이쿠!',
-        text: `${score}점까지 달렸어요!`,
-        onRetry: games.runner,
+        text: `${score}점까지 달렸어요! ${conf.target}점이 목표야!`,
+        onRetry: () => games.runner(runLv),
       });
       return;
     }
     raf = requestAnimationFrame(loop);
   }
 
-  games.runner = function startRunner() {
+  games.runner = function startRunner(level = 1) {
     stop();
     resize();
-    Object.assign(state, { y: 0, vy: 0, score: 0, speed: 4.5, obstacles: [], clouds: [{ x: stage.clientWidth * 0.6, y: 60 }], lastSpawn: 0 });
+    runLv = level;
+    conf = CONF[level - 1];
+    Object.assign(state, { y: 0, vy: 0, score: 0, speed: conf.base, obstacles: [], clouds: [{ x: stage.clientWidth * 0.6, y: 60 }], lastSpawn: 0 });
+    $('#runLevel').textContent = '레벨 ' + level;
     $('#runHint').style.display = '';
     $('#runScore').textContent = '⭐ 0';
+    $('#runTarget').textContent = '🎯 ' + conf.target;
     running = true;
     raf = requestAnimationFrame(loop);
   };
@@ -836,6 +1020,8 @@ games.memory = function startMemory() {
 (function setupQuiz() {
   const fruits = ['🍎', '🍌', '🍓', '🍊', '🍇', '🍉', '🥕', '🍩'];
   const TOTAL = 10;
+  const PASS = 8; // 이만큼 맞히면 레벨 클리어
+  let quizLv = 1;
   let round = 0;
   let score = 0;
   let answered = false;
@@ -844,23 +1030,36 @@ games.memory = function startMemory() {
     round++;
     answered = false;
     $('#quizRound').textContent = `${round} / ${TOTAL} 문제`;
-    const count = 1 + Math.floor(Math.random() * 10);
+    // 레벨 1은 1~5, 레벨 2·3은 1~10
+    const maxN = quizLv === 1 ? 5 : 10;
+    const count = 1 + Math.floor(Math.random() * maxN);
     const fruit = fruits[Math.floor(Math.random() * fruits.length)];
 
     const box = $('#fruitBox');
     box.innerHTML = '';
-    for (let i = 0; i < count; i++) {
+    const items = Array(count).fill(fruit);
+    if (quizLv === 3) {
+      // 레벨 3: 다른 과일이 섞여 있고, 한 과일만 세어야 함
+      let other = fruit;
+      while (other === fruit) other = fruits[Math.floor(Math.random() * fruits.length)];
+      const extra = 2 + Math.floor(Math.random() * 4);
+      for (let i = 0; i < extra; i++) items.push(other);
+      $('#quizTask').textContent = `${fruit}만 세어 봐!`;
+    } else {
+      $('#quizTask').textContent = '과일이 몇 개야?';
+    }
+    shuffle(items).forEach((em, i) => {
       const s = document.createElement('span');
-      s.textContent = fruit;
+      s.textContent = em;
       s.style.animationDelay = i * 0.07 + 's';
       box.appendChild(s);
-    }
+    });
 
     // 보기 3개: 정답 + 근처 오답 2개
     const opts = new Set([count]);
     while (opts.size < 3) {
       const d = count + (Math.floor(Math.random() * 5) - 2);
-      if (d >= 1 && d <= 10) opts.add(d);
+      if (d >= 1 && d <= maxN) opts.add(d);
     }
     const answers = $('#quizAnswers');
     answers.innerHTML = '';
@@ -893,20 +1092,31 @@ games.memory = function startMemory() {
 
   function finish() {
     const isBest = saveBest('quiz', score);
-    sfx.win();
-    confetti(40);
+    const success = score >= PASS;
+    if (success) {
+      clearLevel('quiz', quizLv);
+      sfx.win();
+      confetti(40);
+    } else {
+      sfx.bad();
+    }
     const stars = score >= 9 ? '🌟🌟🌟' : score >= 6 ? '🌟🌟' : '🌟';
     showOverlay({
-      emoji: isBest ? '👑' : stars,
-      title: score === TOTAL ? '전부 다 맞았어!' : '참 잘했어요!',
-      text: `10문제 중에 ${score}개를 맞혔어요! ${stars}`,
-      onRetry: games.quiz,
+      emoji: success ? (isBest ? '👑' : '🎉') : '🍎',
+      title: success ? `레벨 ${quizLv} 성공!` : '조금만 더!',
+      text: success
+        ? `10문제 중에 ${score}개를 맞혔어요! ${stars}`
+        : `${score}개 맞혔어요. ${PASS}개 맞히면 성공!`,
+      onRetry: () => games.quiz(quizLv),
+      onNext: success && quizLv < MAX_LEVEL ? () => games.quiz(quizLv + 1) : null,
     });
   }
 
-  games.quiz = function startQuiz() {
+  games.quiz = function startQuiz(level = 1) {
+    quizLv = level;
     round = 0;
     score = 0;
+    $('#quizLevel').textContent = '레벨 ' + level;
     $('#quizScore').textContent = '⭐ 0';
     nextRound();
   };
