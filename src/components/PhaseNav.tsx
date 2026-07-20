@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Library, FolderTree } from "lucide-react";
+import { Library, FolderTree, Home } from "lucide-react";
 import { phases, type Phase, type PhaseId } from "../data/stations";
 
 /**
@@ -28,6 +28,18 @@ export function PhaseNav({
         className="mx-auto flex items-center gap-2 overflow-x-auto"
         style={{ maxWidth: "var(--max-w)", padding: "10px var(--margin)" }}
       >
+        <Link
+          to="/"
+          aria-label="첫 화면으로"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full font-semibold text-text-muted hover:bg-surface"
+          style={{ fontSize: "var(--t-sm)", padding: "5px 10px", minHeight: 32 }}
+        >
+          <Home size={14} aria-hidden />
+          <span className="hidden sm:inline">첫 화면</span>
+        </Link>
+        <span aria-hidden style={{ color: "var(--border-strong)" }}>
+          ·
+        </span>
         <span className="shrink-0 font-extrabold text-text" style={{ fontSize: "var(--t-sm)" }}>
           {overridePhases ? "ISO 13485 여정" : "IVDR 여정"}
         </span>
