@@ -282,12 +282,15 @@
   #bubble canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   #bubble .hint {
     position: absolute;
-    left: 0; right: 0; top: 8%;
+    left: 8%; right: 8%; top: 48%;
     text-align: center;
     font-size: clamp(16px, 4.2vw, 21px);
     font-weight: 800;
     color: #fff;
-    text-shadow: 0 2px 4px rgba(0,0,0,.45);
+    text-shadow: 0 2px 4px rgba(0,0,0,.6);
+    background: rgba(0,0,0,.28);
+    border-radius: 16px;
+    padding: 10px 12px;
     pointer-events: none;
   }
 
@@ -621,13 +624,12 @@
   </div>
   <div class="hud">
     <div class="pill" id="bubLevel">레벨 1</div>
-    <div class="pill" id="bubTime">⏰ 45</div>
-    <div class="pill" id="bubScore">⭐ 0</div>
-    <div class="pill" id="bubTarget">🎯 8</div>
+    <div class="pill" id="bubLeft">남은 방울 0개</div>
+    <div class="pill" id="bubShots">쏜 횟수 0</div>
   </div>
   <div class="stage" id="bubStage">
     <canvas id="bubCanvas"></canvas>
-    <div class="hint" id="bubHint">손가락을 움직이면 🐲가 따라와요!<br>방울에 갇힌 친구를 콕! 눌러서 팡!</div>
+    <div class="hint" id="bubHint">손가락으로 조준하고 손을 떼면<br>방울이 날아가요! 같은 그림 3개면 펑! 🎯</div>
   </div>
 </div>
 
@@ -904,7 +906,7 @@ const TRO_GAMES = [
   { key: 'runner', emoji: '🦖', name: '점프 공룡', best: 'best:runner' },
   { key: 'quiz', emoji: '🍎', name: '숫자 세기', best: 'best:quiz' },
   { key: 'plane', emoji: '🚀', name: '비행기 슈팅', best: 'best:plane' },
-  { key: 'bubble', emoji: '🐲', name: '버블버블', best: 'best:bubble' },
+  { key: 'bubble', emoji: '🐲', name: '버블버블', best: null },
   { key: 'puzzle', emoji: '🧩', name: '사진 퍼즐', best: null },
 ];
 function renderTrophy() {
@@ -988,7 +990,7 @@ function refreshBests() {
   set('#bestRunner', 'runner', 'best:runner', '점');
   set('#bestQuiz', 'quiz', 'best:quiz', '점');
   set('#bestPlane', 'plane', 'best:plane', '점');
-  set('#bestBubble', 'bubble', 'best:bubble', '점');
+  set('#bestBubble', 'bubble', null, '');
   set('#bestPuzzle', 'puzzle', null, '');
 }
 refreshBests();
@@ -1650,235 +1652,336 @@ window.addEventListener('resize', () => {
 })();
 
 /* ============================================================
-   6. 버블버블 (🐲가 방울을 뿜어 몬스터를 가두면, 탭해서 팡!)
+   6. 버블버블 (조준해서 방울을 쏘면, 같은 과일 3개가 모여 펑!)
 ============================================================ */
 (function setupBubble() {
   const stage = $('#bubStage');
   const canvas = $('#bubCanvas');
   const ctx = canvas.getContext('2d');
-  const TIME = 45;
-  // 레벨별: 몬스터 등장 간격(ms) / 몬스터 속도 / 목표 마릿수
-  const CONF = [
-    { spawn: 2200, mspd: 0.8, target: 8 },
-    { spawn: 1900, mspd: 1.1, target: 11 },
-    { spawn: 1600, mspd: 1.4, target: 14 },
-    { spawn: 1400, mspd: 1.7, target: 17 },
-    { spawn: 1200, mspd: 2.0, target: 20 },
-  ];
-  const MONSTERS = ['👻', '👾', '🪲', '🐙'];
-  const FRUITS = ['🍓', '🍒', '🍉', '🍇', '🍍'];
-  let conf = CONF[0];
-  let lv = 1, score = 0, timeLeft = TIME;
-  let raf = null, timerId = null, running = false;
-  let dragon = { x: 0, tx: 0, dir: 1 };
-  let monsters = [], bubbles = [], fruits = [];
-  let lastBlow = 0, lastSpawn = 0;
 
+  const COLS = 7;
+  const COLORS = ['🍓', '🍊', '🍋', '🫐', '🍇'];
+  const BG = ['#ffd7e0', '#ffe1b8', '#fff6b8', '#d7e6ff', '#ecd6ff'];
+  // 레벨별: 시작 줄 수 / 색 종류 수 (많을수록 어려움)
+  const CONF = [
+    { rows: 3, kinds: 3 },
+    { rows: 4, kinds: 3 },
+    { rows: 5, kinds: 4 },
+    { rows: 6, kinds: 4 },
+    { rows: 7, kinds: 5 },
+  ];
+  // 육각형 벌집 격자 이웃표: 짝수 줄 / 홀수 줄(오른쪽으로 반칸 밀림)이 다름
+  const NEI = {
+    even: [[1, 0], [-1, 0], [-1, -1], [0, -1], [-1, 1], [0, 1]],
+    odd: [[1, 0], [-1, 0], [0, -1], [1, -1], [0, 1], [1, 1]],
+  };
+
+  let conf = CONF[0];
+  let lv = 1;
+  let raf = null, running = false;
+  let r = 24, originX = 0, originY = 0, rowH = 0, maxRows = 6;
+  let grid = [];
+  let launcher = { x: 0, y: 0 };
+  let aiming = false, aimAngle = -Math.PI / 2;
+  let shot = null;
+  let loadedColor = 0, nextColor = 0;
+  let shotsFired = 0, safetyLimit = 45;
+  let fx = [];
+
+  function isValidCell(row, col) {
+    if (row < 0 || col < 0 || row >= maxRows) return false;
+    return col < (row % 2 === 1 ? COLS - 1 : COLS);
+  }
+  function neighbors(row, col) {
+    const offs = row % 2 === 1 ? NEI.odd : NEI.even;
+    return offs.map(([dc, dr]) => [row + dr, col + dc]);
+  }
+  function cellXY(row, col) {
+    return [originX + col * r * 2 + (row % 2 === 1 ? r : 0), originY + row * rowH];
+  }
+  function layout() {
+    const W = stage.clientWidth;
+    const H = stage.clientHeight;
+    r = Math.max(18, Math.min(34, W / (COLS * 2 + 1)));
+    originX = (W - COLS * 2 * r) / 2 + r;
+    originY = r + 10;
+    rowH = r * Math.sqrt(3);
+    launcher.x = W / 2;
+    launcher.y = H - r * 1.6;
+  }
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = stage.clientWidth * dpr;
     canvas.height = stage.clientHeight * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    layout();
   }
+  window.addEventListener('resize', () => { if (current === 'bubble') resize(); });
+
   function stop() {
     running = false;
     cancelAnimationFrame(raf);
-    clearInterval(timerId);
-    raf = timerId = null;
+    raf = null;
   }
   stoppers.bubble = stop;
 
-  stage.addEventListener('pointermove', (e) => {
-    const r = stage.getBoundingClientRect();
-    dragon.tx = e.clientX - r.left;
-    $('#bubHint').style.display = 'none';
-  });
-  stage.addEventListener('pointerdown', (e) => {
-    const r = stage.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    $('#bubHint').style.display = 'none';
-    // 방울을 눌렀으면 터뜨리기, 아니면 이동
-    let hitIdx = -1;
-    let hitDist = 1e9;
-    bubbles.forEach((b, i) => {
-      const d = Math.hypot(b.x - x, b.y - y);
-      if (d < b.r * 1.7 && d < hitDist) { hitDist = d; hitIdx = i; }
-    });
-    if (hitIdx >= 0) {
-      const b = bubbles.splice(hitIdx, 1)[0];
-      if (b.trapped) {
-        score++;
-        $('#bubScore').textContent = '⭐ ' + score;
-        fruits.push({ x: b.x, y: b.y, vy: 0, em: FRUITS[Math.floor(Math.random() * FRUITS.length)], ttl: 90 });
-        sfx.bonk();
-      } else {
-        sfx.tap();
-      }
-    } else {
-      dragon.tx = x;
-    }
-  });
+  function countFilled() {
+    let n = 0;
+    for (let row = 0; row < maxRows; row++)
+      for (let col = 0; col < COLS; col++)
+        if (isValidCell(row, col) && grid[row][col] != null) n++;
+    return n;
+  }
+  function updateHud() {
+    $('#bubLeft').textContent = '남은 방울 ' + countFilled() + '개';
+    $('#bubShots').textContent = '쏜 횟수 ' + shotsFired;
+  }
 
-  function loop(ts) {
-    const W = stage.clientWidth;
-    const H = stage.clientHeight;
-    const size = Math.max(36, Math.min(54, W * 0.11));
-    const groundY = H - size * 0.7;
-
-    // 드래곤 이동
-    const prevX = dragon.x;
-    dragon.x += (dragon.tx - dragon.x) * 0.18;
-    dragon.x = Math.max(size / 2, Math.min(W - size / 2, dragon.x));
-    if (Math.abs(dragon.x - prevX) > 0.5) dragon.dir = dragon.x > prevX ? 1 : -1;
-
-    // 방울 자동 뿜기
-    if (ts - lastBlow > 700) {
-      lastBlow = ts;
-      bubbles.push({ x: dragon.x + dragon.dir * size * 0.6, y: groundY - size * 0.2, vx: dragon.dir * 4, r: size * 0.42, t: 0, ph: Math.random() * 6.28, trapped: null });
-    }
-    // 몬스터 등장 (한 화면 최대 5마리)
-    if (ts - lastSpawn > conf.spawn && monsters.filter((m) => !m.trapped).length < 5) {
-      lastSpawn = ts;
-      const fromLeft = Math.random() < 0.5;
-      monsters.push({
-        x: fromLeft ? -20 : W + 20,
-        dir: fromLeft ? 1 : -1,
-        em: MONSTERS[Math.floor(Math.random() * MONSTERS.length)],
-      });
-    }
-
-    // 몬스터 걷기 (양 끝에서 반대로)
-    monsters.forEach((m) => {
-      m.x += m.dir * conf.mspd;
-      if (m.x < size / 2 && m.dir < 0) m.dir = 1;
-      if (m.x > W - size / 2 && m.dir > 0) m.dir = -1;
-    });
-
-    // 방울 이동: 앞으로 나가다가 → 위로 떠오름 → 천장에서 동동
-    bubbles.forEach((b) => {
-      b.t++;
-      if (b.t < 26) {
-        b.x += b.vx;
-      } else {
-        b.y -= 1.3;
-        b.x += Math.sin(b.y / 22 + b.ph) * 0.7;
-      }
-      if (b.y < size * 0.8) b.y = size * 0.8 + Math.sin(ts / 300 + b.ph) * 3; // 천장에서 동동
-      b.x = Math.max(b.r, Math.min(W - b.r, b.x));
-      // 몬스터 가두기
-      if (!b.trapped) {
-        for (const m of monsters) {
-          if (!m.trapped && Math.abs(m.x - b.x) < size * 0.55 && Math.abs(groundY - b.y) < size * 0.6) {
-            m.trapped = true;
-            b.trapped = m.em;
-            sfx.good();
-            break;
-          }
+  function floodSameColor(row, col) {
+    const color = grid[row][col];
+    if (color == null) return [];
+    const seen = new Set([row + ',' + col]);
+    const stack = [[row, col]];
+    const group = [];
+    while (stack.length) {
+      const [r0, c0] = stack.pop();
+      group.push([r0, c0]);
+      for (const [nr, nc] of neighbors(r0, c0)) {
+        const key = nr + ',' + nc;
+        if (isValidCell(nr, nc) && !seen.has(key) && grid[nr][nc] === color) {
+          seen.add(key);
+          stack.push([nr, nc]);
         }
       }
-    });
-    monsters = monsters.filter((m) => !m.trapped);
-    // 빈 방울은 천장에서 잠시 후 사라짐
-    bubbles = bubbles.filter((b) => b.trapped || b.t < 420);
-
-    // 과일 떨어지기
-    fruits.forEach((f) => {
-      if (f.y < groundY) { f.vy += 0.5; f.y = Math.min(groundY, f.y + f.vy); }
-      else f.ttl--;
-    });
-    fruits = fruits.filter((f) => f.ttl > 0);
-
-    // 그리기
-    ctx.clearRect(0, 0, W, H);
-    ctx.strokeStyle = 'rgba(255,255,255,.5)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, groundY + size * 0.45);
-    ctx.lineTo(W, groundY + size * 0.45);
-    ctx.stroke();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = size * 0.8 + 'px sans-serif';
-    ctx.fillStyle = '#fff';
-    monsters.forEach((m) => ctx.fillText(m.em, m.x, groundY));
-    fruits.forEach((f) => ctx.fillText(f.em, f.x, f.y));
-    // 방울
-    bubbles.forEach((b) => {
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, 7);
-      ctx.fillStyle = 'rgba(180,230,255,.25)';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,.85)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      if (b.trapped) {
-        ctx.fillStyle = '#fff';
-        ctx.font = b.r * 1.1 + 'px sans-serif';
-        ctx.fillText(b.trapped, b.x, b.y);
-        ctx.font = size * 0.8 + 'px sans-serif';
+    }
+    return group;
+  }
+  function findFloating() {
+    const connected = new Set();
+    const stack = [];
+    for (let col = 0; col < COLS; col++) {
+      if (isValidCell(0, col) && grid[0][col] != null) { connected.add('0,' + col); stack.push([0, col]); }
+    }
+    while (stack.length) {
+      const [r0, c0] = stack.pop();
+      for (const [nr, nc] of neighbors(r0, c0)) {
+        const key = nr + ',' + nc;
+        if (isValidCell(nr, nc) && grid[nr][nc] != null && !connected.has(key)) {
+          connected.add(key);
+          stack.push([nr, nc]);
+        }
       }
+    }
+    const floating = [];
+    for (let row = 0; row < maxRows; row++)
+      for (let col = 0; col < COLS; col++)
+        if (isValidCell(row, col) && grid[row][col] != null && !connected.has(row + ',' + col)) floating.push([row, col]);
+    return floating;
+  }
+  function popGroup(cells) {
+    cells.forEach(([row, col]) => {
+      const [x, y] = cellXY(row, col);
+      fx.push({ x, y, vy: 0, em: COLORS[grid[row][col]], ttl: 55 });
+      grid[row][col] = null;
     });
-    ctx.fillStyle = '#fff';
-    // 드래곤 (이동 방향 보고 뒤집기)
-    ctx.save();
-    ctx.translate(dragon.x, groundY);
-    ctx.scale(-dragon.dir, 1); // 🐲 이모지는 왼쪽을 봄
-    ctx.font = size + 'px sans-serif';
-    ctx.fillText('🐲', 0, 0);
-    ctx.restore();
+  }
 
-    if (score >= conf.target) {
+  function afterLand(row, col) {
+    const group = floodSameColor(row, col);
+    if (group.length >= 3) {
+      sfx.good();
+      popGroup(group);
+      const floating = findFloating();
+      if (floating.length) popGroup(floating);
+    } else {
+      sfx.tap();
+    }
+    loadedColor = nextColor;
+    nextColor = Math.floor(Math.random() * conf.kinds);
+    shot = null;
+    updateHud();
+    checkRoundEnd();
+  }
+
+  function autoClearAll() {
+    const remain = [];
+    for (let row = 0; row < maxRows; row++)
+      for (let col = 0; col < COLS; col++)
+        if (isValidCell(row, col) && grid[row][col] != null) remain.push([row, col]);
+    if (remain.length) { popGroup(remain); sfx.win(); }
+  }
+  function checkRoundEnd() {
+    if (countFilled() === 0) {
       stop();
       clearLevel('bubble', lv);
-      saveBest('bubble', score);
       const p = praise();
       celebrate(p);
       showOverlay({
         emoji: '🎉',
         title: p,
-        text: `레벨 ${lv} 성공! 몬스터를 ${score}마리나 잡았어요!`,
+        text: `레벨 ${lv} 성공! 방울을 ${shotsFired}번 쏴서 다 없앴어요!`,
         win: true,
         onRetry: () => games.bubble(lv),
         onNext: lv < MAX_LEVEL ? () => games.bubble(lv + 1) : null,
       });
       return;
     }
+    if (shotsFired >= safetyLimit) {
+      autoClearAll();
+      updateHud();
+      setTimeout(checkRoundEnd, 500);
+    }
+  }
+
+  function fireShot() {
+    if (shot) return;
+    shot = { x: launcher.x, y: launcher.y, vx: Math.cos(aimAngle) * 12, vy: Math.sin(aimAngle) * 12, color: loadedColor };
+    shotsFired++;
+    $('#bubHint').style.display = 'none';
+  }
+  function setAim(clientX, clientY) {
+    const rect = stage.getBoundingClientRect();
+    let dx = clientX - rect.left - launcher.x;
+    let dy = clientY - rect.top - launcher.y;
+    if (dy > -30) dy = -30; // 항상 위쪽으로만 쏘게
+    aimAngle = Math.atan2(dy, dx);
+  }
+  stage.addEventListener('pointerdown', (e) => {
+    if (shot) return;
+    aiming = true;
+    setAim(e.clientX, e.clientY);
+  });
+  stage.addEventListener('pointermove', (e) => { if (aiming) setAim(e.clientX, e.clientY); });
+  stage.addEventListener('pointerup', () => { if (aiming) { aiming = false; fireShot(); } });
+  stage.addEventListener('pointercancel', () => { aiming = false; });
+
+  function drawBubble(x, y, colorIdx) {
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.92, 0, 7);
+    ctx.fillStyle = BG[colorIdx];
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.font = r * 1.15 + 'px sans-serif';
+    ctx.fillStyle = '#000';
+    ctx.fillText(COLORS[colorIdx], x, y);
+  }
+
+  function loop() {
+    const W = stage.clientWidth;
+    const H = stage.clientHeight;
+
+    if (shot) {
+      shot.x += shot.vx;
+      shot.y += shot.vy;
+      const leftWall = originX - r;
+      const rightWall = originX + (COLS - 1) * r * 2 + r;
+      if (shot.x - r < leftWall) { shot.x = leftWall + r; shot.vx *= -1; }
+      if (shot.x + r > rightWall) { shot.x = rightWall - r; shot.vx *= -1; }
+
+      let collided = false, hitRow = -1, hitCol = -1;
+      if (shot.y <= originY) {
+        collided = true;
+      } else {
+        outer: for (let row = 0; row < maxRows; row++) {
+          for (let col = 0; col < COLS; col++) {
+            if (!isValidCell(row, col) || grid[row][col] == null) continue;
+            const [cx, cy] = cellXY(row, col);
+            if (Math.hypot(shot.x - cx, shot.y - cy) < r * 1.9) {
+              collided = true; hitRow = row; hitCol = col;
+              break outer;
+            }
+          }
+        }
+      }
+      if (collided) {
+        const candidates = [];
+        if (hitRow === -1) {
+          for (let col = 0; col < COLS; col++) if (grid[0][col] == null) candidates.push([0, col]);
+        } else {
+          for (let row = 0; row < maxRows; row++) {
+            for (let col = 0; col < COLS; col++) {
+              if (!isValidCell(row, col) || grid[row][col] != null) continue;
+              const [cx, cy] = cellXY(row, col);
+              if (Math.hypot(shot.x - cx, shot.y - cy) < r * 2.6) candidates.push([row, col]);
+            }
+          }
+        }
+        let best = null, bestD = 1e9;
+        candidates.forEach(([row, col]) => {
+          const [cx, cy] = cellXY(row, col);
+          const d = Math.hypot(shot.x - cx, shot.y - cy);
+          if (d < bestD) { bestD = d; best = [row, col]; }
+        });
+        if (!best) {
+          for (let col = 0; col < COLS; col++) if (grid[0][col] == null) { best = [0, col]; break; }
+        }
+        if (best) {
+          grid[best[0]][best[1]] = shot.color;
+          afterLand(best[0], best[1]);
+        } else {
+          shot = null;
+        }
+      }
+    }
+
+    fx.forEach((f) => { f.vy += 0.5; f.y += f.vy; f.ttl--; });
+    fx = fx.filter((f) => f.ttl > 0 && f.y < H + 40);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let row = 0; row < maxRows; row++)
+      for (let col = 0; col < COLS; col++)
+        if (isValidCell(row, col) && grid[row][col] != null) drawBubble(...cellXY(row, col), grid[row][col]);
+    fx.forEach((f) => { ctx.font = r * 1.05 + 'px sans-serif'; ctx.fillStyle = '#000'; ctx.fillText(f.em, f.x, f.y); });
+
+    if (aiming || shot) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,.75)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([9, 8]);
+      ctx.beginPath();
+      ctx.moveTo(launcher.x, launcher.y);
+      ctx.lineTo(launcher.x + Math.cos(aimAngle) * H * 0.42, launcher.y + Math.sin(aimAngle) * H * 0.42);
+      ctx.stroke();
+      ctx.restore();
+    }
+    if (shot) drawBubble(shot.x, shot.y, shot.color);
+
+    // 발사대(드래곤) + 장전된 방울 + 다음 방울 미리보기
+    ctx.font = r * 2.1 + 'px sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('🐲', launcher.x, launcher.y + r * 0.7);
+    if (!shot) drawBubble(launcher.x, launcher.y - r * 0.1, loadedColor);
+    drawBubble(W - r * 1.3, launcher.y, nextColor);
+
     raf = requestAnimationFrame(loop);
   }
 
   games.bubble = function startBubble(level = 1) {
     stop();
-    resize();
     lv = level;
     conf = CONF[level - 1];
-    score = 0;
-    timeLeft = TIME;
-    monsters = []; bubbles = []; fruits = [];
-    lastBlow = 0; lastSpawn = 0;
-    dragon = { x: stage.clientWidth / 2, tx: stage.clientWidth / 2, dir: 1 };
+    maxRows = conf.rows + 3;
+    resize();
+    grid = Array.from({ length: maxRows }, () => Array(COLS).fill(null));
+    for (let row = 0; row < conf.rows; row++)
+      for (let col = 0; col < COLS; col++)
+        if (isValidCell(row, col)) grid[row][col] = Math.floor(Math.random() * conf.kinds);
+    loadedColor = Math.floor(Math.random() * conf.kinds);
+    nextColor = Math.floor(Math.random() * conf.kinds);
+    shot = null;
+    aiming = false;
+    fx = [];
+    shotsFired = 0;
+    safetyLimit = Math.max(45, conf.rows * 10);
     $('#bubLevel').textContent = '레벨 ' + level;
-    $('#bubScore').textContent = '⭐ 0';
-    $('#bubTime').textContent = '⏰ ' + TIME;
-    $('#bubTarget').textContent = '🎯 ' + conf.target;
     $('#bubHint').style.display = '';
+    updateHud();
     running = true;
     raf = requestAnimationFrame(loop);
-    timerId = setInterval(() => {
-      timeLeft--;
-      $('#bubTime').textContent = '⏰ ' + timeLeft;
-      if (timeLeft <= 0) {
-        stop();
-        saveBest('bubble', score);
-        sfx.bad();
-        showOverlay({
-          emoji: '🐲',
-          title: '조금만 더!',
-          text: `${score}마리 잡았어요. ${conf.target}마리 잡으면 성공!`,
-          onRetry: () => games.bubble(lv),
-        });
-      }
-    }, 1000);
   };
 })();
 
