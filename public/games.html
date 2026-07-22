@@ -331,6 +331,67 @@
     z-index: 1;
   }
 
+  /* ---------- 미로 탈출 ---------- */
+  #maze .stage {
+    flex: 1;
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(#d9f2c4, #bfe8a8 60%, #a8dd90);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.5);
+    touch-action: none;
+    cursor: pointer;
+  }
+  #maze canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #maze .hint {
+    position: absolute;
+    left: 8%; right: 8%; bottom: 6%;
+    text-align: center;
+    font-size: clamp(16px, 4.2vw, 21px);
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,.5);
+    background: rgba(0,0,0,.3);
+    border-radius: 16px;
+    padding: 10px 12px;
+    pointer-events: none;
+  }
+
+  /* ---------- 틀린 그림 찾기 ---------- */
+  #odd .task {
+    text-align: center;
+    font-size: clamp(18px, 4.6vw, 24px);
+    font-weight: 800;
+    color: #4a3423;
+    padding-bottom: 8px;
+    text-shadow: 0 2px 0 rgba(255,255,255,.5);
+  }
+  #odd .oddboard {
+    flex: 1;
+    display: grid;
+    gap: 10px;
+    align-content: center;
+    justify-content: center;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 8px;
+  }
+  .oddcell {
+    border: none;
+    border-radius: 18px;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 5px 0 rgba(0,0,0,.12);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+  }
+  .oddcell:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.12); }
+  .oddcell.wrong { animation: shake .4s; background: #e6e6e6; }
+  .oddcell.found { animation: matched .5s; background: #d9f7d9; }
+
   /* ---------- 트로피 방 ---------- */
   #trophy .body {
     flex: 1;
@@ -587,10 +648,20 @@
       <span class="name">버블버블</span>
       <span class="best" id="bestBubble"></span>
     </button>
-    <button class="gamecard" data-game="puzzle" style="grid-column: span 2">
+    <button class="gamecard" data-game="puzzle">
       <span class="emoji">🧩</span>
       <span class="name">사진 퍼즐</span>
       <span class="best" id="bestPuzzle"></span>
+    </button>
+    <button class="gamecard" data-game="maze">
+      <span class="emoji">🐰</span>
+      <span class="name">미로 탈출</span>
+      <span class="best" id="bestMaze"></span>
+    </button>
+    <button class="gamecard" data-game="odd" style="grid-column: span 2">
+      <span class="emoji">🔍</span>
+      <span class="name">틀린 그림 찾기</span>
+      <span class="best" id="bestOdd"></span>
     </button>
   </div>
   <button class="bigbtn" id="trophyBtn">🏆 트로피 방</button>
@@ -631,6 +702,38 @@
     <canvas id="bubCanvas"></canvas>
     <div class="hint" id="bubHint">손가락으로 조준하고 손을 떼면<br>방울이 날아가요! 같은 그림 3개면 펑! 🎯</div>
   </div>
+</div>
+
+<!-- ================= 미로 탈출 ================= -->
+<div id="maze" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home">🏠</button>
+    <div class="title">🐰 미로 탈출</div>
+    <div style="width:64px"></div>
+  </div>
+  <div class="hud">
+    <div class="pill" id="mazeLevel">레벨 1</div>
+    <div class="pill" id="mazeSteps">걸음 0</div>
+  </div>
+  <div class="stage" id="mazeStage">
+    <canvas id="mazeCanvas"></canvas>
+    <div class="hint" id="mazeHint">손가락으로 끌면 🐰가 따라와요!<br>🥕까지 데려다줘!</div>
+  </div>
+</div>
+
+<!-- ================= 틀린 그림 찾기 ================= -->
+<div id="odd" class="screen">
+  <div class="topbar">
+    <button class="iconbtn home">🏠</button>
+    <div class="title">🔍 틀린 그림 찾기</div>
+    <div style="width:64px"></div>
+  </div>
+  <div class="hud">
+    <div class="pill" id="oddLevel">레벨 1</div>
+    <div class="pill" id="oddRound">1 / 5 문제</div>
+  </div>
+  <div class="task" id="oddTask">다른 그림 하나를 찾아 봐!</div>
+  <div class="oddboard" id="oddBoard"></div>
 </div>
 
 <!-- ================= 사진 퍼즐 ================= -->
@@ -886,8 +989,8 @@ function clearLevel(g, lv) {
 
 /* ---------- 화면 전환 ---------- */
 let current = 'menu';
-const games = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null }; // start functions (level 인자)
-const stoppers = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null }; // cleanup functions
+const games = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null, maze: null, odd: null }; // start functions (level 인자)
+const stoppers = { memory: null, mole: null, runner: null, quiz: null, plane: null, bubble: null, puzzle: null, maze: null, odd: null }; // cleanup functions
 function show(id) {
   if (stoppers[current]) { stoppers[current](); }
   document.querySelectorAll('.screen').forEach((s) => s.classList.remove('on'));
@@ -908,6 +1011,8 @@ const TRO_GAMES = [
   { key: 'plane', emoji: '🚀', name: '비행기 슈팅', best: 'best:plane' },
   { key: 'bubble', emoji: '🐲', name: '버블버블', best: null },
   { key: 'puzzle', emoji: '🧩', name: '사진 퍼즐', best: null },
+  { key: 'maze', emoji: '🐰', name: '미로 탈출', best: null },
+  { key: 'odd', emoji: '🔍', name: '틀린 그림 찾기', best: null },
 ];
 function renderTrophy() {
   const list = $('#troList');
@@ -936,13 +1041,13 @@ function renderTrophy() {
     champ.innerHTML = '<div class="champbox">👑 미니게임 챔피언! 👑<small>트로피를 전부 다 모았어!</small></div>';
     celebrate('우와, 미니게임 챔피언이야! 정말 정말 대단해!');
   } else {
-    champ.innerHTML = `<div class="pill" style="display:inline-block">🏆 ${cups} / ${TRO_GAMES.length} 모았어! 레벨 3까지 깨면 트로피를 받아요</div>`;
+    champ.innerHTML = `<div class="pill" style="display:inline-block">🏆 ${cups} / ${TRO_GAMES.length} 모았어! 레벨 ${MAX_LEVEL}까지 깨면 트로피를 받아요</div>`;
   }
 }
 $('#trophyBtn').addEventListener('pointerdown', () => { sfx.tap(); show('trophy'); });
 
 /* ---------- 레벨 선택 ---------- */
-const GAME_EMOJI = { memory: '🐘', mole: '🐹', runner: '🦖', quiz: '🍎', plane: '🚀', bubble: '🐲', puzzle: '🧩' };
+const GAME_EMOJI = { memory: '🐘', mole: '🐹', runner: '🦖', quiz: '🍎', plane: '🚀', bubble: '🐲', puzzle: '🧩', maze: '🐰', odd: '🔍' };
 const lvOverlay = $('#lvOverlay');
 function showLevelSelect(g) {
   $('#lvEmoji').textContent = GAME_EMOJI[g];
@@ -992,6 +1097,8 @@ function refreshBests() {
   set('#bestPlane', 'plane', 'best:plane', '점');
   set('#bestBubble', 'bubble', null, '');
   set('#bestPuzzle', 'puzzle', null, '');
+  set('#bestMaze', 'maze', null, '');
+  set('#bestOdd', 'odd', null, '');
 }
 refreshBests();
 
@@ -1986,6 +2093,278 @@ window.addEventListener('resize', () => {
     updateHud();
     running = true;
     raf = requestAnimationFrame(loop);
+  };
+})();
+
+/* ============================================================
+   8. 미로 탈출 (손가락으로 끌면 🐰가 따라가서 🥕 찾기)
+============================================================ */
+(function setupMaze() {
+  const stage = $('#mazeStage');
+  const canvas = $('#mazeCanvas');
+  const ctx = canvas.getContext('2d');
+  // 만5세 기준: 레벨별 미로 크기 [가로칸, 세로칸] — 통로가 넓고 짧게 시작
+  const CONF = [[4, 5], [5, 7], [6, 8], [7, 10], [8, 11]];
+  const DECOR = ['🌼', '🌷', '🍄', '🌿', '🦋'];
+
+  let lv = 1, cols = 4, rows = 5;
+  let cells = [];
+  let player = { r: 0, c: 0 }, goal = { r: 0, c: 0 };
+  let px = 0, py = 0;
+  let cellSize = 50, ox = 0, oy = 0;
+  let steps = 0, trail = [], decors = [];
+  let raf = null, running = false;
+  let finger = null, lastStep = 0;
+
+  const cx = (c) => ox + c * cellSize + cellSize / 2;
+  const cy = (r) => oy + r * cellSize + cellSize / 2;
+
+  function layout() {
+    const W = stage.clientWidth;
+    const H = stage.clientHeight;
+    cellSize = Math.floor(Math.min((W - 24) / cols, (H - 24) / rows));
+    ox = (W - cellSize * cols) / 2;
+    oy = (H - cellSize * rows) / 2;
+  }
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = stage.clientWidth * dpr;
+    canvas.height = stage.clientHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    layout();
+  }
+  window.addEventListener('resize', () => { if (current === 'maze') resize(); });
+
+  function stop() {
+    running = false;
+    cancelAnimationFrame(raf);
+    raf = null;
+  }
+  stoppers.maze = stop;
+
+  // DFS 백트래커로 미로 생성 (모든 칸이 연결됨)
+  function genMaze() {
+    cells = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ n: 1, e: 1, s: 1, w: 1, v: 0 })));
+    const stack = [[0, 0]];
+    cells[0][0].v = 1;
+    const OPP = { n: 's', s: 'n', e: 'w', w: 'e' };
+    while (stack.length) {
+      const [r, c] = stack[stack.length - 1];
+      const nbrs = [];
+      if (r > 0 && !cells[r - 1][c].v) nbrs.push(['n', r - 1, c]);
+      if (r < rows - 1 && !cells[r + 1][c].v) nbrs.push(['s', r + 1, c]);
+      if (c > 0 && !cells[r][c - 1].v) nbrs.push(['w', r, c - 1]);
+      if (c < cols - 1 && !cells[r][c + 1].v) nbrs.push(['e', r, c + 1]);
+      if (!nbrs.length) { stack.pop(); continue; }
+      const [d, nr, nc] = nbrs[Math.floor(Math.random() * nbrs.length)];
+      cells[r][c][d] = 0;
+      cells[nr][nc][OPP[d]] = 0;
+      cells[nr][nc].v = 1;
+      stack.push([nr, nc]);
+    }
+  }
+
+  function stepDir(d, dr, dc) {
+    if (cells[player.r][player.c][d]) return false; // 벽에 막힘 (그냥 멈춤)
+    player.r += dr;
+    player.c += dc;
+    steps++;
+    $('#mazeSteps').textContent = '걸음 ' + steps;
+    trail.push([player.r, player.c]);
+    if (player.r === goal.r && player.c === goal.c) win();
+    return true;
+  }
+  function tryStep(now) {
+    if (!finger || !running || now - lastStep < 110) return;
+    const dx = finger.x - px;
+    const dy = finger.y - py;
+    if (Math.hypot(dx, dy) < cellSize * 0.45) return;
+    const h = [dx > 0 ? 'e' : 'w', 0, dx > 0 ? 1 : -1];
+    const v = [dy > 0 ? 's' : 'n', dy > 0 ? 1 : -1, 0];
+    const order = Math.abs(dx) > Math.abs(dy) ? [h, v] : [v, h];
+    for (const [d, dr, dc] of order) {
+      if (stepDir(d, dr, dc)) { lastStep = now; return; }
+    }
+  }
+  function win() {
+    stop();
+    clearLevel('maze', lv);
+    const p = praise();
+    celebrate(p);
+    showOverlay({
+      emoji: '🥕',
+      title: p,
+      text: `레벨 ${lv} 성공! ${steps}걸음 만에 당근을 찾았어요!`,
+      win: true,
+      onRetry: () => games.maze(lv),
+      onNext: lv < MAX_LEVEL ? () => games.maze(lv + 1) : null,
+    });
+  }
+
+  function setFinger(e) {
+    const rect = stage.getBoundingClientRect();
+    finger = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    $('#mazeHint').style.display = 'none';
+  }
+  stage.addEventListener('pointerdown', setFinger);
+  stage.addEventListener('pointermove', (e) => { if (finger) setFinger(e); });
+  stage.addEventListener('pointerup', () => { finger = null; });
+  stage.addEventListener('pointercancel', () => { finger = null; });
+  window.addEventListener('keydown', (e) => {
+    if (current !== 'maze' || !running) return;
+    const map = { ArrowUp: ['n', -1, 0], ArrowDown: ['s', 1, 0], ArrowLeft: ['w', 0, -1], ArrowRight: ['e', 0, 1] };
+    if (map[e.code]) { e.preventDefault(); stepDir(...map[e.code]); }
+  });
+
+  function draw() {
+    const W = stage.clientWidth;
+    const H = stage.clientHeight;
+    ctx.clearRect(0, 0, W, H);
+    // 지나온 길
+    ctx.fillStyle = 'rgba(255,255,255,.45)';
+    trail.forEach(([r, c]) => {
+      ctx.beginPath();
+      ctx.arc(cx(c), cy(r), cellSize * 0.11, 0, 7);
+      ctx.fill();
+    });
+    // 벽
+    ctx.strokeStyle = '#3e7d34';
+    ctx.lineWidth = Math.max(5, cellSize * 0.12);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = ox + c * cellSize;
+        const y = oy + r * cellSize;
+        if (cells[r][c].n) { ctx.moveTo(x, y); ctx.lineTo(x + cellSize, y); }
+        if (cells[r][c].w) { ctx.moveTo(x, y); ctx.lineTo(x, y + cellSize); }
+        if (c === cols - 1 && cells[r][c].e) { ctx.moveTo(x + cellSize, y); ctx.lineTo(x + cellSize, y + cellSize); }
+        if (r === rows - 1 && cells[r][c].s) { ctx.moveTo(x, y + cellSize); ctx.lineTo(x + cellSize, y + cellSize); }
+      }
+    }
+    ctx.stroke();
+    // 꾸미기 + 당근 + 토끼
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000';
+    ctx.font = cellSize * 0.38 + 'px sans-serif';
+    decors.forEach((f) => ctx.fillText(f.em, cx(f.c) + cellSize * 0.22, cy(f.r) + cellSize * 0.22));
+    ctx.font = cellSize * 0.62 + 'px sans-serif';
+    ctx.fillText('🥕', cx(goal.c), cy(goal.r));
+    ctx.fillText('🐰', px, py);
+  }
+
+  function loop(now) {
+    tryStep(now);
+    px += (cx(player.c) - px) * 0.3;
+    py += (cy(player.r) - py) * 0.3;
+    draw();
+    if (running) raf = requestAnimationFrame(loop);
+  }
+
+  games.maze = function startMaze(level = 1) {
+    stop();
+    lv = level;
+    [cols, rows] = CONF[level - 1];
+    resize();
+    genMaze();
+    player = { r: 0, c: 0 };
+    goal = { r: rows - 1, c: cols - 1 };
+    px = cx(0);
+    py = cy(0);
+    steps = 0;
+    trail = [[0, 0]];
+    finger = null;
+    lastStep = 0;
+    decors = [];
+    for (let i = 0; i < 4; i++) {
+      const r = Math.floor(Math.random() * rows);
+      const c = Math.floor(Math.random() * cols);
+      if ((r === 0 && c === 0) || (r === rows - 1 && c === cols - 1)) continue;
+      decors.push({ r, c, em: DECOR[Math.floor(Math.random() * DECOR.length)] });
+    }
+    $('#mazeLevel').textContent = '레벨 ' + level;
+    $('#mazeSteps').textContent = '걸음 0';
+    $('#mazeHint').style.display = '';
+    running = true;
+    raf = requestAnimationFrame(loop);
+  };
+})();
+
+/* ============================================================
+   9. 틀린 그림 찾기 (같은 그림 속 다른 하나를 탭!)
+============================================================ */
+(function setupOdd() {
+  const board = $('#oddBoard');
+  const TOTAL = 5;
+  // 만5세 기준: 레벨이 오를수록 판이 커지고 두 그림의 차이가 미묘해짐
+  const CONF = [
+    { grid: [2, 2], pairs: [['🍎', '🍌'], ['🐶', '🐸'], ['⚽', '🍓'], ['🚗', '🐤'], ['🌞', '🐳']] },
+    { grid: [3, 3], pairs: [['🍎', '🍊'], ['🐶', '🐱'], ['⚽', '🏀'], ['🦋', '🐝'], ['🌷', '🌻']] },
+    { grid: [3, 4], pairs: [['😀', '😎'], ['🐸', '🐢'], ['🍦', '🧁'], ['🚌', '🚗'], ['🐟', '🐬']] },
+    { grid: [4, 4], pairs: [['😀', '😃'], ['🐶', '🐺'], ['🍊', '🍑'], ['🐭', '🐹'], ['🌜', '🌛']] },
+    { grid: [4, 5], pairs: [['😺', '😸'], ['🙂', '🙃'], ['🍏', '🍐'], ['🐔', '🐓'], ['🧅', '🧄']] },
+  ];
+  let conf = CONF[0];
+  let lv = 1, round = 0;
+
+  function nextRound() {
+    round++;
+    $('#oddRound').textContent = `${round} / ${TOTAL} 문제`;
+    const [colsN, rowsN] = conf.grid;
+    const n = colsN * rowsN;
+    let [base, odd] = conf.pairs[(round - 1) % conf.pairs.length];
+    if (Math.random() < 0.5) [base, odd] = [odd, base];
+    const oddIdx = Math.floor(Math.random() * n);
+    board.innerHTML = '';
+    board.style.gridTemplateColumns = `repeat(${colsN}, minmax(0, 1fr))`;
+    const fontPx = colsN <= 2 ? 64 : colsN === 3 ? 50 : 40;
+    for (let i = 0; i < n; i++) {
+      const b = document.createElement('button');
+      b.className = 'oddcell';
+      b.style.fontSize = fontPx + 'px';
+      b.textContent = i === oddIdx ? odd : base;
+      b.addEventListener('pointerdown', () => {
+        if (b.disabled) return;
+        if (i === oddIdx) {
+          b.classList.add('found');
+          sfx.good();
+          confetti(8);
+          board.querySelectorAll('button').forEach((x) => (x.disabled = true));
+          setTimeout(() => {
+            if (round >= TOTAL) finish();
+            else nextRound();
+          }, 650);
+        } else {
+          sfx.bad();
+          b.classList.add('wrong');
+          b.disabled = true;
+        }
+      });
+      board.appendChild(b);
+    }
+  }
+
+  function finish() {
+    clearLevel('odd', lv);
+    const p = praise();
+    celebrate(p);
+    showOverlay({
+      emoji: '🔍',
+      title: p,
+      text: `레벨 ${lv} 성공! 다른 그림을 다 찾았어요!`,
+      win: true,
+      onRetry: () => games.odd(lv),
+      onNext: lv < MAX_LEVEL ? () => games.odd(lv + 1) : null,
+    });
+  }
+
+  games.odd = function startOdd(level = 1) {
+    lv = level;
+    conf = CONF[level - 1];
+    round = 0;
+    $('#oddLevel').textContent = '레벨 ' + level;
+    nextRound();
   };
 })();
 
