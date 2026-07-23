@@ -59,6 +59,12 @@
   --lh-tight: 1.3;
   --lh-base:  1.65;
 
+  /* ---- Letter-spacing (자간) — 큰 굵은 제목은 살짝 좁게(뭉침 방지),
+     대문자 라벨은 살짝 넓게(가독성) ---- */
+  --ls-tight: -0.015em; /* 히어로·H1 */
+  --ls-snug:  -0.006em; /* H2·H3·카드 제목 */
+  --ls-label:  0.04em;  /* 대문자 캡션·라벨 */
+
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   --font-mono: "Space Mono", "D2Coding", monospace;
 

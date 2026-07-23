@@ -26,7 +26,7 @@ export function PhaseNav({
     >
       <div
         className="mx-auto flex items-center gap-2 overflow-x-auto"
-        style={{ maxWidth: "var(--max-w)", padding: "10px var(--margin)" }}
+        style={{ maxWidth: "var(--max-w)", padding: "var(--s-3) var(--margin)" }}
       >
         <Link
           to="/"

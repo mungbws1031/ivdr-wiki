@@ -161,7 +161,7 @@ export function WikiIndex() {
             <section key={cat}>
               <h2
                 className="font-bold text-text-muted"
-                style={{ fontSize: "var(--t-sm)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "var(--s-3)" }}
+                style={{ fontSize: "var(--t-sm)", textTransform: "uppercase", letterSpacing: "var(--ls-label)", marginBottom: "var(--s-3)" }}
               >
                 {categoryLabel[cat]}
               </h2>

@@ -16,7 +16,7 @@ export function PageHeader({
     >
       <div
         className="mx-auto flex items-center gap-3"
-        style={{ maxWidth: "var(--max-w)", padding: "10px var(--margin)" }}
+        style={{ maxWidth: "var(--max-w)", padding: "var(--s-3) var(--margin)" }}
       >
         <Link
           to="/"
