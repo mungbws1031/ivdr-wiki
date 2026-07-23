@@ -52,7 +52,7 @@ export function CertHub() {
           className="rounded-[var(--r-lg)] border"
           style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-6) var(--s-8)", marginBottom: "var(--s-6)" }}
         >
-          <div className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)", letterSpacing: "0.02em", marginBottom: "var(--s-4)", textTransform: "uppercase" }}>
+          <div className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)", letterSpacing: "var(--ls-label)", marginBottom: "var(--s-4)", textTransform: "uppercase" }}>
             처음이신가요? 이 앱은 이렇게 씁니다
           </div>
           <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--s-5)" }}>

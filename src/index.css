@@ -100,6 +100,15 @@ body {
   box-sizing: border-box;
 }
 
+/* ---- 제목 자간 — 커진 굵은 제목이 뭉쳐 보이지 않도록 살짝 좁게 ---- */
+h1 {
+  letter-spacing: var(--ls-tight);
+}
+h2,
+h3 {
+  letter-spacing: var(--ls-snug);
+}
+
 /* ---- 포커스 링 (접근성) — accent 사용은 포커스/현재위치/CTA 한정 ---- */
 :focus-visible {
   outline: none;
