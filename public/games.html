@@ -1187,11 +1187,11 @@ games.memory = function startMemory(level = 1) {
   const board = $('#memBoard');
   board.innerHTML = '';
   // 만5세 기준: 3~7쌍(6~14장) — 유아 기억력 게임 권장 범위
-  // 10레벨: 4쌍(8장) → 13쌍(26장)으로 꾸준히 늘어남
-  const pairsN = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13][level - 1];
+  // 10레벨: 5쌍(10장) → 15쌍(30장)으로 꾸준히 늘어남
+  const pairsN = [5, 6, 7, 8, 9, 10, 11, 12, 14, 15][level - 1];
   const cols = pairsN <= 4 ? 2 : pairsN <= 6 ? 3 : pairsN <= 9 ? 4 : 5;
   const rows = Math.ceil((pairsN * 2) / cols);
-  const pool = ['🐘', '🦁', '🐼', '🐸', '🐙', '🦊', '🐢', '🐝', '🦄', '🐳', '🐷', '🐧', '🐨', '🐮'];
+  const pool = ['🐘', '🦁', '🐼', '🐸', '🐙', '🦊', '🐢', '🐝', '🦄', '🐳', '🐷', '🐧', '🐨', '🐮', '🐵'];
   const picks = shuffle(pool).slice(0, pairsN);
   const deck = shuffle([...picks, ...picks]);
   let first = null;
@@ -1284,16 +1284,16 @@ window.addEventListener('resize', () => {
   // 만5세 기준: 반응 속도가 느려 두더지가 오래 떠 있어야 함, 목표도 여유있게
   // 10레벨: 두더지 노출시간·등장간격이 점점 빨라지고 목표도 늘어남
   const CONF = [
-    { up: 1650, gap: 820, target: 7 },
-    { up: 1545, gap: 767, target: 8 },
-    { up: 1439, gap: 713, target: 10 },
-    { up: 1333, gap: 660, target: 13 },
-    { up: 1228, gap: 607, target: 15 },
-    { up: 1122, gap: 553, target: 17 },
-    { up: 1016, gap: 500, target: 19 },
-    { up: 911, gap: 447, target: 22 },
-    { up: 805, gap: 393, target: 24 },
-    { up: 700, gap: 340, target: 27 },
+    { up: 1500, gap: 740, target: 8 },
+    { up: 1400, gap: 690, target: 10 },
+    { up: 1300, gap: 640, target: 12 },
+    { up: 1200, gap: 590, target: 15 },
+    { up: 1100, gap: 540, target: 18 },
+    { up: 1000, gap: 490, target: 20 },
+    { up: 900, gap: 440, target: 23 },
+    { up: 800, gap: 390, target: 26 },
+    { up: 700, gap: 340, target: 29 },
+    { up: 600, gap: 290, target: 32 },
   ];
   let conf = CONF[0];
   let moleLv = 1;
@@ -1325,8 +1325,8 @@ window.addEventListener('resize', () => {
   });
 
   function popLoop() {
-    const upTime = Math.max(550, conf.up - score * 12);   // 점수 오르면 조금씩 빨라짐
-    const gap = Math.max(260, conf.gap - score * 5);
+    const upTime = Math.max(460, conf.up - score * 12);   // 점수 오르면 조금씩 빨라짐
+    const gap = Math.max(210, conf.gap - score * 5);
     const hidden = holes.filter((h) => !h.classList.contains('up'));
     const hole = hidden[Math.floor(Math.random() * hidden.length)];
     if (hole) {
@@ -1390,16 +1390,16 @@ window.addEventListener('resize', () => {
   // 만5세 기준: 순발력이 아직 부족해 속도를 낮추고 장애물 간격을 넓힘
   // 10레벨: 속도·목표점수가 꾸준히 늘어남
   const CONF = [
-    { base: 3.3, max: 4.8, spawn: 1.25, target: 14 },
-    { base: 3.63, max: 5.27, spawn: 1.19, target: 21 },
-    { base: 3.97, max: 5.73, spawn: 1.13, target: 27 },
-    { base: 4.3, max: 6.2, spawn: 1.07, target: 34 },
-    { base: 4.63, max: 6.67, spawn: 1.01, target: 40 },
-    { base: 4.97, max: 7.13, spawn: 0.95, target: 47 },
-    { base: 5.3, max: 7.6, spawn: 0.89, target: 53 },
-    { base: 5.63, max: 8.07, spawn: 0.83, target: 60 },
-    { base: 5.97, max: 8.53, spawn: 0.77, target: 66 },
-    { base: 6.3, max: 9.0, spawn: 0.7, target: 72 },
+    { base: 3.7, max: 5.4, spawn: 1.1, target: 17 },
+    { base: 4.06, max: 5.91, spawn: 1.04, target: 25 },
+    { base: 4.43, max: 6.42, spawn: 0.98, target: 32 },
+    { base: 4.79, max: 6.93, spawn: 0.92, target: 40 },
+    { base: 5.16, max: 7.44, spawn: 0.86, target: 47 },
+    { base: 5.52, max: 7.96, spawn: 0.8, target: 55 },
+    { base: 5.89, max: 8.47, spawn: 0.74, target: 62 },
+    { base: 6.26, max: 8.98, spawn: 0.68, target: 70 },
+    { base: 6.62, max: 9.49, spawn: 0.62, target: 77 },
+    { base: 7.0, max: 10.0, spawn: 0.56, target: 85 },
   ];
   let conf = CONF[0];
   let runLv = 1;
@@ -1563,14 +1563,14 @@ window.addEventListener('resize', () => {
     $('#quizRound').textContent = `${round} / ${TOTAL} 문제`;
     // 10레벨: 수 범위(1~5→1~15)를 늘리고, 레벨4부터 다른 과일을 섞어
     // 세어야 할 것을 헷갈리게 함(최대 3종류까지)
-    const maxN = [5, 6, 8, 9, 10, 11, 12, 13, 14, 15][quizLv - 1];
+    const maxN = [6, 7, 9, 10, 12, 13, 14, 16, 17, 18][quizLv - 1];
     const count = 1 + Math.floor(Math.random() * maxN);
     const fruit = fruits[Math.floor(Math.random() * fruits.length)];
 
     const box = $('#fruitBox');
     box.innerHTML = '';
     const items = Array(count).fill(fruit);
-    const mixKinds = [0, 0, 0, 1, 1, 2, 2, 2, 3, 3][quizLv - 1];
+    const mixKinds = [0, 0, 1, 1, 2, 2, 2, 3, 3, 3][quizLv - 1];
     if (mixKinds > 0) {
       const others = shuffle(fruits.filter((f) => f !== fruit)).slice(0, mixKinds);
       others.forEach((other) => {
@@ -1679,11 +1679,11 @@ window.addEventListener('resize', () => {
     const t = i / (MAX_LEVEL - 1);
     const n = Math.min(i + 1, 7);
     return {
-      spawn: Math.round(1450 - t * 900),
-      espd: +(1.15 + t * 1.9).toFixed(2),
-      target: Math.round(12 + t * 118),
+      spawn: Math.round(1250 - t * 830),
+      espd: +(1.35 + t * 2.25).toFixed(2),
+      target: Math.round(14 + t * 141),
       weapon: WEAPON_NAMES[i],
-      fire: Math.round(370 - t * 230),
+      fire: Math.round(340 - t * 220),
       shots: makeShots(n),
       colors: n <= 4 ? [SOLID_COLORS[i % SOLID_COLORS.length]] : RAINBOW.slice(0, n),
     };
@@ -1852,16 +1852,16 @@ window.addEventListener('resize', () => {
   const COLORS = ['🍓', '🍊', '🍋', '🫐', '🍇', '🍑'];
   const BG = ['#ffd7e0', '#ffe1b8', '#fff6b8', '#d7e6ff', '#ecd6ff', '#ffe0cf'];
   const CONF = [
-    { rows: 2, kinds: 2 },
     { rows: 3, kinds: 2 },
     { rows: 4, kinds: 3 },
     { rows: 5, kinds: 3 },
-    { rows: 6, kinds: 4 },
+    { rows: 5, kinds: 4 },
     { rows: 6, kinds: 4 },
     { rows: 7, kinds: 5 },
     { rows: 7, kinds: 5 },
     { rows: 8, kinds: 6 },
     { rows: 9, kinds: 6 },
+    { rows: 10, kinds: 6 },
   ];
   // 육각형 벌집 격자 이웃표: 짝수 줄 / 홀수 줄(오른쪽으로 반칸 밀림)이 다름
   const NEI = {
@@ -2186,7 +2186,7 @@ window.addEventListener('resize', () => {
   const canvas = $('#mazeCanvas');
   const ctx = canvas.getContext('2d');
   // 만5세 기준: 레벨별 미로 크기 [가로칸, 세로칸] — 통로가 넓고 짧게 시작
-  const CONF = [[4, 5], [5, 6], [5, 7], [6, 8], [6, 9], [7, 9], [7, 10], [8, 11], [8, 12], [9, 13]];
+  const CONF = [[5, 6], [5, 7], [6, 8], [6, 9], [7, 10], [7, 11], [8, 12], [8, 13], [9, 14], [10, 15]];
   const DECOR = ['🌼', '🌷', '🍄', '🌿', '🦋'];
 
   let lv = 1, cols = 4, rows = 5;
@@ -2381,16 +2381,16 @@ window.addEventListener('resize', () => {
   const TOTAL = 5;
   // 만5세 기준: 레벨이 오를수록 판이 커지고 두 그림의 차이가 미묘해짐
   const CONF = [
-    { grid: [2, 2], pairs: [['🍎', '🍌'], ['🐶', '🐸'], ['⚽', '🍓'], ['🚗', '🐤'], ['🌞', '🐳']] },
-    { grid: [3, 3], pairs: [['🍎', '🍊'], ['🐶', '🐱'], ['⚽', '🏀'], ['🦋', '🐝'], ['🌷', '🌻']] },
-    { grid: [3, 4], pairs: [['😀', '😎'], ['🐸', '🐢'], ['🍦', '🧁'], ['🚌', '🚗'], ['🐟', '🐬']] },
-    { grid: [4, 4], pairs: [['😀', '😃'], ['🐶', '🐺'], ['🍊', '🍑'], ['🐭', '🐹'], ['🌜', '🌛']] },
+    { grid: [3, 3], pairs: [['🍎', '🍌'], ['🐶', '🐸'], ['⚽', '🍓'], ['🚗', '🐤'], ['🌞', '🐳']] },
+    { grid: [3, 4], pairs: [['🍎', '🍊'], ['🐶', '🐱'], ['⚽', '🏀'], ['🦋', '🐝'], ['🌷', '🌻']] },
+    { grid: [4, 4], pairs: [['😀', '😎'], ['🐸', '🐢'], ['🍦', '🧁'], ['🚌', '🚗'], ['🐟', '🐬']] },
+    { grid: [4, 5], pairs: [['😀', '😃'], ['🐶', '🐺'], ['🍊', '🍑'], ['🐭', '🐹'], ['🌜', '🌛']] },
     { grid: [4, 5], pairs: [['😺', '😸'], ['🙂', '🙃'], ['🍏', '🍐'], ['🐔', '🐓'], ['🧅', '🧄']] },
-    { grid: [4, 5], pairs: [['🍩', '🥯'], ['🦆', '🐤'], ['🐝', '🪰'], ['🌰', '🥔'], ['🍇', '🫐']] },
-    { grid: [4, 6], pairs: [['🐟', '🐠'], ['🦐', '🦞'], ['🍒', '🍓'], ['🌶️', '🥕'], ['🥨', '🍞']] },
-    { grid: [5, 6], pairs: [['😁', '😄'], ['🚕', '🚙'], ['🍔', '🌭'], ['⚾', '🥎'], ['🎈', '🍅']] },
-    { grid: [5, 7], pairs: [['🐄', '🐂'], ['🍋', '🍈'], ['🧊', '💎'], ['🌙', '🥐'], ['🐍', '🪱']] },
-    { grid: [6, 7], pairs: [['🥚', '🥔'], ['🦔', '🐹'], ['🍪', '🥯'], ['🎾', '🍋'], ['🌙', '☁️']] },
+    { grid: [4, 6], pairs: [['🍩', '🥯'], ['🦆', '🐤'], ['🐝', '🪰'], ['🌰', '🥔'], ['🍇', '🫐']] },
+    { grid: [5, 6], pairs: [['🐟', '🐠'], ['🦐', '🦞'], ['🍒', '🍓'], ['🌶️', '🥕'], ['🥨', '🍞']] },
+    { grid: [5, 7], pairs: [['😁', '😄'], ['🚕', '🚙'], ['🍔', '🌭'], ['⚾', '🥎'], ['🎈', '🍅']] },
+    { grid: [6, 7], pairs: [['🐄', '🐂'], ['🍋', '🍈'], ['🧊', '💎'], ['🌙', '🥐'], ['🐍', '🪱']] },
+    { grid: [6, 8], pairs: [['🥚', '🥔'], ['🦔', '🐹'], ['🍪', '🥯'], ['🎾', '🍋'], ['🌙', '☁️']] },
   ];
   let conf = CONF[0];
   let lv = 1, round = 0;
@@ -2467,9 +2467,9 @@ window.addEventListener('resize', () => {
   const CONF = Array.from({ length: MAX_LEVEL }, (_, i) => {
     const t = i / (MAX_LEVEL - 1);
     return {
-      speed: +(3.0 + t * 3.4).toFixed(2),
-      spawnGap: Math.round(1150 - t * 650),
-      target: Math.round(55 + t * 145),
+      speed: +(3.4 + t * 4.0).toFixed(2),
+      spawnGap: Math.round(1000 - t * 600),
+      target: Math.round(65 + t * 175),
     };
   });
   const CARS = ['🚙', '🚕', '🚌', '🚓'];
@@ -2649,8 +2649,8 @@ window.addEventListener('resize', () => {
   const refImg = $('#puzRef');
   const fileInput = $('#puzFile');
   // 만5세 기준 조각 수 권장 범위(4~16조각)에 맞춘 격자: 4,6,9,12,16조각
-  // 10레벨 조각 수: 4,6,9,12,16,20,25,30,36,42
-  const PUZZLE_GRID = [[2, 2], [2, 3], [3, 3], [3, 4], [4, 4], [4, 5], [5, 5], [5, 6], [6, 6], [6, 7]]; // [열, 행]
+  // 10레벨 조각 수: 6,9,12,16,20,25,30,36,42,48
+  const PUZZLE_GRID = [[2, 3], [3, 3], [3, 4], [4, 4], [4, 5], [5, 5], [5, 6], [6, 6], [6, 7], [6, 8]]; // [열, 행]
   let lv = 1, colsN = 2, rowsN = 2;
   let imgURL = null;
   let perm = [], sel = -1, moves = 0, done = false;
