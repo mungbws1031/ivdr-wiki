@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight, Library } from "lucide-react";
+import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight, Library, Sparkles } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
@@ -244,6 +244,38 @@ export function CertHub() {
             </span>
           </Link>
         </div>
+
+        {/* 자동작성 진입점 (베타) */}
+        <Link
+          to="/auto"
+          className="block rounded-[var(--r-lg)] border hover:shadow-md"
+          style={{
+            borderColor: "var(--accent)",
+            background: "var(--accent-weak)",
+            padding: "var(--s-5) var(--s-8)",
+            marginBottom: "var(--s-6)",
+            transition: "box-shadow 0.15s",
+            display: "grid",
+            gridTemplateColumns: "auto 1fr auto",
+            gap: "var(--s-5)",
+            alignItems: "center",
+          }}
+        >
+          <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 44, height: 44, background: "var(--bg)" }}>
+            <Sparkles size={20} style={{ color: "var(--accent)" }} aria-hidden />
+          </span>
+          <div>
+            <div className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
+              제품 스펙으로 자동 작성 <span style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>베타</span>
+            </div>
+            <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
+              제품 스펙을 한 번 입력하면 클래스 추천·문서 세트·실험계획·문서 초안으로 이어집니다 · 1단계: 스펙 입력
+            </div>
+          </div>
+          <span className="font-bold shrink-0" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>
+            시작 →
+          </span>
+        </Link>
 
         {/* 프로젝트 일정 플래너 */}
         <Link

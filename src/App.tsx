@@ -16,6 +16,7 @@ const IVDDMap = lazy(() => import("./components/IVDDMap").then((m) => ({ default
 const MDSAPMap = lazy(() => import("./components/MDSAPMap").then((m) => ({ default: m.MDSAPMap })));
 const PrepNotePage = lazy(() => import("./components/PrepNotePage").then((m) => ({ default: m.PrepNotePage })));
 const SchedulePlanner = lazy(() => import("./components/SchedulePlanner").then((m) => ({ default: m.SchedulePlanner })));
+const SpecPage = lazy(() => import("./components/auto/SpecPage").then((m) => ({ default: m.SpecPage })));
 
 function RouteFallback() {
   return (
@@ -58,6 +59,8 @@ export default function App() {
           <Route path="/prep-notes" element={<PrepNotePage />} />
           {/* 프로젝트 일정 플래너 */}
           <Route path="/schedule" element={<SchedulePlanner />} />
+          {/* 자동작성: 제품 스펙 */}
+          <Route path="/auto" element={<SpecPage />} />
           <Route path="*" element={<CertHub />} />
         </Routes>
       </Suspense>

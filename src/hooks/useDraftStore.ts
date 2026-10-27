@@ -6,7 +6,8 @@ const PREFIX = "ivdr-draft";
 const CHANGE_EVENT = "ivdr-store-change";
 let storeVersion = 0;
 
-function emitChange(): void {
+/** 모든 로컬 스토어(초안·체크·제품 스펙)가 같은 변경 이벤트를 공유한다. */
+export function emitChange(): void {
   storeVersion++;
   try {
     window.dispatchEvent(new Event(CHANGE_EVENT));

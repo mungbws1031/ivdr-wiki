@@ -294,6 +294,13 @@ export function WriteHub() {
             인증에 필요한 문서를 아래서 골라 바로 작성을 시작하세요.
             각 카드를 누르면 템플릿·가이드·문구 라이브러리가 함께 열립니다.
           </p>
+          <Link
+            to="/auto"
+            className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-semibold hover:shadow-sm"
+            style={{ marginTop: "var(--s-3)", fontSize: "var(--t-sm)", padding: "8px 14px", border: "1px solid var(--accent)", background: "var(--accent-weak)", color: "var(--accent)" }}
+          >
+            제품 스펙으로 자동 작성 (베타) →
+          </Link>
 
           {/* 전체 진행 요약 */}
           <div
