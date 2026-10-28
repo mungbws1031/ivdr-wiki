@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ArrowRight, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
+import { AlertTriangle, ArrowRight, Award, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
 import { fieldHref, STATUS_META } from "./AutoUi";
@@ -11,6 +11,7 @@ import { useSpec } from "../../hooks/useSpecStore";
 import { useClassConfirm } from "../../hooks/useClassConfirm";
 import { useResults } from "../../hooks/useResultsStore";
 import { classify } from "../../lib/rules/classify";
+import { certRoutes, missingQms, type CertRoute } from "../../lib/rules/certRoutes";
 import { countByStatus, evaluateDocSet, type ApplStatus } from "../../lib/rules/applicability";
 import { planHumanTasks, planStudies } from "../../lib/planner";
 import { applicableStandards, hasTransportInput } from "../../lib/transport";
@@ -50,6 +51,61 @@ function Counts({ c, keys }: { c: Partial<Record<ApplStatus, number>>; keys: App
   );
 }
 
+const SUPPORT: Record<CertRoute["support"], { label: string; fg: string; bg: string }> = {
+  full: { label: "자동작성 지원", fg: "var(--success)", bg: "var(--success-bg)" },
+  guide: { label: "경로 안내", fg: "var(--info)", bg: "var(--info-bg)" },
+  planned: { label: "다음 단계 지원", fg: "var(--text-muted)", bg: "var(--surface-2)" },
+};
+
+function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert: string; why: string }[] }) {
+  return (
+    <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--accent)", boxShadow: "var(--shadow-card)", padding: "var(--s-6)" }} aria-labelledby="cert-title">
+      <h2 id="cert-title" className="flex items-center gap-2 font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>
+        <Award size={20} style={{ color: "var(--accent)" }} aria-hidden /> 받아야 할 인증 {routes.length}개
+      </h2>
+      {routes.length === 0 ? (
+        <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>
+          아직 고른 인증이 없습니다. <Link to={fieldHref("markets")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>어떤 인증을 받아야 하는지 고르기</Link>
+        </p>
+      ) : (
+        <div className="grid" style={{ gap: "var(--s-3)", marginTop: "var(--s-3)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))" }}>
+          {routes.map((r) => (
+            <div key={r.market} className="rounded-[var(--r-md)] border flex flex-col" style={{ borderColor: "var(--border)", padding: "var(--s-4)", gap: "var(--s-2)" }}>
+              <div className="flex flex-wrap items-center justify-between" style={{ gap: 6 }}>
+                <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{r.name}</h3>
+                <span className="rounded-full font-bold" style={{ fontSize: 11, padding: "2px 8px", color: SUPPORT[r.support].fg, background: SUPPORT[r.support].bg }}>{SUPPORT[r.support].label}</span>
+              </div>
+              <p className="font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{r.headline}</p>
+              {r.steps.length > 0 && (
+                <ol className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "decimal" }}>
+                  {r.steps.map((x) => <li key={x} className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{x}</li>)}
+                </ol>
+              )}
+              {r.qms.length > 0 && <p className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}><b className="text-text">품질 인증:</b> {r.qms.join(" · ")}</p>}
+              {r.market === "KR" && <Link to={fieldHref("krGrade")} className="self-start font-semibold hover:underline" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>식약처 등급 입력하기 →</Link>}
+              {r.links.length > 0 && (
+                <p className="flex flex-wrap" style={{ gap: "var(--s-3)", fontSize: "var(--t-xs)" }}>
+                  {r.links.map((l) => <Link key={l.to} to={l.to} className="font-semibold hover:underline" style={{ color: "var(--info)" }}>{l.label} →</Link>)}
+                </p>
+              )}
+              {r.verify && <p className="text-text-subtle" style={{ fontSize: 11, lineHeight: "var(--lh-base)" }}>원문 확인 필요 — {r.source}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+      {missing.length > 0 && (
+        <div className="rounded-[var(--r-md)]" style={{ marginTop: "var(--s-3)", padding: "var(--s-3) var(--s-4)", background: "var(--warning-bg)" }}>
+          {missing.map((m) => (
+            <p key={m.cert} style={{ fontSize: "var(--t-sm)", color: "var(--warning)", lineHeight: "var(--lh-base)" }}>
+              <b>{m.cert}</b>도 필요합니다 — {m.why} <Link to={fieldHref("qmsCerts")} className="font-semibold underline decoration-dotted">품질 인증 고르기</Link>
+            </p>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 /** /auto/overview — 스펙을 넣으면 나오는 결과를 한 화면에. 각 카드는 상세 단계로 이어진다. */
 export function OverviewPage() {
   const spec = useSpec();
@@ -77,6 +133,9 @@ export function OverviewPage() {
   const clin = plans.find((p) => p.id === "clinical-performance");
   const realtime = plans.find((p) => p.id === "stability-realtime");
   const reqStd = standards.filter((x) => x.status === "required");
+  const routes = useMemo(() => certRoutes(spec, cls), [spec, cls]);
+  const qmsMissing = missingQms(spec);
+  const euSelected = !!spec.markets?.includes("EU");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -109,8 +168,10 @@ export function OverviewPage() {
               </div>
             )}
 
+            <CertRoutes routes={routes} missing={qmsMissing} />
+
             <div className="grid" style={{ gap: "var(--s-4)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))" }}>
-              <Card icon={ShieldCheck} title="IVDR 클래스" to="/auto/docs" cta={confirmed ? "분류 근거 보기" : "확인하고 확정하기"}>
+              <Card icon={ShieldCheck} title={euSelected ? "IVDR 클래스" : "IVDR 클래스 (EU 미선택 — 참고용)"} to="/auto/docs" cta={confirmed ? "분류 근거 보기" : "확인하고 확정하기"}>
                 <Big>{cls.value ? `Class ${cls.value}` : "판정 보류"}</Big>
                 <Muted>{cls.value ? `${cls.rule} · ${confirmed ? "확정됨" : "추천 — 담당자 확정 전"}` : cls.rationale[0]}</Muted>
                 {cls.route[0] && <Muted>적합성 평가: {cls.route[0]}</Muted>}

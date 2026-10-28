@@ -20,7 +20,7 @@ const READOUT: Record<string, string> = { visual: "육안 판독", reader: "전�
 const USER: Record<string, string> = { lay: "일반인 (자가검사)", professional: "전문가", both: "일반인·전문가" };
 const ENV: Record<string, string> = { home: "가정", "near-patient": "근접검사 (약국·진료실)", lab: "검사실" };
 const PTYPE: Record<string, string> = { "reagent-kit": "반응키트 (시약·키트)", instrument: "분석기 (기기)", software: "소프트웨어", accessory: "부속품" };
-const MARKET: Record<string, string> = { EU: "EU", KR: "한국", US: "미국", CA: "캐나다", AU: "호주", JP: "일본", BR: "브라질" };
+const MARKET: Record<string, string> = { EU: "EU (IVDR)", KR: "한국 (MFDS)", US: "미국 (FDA)", CA: "캐나다", AU: "호주", JP: "일본", BR: "브라질" };
 
 /** 토큰별 사람이 읽는 이름 — 미입력 표시와 화면 안내에 쓴다. */
 export const TOKEN_LABEL: Record<string, string> = {
