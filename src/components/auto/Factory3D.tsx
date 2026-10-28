@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Minus, Plus, RotateCcw, RotateCw, ScanLine } from "lucide-react";
 import type { FactoryFloor } from "../../lib/factory";
-import { FloorDetail, pct, Worker } from "./factoryArt";
+import { FloorDetail, pct, seedOf, Worker } from "./factoryArt";
 
 // 문서 공장 3D — CSS 3D 변환으로 7층 건물을 세운다 (라이브러리 없음).
 // 좌표: x 오른쪽, y 아래(화면 기준), z 앞쪽. 층 바닥 중심이 원점.
@@ -86,9 +86,33 @@ function Storey({ f, level, lifted, selected, view, onSelect }: {
       {/* 직원 (책상 줄) */}
       {desks.map((d, i) => {
         const { x, z } = deskAt(i);
+        // 작성 중이면 책상에 앉아 있고, 시작 전·완료면 책상 주변을 걸어다닌다 (문서마다 고정된 경로)
+        if (d.state === "writing") {
+          return (
+            <div key={d.id} className="absolute" style={{ left: x - 17, top: -50, transform: `translateZ(${z}px) ${face}`, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}>
+              <Worker d={d} color={f.color} />
+            </div>
+          );
+        }
+        const n = seedOf(d.id);
+        const dir = x > -W / 2 + 50 + (cols * SLOT) / 2 ? -1 : 1; // 층 가운데 쪽으로 걷기 시작
+        const dx = dir * (50 + (n % 80));
+        let dz = ((n >>> 4) % 2 ? 1 : -1) * (26 + ((n >>> 7) % 34));
+        if (z + dz > D / 2 - 30 || z + dz < -D / 2 + 50) dz = -dz;
+        const dur = 11 + ((n >>> 10) % 9);
+        const delay = -((n >>> 13) % dur);
+        const walk = { "--wx": `${dx}px`, "--wz": `${dz}px`, "--f": dir, animationDuration: `${dur}s`, animationDelay: `${delay}s` } as React.CSSProperties;
         return (
-          <div key={d.id} className="absolute" style={{ left: x - 17, top: -50, transform: `translateZ(${z}px) ${face}`, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}>
-            <Worker d={d} color={f.color} />
+          <div key={d.id} className="absolute" style={{ left: x - 17, top: -50, transform: `translateZ(${z}px)`, transformStyle: "preserve-3d" }}>
+            {/* 빈 책상 */}
+            <div aria-hidden className="absolute" style={{ left: 1, top: 46, width: 32, height: 4, borderRadius: 2, background: "var(--room-desk, var(--border))", transform: face, transformOrigin: "50% 100%" }} />
+            <div className="factory-walk" style={{ ...walk, transformStyle: "preserve-3d" }}>
+              <div style={{ transform: face, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}>
+                <div className="factory-flip" style={walk}>
+                  <Worker d={d} color={f.color} walking />
+                </div>
+              </div>
+            </div>
           </div>
         );
       })}

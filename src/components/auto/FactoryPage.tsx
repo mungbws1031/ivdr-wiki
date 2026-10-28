@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Box, Rows3 } from "lucide-react";
+import { Box, LayoutGrid, Rows3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "../PageHeader";
@@ -16,16 +16,18 @@ import { buildTokenContext, docMissingTokens } from "../../lib/tokens";
 import { buildFactory, type DocState, type FactoryFloor } from "../../lib/factory";
 import { FloorDetail, pct, STATE, Worker } from "./factoryArt";
 import { Factory3D } from "./Factory3D";
+import { FactoryRoom } from "./FactoryRoom";
 
 const VIEW_KEY = "ivdr-factory-view";
-function initialView(): "3d" | "2d" {
+type ViewKind = "room" | "3d" | "2d";
+function initialView(): ViewKind {
   try {
     const v = localStorage.getItem(VIEW_KEY);
-    if (v === "3d" || v === "2d") return v;
+    if (v === "room" || v === "3d" || v === "2d") return v;
   } catch {
     // 저장소 차단 — 기본값
   }
-  return typeof window !== "undefined" && window.innerWidth < 640 ? "2d" : "3d";
+  return "room"; // 기본은 한눈에 보는 미니룸
 }
 
 function readStatus(): Record<string, "not_started" | "in_progress" | "done"> {
@@ -85,8 +87,8 @@ export function FactoryPage() {
   const results = useResults();
   const confirm = useClassConfirm();
   const [open, setOpen] = useState<string | null>(null);
-  const [view, setViewState] = useState<"3d" | "2d">(initialView);
-  const setView = (v: "3d" | "2d") => {
+  const [view, setViewState] = useState<ViewKind>(initialView);
+  const setView = (v: ViewKind) => {
     setViewState(v);
     try {
       localStorage.setItem(VIEW_KEY, v);
@@ -140,8 +142,8 @@ export function FactoryPage() {
         ) : (
           <div className="mx-auto" style={{ maxWidth: 1100 }}>
             <div className="flex justify-end" style={{ marginBottom: "var(--s-3)" }}>
-              <div className="inline-flex rounded-[var(--r-md)] border" style={{ borderColor: "var(--border)", padding: 2 }} role="group" aria-label="보기 방식">
-                {([["3d", "3D 건물", Box], ["2d", "2D 단면", Rows3]] as const).map(([k, label, Icon]) => (
+              <div className="inline-flex flex-wrap rounded-[var(--r-md)] border" style={{ borderColor: "var(--border)", padding: 2 }} role="group" aria-label="보기 방식">
+                {([["room", "미니룸 (한눈에)", LayoutGrid], ["3d", "3D 건물", Box], ["2d", "2D 단면", Rows3]] as const).map(([k, label, Icon]) => (
                   <button key={k} type="button" aria-pressed={view === k} onClick={() => setView(k)}
                     className="inline-flex items-center gap-1.5 rounded-[var(--r-sm)] font-semibold"
                     style={{ fontSize: "var(--t-sm)", padding: "6px 14px", minHeight: 36, background: view === k ? "var(--text)" : "transparent", color: view === k ? "var(--bg)" : "var(--text)" }}>
@@ -150,7 +152,7 @@ export function FactoryPage() {
                 ))}
               </div>
             </div>
-            {view === "3d" ? <Factory3D floors={factory.floors} overall={o} /> : (
+            {view === "room" ? <FactoryRoom floors={factory.floors} overall={o} /> : view === "3d" ? <Factory3D floors={factory.floors} overall={o} /> : (
             <>
             {/* 지붕 + 간판 + 전체 진행률 */}
             <div aria-hidden style={{ height: 22, margin: "0 6%", background: "var(--border-strong)", clipPath: "polygon(4% 100%, 50% 0, 96% 100%)" }} />

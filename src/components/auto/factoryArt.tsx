@@ -18,7 +18,7 @@ const SKIN = ["#F6D7BD", "#EFC39E", "#D9A47A", "#B97E56", "#8D5A3B"];
 const HAIR = ["#2B2321", "#5A3A26", "#8A5A35", "#C99A5B", "#3B3F4A", "#A23A2A"];
 
 /** 문서 id로 정해지는 고정 난수 — 새로고침해도 같은 얼굴. */
-function seedOf(id: string): number {
+export function seedOf(id: string): number {
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619);
   return h >>> 0;
@@ -131,7 +131,7 @@ export function Avatar({ seed, state, shirt }: { seed: string; state: DocState; 
 }
 
 /** 문서 한 장 = 직원 한 명. 상태에 따라 자리·색·동작이 바뀐다. */
-export function Worker({ d, color }: { d: FactoryDoc; color: string }) {
+export function Worker({ d, color, walking = false }: { d: FactoryDoc; color: string; walking?: boolean }) {
   const st = STATE[d.state];
   const body = d.state === "todo" ? "var(--border-strong)" : d.state === "done" ? "var(--success)" : d.state === "blocked" ? "var(--warning)" : color;
   return (
@@ -156,8 +156,16 @@ export function Worker({ d, color }: { d: FactoryDoc; color: string }) {
       {d.state === "blocked" && (
         <span aria-hidden className="absolute inline-grid place-items-center rounded-full font-extrabold" style={{ top: -4, right: 0, width: 13, height: 13, fontSize: 9, background: "var(--warning)", color: "var(--text-on-color)" }}>!</span>
       )}
-      {/* 책상 */}
-      <span aria-hidden style={{ width: 32, height: 4, marginTop: 1, borderRadius: 2, background: d.state === "blocked" ? "transparent" : "var(--room-desk, var(--border))" }} />
+      {walking ? (
+        // 걷는 다리 — 3D 보기에서 돌아다닐 때
+        <span aria-hidden className="flex" style={{ gap: 5, marginTop: -2, height: 7 }}>
+          <span className="factory-leg" style={{ width: 4, height: 7, borderRadius: 2, background: "#3B3F4A", transformOrigin: "50% 0" }} />
+          <span className="factory-leg factory-leg-r" style={{ width: 4, height: 7, borderRadius: 2, background: "#3B3F4A", transformOrigin: "50% 0" }} />
+        </span>
+      ) : (
+        /* 책상 */
+        <span aria-hidden style={{ width: 32, height: 4, marginTop: 1, borderRadius: 2, background: d.state === "blocked" ? "transparent" : "var(--room-desk, var(--border))" }} />
+      )}
     </Link>
   );
 }

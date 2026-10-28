@@ -151,8 +151,60 @@ h3 {
   50% { transform: translateY(-2px); }
 }
 
+/* 문서 공장 3D — 걸어다니기: 출발 → 옆으로 → 앞뒤로 → 돌아오기 (경로는 --wx·--wz) */
+@keyframes factory-walk {
+  0%, 6% { transform: translate3d(0, 0, 0); }
+  30%, 38% { transform: translate3d(var(--wx), 0, 0); }
+  50%, 56% { transform: translate3d(var(--wx), 0, var(--wz)); }
+  80%, 86% { transform: translate3d(0, 0, var(--wz)); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+/* 가는 방향으로 몸 돌리기 (--f: 처음 가는 방향 1/-1) */
+@keyframes factory-flip {
+  0%, 52% { transform: scaleX(var(--f)); }
+  53%, 85% { transform: scaleX(calc(-1 * var(--f))); }
+  86%, 100% { transform: scaleX(var(--f)); }
+}
+@keyframes factory-leg {
+  from { transform: rotate(22deg); }
+  to { transform: rotate(-22deg); }
+}
+.factory-walk { animation: factory-walk 14s ease-in-out infinite; }
+.factory-flip { animation: factory-flip 14s linear infinite; }
+.factory-leg { animation: factory-leg 0.42s ease-in-out infinite alternate; }
+.factory-leg-r { animation-direction: alternate-reverse; }
+/* 미니룸 — 아이소메트릭 바닥 위 걷기: 출발 → x축 → y축 → 돌아오기 (화면 좌표 --ax·--ay, --bx·--by) */
+@keyframes minimi-walk {
+  0%, 6% { transform: translate(0, 0); }
+  30%, 38% { transform: translate(var(--ax), var(--ay)); }
+  50%, 56% { transform: translate(calc(var(--ax) + var(--bx)), calc(var(--ay) + var(--by))); }
+  80%, 86% { transform: translate(var(--bx), var(--by)); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes minimi-flip {
+  0%, 37% { transform: scaleX(var(--f1)); }
+  38%, 55% { transform: scaleX(var(--f2)); }
+  56%, 85% { transform: scaleX(var(--f3)); }
+  86%, 100% { transform: scaleX(var(--f4)); }
+}
+.minimi-walk { animation: minimi-walk 14s ease-in-out infinite; }
+.minimi-flip { animation: minimi-flip 14s step-end infinite; }
+.minimi-walk:hover,
+.minimi-walk:hover .minimi-flip,
+.minimi-walk:hover .factory-leg { animation-play-state: paused; }
+
+/* 마우스를 올리면 멈춰서 누르기 쉽게 */
+.factory-walk:hover,
+.factory-walk:hover .factory-flip,
+.factory-walk:hover .factory-leg { animation-play-state: paused; }
+
 /* 모션 줄이기 선호 존중 */
 @media (prefers-reduced-motion: reduce) {
+  .factory-walk,
+  .factory-flip,
+  .minimi-walk,
+  .minimi-flip,
+  .factory-leg { animation: none !important; }
   *,
   *::before,
   *::after {
