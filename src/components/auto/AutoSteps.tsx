@@ -7,11 +7,11 @@ const STEPS = [
   { to: "/auto/transport", label: "운송·포장" },
   { to: "/auto/plan", label: "실험계획" },
   { to: "/auto/results", label: "결과 입력" },
-  { to: null, label: "사람이 할 일" },
+  { to: "/auto/factory", label: "문서 공장" },
 ] as const;
 
-/** 자동작성 단계 탭. 아직 만들지 않은 단계는 비활성으로 보여준다. */
-export function AutoSteps({ current }: { current: "/auto" | "/auto/overview" | "/auto/docs" | "/auto/transport" | "/auto/plan" | "/auto/results" }) {
+/** 자동작성 단계 탭. */
+export function AutoSteps({ current }: { current: (typeof STEPS)[number]["to"] }) {
   return (
     <nav aria-label="자동작성 단계" className="flex flex-wrap items-center" style={{ gap: 6 }}>
       {STEPS.map((s, i) => {
@@ -35,7 +35,7 @@ export function AutoSteps({ current }: { current: "/auto" | "/auto/overview" | "
             {i + 1}
           </span>
         );
-        return s.to ? (
+        return (
           <Link
             key={s.label}
             to={s.to}
@@ -45,11 +45,6 @@ export function AutoSteps({ current }: { current: "/auto" | "/auto/overview" | "
             {num}
             {s.label}
           </Link>
-        ) : (
-          <span key={s.label} style={{ ...base, color: "var(--text-subtle)", border: "1px dashed var(--border)" }} title="다음 단계에서 지원">
-            {num}
-            {s.label}
-          </span>
         );
       })}
     </nav>
