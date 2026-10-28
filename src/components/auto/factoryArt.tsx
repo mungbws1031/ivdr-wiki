@@ -13,10 +13,7 @@ export const STATE: Record<DocState, { label: string; color: string }> = {
 
 export const pct = (v: number) => `${Math.round(v * 100)}%`;
 
-// ── 캐릭터 ─────────────────────────────────────────────────
-const SKIN = ["#F6D7BD", "#EFC39E", "#D9A47A", "#B97E56", "#8D5A3B"];
-const HAIR = ["#2B2321", "#5A3A26", "#8A5A35", "#C99A5B", "#3B3F4A", "#A23A2A"];
-
+// ── 캐릭터 — 동물 얼굴 직원 ───────────────────────────────
 /** 문서 id로 정해지는 고정 난수 — 새로고침해도 같은 얼굴. */
 export function seedOf(id: string): number {
   let h = 2166136261;
@@ -24,108 +21,140 @@ export function seedOf(id: string): number {
   return h >>> 0;
 }
 
-function Hair({ style, color }: { style: number; color: string }) {
-  switch (style) {
-    case 0: // 짧은 머리
-      return <path d="M7.5 9 Q7.5 3 14 3 Q20.5 3 20.5 9 Q18 6.5 14 6.5 Q10 6.5 7.5 9 Z" fill={color} />;
-    case 1: // 단발
-      return <path d="M6.5 14 Q5.5 3 14 3 Q22.5 3 21.5 14 L19.8 14 Q20 7.5 14 7 Q8 7.5 8.2 14 Z" fill={color} />;
-    case 2: // 포니테일
+
+type Species = "bear" | "cat" | "rabbit" | "dog" | "fox" | "panda";
+const SPECIES: Species[] = ["bear", "cat", "rabbit", "dog", "fox", "panda"];
+const FUR: Record<Species, string[]> = {
+  bear: ["#A67B5B", "#8C6239", "#C49A6C"],
+  cat: ["#F2B36B", "#B8B8C2", "#F4EDE4", "#3F3D45"],
+  rabbit: ["#F6F2EE", "#E8D9CC", "#CFC6C0"],
+  dog: ["#D9A066", "#F1E1C8", "#B07A4A"],
+  fox: ["#E8833A", "#D96A2B"],
+  panda: ["#F7F7F5"],
+};
+
+/** 동물 머리 (머리 중심 15,9.6) — 귀·털색·주둥이가 종마다 다르다 */
+function AnimalHead({ sp, fur }: { sp: Species; fur: string }) {
+  const ink = "#3A2C26";
+  const pink = "#F7A8B8";
+  switch (sp) {
+    case "bear":
       return (
-        <>
-          <path d="M7.5 9.5 Q7.5 3 14 3 Q20.5 3 20.5 9.5 Q17.5 6 14 6 Q10.5 6 7.5 9.5 Z" fill={color} />
-          <path d="M20 6 Q25.5 7 23.5 15 Q22.5 11 20.3 9.5 Z" fill={color} />
-        </>
-      );
-    case 3: // 곱슬
-      return (
-        <g fill={color}>
-          {[[8.5, 7], [11, 4.6], [14, 3.8], [17, 4.6], [19.5, 7], [7.8, 10], [20.2, 10]].map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r="2.6" />)}
+        <g>
+          <circle cx="9.6" cy="4.4" r="2.7" fill={fur} />
+          <circle cx="20.4" cy="4.4" r="2.7" fill={fur} />
+          <circle cx="9.6" cy="4.4" r="1.4" fill="#E8CDB0" />
+          <circle cx="20.4" cy="4.4" r="1.4" fill="#E8CDB0" />
+          <circle cx="15" cy="9.6" r="6.8" fill={fur} />
+          <ellipse cx="15" cy="12.3" rx="3.2" ry="2.3" fill="#EBD3B8" />
+          <ellipse cx="15" cy="11.2" rx="1.2" ry="0.8" fill={ink} />
         </g>
       );
-    case 4: // 올림머리
+    case "cat":
       return (
-        <>
-          <circle cx="14" cy="2.6" r="2.6" fill={color} />
-          <path d="M7.5 9.5 Q7.8 4 14 4 Q20.2 4 20.5 9.5 Q17.5 6.8 14 6.8 Q10.5 6.8 7.5 9.5 Z" fill={color} />
-        </>
+        <g>
+          <path d="M8.6 6.4 L9 0.8 L12.8 4 Z M21.4 6.4 L21 0.8 L17.2 4 Z" fill={fur} />
+          <path d="M9.5 5 L9.7 2.4 L11.5 4 Z M20.5 5 L20.3 2.4 L18.5 4 Z" fill={pink} />
+          <ellipse cx="15" cy="9.8" rx="7" ry="6.4" fill={fur} />
+          <path d="M14.2 11 L15.8 11 L15 11.9 Z" fill={pink} />
+          <g stroke={ink} strokeWidth="0.35" opacity="0.6">
+            <path d="M8 11.2 L11 11.6 M8 12.6 L11 12.4 M22 11.2 L19 11.6 M22 12.6 L19 12.4" />
+          </g>
+        </g>
       );
-    default: // 뾰족 머리
-      return <path d="M7.5 9.5 L8.5 4.5 L10.5 6 L12 2.8 L14 5 L16 2.8 L17.5 6 L19.5 4.5 L20.5 9.5 Q14 6.5 7.5 9.5 Z" fill={color} />;
+    case "rabbit":
+      return (
+        <g>
+          <ellipse cx="12.2" cy="1.6" rx="1.9" ry="4.6" fill={fur} transform="rotate(-8 12.2 1.6)" />
+          <ellipse cx="17.8" cy="1.6" rx="1.9" ry="4.6" fill={fur} transform="rotate(8 17.8 1.6)" />
+          <ellipse cx="12.2" cy="1.8" rx="0.9" ry="3.4" fill={pink} transform="rotate(-8 12.2 1.8)" />
+          <ellipse cx="17.8" cy="1.8" rx="0.9" ry="3.4" fill={pink} transform="rotate(8 17.8 1.8)" />
+          <circle cx="15" cy="9.8" r="6.6" fill={fur} stroke="#E3D8CF" strokeWidth="0.5" />
+          <ellipse cx="15" cy="11.3" rx="0.9" ry="0.7" fill={pink} />
+        </g>
+      );
+    case "dog":
+      return (
+        <g>
+          <circle cx="15" cy="9.6" r="6.7" fill={fur} />
+          <ellipse cx="8.4" cy="8.4" rx="2.1" ry="4" fill="#8A5A3B" transform="rotate(18 8.4 8.4)" />
+          <ellipse cx="21.6" cy="8.4" rx="2.1" ry="4" fill="#8A5A3B" transform="rotate(-18 21.6 8.4)" />
+          <ellipse cx="15" cy="12.4" rx="3.3" ry="2.4" fill="#F6E9D6" />
+          <ellipse cx="15" cy="11.2" rx="1.3" ry="0.9" fill={ink} />
+        </g>
+      );
+    case "fox":
+      return (
+        <g>
+          <path d="M8.2 7 L8.4 0.6 L13 4 Z M21.8 7 L21.6 0.6 L17 4 Z" fill={fur} />
+          <path d="M8.4 2.6 L8.4 0.6 L10 1.8 Z M21.6 2.6 L21.6 0.6 L20 1.8 Z" fill="#3A2C26" />
+          <path d="M8 9.4 Q8.4 3 15 3 Q21.6 3 22 9.4 Q21 15.6 15 16.4 Q9 15.6 8 9.4 Z" fill={fur} />
+          <path d="M8.6 10.6 Q12 11.4 15 16.2 Q18 11.4 21.4 10.6 Q20.4 15.2 15 16.4 Q9.6 15.2 8.6 10.6 Z" fill="#FFF4E8" />
+          <ellipse cx="15" cy="11.6" rx="1" ry="0.7" fill={ink} />
+        </g>
+      );
+    default: // panda
+      return (
+        <g>
+          <circle cx="9.6" cy="4.4" r="2.6" fill="#2E2E33" />
+          <circle cx="20.4" cy="4.4" r="2.6" fill="#2E2E33" />
+          <circle cx="15" cy="9.6" r="6.8" fill={fur} stroke="#E6E6E2" strokeWidth="0.5" />
+          <ellipse cx="12.3" cy="9.6" rx="1.9" ry="2.4" fill="#2E2E33" transform="rotate(20 12.3 9.6)" />
+          <ellipse cx="17.7" cy="9.6" rx="1.9" ry="2.4" fill="#2E2E33" transform="rotate(-20 17.7 9.6)" />
+          <ellipse cx="15" cy="11.3" rx="1.1" ry="0.75" fill="#2E2E33" />
+        </g>
+      );
   }
 }
 
-/** 눈·코·입 + 헤어스타일. 표정은 상태(완료·작성 중·대기·시작 전)에 따라 바뀐다. */
-export function Avatar({ seed, state, shirt }: { seed: string; state: DocState; shirt: string }) {
+/** 동물 얼굴 직원 — 사원증 셔츠·두 다리, 표정은 상태(완료·작성 중·대기·시작 전)에 따라 바뀐다. */
+export function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
   const n = seedOf(seed);
-  const skin = SKIN[n % SKIN.length];
-  const hair = HAIR[(n >>> 3) % HAIR.length];
-  const style = (n >>> 6) % 6;
-  const glasses = (n >>> 9) % 5 === 0;
-  const blush = state === "done" || (n >>> 11) % 3 === 0;
-  const eyeY = 10.6;
-  const mouth =
-    state === "done" ? <path d="M11.6 13.6 Q14 16 16.4 13.6" stroke="#5B2A1E" strokeWidth="0.9" fill="none" strokeLinecap="round" />
-    : state === "blocked" ? <path d="M11.8 14.8 Q14 13.2 16.2 14.8" stroke="#5B2A1E" strokeWidth="0.9" fill="none" strokeLinecap="round" />
-    : state === "writing" ? <ellipse cx="14" cy="14.3" rx="1" ry="0.7" fill="#5B2A1E" />
-    : <path d="M12.3 14.3 L15.7 14.3" stroke="#5B2A1E" strokeWidth="0.9" strokeLinecap="round" />;
-  return (
-    <svg width="28" height="38" viewBox="0 0 28 38" aria-hidden>
-      {/* 몸 + 목 */}
-      <rect x="12.2" y="15.5" width="3.6" height="3.5" fill={skin} />
-      <path d="M4 37 Q4 19 14 19 Q24 19 24 37 Z" fill={shirt} />
-      <path d="M11 19.3 L14 23 L17 19.3" fill="none" stroke="var(--bg)" strokeWidth="1" />
-      {/* 얼굴 */}
-      <ellipse cx="14" cy="10.5" rx="6.3" ry="6.8" fill={skin} />
-      <ellipse cx="7.8" cy="11" rx="1" ry="1.4" fill={skin} />
-      <ellipse cx="20.2" cy="11" rx="1" ry="1.4" fill={skin} />
-      <Hair style={style} color={hair} />
-      {/* 눈 */}
-      {state === "done" ? (
-        <g stroke="#2B2321" strokeWidth="0.9" fill="none" strokeLinecap="round">
-          <path d="M10.6 10.9 Q11.6 9.9 12.6 10.9" />
-          <path d="M15.4 10.9 Q16.4 9.9 17.4 10.9" />
-        </g>
-      ) : (
-        <g fill="#2B2321">
-          <ellipse cx="11.6" cy={eyeY} rx="0.85" ry={state === "writing" ? 0.6 : 1} />
-          <ellipse cx="16.4" cy={eyeY} rx="0.85" ry={state === "writing" ? 0.6 : 1} />
-          <circle cx="11.9" cy={eyeY - 0.3} r="0.25" fill="#fff" />
-          <circle cx="16.7" cy={eyeY - 0.3} r="0.25" fill="#fff" />
-        </g>
-      )}
-      {/* 눈썹 — 대기 중이면 걱정 */}
-      <g stroke={hair} strokeWidth="0.8" strokeLinecap="round">
-        {state === "blocked" ? (
-          <>
-            <path d="M10.4 8.6 L12.6 8.1" />
-            <path d="M15.4 8.1 L17.6 8.6" />
-          </>
-        ) : (
-          <>
-            <path d="M10.5 8.4 Q11.6 7.8 12.7 8.3" fill="none" />
-            <path d="M15.3 8.3 Q16.4 7.8 17.5 8.4" fill="none" />
-          </>
-        )}
+  const sp = SPECIES[n % SPECIES.length];
+  const furs = FUR[sp];
+  const fur = furs[(n >>> 4) % furs.length];
+  const panda = sp === "panda";
+  const ink = panda ? "#fff" : "#2B2321";
+  const line = "#3A2C26";
+  const eyes =
+    state === "done" ? (
+      <g stroke={ink} strokeWidth="0.85" fill="none" strokeLinecap="round">
+        <path d="M11.6 9.9 Q12.5 8.9 13.4 9.9" />
+        <path d="M16.6 9.9 Q17.5 8.9 18.4 9.9" />
       </g>
-      {glasses && (
-        <g stroke="#3B3F4A" strokeWidth="0.6" fill="none">
-          <circle cx="11.6" cy={eyeY} r="1.9" />
-          <circle cx="16.4" cy={eyeY} r="1.9" />
-          <path d="M13.5 10.5 L14.5 10.5" />
-        </g>
-      )}
-      {/* 코 */}
-      <path d="M14 11.4 Q13.4 12.7 14.3 12.8" stroke="#A0694A" strokeWidth="0.7" fill="none" strokeLinecap="round" />
-      {blush && (
-        <g fill="#F08C8C" opacity="0.45">
-          <ellipse cx="10.2" cy="13" rx="1.1" ry="0.6" />
-          <ellipse cx="17.8" cy="13" rx="1.1" ry="0.6" />
-        </g>
-      )}
+    ) : state === "writing" ? (
+      <g stroke={ink} strokeWidth="0.85" strokeLinecap="round">
+        <path d="M11.7 9.7 L13.3 9.7" />
+        <path d="M16.7 9.7 L18.3 9.7" />
+      </g>
+    ) : (
+      <g fill={ink}>
+        <circle cx="12.5" cy="9.5" r="1" />
+        <circle cx="17.5" cy="9.5" r="1" />
+        {!panda && <circle cx="12.8" cy="9.2" r="0.32" fill="#fff" />}
+        {!panda && <circle cx="17.8" cy="9.2" r="0.32" fill="#fff" />}
+      </g>
+    );
+  const mouth =
+    state === "done" ? <path d="M13.6 13 Q15 14.7 16.4 13 Z" fill="#D9535F" />
+    : state === "blocked" ? <path d="M13.8 14 Q15 13.1 16.2 14" stroke={line} strokeWidth="0.65" fill="none" strokeLinecap="round" />
+    : <path d="M13.8 12.9 Q14.4 13.6 15 12.9 Q15.6 13.6 16.2 12.9" stroke={line} strokeWidth="0.6" fill="none" strokeLinecap="round" />;
+  return (
+    <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible" }}>
+      <ellipse cx="15" cy="38.6" rx="7.5" ry="2.4" fill="rgba(0,0,0,.14)" />
+      {/* 다리 */}
+      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 30px" }}><rect x="10.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
+      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 30px" }}><rect x="16.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
+      {/* 셔츠 + 사원증 */}
+      <rect x="8.5" y="16.5" width="13" height="15" rx="5" fill={shirt} />
+      <rect x="12.1" y="20" width="5.8" height="7" rx="1.1" fill="#fff" opacity="0.92" />
+      <rect x="13.2" y="21.3" width="3.6" height="1" rx="0.5" fill={shirt} opacity="0.7" />
+      <AnimalHead sp={sp} fur={fur} />
+      {eyes}
+      <ellipse cx="10.9" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
+      <ellipse cx="19.1" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
       {mouth}
-      {/* 땀방울 — 대기 중 */}
-      {state === "blocked" && <path d="M21.5 6 Q22.6 7.8 21.5 8.4 Q20.4 7.8 21.5 6 Z" fill="#7CC4F0" />}
+      {state === "blocked" && <path d="M22 4.6 Q23.2 6.4 22 7.1 Q20.8 6.4 22 4.6 Z" fill="#7CC4F0" />}
     </svg>
   );
 }
@@ -147,7 +176,7 @@ export function Worker({ d, color, walking = false }: { d: FactoryDoc; color: st
           {[0, 1, 2].map((i) => <span key={i} className="rounded-full" style={{ width: 3, height: 3, background: color, animation: `factory-dot 1.2s ${i * 0.15}s infinite` }} />)}
         </span>
       )}
-      <Avatar seed={d.id} state={d.state} shirt={body} />
+      <Minimi seed={d.id} state={d.state} shirt={body} walking={walking} />
       {d.state === "done" && (
         <span aria-hidden className="absolute inline-grid place-items-center rounded-full" style={{ top: -4, right: 0, width: 13, height: 13, background: "var(--success)", color: "var(--text-on-color)" }}>
           <Check size={9} strokeWidth={3.5} />
@@ -156,16 +185,8 @@ export function Worker({ d, color, walking = false }: { d: FactoryDoc; color: st
       {d.state === "blocked" && (
         <span aria-hidden className="absolute inline-grid place-items-center rounded-full font-extrabold" style={{ top: -4, right: 0, width: 13, height: 13, fontSize: 9, background: "var(--warning)", color: "var(--text-on-color)" }}>!</span>
       )}
-      {walking ? (
-        // 걷는 다리 — 3D 보기에서 돌아다닐 때
-        <span aria-hidden className="flex" style={{ gap: 5, marginTop: -2, height: 7 }}>
-          <span className="factory-leg" style={{ width: 4, height: 7, borderRadius: 2, background: "#3B3F4A", transformOrigin: "50% 0" }} />
-          <span className="factory-leg factory-leg-r" style={{ width: 4, height: 7, borderRadius: 2, background: "#3B3F4A", transformOrigin: "50% 0" }} />
-        </span>
-      ) : (
-        /* 책상 */
-        <span aria-hidden style={{ width: 32, height: 4, marginTop: 1, borderRadius: 2, background: d.state === "blocked" ? "transparent" : "var(--room-desk, var(--border))" }} />
-      )}
+      {/* 책상 (걸을 때는 다리가 보이도록 비움) */}
+      {!walking && <span aria-hidden style={{ width: 32, height: 4, marginTop: -2, borderRadius: 2, background: d.state === "blocked" ? "transparent" : "var(--room-desk, var(--border))" }} />}
     </Link>
   );
 }

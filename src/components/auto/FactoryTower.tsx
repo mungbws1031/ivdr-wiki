@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { FactoryDoc, FactoryFloor, FactoryTask } from "../../lib/factory";
-import { FloorDetail, pct, seedOf, STATE } from "./factoryArt";
-import { Minimi } from "./FactoryRoom";
+import { FloorDetail, Minimi, pct, seedOf, STATE } from "./factoryArt";
 
 // 건물 단면 보기 — 고층 빌딩을 잘라 본 모습. 층마다 이름 띠, 부서별 실내, 가운데 엘리베이터.
 
