@@ -8,6 +8,10 @@
 import type { ProductSpec } from "../data/spec/types";
 import { composeIntendedPurpose } from "../data/spec/validate";
 import { classify, type ClassResult } from "./rules/classify";
+import { ruleJustification, ruleTableMarkdown } from "./rules/justify";
+import { evaluateDocSet } from "./rules/applicability";
+import { gsprChecklist, gsprTableMarkdown } from "./gspr";
+import { leafById } from "../data/docTree";
 import { transportTokens } from "./transport";
 import { plannerTokens } from "./planner";
 import { resultsTokens, type ResultsMap } from "./results";
@@ -30,7 +34,7 @@ export const TOKEN_LABEL: Record<string, string> = {
   productType: "제품 유형", formFactor: "제품 형태", materials: "주요 재질", analyte: "분석물", cutoff: "Cut-off", specimen: "검체", resultKind: "결과 형태", readout: "판독 방식",
   user: "사용자", environment: "사용 환경", clinicalDecision: "결과로 내리는 판단", targetPopulation: "대상 집단", outOfScope: "사용하면 안 되는 용도",
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
-  cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
+  cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", gsprTable: "GSPR 1차 판정", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
   swScope: "소프트웨어 범위", transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
@@ -42,28 +46,6 @@ export const TOKEN_LABEL: Record<string, string> = {
 };
 
 const yn = (b: boolean | null, yes: string, no: string) => (b === null ? null : b ? yes : no);
-
-function ruleTable(s: ProductSpec, c: ClassResult): string {
-  const f = s.rule1to3Flags;
-  const ask = "[답변 필요 — 제품 스펙의 분류 판단 질문]";
-  const r3 = [
-    f.geneticTesting && "유전자 검사", f.cancerScreening && "암 선별·진단", f.companionDiagnostic && "동반진단",
-    f.congenitalScreening && "선천성 질환 선별", f.lifeThreatening && "생명위협 상태",
-  ].filter(Boolean);
-  const r3Unknown = [f.geneticTesting, f.cancerScreening, f.companionDiagnostic, f.congenitalScreening, f.lifeThreatening].some((x) => x === null);
-  const lay = s.user === "lay" || s.user === "both";
-  const exception = s.analyte.preset === "LH" || s.analyte.preset === "hCG";
-  const lines = [
-    `Rule 1: ${f.transmissibleAgent === null ? ask : f.transmissibleAgent ? "해당 가능 — 감염병 검출 (RA 판단 필요)" : "비해당 — 전파성 병원체를 검출하지 않음"}`,
-    `Rule 2: ${f.bloodGrouping === null || f.tissueTyping === null ? ask : f.bloodGrouping || f.tissueTyping ? "해당 — 혈액형·조직 적합성 판정" : "비해당 — 혈액형·조직 적합성을 판정하지 않음"}`,
-    `Rule 3: ${r3.length ? `해당 — ${r3.join(", ")}` : r3Unknown ? ask : "비해당 — 유전자·암·동반진단·선천성 선별·생명위협 상태에 해당하지 않음"}`,
-    `Rule 4(자가/근접검사): ${s.user === null ? ask : lay ? (exception ? `해당 — 일반인 자가검사이나 ${s.analyte.preset === "LH" ? "가임력(배란)" : "임신"} 검사 예외로 B` : "해당 — 일반인 자가검사로 C") : "비해당 — 전문가용"}`,
-    `Rule 5: ${s.productType === "instrument" ? "해당 — IVD 전용 기기" : "비해당 — 특정 분석물 검출 시약 (범용 실험실 시약·기기·검체 용기 아님)"}`,
-    `Rule 6: ${c.rule === "Rule 6" ? "해당 — 다른 규칙에 해당하지 않음" : "비해당 — 앞선 규칙이 적용됨"}`,
-    `Rule 7: 비해당 — 지정값 없는 관리물질이 아님`,
-  ];
-  return lines.join("\n");
-}
 
 /** 소프트웨어 구성과 분류 연결 — 판독 방식·앱·MDSW 여부로 조립. 모르면 null. */
 function swScope(s: ProductSpec, c: ClassResult): string | null {
@@ -105,7 +87,8 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
       : null,
     cls: c.value, rule: c.value ? c.rule : null,
     rationale: c.rationale.length ? c.rationale.join(" ") : null,
-    ruleTable: ruleTable(s, c),
+    ruleTable: ruleTableMarkdown(ruleJustification(s), c),
+    gsprTable: gsprTableMarkdown(gsprChecklist(s, evaluateDocSet(s, c)), (id) => leafById(id)?.title ?? id),
     route: c.route.length ? c.route.map((r) => `- ${r}`).join("\n") : null,
     nb: c.value === null ? null : c.value === "A" && s.sterile !== true ? "불필요 — Class A 비멸균 (자기선언)" : `필요 — Class ${c.value}${c.value === "A" ? " 멸균 (멸균 측면)" : ""}`,
     nbScope: c.route.length ? c.route.join(" / ") : null,
