@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { DocState, FactoryDoc, FactoryFloor } from "../../lib/factory";
-import { FloorDetail, pct, seedOf, STATE } from "./factoryArt";
+import { FloorDetail, Minimi, pct, seedOf, STATE } from "./factoryArt";
 
 // 미니룸 보기 — 모든 부서를 한 방에 모아 한눈에 본다 (싸이월드 미니룸처럼 고정 아이소메트릭).
 // 바닥 좌표(타일 x·y)를 화면 좌표로 바꿔 그린다: x는 오른쪽 아래, y는 왼쪽 아래 방향.
@@ -34,100 +34,6 @@ function layout(floors: FactoryFloor[]): { zones: Zone[]; X: number; Y: number }
     }
   });
   return { zones, X, Y: bands.length * BAND };
-}
-
-// ── 싸이월드풍 미니미 ──────────────────────────────────────
-const SKIN = ["#FFE3CF", "#FCD5B8", "#F3C29D", "#E0A87E"];
-const HAIR = ["#3A2A22", "#6B4226", "#A0663A", "#2E2E3A", "#D8A35D", "#8E3B2F"];
-
-function MiniHair({ style, color }: { style: number; color: string }) {
-  switch (style) {
-    case 0: // 바가지 머리
-      return <path d="M4 15 Q3.5 3 15 3 Q26.5 3 26 15 Q24 9.5 15 9.5 Q6 9.5 4 15 Z" fill={color} />;
-    case 1: // 긴 생머리
-      return <path d="M3.6 24 Q2 3 15 3 Q28 3 26.4 24 L23.6 24 Q24.5 10 15 9.6 Q5.5 10 6.4 24 Z" fill={color} />;
-    case 2: // 양갈래 똥머리
-      return (
-        <g fill={color}>
-          <circle cx="5" cy="5.5" r="3.6" />
-          <circle cx="25" cy="5.5" r="3.6" />
-          <path d="M4 14 Q3.8 3.5 15 3.5 Q26.2 3.5 26 14 Q23 8.8 15 8.8 Q7 8.8 4 14 Z" />
-        </g>
-      );
-    case 3: // 삐죽 머리
-      return <path d="M4 14 L5 5 L8.5 7 L10.5 2 L13.5 5.5 L16.5 1.6 L18.5 5.5 L22 2.6 L22.8 6.8 L26 5.5 L26 14 Q22 8.8 15 8.8 Q8 8.8 4 14 Z" fill={color} />;
-    case 4: // 옆가르마 + 리본
-      return (
-        <>
-          <path d="M4 15 Q3.5 3 15 3 Q26.5 3 26 15 Q22 7.5 12 9.5 Q7 10.5 4 15 Z" fill={color} />
-          <path d="M20 4 L24.5 1.8 L24 6.2 Z M20 4 L16.5 1.2 L16.2 6 Z" fill="#FF7FA8" />
-          <circle cx="20" cy="4" r="1.2" fill="#FF5C8D" />
-        </>
-      );
-    default: // 포니테일
-      return (
-        <>
-          <path d="M4 14 Q3.8 3 15 3 Q26.2 3 26 14 Q23 8.6 15 8.6 Q7 8.6 4 14 Z" fill={color} />
-          <path d="M24.5 6 Q31 9 28 19 Q27 13 24.8 11 Z" fill={color} />
-        </>
-      );
-  }
-}
-
-/** 시안의 사람 모양(동그란 머리·사원증 셔츠·두 다리)에 눈·코·입. 표정은 상태에 따라 바뀐다. */
-export function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
-  const n = seedOf(seed);
-  const skin = SKIN[n % SKIN.length];
-  const hair = HAIR[(n >>> 3) % HAIR.length];
-  const style = (n >>> 6) % 6;
-  const ink = "#3A2C26";
-  const eyes =
-    state === "done" ? (
-      <g stroke={ink} strokeWidth="0.8" fill="none" strokeLinecap="round">
-        <path d="M11.6 9.8 Q12.5 8.8 13.4 9.8" />
-        <path d="M16.6 9.8 Q17.5 8.8 18.4 9.8" />
-      </g>
-    ) : state === "writing" ? (
-      <g stroke={ink} strokeWidth="0.8" strokeLinecap="round">
-        <path d="M11.7 9.7 L13.3 9.7" />
-        <path d="M16.7 9.7 L18.3 9.7" />
-      </g>
-    ) : (
-      <g fill={ink}>
-        <circle cx="12.5" cy="9.5" r="0.95" />
-        <circle cx="17.5" cy="9.5" r="0.95" />
-        <circle cx="12.8" cy="9.2" r="0.3" fill="#fff" />
-        <circle cx="17.8" cy="9.2" r="0.3" fill="#fff" />
-      </g>
-    );
-  const mouth =
-    state === "done" ? <path d="M13.3 12.6 Q15 14.4 16.7 12.6 Z" fill="#D9535F" />
-    : state === "blocked" ? <path d="M13.5 13.6 Q15 12.6 16.5 13.6" stroke={ink} strokeWidth="0.7" fill="none" strokeLinecap="round" />
-    : <path d="M13.7 12.8 Q15 13.8 16.3 12.8" stroke={ink} strokeWidth="0.7" fill="none" strokeLinecap="round" />;
-  return (
-    <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible" }}>
-      <ellipse cx="15" cy="38.6" rx="7.5" ry="2.4" fill="rgba(0,0,0,.14)" />
-      {/* 다리 */}
-      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 30px" }}><rect x="10.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
-      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 30px" }}><rect x="16.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
-      {/* 셔츠 + 사원증 */}
-      <rect x="8.5" y="16.5" width="13" height="15" rx="5" fill={shirt} />
-      <rect x="12.1" y="20" width="5.8" height="7" rx="1.1" fill="#fff" opacity="0.92" />
-      <rect x="13.2" y="21.3" width="3.6" height="1" rx="0.5" fill={shirt} opacity="0.7" />
-      {/* 머리 */}
-      <circle cx="15" cy="9.6" r="6.6" fill={skin} />
-      <g transform="translate(15 9.6) scale(0.6) translate(-15 -14)">
-        <MiniHair style={style} color={hair} />
-      </g>
-      {eyes}
-      {/* 코 */}
-      <path d="M15 10.4 Q14.5 11.5 15.3 11.6" stroke="#B07A58" strokeWidth="0.6" fill="none" strokeLinecap="round" />
-      <ellipse cx="11.2" cy="11.9" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
-      <ellipse cx="18.8" cy="11.9" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
-      {mouth}
-      {state === "blocked" && <path d="M21.6 4.6 Q22.8 6.4 21.6 7.1 Q20.4 6.4 21.6 4.6 Z" fill="#7CC4F0" />}
-    </svg>
-  );
 }
 
 // ── 가구 ─────────────────────────────────────────────────

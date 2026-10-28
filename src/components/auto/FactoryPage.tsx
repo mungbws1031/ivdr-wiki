@@ -18,6 +18,9 @@ import { STATE } from "./factoryArt";
 import { Factory3D } from "./Factory3D";
 import { FactoryRoom } from "./FactoryRoom";
 import { FactoryTower } from "./FactoryTower";
+import { GoalChecklist } from "./GoalChecklist";
+import { buildGoals } from "../../lib/goals";
+import { resultsProgress } from "../../lib/results";
 
 const VIEW_KEY = "ivdr-factory-view";
 type ViewKind = "room" | "3d" | "2d";
@@ -54,14 +57,16 @@ export function FactoryPage() {
       // 기억만 못 함
     }
   };
-  const { filled } = completion(spec);
+  const specFilled = completion(spec);
+  const { filled } = specFilled;
   const cls = useMemo(() => classify(spec), [spec]);
   const docSet = useMemo(() => evaluateDocSet(spec, cls), [spec, cls]);
   const ctx = useMemo(() => buildTokenContext(spec, cls, results), [spec, cls, results]);
   const status = readStatus();
+  const classConfirmed = !!confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value;
   const factory = buildFactory({
     spec, cls, docSet, results,
-    classConfirmed: !!confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value,
+    classConfirmed,
     status: (id) => status[id] ?? "not_started",
     sections: (id) => {
       const d = resolveDoc(id);
@@ -75,6 +80,7 @@ export function FactoryPage() {
     specMissingCount: unresolvedFields(spec).length,
   });
   const o = factory.overall;
+  const goals = buildGoals({ spec, specFilled, classConfirmed, results: resultsProgress(spec, results), tasksLeft: o.tasks, docs: { done: o.done, total: o.total } });
   const counts = factory.floors.flatMap((f) => f.docs).reduce((m, d) => ({ ...m, [d.state]: (m[d.state] ?? 0) + 1 }), {} as Partial<Record<DocState, number>>);
 
   return (
@@ -99,6 +105,7 @@ export function FactoryPage() {
           </div>
         ) : (
           <div className="mx-auto" style={{ maxWidth: 1100 }}>
+            <div style={{ marginBottom: "var(--s-4)" }}><GoalChecklist goals={goals} /></div>
             <div className="flex justify-end" style={{ marginBottom: "var(--s-3)" }}>
               <div className="inline-flex flex-wrap rounded-[var(--r-md)] border" style={{ borderColor: "var(--border)", padding: 2 }} role="group" aria-label="보기 방식">
                 {([["room", "미니룸 (한눈에)", LayoutGrid], ["3d", "3D 건물", Box], ["2d", "건물 단면", Rows3]] as const).map(([k, label, Icon]) => (
