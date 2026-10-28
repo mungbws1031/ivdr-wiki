@@ -8,9 +8,9 @@ import { EvidenceBar } from "./auto/AutoUi";
 type Doc = { sections: { placeholder: string }[] };
 
 /** 근거 원장 — 이 문서의 값이 어디서 왔는지 (입력·규칙·가정·누락)와 근거 확정 비율. */
-export function EvidencePanel({ raw, filled, ctx, assumedPaths, docId }: { raw: Doc; filled: Doc; ctx: Record<string, string | null>; assumedPaths: Set<string>; docId: string }) {
+export function EvidencePanel({ raw, filled, ctx, assumedPaths, estimatedPaths, docId }: { raw: Doc; filled: Doc; ctx: Record<string, string | null>; assumedPaths: Set<string>; estimatedPaths: Set<string>; docId: string }) {
   const [open, setOpen] = useState(false);
-  const ev = docEvidence(raw, filled, ctx, assumedPaths, (i) => hasDraft(docId, i));
+  const ev = docEvidence(raw, filled, ctx, assumedPaths, (i) => hasDraft(docId, i), estimatedPaths);
   if (ev.confirmed === null) return null;
   const tags = Object.keys(TAG_META) as EvidenceTag[];
   return (

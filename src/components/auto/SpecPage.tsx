@@ -4,6 +4,7 @@ import { ArrowRight, Check, ClipboardList, Download, Eye, FileText, RotateCcw, S
 import { PageHeader } from "../PageHeader";
 import { SpecField } from "./SpecField";
 import { AutoSteps } from "./AutoSteps";
+import { ConceptBox } from "./ConceptBox";
 import { specSections } from "../../data/spec/fields";
 import { completion, composeIntendedPurpose, exampleSpec, getAt, unresolvedFields } from "../../data/spec/validate";
 import { replaceSpec, reloadSpec, resetSpec, setSpecField, useSpec } from "../../hooks/useSpecStore";
@@ -192,6 +193,8 @@ export function SpecPage() {
             </div>
           )}
         </header>
+
+        <div style={{ marginBottom: "var(--s-6)" }}><ConceptBox /></div>
 
         <div className="grid items-start grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]" style={{ gap: "var(--s-6)" }}>
           {/* 입력 섹션 */}

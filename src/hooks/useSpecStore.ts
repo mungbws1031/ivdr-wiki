@@ -1,5 +1,6 @@
 import { emitChange, useStoreVersion } from "./useDraftStore";
 import { applyAssumptions, type Assumption } from "../lib/evidence";
+import { confirmEstimated, getConcept } from "./useConceptStore";
 import type { ProductSpec } from "../data/spec/types";
 import { emptySpec, setAt, validateSpec } from "../data/spec/validate";
 
@@ -34,6 +35,8 @@ export function getSpec(): ProductSpec {
 }
 
 export function setSpecField(path: string, value: unknown): void {
+  // 사람이 직접 고친 칸은 더 이상 '추정'이 아니다
+  if (getConcept().estimated.includes(path)) confirmEstimated([path]);
   const next = setAt(getSpec(), path, value);
   next.meta = { updatedAt: new Date().toISOString() };
   save(next);
@@ -94,16 +97,20 @@ export interface WorkingSpec {
   raw: ProductSpec;
   assumed: Assumption[];
   assumeOn: boolean;
+  /** 컨셉 문장에서 추정했고 아직 확인하지 않은 칸 */
+  estimated: string[];
 }
 
-let working: { raw: ProductSpec; on: boolean; value: WorkingSpec } | null = null;
+let working: { raw: ProductSpec; on: boolean; est: string; value: WorkingSpec } | null = null;
 
 export function getWorkingSpec(): WorkingSpec {
   const raw = getSpec();
   const on = getAssumeMode();
-  if (working && working.raw === raw && working.on === on) return working.value;
-  const value: WorkingSpec = on ? { ...applyAssumptions(raw), raw, assumeOn: true } : { spec: raw, raw, assumed: [], assumeOn: false };
-  working = { raw, on, value };
+  const estimated = getConcept().estimated;
+  const est = estimated.join(",");
+  if (working && working.raw === raw && working.on === on && working.est === est) return working.value;
+  const value: WorkingSpec = on ? { ...applyAssumptions(raw), raw, assumeOn: true, estimated } : { spec: raw, raw, assumed: [], assumeOn: false, estimated };
+  working = { raw, on, est, value };
   return value;
 }
 

@@ -46,7 +46,7 @@ describe("근거 원장", () => {
     const ctx = buildTokenContext(exampleSpec());
     const raw = resolveDoc("intended-purpose")!;
     const ev = docEvidence(raw, fillDoc(raw, ctx), ctx, new Set(), () => true);
-    expect(ev.counts).toEqual({ input: raw.sections.length, rule: 0, assumed: 0, missing: 0 });
+    expect(ev.counts).toEqual({ input: raw.sections.length, estimated: 0, rule: 0, assumed: 0, missing: 0 });
     expect(ev.confirmed).toBe(1);
   });
   it("결과 칸은 실험 전이면 누락", () => {

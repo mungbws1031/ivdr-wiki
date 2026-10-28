@@ -110,7 +110,7 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
 
 /** /auto/overview — 스펙을 넣으면 나오는 결과를 한 화면에. 각 카드는 상세 단계로 이어진다. */
 export function OverviewPage() {
-  const { spec, assumed, assumeOn } = useWorkingSpec();
+  const { spec, assumed, assumeOn, estimated } = useWorkingSpec();
   const results = useResults();
   const confirm = useClassConfirm();
   const { filled, total } = completion(spec);
@@ -122,17 +122,18 @@ export function OverviewPage() {
   const tasks = useMemo(() => planHumanTasks(plans), [plans]);
   const standards = useMemo(() => applicableStandards(spec), [spec]);
   const prog = resultsProgress(spec, results);
-  const ctx = useMemo(() => markAssumed(buildTokenContext(spec, cls, results), assumed), [spec, cls, results, assumed]);
+  const ctx = useMemo(() => markAssumed(buildTokenContext(spec, cls, results), assumed, estimated), [spec, cls, results, assumed, estimated]);
   const assumedPaths = useMemo(() => new Set(assumed.map((a) => a.path)), [assumed]);
+  const estimatedPaths = useMemo(() => new Set(estimated), [estimated]);
   const filledDocs = useMemo(
     () => allLeaves()
       .map((l) => ({ leaf: l, doc: resolveDoc(l.id) }))
       .filter((x) => x.doc && x.doc.sections.some((s) => hasTokens(s.placeholder)))
       .map((x) => ({
         id: x.leaf.id, title: x.leaf.title, missing: docMissingTokens(x.doc!, ctx).length, status: docSet.find((a) => a.leafId === x.leaf.id)?.status,
-        ev: docEvidence(x.doc!, fillDoc(x.doc!, ctx), ctx, assumedPaths, (i) => hasDraft(x.leaf.id, i)),
+        ev: docEvidence(x.doc!, fillDoc(x.doc!, ctx), ctx, assumedPaths, (i) => hasDraft(x.leaf.id, i), estimatedPaths),
       })),
-    [ctx, docSet, assumedPaths],
+    [ctx, docSet, assumedPaths, estimatedPaths],
   );
   const confirmed = confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value;
   const studyCounts = plans.reduce((m, p) => ({ ...m, [p.status]: (m[p.status] ?? 0) + 1 }), {} as Partial<Record<ApplStatus, number>>);
