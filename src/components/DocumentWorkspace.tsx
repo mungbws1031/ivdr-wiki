@@ -35,6 +35,7 @@ import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { PageHeader } from "./PageHeader";
 import { DocxExport } from "./DocxExport";
+import { TranslatePanel } from "./TranslatePanel";
 import { LevelMeter } from "./LevelMeter";
 import { EffortTimeline } from "./EffortTimeline";
 import { SensSpecCalc } from "./calcs/SensSpecCalc";
@@ -578,6 +579,9 @@ export function DocumentWorkspace() {
 
             {/* 워드(.docx) 내보내기 — 완성 후 내보내는 도구 */}
             <DocxExport doc={doc} />
+
+            {/* 영문 번역 (AI) — 해외 인증을 고른 경우 (한국만 골랐으면 숨김) */}
+            {!(spec.markets?.length && spec.markets.every((m) => m === "KR")) && <TranslatePanel doc={doc} />}
 
             {/* 일정 패널 */}
             {scheduleEntries.length > 0 && (() => {
