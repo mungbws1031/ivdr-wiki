@@ -276,6 +276,19 @@ export async function generateFinishedDocx(doc: DocTemplate): Promise<Blob> {
   return Packer.toBlob(document);
 }
 
+/** 번역본(영문) .docx — 제목과 섹션 본문만 담는다 (안내 문구는 한국어라 넣지 않음). */
+export async function generateTranslatedDocx(t: { title: string; sections: { heading: string; body: string }[] }): Promise<Blob> {
+  const children: Paragraph[] = [
+    new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun({ text: t.title, bold: true })] }),
+  ];
+  for (const s of t.sections) {
+    children.push(new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun({ text: s.heading, bold: true })] }));
+    children.push(new Paragraph({ children: s.body.split("\n").flatMap((line, i) => (i === 0 ? [new TextRun(line)] : [new TextRun({ text: line, break: 1 })])) }));
+    children.push(new Paragraph({ children: [] }));
+  }
+  return Packer.toBlob(new Document({ sections: [{ children }] }));
+}
+
 /** Blob 다운로드 트리거. */
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
