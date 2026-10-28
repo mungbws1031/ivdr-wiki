@@ -69,7 +69,11 @@ export interface ProductSpec {
     hasApp: Maybe<boolean>;
     isMdsw: Maybe<boolean>;
   };
+  /** 받아야 할 제품 인증(출시 시장) — 스펙 화면 첫 질문 */
   markets: Maybe<string[]>;
+  qmsCerts: Maybe<string[]>;
+  /** 식약처 체외진단의료기기 등급 (사람이 품목 분류로 확인) */
+  krGrade: Maybe<"1" | "2" | "3" | "4">;
   storage: {
     tempMinC: Maybe<number>;
     tempMaxC: Maybe<number>;

@@ -40,6 +40,45 @@ const YES_NO_TRI: FieldOption[] = [
 
 export const specSections: FieldSection[] = [
   {
+    id: "certs",
+    title: "어떤 인증을 받아야 하나요?",
+    desc: "가장 먼저 정합니다. 고른 인증에 맞춰 분류·필요 문서·실험·포장 규정이 달라집니다. 여러 개를 고를 수 있습니다.",
+    fields: [
+      {
+        path: "markets", label: "제품 인증 (출시할 곳)", kind: "multi", usedBy: ["conformity-route-plan", "labelling-spec", "declaration-of-conformity"],
+        help: "한국은 체외진단의료기기법에 따른 식약처(MFDS) 신고·인증·허가, EU는 IVDR CE 마킹입니다.",
+        options: [
+          { value: "KR", label: "한국 — 식약처(MFDS) 체외진단의료기기" },
+          { value: "EU", label: "EU — IVDR (CE 마킹)" },
+          { value: "US", label: "미국 — FDA" },
+          { value: "CA", label: "캐나다 — Health Canada" },
+          { value: "AU", label: "호주 — TGA" },
+          { value: "JP", label: "일본 — PMDA" },
+          { value: "BR", label: "브라질 — ANVISA" },
+        ],
+      },
+      {
+        path: "qmsCerts", label: "품질경영시스템 인증 (이미 있거나 받을 것)", kind: "multi", optional: true, usedBy: ["conformity-route-plan", "qms-manual"],
+        help: "모르면 비워두세요. 고른 제품 인증에 필요한 품질 인증을 결과 화면에서 알려드립니다.",
+        options: [
+          { value: "KGMP", label: "KGMP (국내 GMP 적합인정)" },
+          { value: "ISO13485", label: "ISO 13485" },
+          { value: "MDSAP", label: "MDSAP" },
+        ],
+      },
+      {
+        path: "krGrade", label: "식약처 등급 (한국 출시 시)", kind: "select", optional: true, usedBy: ["conformity-route-plan"],
+        help: "체외진단의료기기 품목 분류(식약처 고시)에서 확인한 등급. 모르면 비워두세요 — '확인 필요'로 남깁니다.",
+        options: [
+          { value: "1", label: "1등급" },
+          { value: "2", label: "2등급" },
+          { value: "3", label: "3등급" },
+          { value: "4", label: "4등급" },
+        ],
+      },
+    ],
+  },
+  {
     id: "identity",
     title: "제품 정보",
     desc: "모든 문서의 머리말·라벨·DoC에 들어갑니다.",
@@ -176,18 +215,6 @@ export const specSections: FieldSection[] = [
       { path: "sterile", label: "멸균 제품인가요?", kind: "tri", options: YES_NO_TRI, usedBy: ["sterilization-validation", "packaging-validation", "classification-rationale"] },
       { path: "software.hasApp", label: "앱·소프트웨어가 함께 제공되나요?", kind: "tri", options: YES_NO_TRI, usedBy: ["sw-validation", "cybersecurity"] },
       { path: "software.isMdsw", label: "그 소프트웨어가 결과 판정·해석을 하나요?", help: "결과를 판정하면 의료기기 소프트웨어(MDSW)로 봅니다.", kind: "tri", options: YES_NO_TRI, usedBy: ["sw-validation", "classification-rationale"] },
-      {
-        path: "markets", label: "출시 시장", kind: "multi", usedBy: ["conformity-route-plan", "labelling-spec"],
-        options: [
-          { value: "EU", label: "EU (IVDR)" },
-          { value: "KR", label: "한국 (MFDS)" },
-          { value: "US", label: "미국 (FDA)" },
-          { value: "CA", label: "캐나다" },
-          { value: "AU", label: "호주" },
-          { value: "JP", label: "일본" },
-          { value: "BR", label: "브라질" },
-        ],
-      },
     ],
   },
   {

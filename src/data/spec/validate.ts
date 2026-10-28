@@ -24,6 +24,8 @@ export function emptySpec(): ProductSpec {
     sterile: null,
     software: { hasApp: null, isMdsw: null },
     markets: null,
+    qmsCerts: null,
+    krGrade: null,
     storage: { tempMinC: null, tempMaxC: null, shelfLifeMonths: null, openedStabilityMin: null },
     kitComponents: [],
     referenceMethod: { name: null, ceMarked: null, lab: null },
@@ -61,6 +63,7 @@ export function exampleSpec(): ProductSpec {
   s.sterile = false;
   s.software = { hasApp: false, isMdsw: false };
   s.markets = ["EU"];
+  s.qmsCerts = ["ISO13485"];
   s.storage = { tempMinC: 2, tempMaxC: 30, shelfLifeMonths: 24, openedStabilityMin: 60 };
   s.kitComponents = [
     { name: "테스트 스트립 (개별 파우치, 건조제 포함)", qtyPerKit: 5, isReagent: true },
