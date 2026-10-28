@@ -108,7 +108,10 @@ function AnimalHead({ sp, fur }: { sp: Species; fur: string }) {
 }
 
 /** 동물 얼굴 직원 — 사원증 셔츠·두 다리, 표정은 상태(완료·작성 중·대기·시작 전)에 따라 바뀐다. */
-export function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
+/** mood가 있으면 문서 상태 대신 난이도 표정 (결과 화면) — 쉬움 미소 · 보통 · 어려움 땀 · 매우 어려움 비명 */
+export type FaceMood = "easy" | "normal" | "hard" | "scream";
+
+export function Minimi({ seed, state, shirt, walking, mood }: { seed: string; state: DocState; shirt: string; walking: boolean; mood?: FaceMood }) {
   const n = seedOf(seed);
   const sp = SPECIES[n % SPECIES.length];
   const furs = FUR[sp];
@@ -116,8 +119,9 @@ export function Minimi({ seed, state, shirt, walking }: { seed: string; state: D
   const panda = sp === "panda";
   const ink = panda ? "#fff" : "#2B2321";
   const line = "#3A2C26";
-  const eyes =
-    state === "done" ? (
+  const moodFace = mood ? moodParts(mood, ink, line, panda) : null;
+  const eyes = moodFace ? moodFace.eyes
+    : state === "done" ? (
       <g stroke={ink} strokeWidth="0.85" fill="none" strokeLinecap="round">
         <path d="M11.6 9.9 Q12.5 8.9 13.4 9.9" />
         <path d="M16.6 9.9 Q17.5 8.9 18.4 9.9" />
@@ -135,8 +139,8 @@ export function Minimi({ seed, state, shirt, walking }: { seed: string; state: D
         {!panda && <circle cx="17.8" cy="9.2" r="0.32" fill="#fff" />}
       </g>
     );
-  const mouth =
-    state === "done" ? <path d="M13.6 13 Q15 14.7 16.4 13 Z" fill="#D9535F" />
+  const mouth = moodFace ? moodFace.mouth
+    : state === "done" ? <path d="M13.6 13 Q15 14.7 16.4 13 Z" fill="#D9535F" />
     : state === "blocked" ? <path d="M13.8 14 Q15 13.1 16.2 14" stroke={line} strokeWidth="0.65" fill="none" strokeLinecap="round" />
     : <path d="M13.8 12.9 Q14.4 13.6 15 12.9 Q15.6 13.6 16.2 12.9" stroke={line} strokeWidth="0.6" fill="none" strokeLinecap="round" />;
   return (
@@ -154,9 +158,90 @@ export function Minimi({ seed, state, shirt, walking }: { seed: string; state: D
       <ellipse cx="10.9" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
       <ellipse cx="19.1" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
       {mouth}
-      {state === "blocked" && <path d="M22 4.6 Q23.2 6.4 22 7.1 Q20.8 6.4 22 4.6 Z" fill="#7CC4F0" />}
+      {!mood && state === "blocked" && <path d="M22 4.6 Q23.2 6.4 22 7.1 Q20.8 6.4 22 4.6 Z" fill="#7CC4F0" />}
+      {moodFace?.extra}
     </svg>
   );
+}
+
+const drop = (x: number, y: number, s = 1) => <path key={`${x}-${y}`} d={`M${x} ${y} q${1.2 * s} ${1.8 * s} 0 ${2.5 * s} q${-1.2 * s} ${-0.7 * s} 0 ${-2.5 * s} z`} fill="#7CC4F0" />;
+
+/** 난이도 표정 — 눈·입·덧붙임(땀·손·떨림) */
+function moodParts(mood: FaceMood, ink: string, line: string, panda: boolean): { eyes: React.ReactNode; mouth: React.ReactNode; extra: React.ReactNode } {
+  switch (mood) {
+    case "easy":
+      return {
+        eyes: (
+          <g stroke={ink} strokeWidth="0.95" fill="none" strokeLinecap="round">
+            <path d="M11.4 10 Q12.5 8.6 13.6 10" />
+            <path d="M16.4 10 Q17.5 8.6 18.6 10" />
+          </g>
+        ),
+        mouth: <path d="M12.9 12.6 Q15 15.6 17.1 12.6 Z" fill="#D9535F" stroke={line} strokeWidth="0.4" strokeLinejoin="round" />,
+        extra: (
+          <g fill="#FF8F9E" opacity="0.6">
+            <ellipse cx="10.6" cy="12.2" rx="1.5" ry="0.8" />
+            <ellipse cx="19.4" cy="12.2" rx="1.5" ry="0.8" />
+          </g>
+        ),
+      };
+    case "normal":
+      return {
+        eyes: (
+          <g fill={ink}>
+            <circle cx="12.5" cy="9.5" r="1" />
+            <circle cx="17.5" cy="9.5" r="1" />
+          </g>
+        ),
+        mouth: <path d="M13.6 13.3 L16.4 13.3" stroke={line} strokeWidth="0.7" strokeLinecap="round" />,
+        extra: null,
+      };
+    case "hard":
+      return {
+        eyes: (
+          <g>
+            <g stroke={line} strokeWidth="0.7" strokeLinecap="round">
+              <path d="M11.2 7.6 L13.4 8.4" />
+              <path d="M18.8 7.6 L16.6 8.4" />
+            </g>
+            <g fill={ink}>
+              <circle cx="12.5" cy="9.8" r="0.95" />
+              <circle cx="17.5" cy="9.8" r="0.95" />
+            </g>
+          </g>
+        ),
+        mouth: <path d="M13 13.6 Q13.8 12.8 14.5 13.6 Q15.2 14.4 16 13.6 Q16.6 12.9 17.2 13.5" stroke={line} strokeWidth="0.65" fill="none" strokeLinecap="round" />,
+        extra: <g>{drop(21.6, 4.4)}{drop(7.8, 6, 0.8)}</g>,
+      };
+    default: // scream — 크게 뜬 눈, 세로로 벌린 입, 볼에 손, 땀, 떨림
+      return {
+        eyes: (
+          <g>
+            <circle cx="12.4" cy="9.3" r="1.7" fill="#fff" stroke={ink === "#fff" ? "#2E2E33" : line} strokeWidth="0.5" />
+            <circle cx="17.6" cy="9.3" r="1.7" fill="#fff" stroke={ink === "#fff" ? "#2E2E33" : line} strokeWidth="0.5" />
+            <circle cx="12.4" cy="9.3" r="0.55" fill={panda ? "#2E2E33" : ink} />
+            <circle cx="17.6" cy="9.3" r="0.55" fill={panda ? "#2E2E33" : ink} />
+          </g>
+        ),
+        mouth: (
+          <g>
+            <ellipse cx="15" cy="13.9" rx="1.6" ry="2.4" fill="#4A1F1F" stroke={line} strokeWidth="0.4" />
+            <ellipse cx="15" cy="15.2" rx="0.9" ry="0.7" fill="#E25B6E" />
+          </g>
+        ),
+        extra: (
+          <g>
+            {/* 볼을 감싼 두 손 + 들어 올린 팔 */}
+            <path d="M9 18 Q6.6 15.6 7.6 12.4" stroke="#3B3F4A" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.85" />
+            <path d="M21 18 Q23.4 15.6 22.4 12.4" stroke="#3B3F4A" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity="0.85" />
+            <ellipse cx="8.1" cy="11.6" rx="1.6" ry="2.1" fill="#F3D2B8" stroke={line} strokeWidth="0.4" />
+            <ellipse cx="21.9" cy="11.6" rx="1.6" ry="2.1" fill="#F3D2B8" stroke={line} strokeWidth="0.4" />
+            {drop(23.6, 3.4)}{drop(5.6, 4.2, 0.9)}{drop(24.6, 8, 0.7)}
+            <path d="M3.5 2.5 l1.2 1.4 M26.5 2.5 l-1.2 1.4 M15 -1.2 l0 1.6" stroke="#E25B6E" strokeWidth="0.7" strokeLinecap="round" />
+          </g>
+        ),
+      };
+  }
 }
 
 /** 문서 한 장 = 직원 한 명. 상태에 따라 자리·색·동작이 바뀐다. */

@@ -18,6 +18,8 @@ import { applicableStandards, hasTransportInput } from "../../lib/transport";
 import { resultsProgress } from "../../lib/results";
 import { buildTokenContext, docMissingTokens, fillDoc, hasTokens } from "../../lib/tokens";
 import { docEvidence, markAssumed } from "../../lib/evidence";
+import { docDifficulty, MOOD_META, MOODS, overallDifficulty, type Difficulty } from "../../lib/difficulty";
+import { Minimi } from "./factoryArt";
 import { hasDraft } from "../../hooks/useDraftStore";
 
 function Card({ icon: Icon, title, to, cta, children }: { icon: typeof Layers; title: string; to: string; cta: string; children: React.ReactNode }) {
@@ -40,6 +42,19 @@ const Big = ({ children }: { children: React.ReactNode }) => (
 const Muted = ({ children }: { children: React.ReactNode }) => (
   <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{children}</p>
 );
+
+/** 난이도 얼굴 — 문서 공장의 동물 직원이 난이도 표정을 짓는다 */
+function DifficultyFace({ seed, d, size = 1 }: { seed: string; d: Difficulty; size?: number }) {
+  const m = MOOD_META[d.mood];
+  return (
+    <span className="inline-grid place-items-center rounded-full shrink-0" title={`${m.label} — ${d.reasons.join(" · ")}`}
+      style={{ width: 44 * size, height: 44 * size, background: `color-mix(in srgb, ${m.color} 14%, var(--bg))`, border: `1.5px solid ${m.color}`, overflow: "hidden" }}>
+      <span className={d.mood === "scream" ? "mood-shake" : undefined} style={{ transform: `scale(${1.25 * size}) translateY(${5}px)` }}>
+        <Minimi seed={seed} state="todo" shirt={m.color} walking={false} mood={d.mood} />
+      </span>
+    </span>
+  );
+}
 
 function Counts({ c, keys }: { c: Partial<Record<ApplStatus, number>>; keys: ApplStatus[] }) {
   return (
@@ -132,10 +147,12 @@ export function OverviewPage() {
       .map((x) => ({
         id: x.leaf.id, title: x.leaf.title, missing: docMissingTokens(x.doc!, ctx).length, status: docSet.find((a) => a.leafId === x.leaf.id)?.status,
         ev: docEvidence(x.doc!, fillDoc(x.doc!, ctx), ctx, assumedPaths, (i) => hasDraft(x.leaf.id, i), estimatedPaths),
-      })),
+      }))
+      .map((x) => ({ ...x, diff: docDifficulty(x.id, x.ev) })),
     [ctx, docSet, assumedPaths, estimatedPaths],
   );
   const confirmed = confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value;
+  const overall = overallDifficulty(cls.value, filledDocs.filter((d) => d.status !== "excluded").map((d) => d.diff));
   const studyCounts = plans.reduce((m, p) => ({ ...m, [p.status]: (m[p.status] ?? 0) + 1 }), {} as Partial<Record<ApplStatus, number>>);
   const clin = plans.find((p) => p.id === "clinical-performance");
   const realtime = plans.find((p) => p.id === "stability-realtime");
@@ -184,6 +201,17 @@ export function OverviewPage() {
             <CertRoutes routes={routes} missing={qmsMissing} />
 
             <div className="grid" style={{ gap: "var(--s-4)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))" }}>
+              <section className="rounded-[var(--r-lg)] border flex items-center" aria-label="인증 난이도"
+                style={{ gap: "var(--s-4)", padding: "20px 24px", borderColor: MOOD_META[overall.mood].color, background: `color-mix(in srgb, ${MOOD_META[overall.mood].color} 6%, var(--bg))`, boxShadow: "var(--shadow-card)" }}>
+                <DifficultyFace seed={spec.identity.productName ?? "product"} d={overall} size={1.8} />
+                <div className="min-w-0">
+                  <p className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)" }}>인증 난이도</p>
+                  <p className="font-extrabold" style={{ fontSize: "var(--t-xl)", color: MOOD_META[overall.mood].color }}>{MOOD_META[overall.mood].label}</p>
+                  {overall.reasons.map((r) => <p key={r} className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{r}</p>)}
+                  <p className="text-text-subtle" style={{ fontSize: 11, marginTop: 4 }}>{MOODS.map((m) => `${MOOD_META[m].emoji} ${MOOD_META[m].label}`).join(" · ")}</p>
+                </div>
+              </section>
+
               <Card icon={ShieldCheck} title={euSelected ? "IVDR 클래스" : "IVDR 클래스 (EU 미선택 — 참고용)"} to="/auto/docs" cta={confirmed ? "분류 근거 보기" : "확인하고 확정하기"}>
                 <Big>{cls.value ? `Class ${cls.value}` : "판정 보류"}</Big>
                 <Muted>{cls.value ? `${cls.rule} · ${confirmed ? "확정됨" : "추천 — 담당자 확정 전"}` : cls.rationale[0]}</Muted>
@@ -240,7 +268,9 @@ export function OverviewPage() {
                 {filledDocs.map((d) => (
                   <li key={d.id}>
                     <Link to={`/doc/${d.id}`} className="flex items-center justify-between rounded-[var(--r-md)] border hover:bg-surface" style={{ borderColor: "var(--border)", padding: "10px 14px", gap: "var(--s-2)" }}>
-                      <span className="min-w-0">
+                      <DifficultyFace seed={d.id} d={d.diff} />
+                      <span className="min-w-0 flex-1">
+                        <span className="inline-flex rounded-full font-bold" style={{ fontSize: 10, padding: "0 7px", marginBottom: 2, color: MOOD_META[d.diff.mood].color, border: `1px solid ${MOOD_META[d.diff.mood].color}` }}>{MOOD_META[d.diff.mood].label}</span>
                         <span className="block font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{d.title}</span>
                         <span className="block" style={{ fontSize: "var(--t-xs)", color: d.missing ? "var(--warning)" : "var(--success)" }}>
                           {d.missing ? `스펙 미입력 항목 ${d.missing}개` : "스펙 항목 모두 채워짐"}
