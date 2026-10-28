@@ -4,7 +4,7 @@
 // =====================================================================
 
 import type { ProductSpec } from "./types";
-import { allSpecFields, type FieldDef } from "./fields";
+import { allSpecFields, everySpecField, type FieldDef } from "./fields";
 
 export function emptySpec(): ProductSpec {
   return {
@@ -28,6 +28,10 @@ export function emptySpec(): ProductSpec {
     kitComponents: [],
     referenceMethod: { name: null, ceMarked: null, lab: null },
     targets: { sensitivity: null, specificity: null, confidence: null, lots: null },
+    transport: {
+      destinations: null, modes: null, lengthCm: null, widthCm: null, heightCm: null, grossWeightKg: null,
+      kitsPerShipper: null, liquidReagent: null, dangerousGoods: null, primaryPlastic: null, outerMaterial: null,
+    },
     meta: { updatedAt: null },
   };
 }
@@ -64,6 +68,10 @@ export function exampleSpec(): ProductSpec {
   ];
   s.referenceMethod = { name: "정량 LH 면역분석 (검사실)", ceMarked: true, lab: "(예시) 협력 검사기관" };
   s.targets = { sensitivity: 95, specificity: null, confidence: 95, lots: 3 };
+  s.transport = {
+    destinations: ["EU"], modes: ["parcel", "air"], lengthCm: 40, widthCm: 30, heightCm: 25, grossWeightKg: 4.5,
+    kitsPerShipper: 50, liquidReagent: false, dangerousGoods: false, primaryPlastic: true, outerMaterial: "corrugated",
+  };
   return s;
 }
 
@@ -117,13 +125,13 @@ export function validateSpec(x: unknown): ValidateResult {
   const src = x as Record<string, unknown>;
   if (src.schemaVersion !== 1) return { ok: false, spec: emptySpec(), errors: [`지원하지 않는 스펙 버전입니다 (${String(src.schemaVersion)}).`] };
   let spec = emptySpec();
-  for (const f of allSpecFields) {
+  for (const f of everySpecField) {
     const v = getAt(src, f.path);
     if (v === undefined || v === null) continue;
     const okType =
       f.kind === "number" ? typeof v === "number" && Number.isFinite(v)
       : f.kind === "tri" ? typeof v === "boolean"
-      : f.kind === "multi" ? Array.isArray(v) && v.every((m) => typeof m === "string")
+      : f.kind === "multi" ? Array.isArray(v) && v.every((m) => typeof m === "string" && (!f.options || f.options.some((o) => o.value === m)))
       : f.kind === "components" ? Array.isArray(v)
       : f.kind === "select" ? typeof v === "string" && !!f.options?.some((o) => o.value === v)
       : typeof v === "string";
@@ -183,8 +191,10 @@ function stableStringify(v: unknown): string {
   return `{${Object.keys(o).filter((k) => k !== "meta").sort().map((k) => `${JSON.stringify(k)}:${stableStringify(o[k])}`).join(",")}}`;
 }
 
+/** 분류 확정의 변경 감지용. 운송 정보는 클래스에 영향이 없어 뺀다. */
 export function specHash(s: ProductSpec): string {
-  const str = stableStringify(s);
+  const { transport: _transport, ...rest } = s;
+  const str = stableStringify(rest);
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);

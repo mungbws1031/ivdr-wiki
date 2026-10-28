@@ -1080,6 +1080,87 @@ export const documents: DocTemplate[] = [
     relatedConceptSlugs: ["iec-62366", "iso-14971", "gspr"],
     refs: ["IEC 62366-1:2015+A1:2020", "IVDR Annex I"],
   },
+  {
+    // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.
+    id: "transport-validation",
+    stationId: 5,
+    docTitle: "운송(수송) 밸리데이션 (ISTA 3A)",
+    purpose: "실제 운송 경로의 충격·진동·저압·온도 노출 뒤에도 포장이 제품을 보호하고 시약 성능이 유지됨을 입증한다 (IVDR Annex I §7).",
+    intent: "제품 스펙의 운송·포장 정보로 적용 규격·포장 사양·시험 순서·운송 과정을 자동으로 채우고, 시험 강도와 합격 수치는 원문·사람 결정으로 남기도록 설계했다.",
+    sections: [
+      {
+        heading: "1. 목적 · 적용 범위",
+        guidance: "무엇을 입증하는지와 대상 제품·포장 구성·운송 경로를 적는다.",
+        placeholder: "목적: {{auto.productName}}({{auto.model}})이 출하부터 사용자 수령까지의 운송 스트레스를 겪은 뒤에도 포장 무결성과 표시 성능을 유지함을 입증한다.\n적용 범위: 출하 포장 상태의 키트 — 구성품:\n{{auto.components}}",
+      },
+      {
+        heading: "2. 운송 경로 · 조건 · 적용 규격",
+        guidance: "목적지·운송 방식·출하 박스 정보와 적용 규정·규격, 그 이유를 적는다. 최악 경로(가장 길고 덥거나 추운 경로)를 기준으로 삼는다.",
+        placeholder: "{{auto.transportRoute}}\n\n적용 규정·규격:\n{{auto.transportStandards}}",
+      },
+      {
+        heading: "3. 근거 · 참조",
+        guidance: "관련 조항·표준·연결 문서를 적는다.",
+        placeholder: "IVDR Annex I §7 — 운송·보관 중 성능 유지\nEN ISO 23640 — IVD 시약 안정성 평가\nISTA 3A — 택배 단일 포장 시험\nISO 13485 7.5.11 — 제품 보존\nRegulation (EU) 2025/40 (PPWR) — 포장 요건 (원문 확인 필요)\n연결 문서: 안정성 시험, 포장 사양, 취급·보관·배송 관리",
+      },
+      {
+        heading: "4. 검토 · 승인",
+        guidance: "작성자·검토자·승인자와 일자를 기록한다.",
+        placeholder: "작성: [__]\n검토: [__]\n승인: [__]\n일자: [__]",
+      },
+      {
+        heading: "5. 포장 구성",
+        guidance: "1차(파우치)·2차(키트 상자)·3차(출하 박스) 구성과 재질, PPWR 대응을 적는다. 포장 사양 문서 번호를 연결한다.",
+        placeholder: "{{auto.packagingSpec}}",
+      },
+      {
+        heading: "6. 시험 순서 · 조건",
+        guidance: "시험 순서와 각 단계의 방법을 적는다. 낙하 높이·진동 강도·박스 수는 ISTA 원문 표의 값을 그대로 옮기고 출처(판·표 번호)를 적는다.",
+        placeholder: "{{auto.transportTests}}",
+      },
+      {
+        heading: "7. 판정 기준",
+        guidance: "외관·포장 무결성·성능 판정 기준을 시험 전에 확정한다. 허용 기준 수치는 위험관리·성능 목표에서 가져와 근거를 적는다.",
+        placeholder: "{{auto.transportAcceptance}}",
+      },
+      {
+        heading: "8. 운송 과정 관리",
+        guidance: "출하부터 사용자 수령까지 단계별 위험·관리·기록을 적는다. 유통자·수입자 의무와 연결한다.",
+        placeholder: "{{auto.transportProcess}}",
+      },
+      {
+        heading: "9. 결과 · 결론",
+        guidance: "시험 결과를 판정 기준과 비교하고 결론을 적는다. 이탈이 있으면 원인과 포장 개선·재시험을 기록한다.",
+        placeholder: "외관 검사 결과: [실험 후 입력]\n운송 후 성능 확인 결과 ({{auto.lots}}): [실험 후 입력]\n판정 기준 충족 여부: [실험 후 입력]\n결론: [실험 후 입력 — 운송 조건에서 성능 유지 / 포장 개선 필요]",
+      },
+    ],
+    experiments: [
+      "ISTA 3A 운송 시뮬레이션 — 전처리 → 낙하 → 랜덤 진동 → (항공) 저압 → 최종 낙하",
+      "운송 온도 노출 — 상온 제품은 EN ISO 23640 운송 시뮬레이션, 냉장 제품은 ISTA 7E",
+      "운송 후 성능 확인 — 운송 시료 대 비운송 대조, cut-off 근처 시료",
+    ],
+    certTests: [
+      "ISTA 인증 시험소 시험 (선택) — ISTA 3A 결과를 외부 보고서로 확보",
+    ],
+    requiredData: [
+      "포장 사양서 (1·2·3차 포장 재질·치수·구성)",
+      "운송 경로 조사 — 목적지·운송사·계절 온도·대기 시간",
+      "SDS 14항 운송 정보 (위험물 해당 여부)",
+      "포장재 공급사 자료 — 중금속 함량·재질 (PPWR)",
+      "안정성 시험 결과 (운송 후 성능 비교 기준)",
+    ],
+    checklist: [
+      "최악 운송 경로(가장 길고 덥거나 추운 경로)를 기준으로 삼았는가",
+      "시험 강도(낙하 높이·진동)를 ISTA 원문 표에서 옮기고 출처를 적었는가",
+      "항공 구간이 있으면 저압 단계를 넣었는가",
+      "판정 기준을 시험 전에 확정했는가",
+      "운송 후 성능을 비운송 대조와 비교했는가",
+      "EU 출시면 PPWR 의무(재활용·빈 공간·중금속)와 1차 포장 예외 근거를 정리했는가",
+    ],
+    relatedConceptSlugs: ["gspr", "ifu"],
+    refs: ["IVDR Annex I §7", "EN ISO 23640", "ISTA 3A", "ISTA 7E", "ASTM D4169", "ISO 13485 7.5.11", "Regulation (EU) 2025/40 (PPWR)"],
+    calcTools: ["mkt"],
+  },
 ];
 
 export const docByStationId = (id: number): DocTemplate | undefined =>
