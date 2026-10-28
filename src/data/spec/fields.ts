@@ -232,5 +232,71 @@ export const specSections: FieldSection[] = [
   },
 ];
 
+/** 운송·포장 — /auto/transport 화면에서만 입력한다. /auto 진행률·미입력 목록에는 넣지 않는다. */
+export const transportSections: FieldSection[] = [
+  {
+    id: "route",
+    title: "어디로 · 어떻게",
+    desc: "목적지와 운송 방식으로 적용 규정과 시험 순서(항공이면 저압 시험)가 정해집니다.",
+    fields: [
+      {
+        path: "transport.destinations", label: "목적지", kind: "multi", usedBy: ["transport-validation"],
+        options: [
+          { value: "KR", label: "국내" },
+          { value: "EU", label: "EU" },
+          { value: "US", label: "미국" },
+          { value: "JP", label: "일본" },
+          { value: "SEA", label: "동남아" },
+          { value: "ME", label: "중동" },
+          { value: "AU", label: "호주" },
+          { value: "other", label: "기타" },
+        ],
+      },
+      {
+        path: "transport.modes", label: "운송 방식", help: "1차 지원 범위는 택배·소포와 항공입니다. 팔레트 화물은 다음 단계에서 지원합니다.", kind: "multi", usedBy: ["transport-validation"],
+        options: [
+          { value: "parcel", label: "택배·소포" },
+          { value: "air", label: "항공" },
+          { value: "road", label: "육상 화물" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "shipper",
+    title: "출하 박스",
+    desc: "운송사에 넘기는 가장 바깥 박스 기준. 무게로 ISTA 3A 시험 강도 표가 정해집니다.",
+    fields: [
+      { path: "transport.lengthCm", label: "가로", kind: "number", unit: "cm", usedBy: ["transport-validation"] },
+      { path: "transport.widthCm", label: "세로", kind: "number", unit: "cm", usedBy: ["transport-validation"] },
+      { path: "transport.heightCm", label: "높이", kind: "number", unit: "cm", usedBy: ["transport-validation"] },
+      { path: "transport.grossWeightKg", label: "총 무게 (포장 포함)", kind: "number", unit: "kg", usedBy: ["transport-validation"] },
+      { path: "transport.kitsPerShipper", label: "박스당 키트 수", kind: "number", unit: "키트", usedBy: ["transport-validation"] },
+    ],
+  },
+  {
+    id: "contents",
+    title: "내용물 · 포장재",
+    desc: "위험물·액체 여부와 포장재로 IATA 위험물 규정과 PPWR 의무 범위가 정해집니다.",
+    fields: [
+      { path: "transport.liquidReagent", label: "액체 시약(완충액 등)이 들어있나요?", help: "액체가 있으면 누액 방지 설계와 저압 시험이 중요해집니다.", kind: "tri", options: YES_NO_TRI, usedBy: ["transport-validation"] },
+      { path: "transport.dangerousGoods", label: "SDS상 운송 위험물에 해당하나요?", help: "아지드화나트륨 등 보존제가 있으면 SDS 14항(운송 정보)을 확인하세요. 모르면 비워두세요.", kind: "tri", options: YES_NO_TRI, usedBy: ["transport-validation"] },
+      { path: "transport.primaryPlastic", label: "1차 포장(파우치·용기)에 플라스틱이 들어가나요?", kind: "tri", options: YES_NO_TRI, usedBy: ["transport-validation"] },
+      {
+        path: "transport.outerMaterial", label: "키트 상자·출하 박스 재질", kind: "select", usedBy: ["transport-validation"],
+        options: [
+          { value: "corrugated", label: "종이·골판지" },
+          { value: "plastic", label: "플라스틱" },
+          { value: "mixed", label: "복합 (종이+플라스틱)" },
+        ],
+      },
+    ],
+  },
+];
+
+/** /auto 의 기본 스펙 필드 (진행률·미입력 집계 대상). */
 export const allSpecFields: FieldDef[] = specSections.flatMap((s) => s.fields);
-export const fieldByPath = (path: string): FieldDef | undefined => allSpecFields.find((f) => f.path === path);
+export const transportFields: FieldDef[] = transportSections.flatMap((s) => s.fields);
+/** 가져오기 검증·경로 조회용 — 운송 필드까지 전부. */
+export const everySpecField: FieldDef[] = [...allSpecFields, ...transportFields];
+export const fieldByPath = (path: string): FieldDef | undefined => everySpecField.find((f) => f.path === path);

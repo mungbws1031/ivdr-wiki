@@ -56,7 +56,10 @@ export const APPLICABILITY_RULES: Record<string, Rule> = {
     s.result.kind === null ? unknown("결과 형태(정성/정량)가 정해지면 판정됩니다.", "result.kind")
     : s.result.kind === "quantitative" ? v("required", "정량 검사라 교정물질·관리물질 지정값의 추적성이 필요합니다.", "result.kind")
     : v("optional", "정성 검사라 필수는 아니지만, cut-off를 국제표준물질(WHO IS 등)에 연결하면 근거가 강해집니다.", "result.kind"),
-  "transport-validation": () => v("recommended", "소형 IVD는 대개 택배로 발송되어 운송 중 온도·진동·낙하 영향을 검증해 두는 것이 실무 표준입니다(ISTA 3A)."),
+  "transport-validation": (s) =>
+    s.transport.modes?.length
+      ? v("required", "제품을 실제로 운송합니다. IVDR Annex I §7은 운송·보관 중 성능 유지를 요구하므로 운송 영향을 검증해야 합니다. 적용 규격은 운송·포장 단계에서 확인하세요.", "transport.modes")
+      : v("recommended", "소형 IVD는 대개 택배로 발송되어 운송 중 온도·진동·낙하 영향을 검증해 두는 것이 실무 표준입니다(ISTA 3A). 운송·포장 단계에서 운송 방식을 입력하면 판정됩니다.", "transport.modes"),
   "clinical-performance-study-plan": (s) =>
     s.rule1to3Flags.companionDiagnostic === true
       ? v("required", "동반진단 성능 연구는 Art.58 신고 대상입니다.", "rule1to3Flags.companionDiagnostic")

@@ -14,6 +14,9 @@ export type ResultKind = "qualitative" | "semi-quantitative" | "quantitative";
 export type Readout = "visual" | "reader" | "app";
 export type UserType = "lay" | "professional" | "both";
 export type Environment = "home" | "near-patient" | "lab";
+export type Destination = "KR" | "EU" | "US" | "JP" | "SEA" | "ME" | "AU" | "other";
+export type ShipMode = "parcel" | "air" | "road";
+export type OuterMaterial = "corrugated" | "plastic" | "mixed";
 
 export interface KitComponent {
   name: string;
@@ -84,6 +87,20 @@ export interface ProductSpec {
     specificity: Maybe<number>; // %
     confidence: Maybe<number>; // %
     lots: Maybe<number>;
+  };
+  /** 운송·포장 — /auto/transport 에서만 입력. 분류(specHash)에는 영향 없음. */
+  transport: {
+    destinations: Maybe<Destination[]>;
+    modes: Maybe<ShipMode[]>;
+    lengthCm: Maybe<number>;
+    widthCm: Maybe<number>;
+    heightCm: Maybe<number>;
+    grossWeightKg: Maybe<number>;
+    kitsPerShipper: Maybe<number>;
+    liquidReagent: Maybe<boolean>;
+    dangerousGoods: Maybe<boolean>; // SDS 14항 기준 운송 위험물 해당 여부
+    primaryPlastic: Maybe<boolean>; // 1차 포장(파우치)에 플라스틱이 들어가는지
+    outerMaterial: Maybe<OuterMaterial>;
   };
   meta: {
     updatedAt: string | null;

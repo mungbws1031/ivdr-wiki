@@ -4,20 +4,12 @@ import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, ShieldCheck } f
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
 import { docTree } from "../../data/docTree";
-import { fieldByPath } from "../../data/spec/fields";
+import { Chip, FieldLink, STATUS_META } from "./AutoUi";
 import { completion, specHash } from "../../data/spec/validate";
 import { useSpec } from "../../hooks/useSpecStore";
 import { clearClassConfirm, confirmClass, useClassConfirm } from "../../hooks/useClassConfirm";
 import { classify, RULES_REVIEWED, type ClassStatus } from "../../lib/rules/classify";
 import { BASE_REQUIRED_REASON, countByStatus, evaluateDocSet, type Applicability, type ApplStatus } from "../../lib/rules/applicability";
-
-const STATUS_META: Record<ApplStatus, { label: string; fg: string; bg: string }> = {
-  required: { label: "필수", fg: "var(--text-on-color)", bg: "var(--text)" },
-  recommended: { label: "권장", fg: "var(--info)", bg: "var(--info-bg)" },
-  optional: { label: "선택", fg: "var(--text-muted)", bg: "var(--surface-2)" },
-  excluded: { label: "불필요", fg: "var(--text-subtle)", bg: "var(--surface)" },
-  unknown: { label: "확인 필요", fg: "var(--warning)", bg: "var(--warning-bg)" },
-};
 
 const CLASS_STATUS: Record<ClassStatus, { label: string; fg: string; bg: string }> = {
   recommended: { label: "추천", fg: "var(--success)", bg: "var(--success-bg)" },
@@ -25,24 +17,6 @@ const CLASS_STATUS: Record<ClassStatus, { label: string; fg: string; bg: string 
   "needs-review": { label: "RA 판단 필요", fg: "var(--danger)", bg: "var(--danger-bg)" },
   blocked: { label: "입력 부족", fg: "var(--danger)", bg: "var(--danger-bg)" },
 };
-
-function Chip({ s }: { s: ApplStatus }) {
-  const m = STATUS_META[s];
-  return (
-    <span className="inline-flex items-center rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", color: m.fg, background: m.bg }}>
-      {m.label}
-    </span>
-  );
-}
-
-function FieldLink({ path }: { path: string }) {
-  const f = fieldByPath(path);
-  return (
-    <Link to={`/auto#field-${path}`} className="font-semibold underline decoration-dotted underline-offset-2" style={{ color: "var(--info)" }}>
-      {f?.label ?? path}
-    </Link>
-  );
-}
 
 function DocRow({ a, title }: { a: Applicability; title: string }) {
   return (
@@ -230,6 +204,14 @@ export function DocSetPage() {
                 )}
               </div>
             </section>
+
+            <Link
+              to="/auto/transport"
+              className="flex items-center justify-between rounded-[var(--r-lg)] font-bold self-end"
+              style={{ padding: "var(--s-4) var(--s-6)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)", gap: "var(--s-4)" }}
+            >
+              다음: 운송·포장 <span aria-hidden>→</span>
+            </Link>
           </div>
         )}
       </main>

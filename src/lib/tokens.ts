@@ -8,6 +8,7 @@
 import type { ProductSpec } from "../data/spec/types";
 import { composeIntendedPurpose } from "../data/spec/validate";
 import { classify, type ClassResult } from "./rules/classify";
+import { transportTokens } from "./transport";
 
 const TOKEN_RE = /\{\{auto\.([a-zA-Z]+)\}\}/g;
 
@@ -27,7 +28,9 @@ export const TOKEN_LABEL: Record<string, string> = {
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
   cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
-  targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법",
+  targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
+  transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
+  transportAcceptance: "운송 판정 기준", transportProcess: "운송 과정 관리",
 };
 
 const yn = (b: boolean | null, yes: string, no: string) => (b === null ? null : b ? yes : no);
@@ -91,6 +94,8 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s)):
     targetSe: s.targets.sensitivity !== null ? `${s.targets.sensitivity}%` : null,
     targetSp: s.targets.specificity !== null ? `${s.targets.specificity}%` : null,
     referenceMethod: s.referenceMethod.name,
+    lots: s.targets.lots !== null ? `${s.targets.lots}로트` : null,
+    ...transportTokens(s),
   };
 }
 
