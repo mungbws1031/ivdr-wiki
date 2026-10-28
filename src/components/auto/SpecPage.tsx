@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Check, ClipboardList, Download, FileText, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { SpecField } from "./SpecField";
+import { AutoSteps } from "./AutoSteps";
 import { specSections } from "../../data/spec/fields";
 import { completion, composeIntendedPurpose, exampleSpec, getAt, unresolvedFields } from "../../data/spec/validate";
 import { replaceSpec, reloadSpec, resetSpec, setSpecField, useSpec } from "../../hooks/useSpecStore";
@@ -42,6 +44,15 @@ export function SpecPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { void requestPersistentStorage(); }, []);
+  // /auto#field-<경로> 로 들어오면 그 입력칸으로 이동 (분류 화면의 "답하지 않은 항목" 링크)
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (!hash.startsWith("#field-")) return;
+    const el = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!el) return;
+    el.scrollIntoView({ block: "center" });
+    el.querySelector<HTMLElement>("input, textarea, button")?.focus({ preventScroll: true });
+  }, [hash]);
   useEffect(() => {
     if (!notice) return;
     const t = setTimeout(() => setNotice(null), 5000);
@@ -83,6 +94,7 @@ export function SpecPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         {/* 머리말 */}
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
+          <AutoSteps current="/auto" />
           <span
             className="inline-flex items-center gap-1.5 self-start rounded-full font-bold"
             style={{ fontSize: "var(--t-xs)", padding: "3px 10px", background: "var(--accent-weak)", color: "var(--accent)" }}
@@ -232,6 +244,14 @@ export function SpecPage() {
                 <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>다음 단계에서 클래스 추천과 문서 세트가 이 스펙으로 계산됩니다.</p>
               )}
             </section>
+
+            <Link
+              to="/auto/docs"
+              className="flex items-center justify-between rounded-[var(--r-lg)] font-bold"
+              style={{ padding: "var(--s-4)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}
+            >
+              다음: 분류·문서 세트 보기 <span aria-hidden>→</span>
+            </Link>
 
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
               입력은 자동 저장되며 이 브라우저에만 남습니다. 브라우저 데이터를 지우면 사라지니 "전체 백업"으로 파일을 보관해 두세요.
