@@ -4,9 +4,9 @@ import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, ShieldCheck } f
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
 import { docTree } from "../../data/docTree";
-import { Chip, FieldLink, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, Chip, FieldLink, STATUS_META } from "./AutoUi";
 import { completion, specHash } from "../../data/spec/validate";
-import { useSpec } from "../../hooks/useSpecStore";
+import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { clearClassConfirm, confirmClass, useClassConfirm } from "../../hooks/useClassConfirm";
 import { classify, RULES_REVIEWED, type ClassStatus } from "../../lib/rules/classify";
 import { BASE_REQUIRED_REASON, countByStatus, evaluateDocSet, type Applicability, type ApplStatus } from "../../lib/rules/applicability";
@@ -37,13 +37,15 @@ function DocRow({ a, title }: { a: Applicability; title: string }) {
 
 /** /auto/docs — 클래스 추천 + 필요한 문서 세트 (자동작성 2단계). */
 export function DocSetPage() {
-  const spec = useSpec();
+  const { spec, assumed, assumeOn } = useWorkingSpec();
   const confirm = useClassConfirm();
   const [showExcluded, setShowExcluded] = useState(false);
   const cls = useMemo(() => classify(spec), [spec]);
   const set = useMemo(() => evaluateDocSet(spec, cls), [spec, cls]);
   const counts = countByStatus(set);
   const hash = specHash(spec);
+  // 가정값(사용자·측정 목적)으로 나온 등급은 확정하지 않는다 — 빈 칸을 먼저 입력
+  const classAssumed = assumed.some((a) => a.path === "user" || a.path === "analyte.preset");
   const { filled } = completion(spec);
   const stale = confirm && (confirm.specHash !== hash || confirm.value !== cls.value);
   const cs = CLASS_STATUS[cls.status];
@@ -58,6 +60,7 @@ export function DocSetPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
           <AutoSteps current="/auto/docs" />
+          <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>분류·문서 세트</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
             제품 스펙으로 IVDR 클래스를 추천하고, 문서 {set.length}개 각각이 이 제품에 필요한지 이유와 함께 판정합니다.
@@ -126,12 +129,12 @@ export function DocSetPage() {
                         {!stale && <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 확정 전입니다. 확정하면 다음 단계(실험계획·문서 작성)가 이 클래스로 진행됩니다.</span>}
                         <button
                           type="button"
-                          disabled={!cls.value || cls.status === "blocked" || cls.status === "needs-review"}
+                          disabled={!cls.value || cls.status === "blocked" || cls.status === "needs-review" || classAssumed}
                           onClick={() => cls.value && confirmClass(cls.value, hash)}
                           className="ml-auto rounded-[var(--r-md)] font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ fontSize: "var(--t-sm)", padding: "8px 16px", minHeight: 40, background: "var(--accent)", color: "var(--text-on-color)" }}
                         >
-                          {cls.value ? `Class ${cls.value}로 확정` : "확정할 수 없음"}
+                          {classAssumed ? "가정으로 나온 등급 — 확정 불가" : cls.value ? `Class ${cls.value}로 확정` : "확정할 수 없음"}
                         </button>
                       </>
                     )}

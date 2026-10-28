@@ -44,7 +44,9 @@ import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
-import { useSpec } from "../hooks/useSpecStore";
+import { useWorkingSpec } from "../hooks/useSpecStore";
+import { markAssumed } from "../lib/evidence";
+import { EvidencePanel } from "./EvidencePanel";
 import { completion } from "../data/spec/validate";
 import { useResults } from "../hooks/useResultsStore";
 import { buildTokenContext, docMissingTokens, fillDoc, hasTokens, TOKEN_LABEL } from "../lib/tokens";
@@ -234,9 +236,10 @@ export function DocumentWorkspace() {
   const { id } = useParams();
   const rawDoc = id ? resolveDoc(id) : undefined;
   // 제품 스펙으로 {{auto.*}} 자리를 채운 문서. 사람이 쓴 초안이 있는 섹션은 초안이 우선한다.
-  const spec = useSpec();
+  const { spec, assumed } = useWorkingSpec();
   const results = useResults();
-  const tokenCtx = useMemo(() => buildTokenContext(spec, undefined, results), [spec, results]);
+  const tokenCtx = useMemo(() => markAssumed(buildTokenContext(spec, undefined, results), assumed), [spec, results, assumed]);
+  const assumedPaths = useMemo(() => new Set(assumed.map((a) => a.path)), [assumed]);
   const doc = useMemo(() => (rawDoc ? fillDoc(rawDoc, tokenCtx) : undefined), [rawDoc, tokenCtx]);
   const autoFilled = !!rawDoc && rawDoc.sections.some((s) => hasTokens(s.placeholder));
   const autoMissing = rawDoc && autoFilled ? docMissingTokens(rawDoc, tokenCtx) : [];
@@ -516,6 +519,8 @@ export function DocumentWorkspace() {
                 <Link to="/auto" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>제품 스펙 →</Link>
               </div>
             )}
+
+            {autoFilled && rawDoc && <EvidencePanel raw={rawDoc} filled={doc} ctx={tokenCtx} assumedPaths={assumedPaths} docId={doc.id} />}
 
             {/* 섹션 카드들 */}
             {doc.sections.map((s, i) => {

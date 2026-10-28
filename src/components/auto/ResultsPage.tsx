@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { CheckCircle2, ChevronDown, ChevronRight, CircleDashed, FileText, Trash2, XCircle } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
+import { AssumptionBanner } from "./AutoUi";
 import { docTree } from "../../data/docTree";
 import { completion } from "../../data/spec/validate";
-import { useSpec } from "../../hooks/useSpecStore";
+import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { setResult, useResults } from "../../hooks/useResultsStore";
 import { PHASES, planStudies, type StudyPlan } from "../../lib/planner";
 import {
@@ -191,7 +192,7 @@ function StudyCard({ p, r, spec, titleOf }: { p: StudyPlan; r: StudyResult | und
 
 /** /auto/results — 실험 결과 입력. 입력한 값이 관련 문서의 결과 섹션에 자동으로 들어간다. */
 export function ResultsPage() {
-  const spec = useSpec();
+  const { spec, assumed, assumeOn } = useWorkingSpec();
   const results = useResults();
   const plans = useMemo(() => planStudies(spec).filter((p) => p.status !== "excluded" && p.status !== "unknown"), [spec]);
   const prog = resultsProgress(spec, results);
@@ -205,6 +206,7 @@ export function ResultsPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
           <AutoSteps current="/auto/results" />
+          <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험 결과 입력</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             실험을 마치면 건수·판정·원자료 번호를 입력하세요. 민감도·특이도·신뢰하한은 입력한 건수로 계산하고, 분석적 성능·임상적 성능·안정성·운송 문서의 결과 섹션에 자동으로 들어갑니다.

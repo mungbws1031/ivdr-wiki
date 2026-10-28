@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, ClipboardList, Clock, FileText, Sigma } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { Chip, FieldLink, fieldHref, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, Chip, FieldLink, fieldHref, STATUS_META } from "./AutoUi";
 import { docTree } from "../../data/docTree";
 import { completion } from "../../data/spec/validate";
-import { useSpec } from "../../hooks/useSpecStore";
+import { useWorkingSpec } from "../../hooks/useSpecStore";
 import type { ApplStatus } from "../../lib/rules/applicability";
 import { CROSS_REACTANTS_REVIEWED } from "../../lib/planner/crossReactants";
 import { PHASES, planHumanTasks, planStudies, sampleSizeTable, type StudyPlan } from "../../lib/planner";
@@ -120,7 +120,7 @@ function SizeTable({ label, target, conf, path }: { label: string; target: numbe
 
 /** /auto/plan — 실험계획: 스펙 → 필요한 실험과 설계·시료·판정 기준·사람이 할 일. */
 export function PlanPage() {
-  const spec = useSpec();
+  const { spec, assumed, assumeOn } = useWorkingSpec();
   const plans = useMemo(() => planStudies(spec), [spec]);
   const tasks = useMemo(() => planHumanTasks(plans), [plans]);
   const { filled } = completion(spec);
@@ -135,6 +135,7 @@ export function PlanPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
           <AutoSteps current="/auto/plan" />
+          <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험계획</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             제품 스펙으로 필요한 실험과 각 실험의 설계·시료·판정 기준을 정하고, 사람이 직접 해야 할 일을 모읍니다.
