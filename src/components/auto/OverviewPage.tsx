@@ -20,6 +20,8 @@ import { buildTokenContext, docMissingTokens, fillDoc, hasTokens } from "../../l
 import { docEvidence, markAssumed } from "../../lib/evidence";
 import { docDifficulty, MOOD_META, MOODS, overallDifficulty, type Difficulty } from "../../lib/difficulty";
 import { Minimi } from "./factoryArt";
+import { docImpact } from "../../lib/impact";
+import { getReview } from "../../hooks/useReviewStore";
 import { hasDraft } from "../../hooks/useDraftStore";
 
 function Card({ icon: Icon, title, to, cta, children }: { icon: typeof Layers; title: string; to: string; cta: string; children: React.ReactNode }) {
@@ -137,7 +139,8 @@ export function OverviewPage() {
   const tasks = useMemo(() => planHumanTasks(plans), [plans]);
   const standards = useMemo(() => applicableStandards(spec), [spec]);
   const prog = resultsProgress(spec, results);
-  const ctx = useMemo(() => markAssumed(buildTokenContext(spec, cls, results), assumed, estimated), [spec, cls, results, assumed, estimated]);
+  const rawCtx = useMemo(() => buildTokenContext(spec, cls, results), [spec, cls, results]);
+  const ctx = useMemo(() => markAssumed(rawCtx, assumed, estimated), [rawCtx, assumed, estimated]);
   const assumedPaths = useMemo(() => new Set(assumed.map((a) => a.path)), [assumed]);
   const estimatedPaths = useMemo(() => new Set(estimated), [estimated]);
   const filledDocs = useMemo(
@@ -148,8 +151,9 @@ export function OverviewPage() {
         id: x.leaf.id, title: x.leaf.title, missing: docMissingTokens(x.doc!, ctx).length, status: docSet.find((a) => a.leafId === x.leaf.id)?.status,
         ev: docEvidence(x.doc!, fillDoc(x.doc!, ctx), ctx, assumedPaths, (i) => hasDraft(x.leaf.id, i), estimatedPaths),
       }))
-      .map((x) => ({ ...x, diff: docDifficulty(x.id, x.ev) })),
-    [ctx, docSet, assumedPaths, estimatedPaths],
+      .map((x) => ({ ...x, diff: docDifficulty(x.id, x.ev), impact: docImpact(resolveDoc(x.id)!, getReview(x.id)?.values ?? null, rawCtx, (i) => hasDraft(x.id, i)) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ctx, rawCtx, docSet, assumedPaths, estimatedPaths],
   );
   const confirmed = confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value;
   const overall = overallDifficulty(cls.value, filledDocs.filter((d) => d.status !== "excluded").map((d) => d.diff));
@@ -258,6 +262,11 @@ export function OverviewPage() {
             </div>
 
             <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-6)" }} aria-labelledby="docs-title">
+              {filledDocs.some((d) => d.impact.changes.length) && (
+                <p role="status" className="rounded-[var(--r-md)] font-semibold" style={{ fontSize: "var(--t-sm)", padding: "8px 12px", marginBottom: "var(--s-3)", color: "var(--danger)", background: "color-mix(in srgb, var(--danger) 8%, var(--bg))", border: "1px solid var(--danger)" }}>
+                  검토 이후 스펙·결과가 바뀐 문서 {filledDocs.filter((d) => d.impact.changes.length).length}개 — 직접 쓴 섹션 재검토 {filledDocs.reduce((n, d) => n + d.impact.review, 0)}개. 문서를 열어 바뀐 값을 확인하세요.
+                </p>
+              )}
               <h2 id="docs-title" className="flex items-center gap-2 font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>
                 <FileText size={20} style={{ color: "var(--accent)" }} aria-hidden /> 자동으로 채워진 문서 {filledDocs.length}개
               </h2>
@@ -271,6 +280,11 @@ export function OverviewPage() {
                       <DifficultyFace seed={d.id} d={d.diff} />
                       <span className="min-w-0 flex-1">
                         <span className="inline-flex rounded-full font-bold" style={{ fontSize: 10, padding: "0 7px", marginBottom: 2, color: MOOD_META[d.diff.mood].color, border: `1px solid ${MOOD_META[d.diff.mood].color}` }}>{MOOD_META[d.diff.mood].label}</span>
+                        {d.impact.changes.length > 0 && (
+                          <span className="inline-flex rounded-full font-bold" style={{ fontSize: 10, padding: "0 7px", marginLeft: 4, color: "var(--text-on-color)", background: d.impact.review ? "var(--danger)" : "var(--info)" }}>
+                            {d.impact.review ? `재검토 필요 ${d.impact.review}` : `값 바뀜 ${d.impact.changes.length}`}
+                          </span>
+                        )}
                         <span className="block font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{d.title}</span>
                         <span className="block" style={{ fontSize: "var(--t-xs)", color: d.missing ? "var(--warning)" : "var(--success)" }}>
                           {d.missing ? `스펙 미입력 항목 ${d.missing}개` : "스펙 항목 모두 채워짐"}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ListChecks,
@@ -47,6 +47,9 @@ import { InlineEditor } from "./InlineEditor";
 import { useWorkingSpec } from "../hooks/useSpecStore";
 import { markAssumed } from "../lib/evidence";
 import { EvidencePanel } from "./EvidencePanel";
+import { ImpactPanel } from "./ImpactPanel";
+import { docImpact, snapshotOf } from "../lib/impact";
+import { getReview, saveReview } from "../hooks/useReviewStore";
 import { completion } from "../data/spec/validate";
 import { useResults } from "../hooks/useResultsStore";
 import { buildTokenContext, docMissingTokens, fillDoc, hasTokens, TOKEN_LABEL } from "../lib/tokens";
@@ -238,12 +241,20 @@ export function DocumentWorkspace() {
   // 제품 스펙으로 {{auto.*}} 자리를 채운 문서. 사람이 쓴 초안이 있는 섹션은 초안이 우선한다.
   const { spec, assumed, estimated } = useWorkingSpec();
   const results = useResults();
-  const tokenCtx = useMemo(() => markAssumed(buildTokenContext(spec, undefined, results), assumed, estimated), [spec, results, assumed, estimated]);
+  const rawCtx = useMemo(() => buildTokenContext(spec, undefined, results), [spec, results]);
+  const tokenCtx = useMemo(() => markAssumed(rawCtx, assumed, estimated), [rawCtx, assumed, estimated]);
   const assumedPaths = useMemo(() => new Set(assumed.map((a) => a.path)), [assumed]);
   const estimatedPaths = useMemo(() => new Set(estimated), [estimated]);
   const doc = useMemo(() => (rawDoc ? fillDoc(rawDoc, tokenCtx) : undefined), [rawDoc, tokenCtx]);
   const autoFilled = !!rawDoc && rawDoc.sections.some((s) => hasTokens(s.placeholder));
   const autoMissing = rawDoc && autoFilled ? docMissingTokens(rawDoc, tokenCtx) : [];
+  // 변경 영향: 처음 연 때의 값을 검토 기준으로 저장하고, 이후 바뀐 값·영향받는 섹션을 보여준다
+  const review = rawDoc && autoFilled ? getReview(rawDoc.id) : null;
+  useEffect(() => {
+    if (rawDoc && autoFilled && !getReview(rawDoc.id)) saveReview(rawDoc.id, snapshotOf(rawDoc, rawCtx), false);
+  }, [rawDoc, autoFilled, rawCtx]);
+  const impact = rawDoc && review ? docImpact(rawDoc, review.values, rawCtx, (i) => hasDraft(rawDoc.id, i)) : null;
+  const impacted = new Map((impact?.sections ?? []).map((x) => [x.index, x]));
 
   const isISODoc = (doc?.id ?? "").startsWith("iso-");
   const isIVDDDoc = (doc?.id ?? "").startsWith("ivdd-");
@@ -521,6 +532,8 @@ export function DocumentWorkspace() {
               </div>
             )}
 
+            {impact && review && rawDoc && <ImpactPanel impact={impact} since={review.at} onReviewed={() => saveReview(rawDoc.id, snapshotOf(rawDoc, rawCtx))} />}
+
             {autoFilled && rawDoc && <EvidencePanel raw={rawDoc} filled={doc} ctx={tokenCtx} assumedPaths={assumedPaths} estimatedPaths={estimatedPaths} docId={doc.id} />}
 
             {/* 섹션 카드들 */}
@@ -548,6 +561,12 @@ export function DocumentWorkspace() {
                       {sectionWritten ? "✓" : i + 1}
                     </span>
                     <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{s.heading}</h3>
+                    {impacted.get(i) && (
+                      <span className="rounded-full font-bold shrink-0" title={`바뀐 값: ${impacted.get(i)!.keys.map((k) => TOKEN_LABEL[k] ?? k).join(", ")}`}
+                        style={{ fontSize: 11, padding: "1px 8px", color: impacted.get(i)!.drafted ? "var(--danger)" : "var(--info)", border: `1px solid ${impacted.get(i)!.drafted ? "var(--danger)" : "var(--info)"}` }}>
+                        {impacted.get(i)!.drafted ? "재검토 필요" : "값 바뀜 — 자동 반영"}
+                      </span>
+                    )}
                     {sectionWritten && (
                       <span className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--success)" }}>
                         작성됨
