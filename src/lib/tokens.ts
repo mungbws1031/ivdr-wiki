@@ -10,6 +10,7 @@ import { composeIntendedPurpose } from "../data/spec/validate";
 import { classify, type ClassResult } from "./rules/classify";
 import { transportTokens } from "./transport";
 import { plannerTokens } from "./planner";
+import { resultsTokens, type ResultsMap } from "./results";
 
 const TOKEN_RE = /\{\{auto\.([a-zA-Z]+)\}\}/g;
 
@@ -35,6 +36,7 @@ export const TOKEN_LABEL: Record<string, string> = {
   studyList: "실험 목록", analyticalPlan: "분석 성능 실험 설계", analyticalAcceptance: "분석 성능 판정 기준", analyticalResults: "분석 성능 결과",
   stabilityPlan: "안정성 실험 설계", stabilityResults: "안정성 결과", clinicalPlan: "임상 성능 연구 설계",
   clinicalAcceptance: "임상 성능 판정 기준", sampleSize: "표본수", studySchedule: "실험 일정",
+  clinicalResults: "임상 성능 결과", stabilityConclusion: "입증된 유효기간", transportResults: "운송 시험 결과",
 };
 
 const yn = (b: boolean | null, yes: string, no: string) => (b === null ? null : b ? yes : no);
@@ -61,8 +63,8 @@ function ruleTable(s: ProductSpec, c: ClassResult): string {
   return lines.join("\n");
 }
 
-/** 스펙 + 분류 결과 → 토큰 값. null 은 "스펙 미입력". */
-export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s)): Record<string, string | null> {
+/** 스펙 + 분류 결과 + 실험 결과 → 토큰 값. null 은 "스펙 미입력". */
+export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), results: ResultsMap = {}): Record<string, string | null> {
   const id = s.identity;
   const cutoff = s.analyte.cutoffValue !== null ? `${s.analyte.cutoffValue}${s.analyte.cutoffUnit ? ` ${s.analyte.cutoffUnit}` : ""}` : null;
   const st = s.storage;
@@ -101,6 +103,7 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s)):
     lots: s.targets.lots !== null ? `${s.targets.lots}로트` : null,
     ...transportTokens(s),
     ...plannerTokens(s),
+    ...resultsTokens(s, results),
   };
 }
 

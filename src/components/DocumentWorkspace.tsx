@@ -45,6 +45,7 @@ import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
 import { useSpec } from "../hooks/useSpecStore";
 import { completion } from "../data/spec/validate";
+import { useResults } from "../hooks/useResultsStore";
 import { buildTokenContext, docMissingTokens, fillDoc, hasTokens, TOKEN_LABEL } from "../lib/tokens";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
@@ -233,7 +234,8 @@ export function DocumentWorkspace() {
   const rawDoc = id ? resolveDoc(id) : undefined;
   // 제품 스펙으로 {{auto.*}} 자리를 채운 문서. 사람이 쓴 초안이 있는 섹션은 초안이 우선한다.
   const spec = useSpec();
-  const tokenCtx = useMemo(() => buildTokenContext(spec), [spec]);
+  const results = useResults();
+  const tokenCtx = useMemo(() => buildTokenContext(spec, undefined, results), [spec, results]);
   const doc = useMemo(() => (rawDoc ? fillDoc(rawDoc, tokenCtx) : undefined), [rawDoc, tokenCtx]);
   const autoFilled = !!rawDoc && rawDoc.sections.some((s) => hasTokens(s.placeholder));
   const autoMissing = rawDoc && autoFilled ? docMissingTokens(rawDoc, tokenCtx) : [];
