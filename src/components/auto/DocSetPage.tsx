@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, ShieldCheck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
@@ -9,6 +9,9 @@ import { completion, specHash } from "../../data/spec/validate";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { clearClassConfirm, confirmClass, useClassConfirm } from "../../hooks/useClassConfirm";
 import { classify, RULES_REVIEWED, type ClassStatus } from "../../lib/rules/classify";
+import { ruleJustification } from "../../lib/rules/justify";
+import { gsprChecklist } from "../../lib/gspr";
+import { GsprTable, RuleTable } from "./JustifyTables";
 import { BASE_REQUIRED_REASON, countByStatus, evaluateDocSet, type Applicability, type ApplStatus } from "../../lib/rules/applicability";
 
 const CLASS_STATUS: Record<ClassStatus, { label: string; fg: string; bg: string }> = {
@@ -40,9 +43,19 @@ export function DocSetPage() {
   const { spec, assumed, assumeOn } = useWorkingSpec();
   const confirm = useClassConfirm();
   const [showExcluded, setShowExcluded] = useState(false);
+  // /auto/docs#gspr · #rules 로 들어오면 그 표로 이동 (결과 한눈에의 GSPR 링크)
+  const { hash: anchor } = useLocation();
+  useEffect(() => {
+    if (anchor !== "#gspr" && anchor !== "#rules") return;
+    // 화면이 다 그려진 뒤 이동 (위쪽 카드 높이가 먼저 정해져야 위치가 맞다)
+    const t = setTimeout(() => document.getElementById(anchor.slice(1))?.scrollIntoView({ block: "start" }), 80);
+    return () => clearTimeout(t);
+  }, [anchor]);
   const cls = useMemo(() => classify(spec), [spec]);
   const set = useMemo(() => evaluateDocSet(spec, cls), [spec, cls]);
   const counts = countByStatus(set);
+  const ruleRows = useMemo(() => ruleJustification(spec), [spec]);
+  const gspr = useMemo(() => gsprChecklist(spec, set), [spec, set]);
   const hash = specHash(spec);
   // 가정값(사용자·측정 목적)으로 나온 등급은 확정하지 않는다 — 빈 칸을 먼저 입력
   const classAssumed = assumed.some((a) => a.path === "user" || a.path === "analyte.preset");
@@ -148,6 +161,8 @@ export function DocSetPage() {
               </p>
             </section>
 
+            <RuleTable rows={ruleRows} decided={cls.rule} />
+
             {/* 문서 세트 요약 */}
             <section aria-labelledby="set-title" className="flex flex-col" style={{ gap: "var(--s-4)" }}>
               <div className="flex flex-wrap items-baseline justify-between" style={{ gap: "var(--s-3)" }}>
@@ -207,6 +222,8 @@ export function DocSetPage() {
                 )}
               </div>
             </section>
+
+            <GsprTable rows={gspr} title={(id) => titleOf.get(id) ?? id} />
 
             <Link
               to="/auto/transport"

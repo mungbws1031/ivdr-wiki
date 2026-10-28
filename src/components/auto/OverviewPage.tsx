@@ -11,6 +11,7 @@ import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { useClassConfirm } from "../../hooks/useClassConfirm";
 import { useResults } from "../../hooks/useResultsStore";
 import { classify } from "../../lib/rules/classify";
+import { gsprChecklist, gsprCounts } from "../../lib/gspr";
 import { certRoutes, missingQms, type CertRoute } from "../../lib/rules/certRoutes";
 import { countByStatus, evaluateDocSet, type ApplStatus } from "../../lib/rules/applicability";
 import { planHumanTasks, planStudies } from "../../lib/planner";
@@ -134,6 +135,7 @@ export function OverviewPage() {
   const missing = unresolvedFields(spec);
   const cls = useMemo(() => classify(spec), [spec]);
   const docSet = useMemo(() => evaluateDocSet(spec, cls), [spec, cls]);
+  const gsprC = useMemo(() => gsprCounts(gsprChecklist(spec, docSet)), [spec, docSet]);
   const docCounts = countByStatus(docSet);
   const plans = useMemo(() => planStudies(spec), [spec]);
   const tasks = useMemo(() => planHumanTasks(plans), [plans]);
@@ -220,6 +222,9 @@ export function OverviewPage() {
                 <Big>{cls.value ? `Class ${cls.value}` : "판정 보류"}</Big>
                 <Muted>{cls.value ? `${cls.rule} · ${confirmed ? "확정됨" : "추천 — 담당자 확정 전"}` : cls.rationale[0]}</Muted>
                 {cls.route[0] && <Muted>적합성 평가: {cls.route[0]}</Muted>}
+                <Link to="/auto/docs#gspr" className="font-semibold text-text underline decoration-dotted" style={{ fontSize: "var(--t-xs)" }}>
+                  GSPR 해당 {gsprC.applies} · 확인 필요 {gsprC.check} · 비해당 {gsprC.na}
+                </Link>
               </Card>
 
               <Card icon={Layers} title="필요한 문서" to="/auto/docs" cta="문서 세트 보기">

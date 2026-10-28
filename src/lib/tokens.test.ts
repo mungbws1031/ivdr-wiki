@@ -16,7 +16,7 @@ describe("tokens", () => {
   it("분류 근거서에 Class B와 Rule 표가 들어간다", () => {
     const all = fillDoc(resolveDoc("classification-rationale")!, buildTokenContext(exampleSpec())).sections.map((s) => s.placeholder).join("\n");
     expect(all).toContain("최종 클래스: B");
-    expect(all).toContain("Rule 4(자가/근접검사): 해당");
+    expect(all).toContain("| Rule 4 | 해당 | B |");
   });
   it("값이 없으면 지어내지 않고 미입력 표시", () => {
     expect(fillTokens("특이도 {{auto.targetSp}}", buildTokenContext(exampleSpec()))).toBe("특이도 [목표 특이도 — 스펙 미입력]");

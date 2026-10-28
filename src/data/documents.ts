@@ -255,7 +255,7 @@ export const documents: DocTemplate[] = [
     docTitle: "기술문서 목차(Annex II/III) + GSPR 체크리스트",
     purpose:
       "Annex II/III 목차를 폴더 구조로 만들고, GSPR(Annex I) 충족을 항목별로 추적한다.",
-    rationale: "IVDR Annex II·III는 기술문서의 필수 구성을 규정하며, Annex I({{gspr|GSPR}}) 14개 조항 각각에 대한 충족 증거를 요구한다. NB는 이 매트릭스를 통해 증거 공백을 식별한다.",
+    rationale: "IVDR Annex II·III는 기술문서의 필수 구성을 규정하며, Annex I({{gspr|GSPR}}) 20개 조항(3개 장) 각각에 대한 충족 증거를 요구한다. NB는 이 매트릭스를 통해 증거 공백을 식별한다.",
     intent: "기술문서 작성 초기에 '어떤 증거가 어느 조항을 커버하는지' 전체 지도를 그려, 후반부 증거 누락을 사전에 방지하도록 설계했다.",
     sections: [
       {
@@ -271,13 +271,13 @@ export const documents: DocTemplate[] = [
       },
       {
         heading: "3. GSPR 체크리스트 (Annex I)",
-        guidance: "요구사항별 적용·충족방법·증거위치를 한 줄씩.",
+        guidance: "조항별 적용 여부는 스펙으로 1차 판정된다. 충족 방법·증거 위치를 채우고, 확인 필요 조항을 판정한다.",
         placeholder:
-          "| GSPR 조항 | 요구사항 요약 | 적용 | 충족 방법 | 증거 위치 |\n|---|---|---|---|---|\n| §1 | 안전·성능 충족, 위험 최소화 | 예 | 성능평가 + 위험관리 | PER, RMF |\n| §2 | 위험 대비 잔여위험 수용 가능 | 예 | ISO 14971 | RMF §5 |\n| §3 | 의도된 성능 달성 | 예 | PER | PER §2 |\n| §5 | 기기 수명 중 성능 유지 | 예 | 안정성 시험 | 분석 성능 §6 |\n| §8 | 화학적·물리적 특성 안전 | 해당 시 | 원자재 시험 | TD §3 |\n| §11 | 측정 기능 정확도 | 예 | LoD·정밀도·정확도 시험 | PER §2 |\n| §13 | 라벨·IFU 정보 완전성 | 예 | IFU 사용적합성 | IFU v[__] |\n| §14 | 사이버보안 (SW 포함 시) | 해당 시 | IEC 81001-5-1 | SW 보안 파일 |\n| [추가] | [____] | [__] | [____] | [____] |",
+          "{{auto.gsprTable}}",
       },
     ],
     experiments: [
-      "GSPR 각 조항(§1~§14) 충족 방법 사전 매핑 워크숍 (R&D·RA 팀 공동)",
+      "GSPR 각 조항(§1~§20) 충족 방법 사전 매핑 워크숍 (R&D·RA 팀 공동)",
     ],
     requiredData: [
       "IVDR Annex I (GSPR) 원문",

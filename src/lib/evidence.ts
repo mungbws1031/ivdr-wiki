@@ -68,6 +68,7 @@ const TOKEN_DEPS: Record<string, string[]> = {
   cls: CLASS_DEPS, rule: CLASS_DEPS, rationale: CLASS_DEPS, ruleTable: CLASS_DEPS, route: CLASS_DEPS, nb: CLASS_DEPS, nbScope: CLASS_DEPS,
   swScope: ["software.hasApp", "formFactor", ...CLASS_DEPS],
   formFactor: ["formFactor"],
+  gsprTable: ["user", "environment", "formFactor", "result.kind", "software.hasApp", "specimen"],
   studyList: PLAN_DEPS, analyticalPlan: PLAN_DEPS, analyticalAcceptance: PLAN_DEPS, clinicalPlan: PLAN_DEPS,
   clinicalAcceptance: PLAN_DEPS, sampleSize: PLAN_DEPS, studySchedule: PLAN_DEPS, stabilityPlan: ["environment"],
 };
