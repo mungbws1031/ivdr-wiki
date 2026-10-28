@@ -36,6 +36,7 @@ export const ASSUMPTIONS: Assumption[] = [
   { path: "analyte.preset", value: "other", label: "측정 목적 → 임신·가임 외", why: "Rule 4(a) 예외(임신·가임 → B)를 적용하지 않아 자가검사면 Class C로 본다" },
   { path: "environment", value: "home", label: "사용 환경 → 가정", why: "가정 사용이면 사용 환경·보관·운송 조건 요구가 더 넓다" },
   { path: "result.kind", value: "quantitative", label: "결과 형태 → 정량", why: "정량이면 정확도·측정범위·직선성 등 성능평가 범위가 가장 넓다" },
+  { path: "formFactor", value: "strip-reader", label: "제품 형태 → 스틱 + 리더기", why: "리더기가 있으면 전기안전·EMC·펌웨어(소프트웨어) 문서가 추가된다" },
   { path: "software.hasApp", value: true, label: "앱 → 있음", why: "앱이 있으면 소프트웨어 밸리데이션·사이버보안 문서가 추가된다" },
 ];
 
@@ -64,14 +65,15 @@ const TOKEN_DEPS: Record<string, string[]> = {
   user: ["user"], environment: ["environment"], resultKind: ["result.kind"],
   intendedPurpose: ["user", "environment"],
   cls: CLASS_DEPS, rule: CLASS_DEPS, rationale: CLASS_DEPS, ruleTable: CLASS_DEPS, route: CLASS_DEPS, nb: CLASS_DEPS, nbScope: CLASS_DEPS,
-  swScope: ["software.hasApp", ...CLASS_DEPS],
+  swScope: ["software.hasApp", "formFactor", ...CLASS_DEPS],
+  formFactor: ["formFactor"],
   studyList: PLAN_DEPS, analyticalPlan: PLAN_DEPS, analyticalAcceptance: PLAN_DEPS, clinicalPlan: PLAN_DEPS,
   clinicalAcceptance: PLAN_DEPS, sampleSize: PLAN_DEPS, studySchedule: PLAN_DEPS, stabilityPlan: ["environment"],
 };
 
 /** 사람이 직접 넣은 값을 그대로 옮기는 토큰. 나머지는 규칙으로 만든 값. */
 const INPUT_KEYS = new Set([
-  "productName", "model", "manufacturer", "manufacturerCountry", "basicUdiDi", "productType", "analyte", "cutoff", "specimen",
+  "productName", "model", "manufacturer", "manufacturerCountry", "basicUdiDi", "productType", "formFactor", "materials", "analyte", "cutoff", "specimen",
   "resultKind", "readout", "user", "environment", "clinicalDecision", "targetPopulation", "outOfScope", "storage", "shelfLife",
   "openedStability", "components", "markets", "targetSe", "targetSp", "referenceMethod", "lots",
   "analyticalResults", "stabilityResults", "clinicalResults", "stabilityConclusion", "transportResults",

@@ -42,9 +42,14 @@ export const APPLICABILITY_RULES: Record<string, Rule> = {
       ? v("required", lay ? "일반인 자가검사라 사용 오류가 곧 임상 위험입니다 — IEC 62366-1 사용적합성 평가 필수." : "근접검사 환경이라 사용적합성 평가가 필요합니다.", "user", "environment")
       : v("recommended", "검사실 전문가용이지만 IEC 62366-1 사용적합성 문서는 GSPR 충족 근거로 권장됩니다.", "user", "environment");
   },
+  "electrical-safety-emc": (s) => {
+    if (s.formFactor === null) return unknown("제품 형태(스틱만 / 리더기·기기 포함)가 정해지면 판정됩니다.", "formFactor");
+    if (s.formFactor === "strip-only") return v("excluded", "기기 없이 스틱만 판매합니다 — 전원이 있는 부품이 없어 전기안전·EMC 시험 대상이 아닙니다.", "formFactor");
+    return v("required", "전원이 들어가는 리더기·기기가 있습니다 — 전기안전(IEC 61010-1·-2-101)과 EMC(IEC 61326-2-6) 시험, EU면 RoHS·WEEE 확인이 필요합니다 (원문 확인 필요).", "formFactor");
+  },
   "sw-validation": (s) => {
     // 판독을 리더기·앱으로 하면 펌웨어·앱이 결과에 관여한다 — 앱 별도 제공 여부와 관계없이 IEC 62304 대상
-    const fw = s.result.readout === "reader" || s.result.readout === "app";
+    const fw = s.result.readout === "reader" || s.result.readout === "app" || (s.formFactor !== null && s.formFactor !== "strip-only");
     if (s.software.hasApp === true || fw)
       return v("required", fw && s.software.hasApp !== true ? `판독을 ${s.result.readout === "reader" ? "전용 리더기(펌웨어)" : "스마트폰 앱"}로 합니다 — 결과에 관여하는 소프트웨어라 IEC 62304 수명주기·검증이 필요합니다.` : "앱·소프트웨어가 함께 제공됩니다 — IEC 62304 수명주기·검증이 필요합니다.", "software.hasApp", "result.readout");
     if (s.software.hasApp === null || s.result.readout === null) return unknown("앱·소프트웨어 제공 여부와 판독 방식이 정해지면 판정됩니다.", "software.hasApp", "result.readout");

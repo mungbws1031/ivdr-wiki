@@ -641,7 +641,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "2. 기기 설명 및 의도된 목적",
         guidance: "의도된 목적 정의서에서 옮겨와 기기 유형·작동 원리를 설명.",
-        placeholder: "기기 유형: {{auto.productType}}\n작동 원리: [____]\n의도된 목적(요약): {{auto.intendedPurpose}}",
+        placeholder: "기기 유형: {{auto.productType}}\n제품 형태: {{auto.formFactor}}\n주요 재질: {{auto.materials}}\n작동 원리: [____]\n의도된 목적(요약): {{auto.intendedPurpose}}",
       },
       {
         heading: "3. 구성 및 부품 목록",

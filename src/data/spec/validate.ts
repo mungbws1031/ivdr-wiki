@@ -11,6 +11,8 @@ export function emptySpec(): ProductSpec {
     schemaVersion: 1,
     identity: { productName: null, model: null, manufacturerName: null, manufacturerCountry: null, manufacturerIsEU: null, basicUdiDi: null },
     productType: null,
+    formFactor: null,
+    materials: null,
     analyte: { preset: null, name: null, cutoffValue: null, cutoffUnit: null },
     specimen: null,
     result: { kind: null, readout: null },
@@ -46,6 +48,8 @@ export function exampleSpec(): ProductSpec {
     manufacturerCountry: "대한민국", manufacturerIsEU: false, basicUdiDi: null,
   };
   s.productType = "reagent-kit";
+  s.formFactor = "strip-only";
+  s.materials = ["plastic", "paper-membrane"];
   s.analyte = { preset: "LH", name: "황체형성호르몬(LH)", cutoffValue: 25, cutoffUnit: "mIU/mL" };
   s.specimen = "urine";
   s.result = { kind: "qualitative", readout: "visual" };

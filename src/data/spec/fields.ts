@@ -108,6 +108,36 @@ export const specSections: FieldSection[] = [
     ],
   },
   {
+    id: "form",
+    title: "형태 · 재질",
+    desc: "기기 없이 스틱만 파는지, 리더기·장비가 있는지. 전원이 있는 기기면 전기안전·EMC·펌웨어 문서가 추가됩니다.",
+    fields: [
+      {
+        path: "formFactor", label: "제품 형태", kind: "select", usedBy: ["device-description", "electrical-safety-emc", "sw-validation", "labelling-spec"],
+        help: "같은 시약이라도 리더기나 장비를 함께 팔면 전기안전·EMC·소프트웨어 문서가 필요합니다.",
+        options: [
+          { value: "strip-only", label: "스틱·스트립만 (기기 없이, 육안 판독)" },
+          { value: "strip-reader", label: "스틱 + 개인용 리더기" },
+          { value: "personal-device", label: "개인용 진단 기기 (일체형, 가정용)" },
+          { value: "poct", label: "POCT 기기 (약국·진료실·현장)" },
+          { value: "lab-analyzer", label: "병원·검사실 대형 진단 장비" },
+        ],
+      },
+      {
+        path: "materials", label: "주요 재질", kind: "multi", optional: true, usedBy: ["device-description", "biocompatibility", "packaging-design"],
+        help: "하우징·스트립·부품의 주 재질. 전자부품이 있으면 EU RoHS·WEEE 확인이 필요합니다.",
+        options: [
+          { value: "plastic", label: "플라스틱 (하우징·카세트)" },
+          { value: "paper-membrane", label: "종이·멤브레인 (니트로셀룰로스 스트립)" },
+          { value: "glass", label: "유리" },
+          { value: "metal", label: "금속" },
+          { value: "electronics", label: "전자부품 (회로·배터리·디스플레이)" },
+          { value: "other", label: "기타" },
+        ],
+      },
+    ],
+  },
+  {
     id: "analyte",
     title: "분석 대상",
     desc: "무엇을 검출하는지. 분류(가임력·임신 예외)와 교차반응 물질 목록이 여기서 정해집니다.",

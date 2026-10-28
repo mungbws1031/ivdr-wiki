@@ -20,12 +20,14 @@ const READOUT: Record<string, string> = { visual: "육안 판독", reader: "전�
 const USER: Record<string, string> = { lay: "일반인 (자가검사)", professional: "전문가", both: "일반인·전문가" };
 const ENV: Record<string, string> = { home: "가정", "near-patient": "근접검사 (약국·진료실)", lab: "검사실" };
 const PTYPE: Record<string, string> = { "reagent-kit": "반응키트 (시약·키트)", instrument: "분석기 (기기)", software: "소프트웨어", accessory: "부속품" };
+const FORM: Record<string, string> = { "strip-only": "스틱·스트립만 (기기 없이 육안 판독)", "strip-reader": "스틱 + 개인용 리더기", "personal-device": "개인용 진단 기기 (일체형)", poct: "POCT 기기 (약국·진료실·현장)", "lab-analyzer": "병원·검사실 대형 진단 장비" };
+const MATERIAL: Record<string, string> = { plastic: "플라스틱", "paper-membrane": "종이·멤브레인", glass: "유리", metal: "금속", electronics: "전자부품", other: "기타" };
 const MARKET: Record<string, string> = { EU: "EU (IVDR)", KR: "한국 (MFDS)", US: "미국 (FDA)", CA: "캐나다", AU: "호주", JP: "일본", BR: "브라질" };
 
 /** 토큰별 사람이 읽는 이름 — 미입력 표시와 화면 안내에 쓴다. */
 export const TOKEN_LABEL: Record<string, string> = {
   productName: "제품명", model: "모델", manufacturer: "제조자", manufacturerCountry: "제조국", basicUdiDi: "Basic UDI-DI",
-  productType: "제품 유형", analyte: "분석물", cutoff: "Cut-off", specimen: "검체", resultKind: "결과 형태", readout: "판독 방식",
+  productType: "제품 유형", formFactor: "제품 형태", materials: "주요 재질", analyte: "분석물", cutoff: "Cut-off", specimen: "검체", resultKind: "결과 형태", readout: "판독 방식",
   user: "사용자", environment: "사용 환경", clinicalDecision: "결과로 내리는 판단", targetPopulation: "대상 집단", outOfScope: "사용하면 안 되는 용도",
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
   cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
@@ -67,9 +69,10 @@ function ruleTable(s: ProductSpec, c: ClassResult): string {
 function swScope(s: ProductSpec, c: ClassResult): string | null {
   const { hasApp, isMdsw } = s.software;
   const r = s.result.readout;
-  if (hasApp === null && r === null) return null;
+  if (hasApp === null && r === null && s.formFactor === null) return null;
   const parts: string[] = [];
   if (r === "reader") parts.push("전용 리더기 펌웨어 (결과 판독)");
+  else if (s.formFactor && s.formFactor !== "strip-only") parts.push("기기 펌웨어 (리더기·장비 구동)");
   if (r === "app" || hasApp) parts.push(`스마트폰 앱${isMdsw ? " — 결과를 판정·해석하므로 의료기기 소프트웨어(MDSW)" : isMdsw === false ? " — 결과 판정을 하지 않는 보조 앱" : " — MDSW 해당 여부 [확인 필요]"}`);
   if (!parts.length) return "소프트웨어 없음 (육안 판독, 앱 미제공)";
   const cls = c.value ? `Class ${c.value}` : "[클래스 — 확정 전]";
@@ -86,6 +89,8 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
     productName: id.productName, model: id.model, manufacturer: id.manufacturerName, manufacturerCountry: id.manufacturerCountry,
     basicUdiDi: id.basicUdiDi,
     productType: s.productType ? PTYPE[s.productType] : null,
+    formFactor: s.formFactor ? FORM[s.formFactor] : null,
+    materials: s.materials?.length ? s.materials.map((m) => MATERIAL[m] ?? m).join(", ") : null,
     analyte: s.analyte.name, cutoff,
     specimen: s.specimen ? SPECIMEN[s.specimen] : null,
     resultKind: s.result.kind ? KIND[s.result.kind] : null,
