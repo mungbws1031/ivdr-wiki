@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Check, ClipboardList, Download, FileText, RotateCcw, Sparkles, Upload } from "lucide-react";
+import { ArrowRight, Check, ClipboardList, Download, Eye, FileText, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { SpecField } from "./SpecField";
 import { AutoSteps } from "./AutoSteps";
 import { specSections } from "../../data/spec/fields";
 import { completion, composeIntendedPurpose, exampleSpec, getAt, unresolvedFields } from "../../data/spec/validate";
 import { replaceSpec, reloadSpec, resetSpec, setSpecField, useSpec } from "../../hooks/useSpecStore";
+import { reloadResults } from "../../hooks/useResultsStore";
 import { applyBackup, exportAll, exportSpecOnly, parseBackup, requestPersistentStorage, type ParsedBackup } from "../../lib/backup";
 
 type Confirm =
@@ -79,6 +80,7 @@ export function SpecPage() {
     try {
       applyBackup(confirm.parsed, mode);
       reloadSpec();
+      reloadResults();
       setNotice({ tone: "ok", text: `${confirm.parsed.keyCount}개 항목을 ${mode === "merge" ? "합쳤습니다" : "덮어썼습니다"}. 문서 초안·체크·일정도 함께 반영됩니다.` });
     } catch {
       setNotice({ tone: "error", text: "브라우저 저장소에 쓰지 못했습니다. 저장 공간이나 사생활 보호 설정을 확인해 주세요." });
@@ -120,6 +122,15 @@ export function SpecPage() {
                 <span className="block h-full rounded-full" style={{ width: `${pct}%`, background: pct === 100 ? "var(--success)" : "var(--accent)", transition: "width .3s" }} />
               </span>
             </div>
+            {!isEmpty && (
+              <Link
+                to="/auto/overview"
+                className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-bold"
+                style={{ fontSize: "var(--t-sm)", padding: "8px 18px", minHeight: 40, background: "var(--accent)", color: "var(--text-on-color)" }}
+              >
+                <Eye size={16} aria-hidden /> 결과 보기 <ArrowRight size={15} aria-hidden />
+              </Link>
+            )}
             <ToolButton icon={Sparkles} label="예시로 채우기" onClick={() => (isEmpty ? replaceSpec(exampleSpec()) : setConfirm({ kind: "example" }))} tone={isEmpty ? "primary" : "default"} />
             <ToolButton icon={Download} label="전체 백업" onClick={() => setNotice({ tone: "ok", text: `${exportAll()}개 항목을 백업 파일로 내려받았습니다.` })} />
             <ToolButton icon={FileText} label="스펙만 내보내기" onClick={() => exportSpecOnly(spec)} />
@@ -206,6 +217,21 @@ export function SpecPage() {
                 </div>
               </section>
             ))}
+            <Link
+              to="/auto/overview"
+              className="flex flex-wrap items-center justify-between rounded-[var(--r-lg)]"
+              style={{ gap: "var(--s-3)", padding: "var(--s-6)", background: "var(--accent)", color: "var(--text-on-color)" }}
+            >
+              <span>
+                <span className="block font-extrabold" style={{ fontSize: "var(--t-lg)" }}>입력을 마쳤으면 결과 보기</span>
+                <span className="block" style={{ fontSize: "var(--t-sm)", opacity: 0.9 }}>
+                  클래스, 필요한 문서, 자동으로 채워진 문서, 실험계획을 한 화면에서 봅니다{missing.length ? ` — 비어 있는 ${missing.length}개는 [미입력]으로 남습니다` : ""}.
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 font-bold rounded-[var(--r-md)]" style={{ padding: "10px 18px", background: "var(--bg)", color: "var(--accent)", fontSize: "var(--t-sm)" }}>
+                결과 보기 <ArrowRight size={16} aria-hidden />
+              </span>
+            </Link>
           </div>
 
           {/* 요약 사이드 */}
@@ -246,11 +272,11 @@ export function SpecPage() {
             </section>
 
             <Link
-              to="/auto/docs"
+              to="/auto/overview"
               className="flex items-center justify-between rounded-[var(--r-lg)] font-bold"
               style={{ padding: "var(--s-4)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}
             >
-              다음: 분류·문서 세트 보기 <span aria-hidden>→</span>
+              <span className="inline-flex items-center gap-1.5"><Eye size={16} aria-hidden /> 결과 보기</span> <span aria-hidden>→</span>
             </Link>
 
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>

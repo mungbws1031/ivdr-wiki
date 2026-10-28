@@ -1188,7 +1188,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "7. 결과 · 결론",
         guidance: "2×2 표, 민감도·특이도와 신뢰구간, 무효 결과를 적는다.",
-        placeholder: "양성 일치 a / (a+c): [실험 후 입력]\n음성 일치 d / (b+d): [실험 후 입력]\n신뢰하한: [실험 후 입력]\n무효 결과: [실험 후 입력]\n결론: [실험 후 입력]",
+        placeholder: "{{auto.clinicalResults}}",
       },
     ],
     experiments: [
@@ -1246,7 +1246,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "6. 결론 · 라벨 반영",
         guidance: "입증된 유효기간·보관 조건·개봉 후 시한을 라벨·IFU에 반영한다.",
-        placeholder: "입증된 유효기간: [실험 후 입력]\n라벨·IFU 반영: [실험 후 입력]",
+        placeholder: "{{auto.stabilityConclusion}}\n라벨·IFU 반영: [실험 후 입력]",
       },
     ],
     experiments: [
@@ -1321,7 +1321,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "9. 결과 · 결론",
         guidance: "시험 결과를 판정 기준과 비교하고 결론을 적는다. 이탈이 있으면 원인과 포장 개선·재시험을 기록한다.",
-        placeholder: "외관 검사 결과: [실험 후 입력]\n운송 후 성능 확인 결과 ({{auto.lots}}): [실험 후 입력]\n판정 기준 충족 여부: [실험 후 입력]\n결론: [실험 후 입력 — 운송 조건에서 성능 유지 / 포장 개선 필요]",
+        placeholder: "{{auto.transportResults}}",
       },
     ],
     experiments: [

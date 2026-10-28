@@ -291,20 +291,15 @@ function studyText(p: StudyPlan): string {
   return lines.join("\n");
 }
 
-const RESULT = "[실험 후 입력]";
-
 export function plannerTokens(s: ProductSpec): Record<string, string | null> {
   const plans = planStudies(s).filter((p) => p.status !== "excluded");
   const by = (c: StudyCategory[]) => plans.filter((p) => c.includes(p.category));
   const block = (list: StudyPlan[]) => (list.length ? list.map(studyText).join("\n\n") : null);
-  const resultLines = (list: StudyPlan[]) => list.map((p) => `${p.title}: ${RESULT}`).join("\n");
   return {
     studyList: plans.length ? plans.map((p) => `- [${STATUS_KO[p.status]}] ${p.title} (${p.standards[0]})`).join("\n") : null,
     analyticalPlan: block(by(["analytical"])),
     analyticalAcceptance: by(["analytical"]).flatMap((p) => p.acceptance.map((a) => `- ${p.title}: ${a}`)).join("\n") || null,
-    analyticalResults: resultLines(by(["analytical"])),
     stabilityPlan: block(by(["stability"])),
-    stabilityResults: resultLines(by(["stability"])),
     clinicalPlan: block(by(["clinical"])),
     clinicalAcceptance: by(["clinical"]).flatMap((p) => p.acceptance.map((a) => `- ${a}`)).join("\n") || null,
     sampleSize: by(["clinical"]).flatMap((p) => p.samples).join("\n") || null,

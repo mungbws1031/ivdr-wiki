@@ -2,15 +2,16 @@ import { Link } from "react-router-dom";
 
 const STEPS = [
   { to: "/auto", label: "제품 스펙" },
+  { to: "/auto/overview", label: "결과 한눈에" },
   { to: "/auto/docs", label: "분류·문서 세트" },
   { to: "/auto/transport", label: "운송·포장" },
   { to: "/auto/plan", label: "실험계획" },
-  { to: null, label: "문서 작성" },
+  { to: "/auto/results", label: "결과 입력" },
   { to: null, label: "사람이 할 일" },
 ] as const;
 
 /** 자동작성 단계 탭. 아직 만들지 않은 단계는 비활성으로 보여준다. */
-export function AutoSteps({ current }: { current: "/auto" | "/auto/docs" | "/auto/transport" | "/auto/plan" }) {
+export function AutoSteps({ current }: { current: "/auto" | "/auto/overview" | "/auto/docs" | "/auto/transport" | "/auto/plan" | "/auto/results" }) {
   return (
     <nav aria-label="자동작성 단계" className="flex flex-wrap items-center" style={{ gap: 6 }}>
       {STEPS.map((s, i) => {

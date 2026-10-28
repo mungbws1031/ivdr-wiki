@@ -226,6 +226,9 @@ export function PlanPage() {
                 <SizeTable label="특이도" target={spec.targets.specificity} conf={spec.targets.confidence} path="targets.specificity" />
               </section>
 
+              <Link to="/auto/results" className="flex items-center justify-between rounded-[var(--r-lg)] font-bold" style={{ padding: "var(--s-4)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
+                실험을 마쳤으면: 결과 입력 <span aria-hidden>→</span>
+              </Link>
               <div className="flex flex-col" style={{ gap: 6 }}>
                 {[["performance-eval-plan", "성능평가 계획 (PEP)"], ["analytical-performance", "분석적 성능 보고서"], ["clinical-performance", "임상적 성능 보고서"], ["stability-study", "안정성 시험 계획·보고서"]].map(([id, t]) => (
                   <Link key={id} to={`/doc/${id}`} className="flex items-center justify-between rounded-[var(--r-md)] border font-semibold hover:bg-surface" style={{ borderColor: "var(--border)", padding: "10px 14px", fontSize: "var(--t-sm)", color: "var(--text)" }}>

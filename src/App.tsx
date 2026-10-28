@@ -18,6 +18,8 @@ const PrepNotePage = lazy(() => import("./components/PrepNotePage").then((m) => 
 const SchedulePlanner = lazy(() => import("./components/SchedulePlanner").then((m) => ({ default: m.SchedulePlanner })));
 const SpecPage = lazy(() => import("./components/auto/SpecPage").then((m) => ({ default: m.SpecPage })));
 const DocSetPage = lazy(() => import("./components/auto/DocSetPage").then((m) => ({ default: m.DocSetPage })));
+const OverviewPage = lazy(() => import("./components/auto/OverviewPage").then((m) => ({ default: m.OverviewPage })));
+const ResultsPage = lazy(() => import("./components/auto/ResultsPage").then((m) => ({ default: m.ResultsPage })));
 const PlanPage = lazy(() => import("./components/auto/PlanPage").then((m) => ({ default: m.PlanPage })));
 const TransportPage = lazy(() => import("./components/auto/TransportPage").then((m) => ({ default: m.TransportPage })));
 
@@ -67,6 +69,8 @@ export default function App() {
           <Route path="/auto/docs" element={<DocSetPage />} />
           <Route path="/auto/transport" element={<TransportPage />} />
           <Route path="/auto/plan" element={<PlanPage />} />
+          <Route path="/auto/overview" element={<OverviewPage />} />
+          <Route path="/auto/results" element={<ResultsPage />} />
           <Route path="*" element={<CertHub />} />
         </Routes>
       </Suspense>
