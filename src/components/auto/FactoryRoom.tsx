@@ -39,7 +39,6 @@ function layout(floors: FactoryFloor[]): { zones: Zone[]; X: number; Y: number }
 // ── 싸이월드풍 미니미 ──────────────────────────────────────
 const SKIN = ["#FFE3CF", "#FCD5B8", "#F3C29D", "#E0A87E"];
 const HAIR = ["#3A2A22", "#6B4226", "#A0663A", "#2E2E3A", "#D8A35D", "#8E3B2F"];
-const SHIRT_TODO = "#C9CED8";
 
 function MiniHair({ style, color }: { style: number; color: string }) {
   switch (style) {
@@ -75,87 +74,58 @@ function MiniHair({ style, color }: { style: number; color: string }) {
   }
 }
 
-/** 큰 머리·작은 몸·점 눈·발그레한 볼 — 상태에 따라 표정이 바뀐다. */
+/** 시안의 사람 모양(동그란 머리·사원증 셔츠·두 다리)에 눈·코·입. 표정은 상태에 따라 바뀐다. */
 function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
   const n = seedOf(seed);
   const skin = SKIN[n % SKIN.length];
   const hair = HAIR[(n >>> 3) % HAIR.length];
   const style = (n >>> 6) % 6;
-  const acc = (n >>> 15) % 4; // 0 없음 · 1 별 핀 · 2 고양이 귀 머리띠 · 3 새싹
-  const line = "#5A4038";
-  // 반짝이는 큰 눈 — 완료면 ^^, 작성 중이면 집중(반쯤 감은 눈), 대기면 글썽
+  const ink = "#3A2C26";
   const eyes =
     state === "done" ? (
-      <g stroke={line} strokeWidth="1.3" fill="none" strokeLinecap="round">
-        <path d="M8.9 15.6 Q10.6 13.4 12.3 15.6" />
-        <path d="M17.7 15.6 Q19.4 13.4 21.1 15.6" />
+      <g stroke={ink} strokeWidth="0.8" fill="none" strokeLinecap="round">
+        <path d="M11.6 9.8 Q12.5 8.8 13.4 9.8" />
+        <path d="M16.6 9.8 Q17.5 8.8 18.4 9.8" />
       </g>
     ) : state === "writing" ? (
-      <g>
-        <ellipse cx="10.6" cy="15.6" rx="1.7" ry="1.3" fill="#2B2321" />
-        <ellipse cx="19.4" cy="15.6" rx="1.7" ry="1.3" fill="#2B2321" />
-        <path d="M8.7 14.6 L12.5 14.6 M17.5 14.6 L21.3 14.6" stroke={skin} strokeWidth="1.4" />
-        <circle cx="11.2" cy="15.3" r="0.45" fill="#fff" />
-        <circle cx="20" cy="15.3" r="0.45" fill="#fff" />
+      <g stroke={ink} strokeWidth="0.8" strokeLinecap="round">
+        <path d="M11.7 9.7 L13.3 9.7" />
+        <path d="M16.7 9.7 L18.3 9.7" />
       </g>
     ) : (
-      <g>
-        <ellipse cx="10.6" cy="15.2" rx="1.8" ry="2.2" fill="#2B2321" />
-        <ellipse cx="19.4" cy="15.2" rx="1.8" ry="2.2" fill="#2B2321" />
-        <circle cx="11.3" cy="14.2" r="0.75" fill="#fff" />
-        <circle cx="20.1" cy="14.2" r="0.75" fill="#fff" />
-        <circle cx="10" cy="16.2" r="0.35" fill="#fff" />
-        <circle cx="18.8" cy="16.2" r="0.35" fill="#fff" />
-        {state === "blocked" && <path d="M8.6 17.4 Q8 19.4 9 19.8 Q10 19.4 9.4 17.4 Z" fill="#8FD3FF" />}
+      <g fill={ink}>
+        <circle cx="12.5" cy="9.5" r="0.95" />
+        <circle cx="17.5" cy="9.5" r="0.95" />
+        <circle cx="12.8" cy="9.2" r="0.3" fill="#fff" />
+        <circle cx="17.8" cy="9.2" r="0.3" fill="#fff" />
       </g>
     );
   const mouth =
-    state === "done" ? <path d="M12.8 18.8 Q15 21.8 17.2 18.8 Q15 19.6 12.8 18.8 Z" fill="#E25B6E" stroke={line} strokeWidth="0.5" strokeLinejoin="round" />
-    : state === "blocked" ? <path d="M12.9 19.8 Q13.9 19 14.9 19.8 Q15.9 20.6 16.9 19.8" stroke={line} strokeWidth="0.8" fill="none" strokeLinecap="round" />
-    : <path d="M13 18.9 Q14 20.1 15 18.9 Q16 20.1 17 18.9" stroke={line} strokeWidth="0.8" fill="none" strokeLinecap="round" />; // ω
+    state === "done" ? <path d="M13.3 12.6 Q15 14.4 16.7 12.6 Z" fill="#D9535F" />
+    : state === "blocked" ? <path d="M13.5 13.6 Q15 12.6 16.5 13.6" stroke={ink} strokeWidth="0.7" fill="none" strokeLinecap="round" />
+    : <path d="M13.7 12.8 Q15 13.8 16.3 12.8" stroke={ink} strokeWidth="0.7" fill="none" strokeLinecap="round" />;
   return (
     <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible" }}>
-      <ellipse cx="15" cy="38.6" rx="7" ry="1.6" fill="rgba(0,0,0,.16)" />
-      {/* 짧은 다리 + 동글 신발 */}
-      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 32px" }}>
-        <rect x="11" y="31" width="2.6" height="5" rx="1.2" fill="#4A4F5C" />
-        <ellipse cx="12.2" cy="36.8" rx="2.3" ry="1.4" fill="#FF8FAB" stroke={line} strokeWidth="0.5" />
+      <ellipse cx="15" cy="38.6" rx="7.5" ry="2.4" fill="rgba(0,0,0,.14)" />
+      {/* 다리 */}
+      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 30px" }}><rect x="10.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
+      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 30px" }}><rect x="16.2" y="29.5" width="3.6" height="9" rx="1.5" fill="#3B3F4A" /></g>
+      {/* 셔츠 + 사원증 */}
+      <rect x="8.5" y="16.5" width="13" height="15" rx="5" fill={shirt} />
+      <rect x="12.1" y="20" width="5.8" height="7" rx="1.1" fill="#fff" opacity="0.92" />
+      <rect x="13.2" y="21.3" width="3.6" height="1" rx="0.5" fill={shirt} opacity="0.7" />
+      {/* 머리 */}
+      <circle cx="15" cy="9.6" r="6.6" fill={skin} />
+      <g transform="translate(15 9.6) scale(0.6) translate(-15 -14)">
+        <MiniHair style={style} color={hair} />
       </g>
-      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 32px" }}>
-        <rect x="16.4" y="31" width="2.6" height="5" rx="1.2" fill="#4A4F5C" />
-        <ellipse cx="17.8" cy="36.8" rx="2.3" ry="1.4" fill="#FF8FAB" stroke={line} strokeWidth="0.5" />
-      </g>
-      {/* 동글동글 몸·팔 */}
-      <path d="M9.4 33 Q8.6 24 15 23.2 Q21.4 24 20.6 33 Z" fill={shirt} stroke={line} strokeWidth="0.6" strokeLinejoin="round" />
-      <ellipse cx="8.6" cy="27.6" rx="1.7" ry="2.6" fill={shirt} stroke={line} strokeWidth="0.5" />
-      <ellipse cx="21.4" cy="27.6" rx="1.7" ry="2.6" fill={shirt} stroke={line} strokeWidth="0.5" />
-      <circle cx="8.6" cy="30.2" r="1.3" fill={skin} stroke={line} strokeWidth="0.4" />
-      <circle cx="21.4" cy="30.2" r="1.3" fill={skin} stroke={line} strokeWidth="0.4" />
-      {acc === 2 && (
-        <g fill={hair} stroke={line} strokeWidth="0.5" strokeLinejoin="round">
-          <path d="M5.5 8 L5 1.2 L10.5 4.6 Z" />
-          <path d="M24.5 8 L25 1.2 L19.5 4.6 Z" />
-          <path d="M6.4 6.4 L6.2 3.2 L8.8 4.9 Z M23.6 6.4 L23.8 3.2 L21.2 4.9 Z" fill="#FFB3C7" stroke="none" />
-        </g>
-      )}
-      {/* 큰 머리 */}
-      <ellipse cx="15" cy="14" rx="11.6" ry="10.6" fill={skin} stroke={line} strokeWidth="0.7" />
-      <MiniHair style={style} color={hair} />
-      {acc === 1 && <path d="M21.5 4.2 L22.4 6 L24.4 6.2 L22.9 7.5 L23.4 9.4 L21.5 8.4 L19.6 9.4 L20.1 7.5 L18.6 6.2 L20.6 6 Z" fill="#FFD84D" stroke="#E0A800" strokeWidth="0.4" />}
-      {acc === 3 && (
-        <g>
-          <path d="M15 3.6 L15 0.6" stroke="#5BAE5B" strokeWidth="0.8" />
-          <ellipse cx="13.4" cy="0.8" rx="1.8" ry="1" fill="#7ED37E" transform="rotate(-25 13.4 0.8)" />
-          <ellipse cx="16.6" cy="0.8" rx="1.8" ry="1" fill="#7ED37E" transform="rotate(25 16.6 0.8)" />
-        </g>
-      )}
       {eyes}
-      {/* 볼터치 */}
-      <ellipse cx="7.4" cy="18.6" rx="2.3" ry="1.4" fill="#FF8F9E" opacity="0.7" />
-      <ellipse cx="22.6" cy="18.6" rx="2.3" ry="1.4" fill="#FF8F9E" opacity="0.7" />
+      {/* 코 */}
+      <path d="M15 10.4 Q14.5 11.5 15.3 11.6" stroke="#B07A58" strokeWidth="0.6" fill="none" strokeLinecap="round" />
+      <ellipse cx="11.2" cy="11.9" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
+      <ellipse cx="18.8" cy="11.9" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
       {mouth}
-      {state === "done" && <path d="M26 5.5 L26.6 7 L28 7.5 L26.6 8 L26 9.5 L25.4 8 L24 7.5 L25.4 7 Z" fill="#FFD84D" />}
-      {state === "blocked" && <path d="M25.5 6 Q27.4 8.8 25.5 10 Q23.6 8.8 25.5 6 Z" fill="#7CC4F0" />}
+      {state === "blocked" && <path d="M21.6 4.6 Q22.8 6.4 21.6 7.1 Q20.4 6.4 21.6 4.6 Z" fill="#7CC4F0" />}
     </svg>
   );
 }
@@ -349,7 +319,7 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
 /** 책상 하나와 그 자리 직원. */
 function Spot({ d, color, hx, hy, zone, tx, ty }: { d: FactoryDoc; color: string; hx: number; hy: number; zone: Zone; tx: number; ty: number }) {
   const st = STATE[d.state];
-  const shirt = d.state === "todo" ? SHIRT_TODO : d.state === "done" ? "#7ED3A0" : d.state === "blocked" ? "#FFC266" : color;
+  const shirt = d.state === "todo" ? `color-mix(in srgb, ${color} 70%, #fff)` : d.state === "done" ? "#7ED3A0" : d.state === "blocked" ? "#FFC266" : color;
   const walking = d.state === "todo" || d.state === "done";
   const label = `${d.title} — ${st.label}${d.why ? ` (${d.why})` : ""} · ${pct(d.progress)}`;
   const depth = Math.round(hy);
