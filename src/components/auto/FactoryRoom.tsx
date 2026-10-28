@@ -8,7 +8,7 @@ import { FloorDetail, pct, seedOf, STATE } from "./factoryArt";
 
 const T = 17; // 타일 크기(px)
 const C = 0.866; // cos 30°
-const S = 2.6; // 책상 간격(타일)
+const S = 3.6; // 책상 간격(타일) — 캐릭터(30×40px)가 서로 겹치지 않는 거리
 const ROWS = 3; // 부서 구역마다 책상 줄 수
 const BAND = ROWS * S + 3.2; // 구역 깊이(타일)
 const WALL = 96; // 벽 높이(px)
@@ -81,49 +81,81 @@ function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState
   const skin = SKIN[n % SKIN.length];
   const hair = HAIR[(n >>> 3) % HAIR.length];
   const style = (n >>> 6) % 6;
+  const acc = (n >>> 15) % 4; // 0 없음 · 1 별 핀 · 2 고양이 귀 머리띠 · 3 새싹
+  const line = "#5A4038";
+  // 반짝이는 큰 눈 — 완료면 ^^, 작성 중이면 집중(반쯤 감은 눈), 대기면 글썽
   const eyes =
     state === "done" ? (
-      <g stroke="#2B2321" strokeWidth="1.1" fill="none" strokeLinecap="round">
-        <path d="M9.4 15 Q10.6 13.6 11.8 15" />
-        <path d="M18.2 15 Q19.4 13.6 20.6 15" />
+      <g stroke={line} strokeWidth="1.3" fill="none" strokeLinecap="round">
+        <path d="M8.9 15.6 Q10.6 13.4 12.3 15.6" />
+        <path d="M17.7 15.6 Q19.4 13.4 21.1 15.6" />
       </g>
     ) : state === "writing" ? (
-      <g stroke="#2B2321" strokeWidth="1.1" strokeLinecap="round">
-        <path d="M9.6 15.2 L11.8 15.2" />
-        <path d="M18.2 15.2 L20.4 15.2" />
+      <g>
+        <ellipse cx="10.6" cy="15.6" rx="1.7" ry="1.3" fill="#2B2321" />
+        <ellipse cx="19.4" cy="15.6" rx="1.7" ry="1.3" fill="#2B2321" />
+        <path d="M8.7 14.6 L12.5 14.6 M17.5 14.6 L21.3 14.6" stroke={skin} strokeWidth="1.4" />
+        <circle cx="11.2" cy="15.3" r="0.45" fill="#fff" />
+        <circle cx="20" cy="15.3" r="0.45" fill="#fff" />
       </g>
     ) : (
-      <g fill="#2B2321">
-        <circle cx="10.8" cy="14.8" r="1.25" />
-        <circle cx="19.2" cy="14.8" r="1.25" />
-        <circle cx="11.2" cy="14.3" r="0.4" fill="#fff" />
-        <circle cx="19.6" cy="14.3" r="0.4" fill="#fff" />
+      <g>
+        <ellipse cx="10.6" cy="15.2" rx="1.8" ry="2.2" fill="#2B2321" />
+        <ellipse cx="19.4" cy="15.2" rx="1.8" ry="2.2" fill="#2B2321" />
+        <circle cx="11.3" cy="14.2" r="0.75" fill="#fff" />
+        <circle cx="20.1" cy="14.2" r="0.75" fill="#fff" />
+        <circle cx="10" cy="16.2" r="0.35" fill="#fff" />
+        <circle cx="18.8" cy="16.2" r="0.35" fill="#fff" />
+        {state === "blocked" && <path d="M8.6 17.4 Q8 19.4 9 19.8 Q10 19.4 9.4 17.4 Z" fill="#8FD3FF" />}
       </g>
     );
   const mouth =
-    state === "done" ? <path d="M13.2 18.3 Q15 20.4 16.8 18.3 Z" fill="#E25B5B" />
-    : state === "blocked" ? <path d="M13.4 19.6 Q15 18.2 16.6 19.6" stroke="#8A3B2E" strokeWidth="0.9" fill="none" strokeLinecap="round" />
-    : <path d="M13.8 18.6 Q15 19.6 16.2 18.6" stroke="#8A3B2E" strokeWidth="0.9" fill="none" strokeLinecap="round" />;
+    state === "done" ? <path d="M12.8 18.8 Q15 21.8 17.2 18.8 Q15 19.6 12.8 18.8 Z" fill="#E25B6E" stroke={line} strokeWidth="0.5" strokeLinejoin="round" />
+    : state === "blocked" ? <path d="M12.9 19.8 Q13.9 19 14.9 19.8 Q15.9 20.6 16.9 19.8" stroke={line} strokeWidth="0.8" fill="none" strokeLinecap="round" />
+    : <path d="M13 18.9 Q14 20.1 15 18.9 Q16 20.1 17 18.9" stroke={line} strokeWidth="0.8" fill="none" strokeLinecap="round" />; // ω
   return (
     <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible" }}>
       <ellipse cx="15" cy="38.6" rx="7" ry="1.6" fill="rgba(0,0,0,.16)" />
-      {/* 다리 */}
-      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 32px" }}><rect x="10.6" y="31" width="3" height="6.6" rx="1.4" fill="#4A4F5C" /></g>
-      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 32px" }}><rect x="16.4" y="31" width="3" height="6.6" rx="1.4" fill="#4A4F5C" /></g>
-      {/* 몸·팔 */}
-      <rect x="8.6" y="23" width="12.8" height="10" rx="4" fill={shirt} />
-      <ellipse cx="8" cy="27" rx="1.8" ry="3" fill={shirt} />
-      <ellipse cx="22" cy="27" rx="1.8" ry="3" fill={shirt} />
-      <circle cx="8" cy="30" r="1.4" fill={skin} />
-      <circle cx="22" cy="30" r="1.4" fill={skin} />
+      {/* 짧은 다리 + 동글 신발 */}
+      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12px 32px" }}>
+        <rect x="11" y="31" width="2.6" height="5" rx="1.2" fill="#4A4F5C" />
+        <ellipse cx="12.2" cy="36.8" rx="2.3" ry="1.4" fill="#FF8FAB" stroke={line} strokeWidth="0.5" />
+      </g>
+      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "18px 32px" }}>
+        <rect x="16.4" y="31" width="2.6" height="5" rx="1.2" fill="#4A4F5C" />
+        <ellipse cx="17.8" cy="36.8" rx="2.3" ry="1.4" fill="#FF8FAB" stroke={line} strokeWidth="0.5" />
+      </g>
+      {/* 동글동글 몸·팔 */}
+      <path d="M9.4 33 Q8.6 24 15 23.2 Q21.4 24 20.6 33 Z" fill={shirt} stroke={line} strokeWidth="0.6" strokeLinejoin="round" />
+      <ellipse cx="8.6" cy="27.6" rx="1.7" ry="2.6" fill={shirt} stroke={line} strokeWidth="0.5" />
+      <ellipse cx="21.4" cy="27.6" rx="1.7" ry="2.6" fill={shirt} stroke={line} strokeWidth="0.5" />
+      <circle cx="8.6" cy="30.2" r="1.3" fill={skin} stroke={line} strokeWidth="0.4" />
+      <circle cx="21.4" cy="30.2" r="1.3" fill={skin} stroke={line} strokeWidth="0.4" />
+      {acc === 2 && (
+        <g fill={hair} stroke={line} strokeWidth="0.5" strokeLinejoin="round">
+          <path d="M5.5 8 L5 1.2 L10.5 4.6 Z" />
+          <path d="M24.5 8 L25 1.2 L19.5 4.6 Z" />
+          <path d="M6.4 6.4 L6.2 3.2 L8.8 4.9 Z M23.6 6.4 L23.8 3.2 L21.2 4.9 Z" fill="#FFB3C7" stroke="none" />
+        </g>
+      )}
       {/* 큰 머리 */}
-      <ellipse cx="15" cy="14" rx="11.2" ry="10.4" fill={skin} />
+      <ellipse cx="15" cy="14" rx="11.6" ry="10.6" fill={skin} stroke={line} strokeWidth="0.7" />
       <MiniHair style={style} color={hair} />
+      {acc === 1 && <path d="M21.5 4.2 L22.4 6 L24.4 6.2 L22.9 7.5 L23.4 9.4 L21.5 8.4 L19.6 9.4 L20.1 7.5 L18.6 6.2 L20.6 6 Z" fill="#FFD84D" stroke="#E0A800" strokeWidth="0.4" />}
+      {acc === 3 && (
+        <g>
+          <path d="M15 3.6 L15 0.6" stroke="#5BAE5B" strokeWidth="0.8" />
+          <ellipse cx="13.4" cy="0.8" rx="1.8" ry="1" fill="#7ED37E" transform="rotate(-25 13.4 0.8)" />
+          <ellipse cx="16.6" cy="0.8" rx="1.8" ry="1" fill="#7ED37E" transform="rotate(25 16.6 0.8)" />
+        </g>
+      )}
       {eyes}
-      <ellipse cx="7.8" cy="18" rx="2" ry="1.2" fill="#FF8F9E" opacity="0.6" />
-      <ellipse cx="22.2" cy="18" rx="2" ry="1.2" fill="#FF8F9E" opacity="0.6" />
+      {/* 볼터치 */}
+      <ellipse cx="7.4" cy="18.6" rx="2.3" ry="1.4" fill="#FF8F9E" opacity="0.7" />
+      <ellipse cx="22.6" cy="18.6" rx="2.3" ry="1.4" fill="#FF8F9E" opacity="0.7" />
       {mouth}
-      {state === "blocked" && <path d="M25.5 7 Q27.2 9.6 25.5 10.6 Q23.8 9.6 25.5 7 Z" fill="#7CC4F0" />}
+      {state === "done" && <path d="M26 5.5 L26.6 7 L28 7.5 L26.6 8 L26 9.5 L25.4 8 L24 7.5 L25.4 7 Z" fill="#FFD84D" />}
+      {state === "blocked" && <path d="M25.5 6 Q27.4 8.8 25.5 10 Q23.6 8.8 25.5 6 Z" fill="#7CC4F0" />}
     </svg>
   );
 }
@@ -270,11 +302,11 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
 
             {/* 문서가 없는 부서(결재실·접수)는 사람 할 일이 줄을 선다 */}
             {zones.filter((z) => z.f.docs.length === 0).flatMap((z) => {
-              const cap = Math.max(1, Math.floor((z.w - 2) / 1.3)) * 2;
+              const cap = Math.max(1, Math.floor((z.w - 2) / 2.2)) * 2;
               const shown = z.f.tasks.slice(0, cap);
               const perRow = Math.ceil(shown.length / 2);
               const items = shown.map((t, i) => {
-                const [hx, hy] = iso(ox, oy, z.x + 1.8 + (i % perRow) * 1.3, z.y + 3.6 + Math.floor(i / perRow) * 2.4);
+                const [hx, hy] = iso(ox, oy, z.x + 1.8 + (i % perRow) * 2.2, z.y + 3.6 + Math.floor(i / perRow) * 3.6);
                 return (
                   <Link key={t.id} to={t.to} title={`${t.title} — ${t.why}`} aria-label={`할 일: ${t.title}`} className="absolute block" style={{ left: hx - 15, top: hy - 38, zIndex: Math.round(hy), width: 30, height: 40, animation: "factory-bob 1.6s ease-in-out infinite", animationDelay: `${-(i % 5) * 0.3}s` }}>
                     <Minimi seed={t.id} state="blocked" shirt="#FFC266" walking={false} />
@@ -322,12 +354,12 @@ function Spot({ d, color, hx, hy, zone, tx, ty }: { d: FactoryDoc; color: string
   const label = `${d.title} — ${st.label}${d.why ? ` (${d.why})` : ""} · ${pct(d.progress)}`;
   const depth = Math.round(hy);
 
-  // 걷는 경로: 구역 안에서 x로 갔다가 y로, 다시 돌아오기 (문서마다 고정)
+  // 걷는 경로: 자기 칸 안에서만 x로 갔다가 y로, 다시 돌아오기 (모두 같은 방향이라 이웃과 겹치지 않음)
   let walk: React.CSSProperties | undefined;
   if (walking) {
     const n = seedOf(d.id);
-    let dx = (n % 2 ? 1 : -1) * (1.2 + ((n >>> 2) % 18) / 10);
-    let dy = ((n >>> 5) % 2 ? 1 : -1) * (0.8 + ((n >>> 7) % 12) / 10);
+    let dx = 0.5 + ((n >>> 2) % 5) / 10;
+    let dy = 0.5 + ((n >>> 7) % 5) / 10;
     if (tx + dx > zone.x + zone.w - 0.8 || tx + dx < zone.x + 0.8) dx = -dx;
     if (ty + dy > zone.y + zone.h - 0.6 || ty + dy < zone.y + 2.6) dy = -dy;
     const ax = dx * C * T, ay = dx * 0.5 * T, bx = -dy * C * T, by = dy * 0.5 * T;
