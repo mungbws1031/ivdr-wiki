@@ -141,6 +141,9 @@ export function TransportPage() {
               <span className="inline-flex items-center gap-1.5"><FileText size={16} aria-hidden /> 운송 밸리데이션 문서 열기</span>
               <ArrowRight size={16} aria-hidden />
             </Link>
+            <Link to="/auto/plan" className="flex items-center justify-between rounded-[var(--r-lg)] border font-bold" style={{ padding: "var(--s-4)", borderColor: "var(--border-strong)", color: "var(--text)", fontSize: "var(--t-sm)" }}>
+              다음: 실험계획 <ArrowRight size={16} aria-hidden />
+            </Link>
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
               아래 결과가 문서의 운송 경로·적용 규격·포장 구성·시험 순서·판정 기준·운송 과정 섹션에 자동으로 들어갑니다. 직접 쓴 초안은 덮어쓰지 않습니다.
             </p>
