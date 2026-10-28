@@ -313,17 +313,17 @@ export const documents: DocTemplate[] = [
       {
         heading: "2. 분석적 성능 연구 설계",
         guidance: "LoD·정밀도·정확도·특이성(교차반응)·안정성 연구를 설계한다. (IVDR Annex XIII 2.1조)",
-        placeholder: "[ ] LoD (검출 한계) — 방법: [Probit 분석, CLSI EP17] / 목표: [____]\n[ ] 정밀도 — 반복성: [동일 장비, n=20] / 재현성: [3개 기관, 3일간]\n[ ] 진실성/정확도 — 참고법 비교: [____] / 검체수: [n≥40]\n[ ] 교차반응 — 시험 항원/균주 목록: [____]\n[ ] 기질 간섭 — 헤모글로빈·지질·빌리루빈: [____]\n[ ] 안정성 — 가속: [____°C × ____주] / 실시간: [____]",
+        placeholder: "{{auto.analyticalPlan}}\n\n{{auto.stabilityPlan}}",
       },
       {
         heading: "3. 임상적 성능 연구 설계",
         guidance: "민감도·특이도를 통계적으로 입증할 임상 연구를 설계한다. MDCG 2025-5의 성능 연구 유형을 참조하라.",
-        placeholder: "연구 유형: [전향적 / 후향적 / 레지스트리 — MDCG 2025-5 Table 1 참조]\n대상 집단: {{auto.targetPopulation}} (나이·임상 상태 세부: [____])\n참조 검사(Reference Standard): {{auto.referenceMethod}}\n목표 Se: {{auto.targetSe}} · 허용 오차: ±____% · 신뢰 수준: 95%\n목표 Sp: {{auto.targetSp}} · 허용 오차: ±____%\n→ 최소 양성 검체: n ≥ [계산기 사용 →____] (Wilson 방법)\n→ 최소 음성 검체: n ≥ [____]\n참여 기관 수: [≥2개 기관 권장]\n통계 방법: [95% CI, Wilson 방법, Clopper-Pearson]",
+        placeholder: "{{auto.clinicalPlan}}\n\n참여 기관 수: [≥2개 기관 권장]\n통계 방법: 단측 신뢰하한 (Clopper-Pearson), 보조로 Wilson 95% 구간",
       },
       {
         heading: "4. 연구 일정 및 책임",
         guidance: "PEP → 데이터 수집 → PER 완성까지 일정과 담당을 배정한다.",
-        placeholder: "PEP 완성: [____] — 담당: [____]\n분석적 성능 연구 완료: [____] — 기관: [____]\n임상 검체 수집 시작: [____] — 기관: [____]\n임상 검체 수집 완료: [____]\nPER 초안 완성: [____] — 담당: [____]\nNB 제출 예정: [____]",
+        placeholder: "{{auto.studySchedule}}\n\nPEP 완성: [____] — 담당: [____]\nPER 초안 완성: [____] — 담당: [____]\nNB 제출 예정: [____]",
       },
     ],
     experiments: [
@@ -1079,6 +1079,196 @@ export const documents: DocTemplate[] = [
     ],
     relatedConceptSlugs: ["iec-62366", "iso-14971", "gspr"],
     refs: ["IEC 62366-1:2015+A1:2020", "IVDR Annex I"],
+  },
+  {
+    // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.
+    id: "analytical-performance",
+    stationId: 6,
+    docTitle: "분석적 성능 보고서",
+    purpose: "분석적 성능(cut-off 특성·정밀도·교차반응·간섭·후크 효과·검체 안정성)을 입증한다 (IVDR Annex XIII 1.2.2).",
+    intent: "제품 스펙으로 실험계획(설계·시료·판정 기준)을 자동으로 채우고, 규격 원문 값과 합격 수치는 원문·사람 결정으로 남기도록 설계했다.",
+    sections: [
+      {
+        heading: "1. 목적 · 적용 범위",
+        guidance: "이 문서의 목적과 대상 제품·적용 범위를 적는다.",
+        placeholder: "목적: 분석적 성능(cut-off 특성·정밀도·교차반응·간섭·후크 효과·검체 안정성)을 입증한다 (IVDR Annex XIII 1.2.2).\n적용 범위(제품·모델): {{auto.productName}} ({{auto.model}}) — {{auto.analyte}}, 검체 {{auto.specimen}}, {{auto.resultKind}}",
+      },
+      {
+        heading: "2. 실험 설계",
+        guidance: "실험별 목적·설계·시료를 적는다. 반복 수·시험 농도는 CLSI 원문 표의 값을 옮기고 출처를 적는다.",
+        placeholder: "{{auto.analyticalPlan}}",
+      },
+      {
+        heading: "3. 근거 · 참조",
+        guidance: "관련 조항·표준·연결 문서를 적는다.",
+        placeholder: "IVDR Annex I §9.1 — 성능 특성\nIVDR Annex XIII 1.2.2 — 분석적 성능\nCLSI EP12 · EP07 · EP37\n연결 문서: 성능평가 계획(PEP), 성능평가 보고서(PER), 위험관리 파일",
+      },
+      {
+        heading: "4. 검토 · 승인",
+        guidance: "작성자·검토자·승인자와 일자를 기록한다.",
+        placeholder: "작성: [__]\n검토: [__]\n승인: [__]\n일자: [__]",
+      },
+      {
+        heading: "5. 판정 기준",
+        guidance: "시험 전에 판정 기준을 확정한다. 수치는 위험관리·성능 목표에서 가져와 근거를 적는다.",
+        placeholder: "{{auto.analyticalAcceptance}}",
+      },
+      {
+        heading: "6. 결과",
+        guidance: "실험별 결과를 원자료와 함께 적는다.",
+        placeholder: "{{auto.analyticalResults}}",
+      },
+      {
+        heading: "7. 결론",
+        guidance: "판정 기준 충족 여부와 IFU·라벨에 적을 성능 주장을 정리한다.",
+        placeholder: "판정 기준 충족: [실험 후 입력]\nIFU 성능 주장: [실험 후 입력]",
+      },
+    ],
+    experiments: [
+      "Cut-off 특성(C5–C95)·정밀도 — CLSI EP12",
+      "교차반응 — 구조 유사 물질",
+      "간섭 물질 — CLSI EP07·EP37",
+      "고농도 후크 효과",
+      "검체 안정성",
+    ],
+    requiredData: [
+      "국제표준물질(WHO IS 등)과 추적성 기록",
+      "교차반응·간섭 후보 물질 목록(검토 완료본)",
+      "로트별 시험 원자료",
+    ],
+    checklist: [
+      "반복 수·시험 농도의 원문 출처를 적었는가",
+      "판정 기준을 시험 전에 확정했는가",
+      "로트 간 차이를 평가했는가",
+      "교차반응·간섭 후보 목록을 검토했는가",
+      "결과를 IFU 성능 주장과 맞췄는가",
+    ],
+    relatedConceptSlugs: ["annex-xiii", "pep-per", "gspr"],
+    refs: ["IVDR Annex XIII 1.2.2", "IVDR Annex I §9.1", "CLSI EP12", "CLSI EP07", "CLSI EP37"],
+    calcTools: ["lod-calc"],
+  },
+  {
+    // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.
+    id: "clinical-performance",
+    stationId: 6,
+    docTitle: "임상적 성능 보고서",
+    purpose: "의도된 사용자·사용 조건에서 기준 방법 대비 임상 성능(민감도·특이도)을 입증한다 (IVDR Annex XIII 1.2.3).",
+    intent: "제품 스펙으로 실험계획(설계·시료·판정 기준)을 자동으로 채우고, 규격 원문 값과 합격 수치는 원문·사람 결정으로 남기도록 설계했다.",
+    sections: [
+      {
+        heading: "1. 목적 · 적용 범위",
+        guidance: "이 문서의 목적과 대상 제품·적용 범위를 적는다.",
+        placeholder: "목적: 의도된 사용자·사용 조건에서 기준 방법 대비 임상 성능(민감도·특이도)을 입증한다 (IVDR Annex XIII 1.2.3).\n적용 범위(제품·모델): {{auto.productName}} ({{auto.model}}) — {{auto.analyte}}, 검체 {{auto.specimen}}, {{auto.resultKind}}",
+      },
+      {
+        heading: "2. 연구 설계",
+        guidance: "대상 집단·기준 방법·맹검·표본수 근거를 적는다.",
+        placeholder: "{{auto.clinicalPlan}}",
+      },
+      {
+        heading: "3. 근거 · 참조",
+        guidance: "관련 조항·표준·연결 문서를 적는다.",
+        placeholder: "IVDR Annex XIII 1.2.3 — 임상적 성능\nMDCG 2025-5 — 성능 연구\nISO 20916 — 성능 연구 GSP\n연결 문서: 성능평가 계획(PEP), 사용적합성 파일",
+      },
+      {
+        heading: "4. 검토 · 승인",
+        guidance: "작성자·검토자·승인자와 일자를 기록한다.",
+        placeholder: "작성: [__]\n검토: [__]\n승인: [__]\n일자: [__]",
+      },
+      {
+        heading: "5. 표본수 근거",
+        guidance: "목표 성능을 신뢰하한으로 입증하는 표본수 계산과 허용 오판정 수를 적는다.",
+        placeholder: "{{auto.sampleSize}}",
+      },
+      {
+        heading: "6. 판정 기준",
+        guidance: "시험 전에 판정 기준을 확정한다.",
+        placeholder: "{{auto.clinicalAcceptance}}",
+      },
+      {
+        heading: "7. 결과 · 결론",
+        guidance: "2×2 표, 민감도·특이도와 신뢰구간, 무효 결과를 적는다.",
+        placeholder: "양성 일치 a / (a+c): [실험 후 입력]\n음성 일치 d / (b+d): [실험 후 입력]\n신뢰하한: [실험 후 입력]\n무효 결과: [실험 후 입력]\n결론: [실험 후 입력]",
+      },
+    ],
+    experiments: [
+      "임상 성능 — 기준 방법 대비 일치도 (일반인 사용 시 일반인 직접 검사·판독)",
+    ],
+    requiredData: [
+      "윤리위원회(IRB) 승인서",
+      "참여 기관·기준 방법 시험기관 계약",
+      "통계 분석 계획",
+    ],
+    checklist: [
+      "대상 집단이 의도된 목적과 일치하는가",
+      "기준 방법이 적합하고 맹검을 지켰는가",
+      "표본수 근거(신뢰하한)를 적었는가",
+      "판정 기준을 시험 전에 확정했는가",
+      "무효 결과를 보고했는가",
+    ],
+    relatedConceptSlugs: ["annex-xiii", "pep-per", "intended-purpose"],
+    refs: ["IVDR Annex XIII 1.2.3", "MDCG 2025-5", "ISO 20916"],
+    calcTools: ["sens-spec", "sample-size"],
+  },
+  {
+    // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.
+    id: "stability-study",
+    stationId: 6,
+    docTitle: "안정성 시험 계획·보고서",
+    purpose: "표시 유효기간·개봉 후 사용 시한·운송 안정성을 입증한다 (EN ISO 23640).",
+    intent: "제품 스펙으로 실험계획(설계·시료·판정 기준)을 자동으로 채우고, 규격 원문 값과 합격 수치는 원문·사람 결정으로 남기도록 설계했다.",
+    sections: [
+      {
+        heading: "1. 목적 · 적용 범위",
+        guidance: "이 문서의 목적과 대상 제품·적용 범위를 적는다.",
+        placeholder: "목적: 표시 유효기간·개봉 후 사용 시한·운송 안정성을 입증한다 (EN ISO 23640).\n적용 범위(제품·모델): {{auto.productName}} ({{auto.model}}) — {{auto.analyte}}, 검체 {{auto.specimen}}, {{auto.resultKind}}",
+      },
+      {
+        heading: "2. 실험 설계",
+        guidance: "온도 조건·시점·로트·시험 방법을 적는다.",
+        placeholder: "보관 조건: {{auto.storage}} · 목표 유효기간: {{auto.shelfLife}}\n\n{{auto.stabilityPlan}}",
+      },
+      {
+        heading: "3. 근거 · 참조",
+        guidance: "관련 조항·표준·연결 문서를 적는다.",
+        placeholder: "EN ISO 23640 — IVD 시약 안정성 평가\nIVDR Annex II 6.2 — 안정성 데이터\n연결 문서: 라벨 사양, IFU, 운송 밸리데이션",
+      },
+      {
+        heading: "4. 검토 · 승인",
+        guidance: "작성자·검토자·승인자와 일자를 기록한다.",
+        placeholder: "작성: [__]\n검토: [__]\n승인: [__]\n일자: [__]",
+      },
+      {
+        heading: "5. 결과",
+        guidance: "시점별 결과를 적는다.",
+        placeholder: "{{auto.stabilityResults}}",
+      },
+      {
+        heading: "6. 결론 · 라벨 반영",
+        guidance: "입증된 유효기간·보관 조건·개봉 후 시한을 라벨·IFU에 반영한다.",
+        placeholder: "입증된 유효기간: [실험 후 입력]\n라벨·IFU 반영: [실험 후 입력]",
+      },
+    ],
+    experiments: [
+      "실시간 안정성 — 보관 범위 양 끝 온도",
+      "가속 안정성 (잠정 근거)",
+      "개봉 후 안정성",
+      "운송 안정성",
+    ],
+    requiredData: [
+      "설계 확정 로트",
+      "안정성 챔버 온도 기록",
+      "시점별 시험 원자료",
+    ],
+    checklist: [
+      "보관 범위 양 끝 온도를 모두 시험했는가",
+      "가속 결과를 실시간 결과로 확정했는가",
+      "라벨 유효기간이 입증 기간을 넘지 않는가",
+      "개봉 후 시한 근거가 있는가",
+    ],
+    relatedConceptSlugs: ["ifu", "pep-per"],
+    refs: ["EN ISO 23640", "IVDR Annex II 6.2"],
+    calcTools: ["mkt"],
   },
   {
     // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.

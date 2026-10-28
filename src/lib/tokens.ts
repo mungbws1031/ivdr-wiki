@@ -9,6 +9,7 @@ import type { ProductSpec } from "../data/spec/types";
 import { composeIntendedPurpose } from "../data/spec/validate";
 import { classify, type ClassResult } from "./rules/classify";
 import { transportTokens } from "./transport";
+import { plannerTokens } from "./planner";
 
 const TOKEN_RE = /\{\{auto\.([a-zA-Z]+)\}\}/g;
 
@@ -31,6 +32,9 @@ export const TOKEN_LABEL: Record<string, string> = {
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
   transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
   transportAcceptance: "운송 판정 기준", transportProcess: "운송 과정 관리",
+  studyList: "실험 목록", analyticalPlan: "분석 성능 실험 설계", analyticalAcceptance: "분석 성능 판정 기준", analyticalResults: "분석 성능 결과",
+  stabilityPlan: "안정성 실험 설계", stabilityResults: "안정성 결과", clinicalPlan: "임상 성능 연구 설계",
+  clinicalAcceptance: "임상 성능 판정 기준", sampleSize: "표본수", studySchedule: "실험 일정",
 };
 
 const yn = (b: boolean | null, yes: string, no: string) => (b === null ? null : b ? yes : no);
@@ -96,6 +100,7 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s)):
     referenceMethod: s.referenceMethod.name,
     lots: s.targets.lots !== null ? `${s.targets.lots}로트` : null,
     ...transportTokens(s),
+    ...plannerTokens(s),
   };
 }
 
