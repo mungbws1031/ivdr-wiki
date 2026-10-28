@@ -217,6 +217,16 @@ h3 {
 .tower-elev { animation: tower-elev 24s ease-in-out infinite; }
 .tower-walk:hover, .tower-walk:hover .tower-flip, .tower-walk:hover .factory-leg { animation-play-state: paused; }
 
+/* 난이도 '비명' 얼굴 — 덜덜 떨기 */
+@keyframes mood-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-0.8px, 0.3px) rotate(-2deg); }
+  40% { transform: translate(0.8px, -0.3px) rotate(2deg); }
+  60% { transform: translate(-0.6px, 0) rotate(-1.5deg); }
+  80% { transform: translate(0.6px, 0.3px) rotate(1.5deg); }
+}
+.mood-shake { animation: mood-shake 0.35s linear infinite; display: inline-block; }
+
 /* 마우스를 올리면 멈춰서 누르기 쉽게 */
 .factory-walk:hover,
 .factory-walk:hover .factory-flip,
@@ -231,6 +241,7 @@ h3 {
   .tower-walk,
   .tower-flip,
   .tower-elev,
+  .mood-shake,
   .factory-leg { animation: none !important; }
   *,
   *::before,
