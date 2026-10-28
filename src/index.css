@@ -193,6 +193,30 @@ h3 {
 .minimi-walk:hover .minimi-flip,
 .minimi-walk:hover .factory-leg { animation-play-state: paused; }
 
+/* 건물 단면 — 책상 옆으로 왔다 갔다 (--wx), 엘리베이터 오르내림 (--step = 한 층 높이) */
+@keyframes tower-walk {
+  0%, 12% { transform: translateX(0); }
+  38%, 60% { transform: translateX(var(--wx)); }
+  86%, 100% { transform: translateX(0); }
+}
+@keyframes tower-flip {
+  0%, 37% { transform: scaleX(var(--f)); }
+  38%, 85% { transform: scaleX(calc(-1 * var(--f))); }
+  86%, 100% { transform: scaleX(var(--f)); }
+}
+@keyframes tower-elev {
+  0%, 8% { transform: translateY(0); }
+  18%, 26% { transform: translateY(calc(var(--step) * 3)); }
+  38%, 46% { transform: translateY(calc(var(--step) * 6)); }
+  58%, 66% { transform: translateY(calc(var(--step) * 2)); }
+  78%, 86% { transform: translateY(calc(var(--step) * 4)); }
+  100% { transform: translateY(0); }
+}
+.tower-walk { animation: tower-walk 12s ease-in-out infinite; }
+.tower-flip { animation: tower-flip 12s step-end infinite; }
+.tower-elev { animation: tower-elev 24s ease-in-out infinite; }
+.tower-walk:hover, .tower-walk:hover .tower-flip, .tower-walk:hover .factory-leg { animation-play-state: paused; }
+
 /* 마우스를 올리면 멈춰서 누르기 쉽게 */
 .factory-walk:hover,
 .factory-walk:hover .factory-flip,
@@ -204,6 +228,9 @@ h3 {
   .factory-flip,
   .minimi-walk,
   .minimi-flip,
+  .tower-walk,
+  .tower-flip,
+  .tower-elev,
   .factory-leg { animation: none !important; }
   *,
   *::before,
