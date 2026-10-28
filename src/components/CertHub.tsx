@@ -269,7 +269,7 @@ export function CertHub() {
               제품 스펙으로 자동 작성 <span style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>베타</span>
             </div>
             <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-              제품 스펙을 한 번 입력하면 클래스 추천·문서 세트·실험계획·문서 초안으로 이어집니다 · 1단계: 스펙 입력
+              제품 스펙을 한 번 입력하면 클래스 추천·문서 세트·실험계획·문서 초안으로 이어집니다 · 지금: 스펙 입력, 클래스 추천·문서 세트
             </div>
           </div>
           <span className="font-bold shrink-0" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>
