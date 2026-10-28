@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ArrowRight, Award, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
+import { AlertTriangle, ArrowRight, Award, Building2, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
 import { fieldHref, STATUS_META } from "./AutoUi";
@@ -147,6 +147,11 @@ export function OverviewPage() {
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             {spec.identity.productName ? <b className="text-text">{spec.identity.productName}</b> : "입력한 제품"}의 스펙으로 만든 결과입니다. 스펙을 고치면 이 화면과 모든 문서가 바로 바뀝니다. 카드를 눌러 자세히 보세요.
           </p>
+          {filled > 0 && (
+            <Link to="/auto/factory" className="inline-flex items-center gap-1.5 self-start rounded-[var(--r-md)] font-bold" style={{ fontSize: "var(--t-sm)", padding: "8px 16px", minHeight: 40, background: "var(--text)", color: "var(--bg)" }}>
+              <Building2 size={16} aria-hidden /> 문서 공장 건물로 보기 · 진행률 <ArrowRight size={15} aria-hidden />
+            </Link>
+          )}
         </header>
 
         {filled === 0 ? (

@@ -141,6 +141,16 @@ h3 {
   }
 }
 
+/* 문서 공장 — 작성 중 타이핑 점, 대기줄 흔들림 */
+@keyframes factory-dot {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+@keyframes factory-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
 /* 모션 줄이기 선호 존중 */
 @media (prefers-reduced-motion: reduce) {
   *,
