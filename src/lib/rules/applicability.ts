@@ -42,7 +42,14 @@ export const APPLICABILITY_RULES: Record<string, Rule> = {
       ? v("required", lay ? "일반인 자가검사라 사용 오류가 곧 임상 위험입니다 — IEC 62366-1 사용적합성 평가 필수." : "근접검사 환경이라 사용적합성 평가가 필요합니다.", "user", "environment")
       : v("recommended", "검사실 전문가용이지만 IEC 62366-1 사용적합성 문서는 GSPR 충족 근거로 권장됩니다.", "user", "environment");
   },
-  "sw-validation": triRule("software.hasApp", (s) => s.software.hasApp, "앱·소프트웨어가 함께 제공됩니다 — IEC 62304 수명주기·검증 필요.", "소프트웨어가 없는 제품입니다.", "앱·소프트웨어 제공 여부가 정해지면 판정됩니다."),
+  "sw-validation": (s) => {
+    // 판독을 리더기·앱으로 하면 펌웨어·앱이 결과에 관여한다 — 앱 별도 제공 여부와 관계없이 IEC 62304 대상
+    const fw = s.result.readout === "reader" || s.result.readout === "app";
+    if (s.software.hasApp === true || fw)
+      return v("required", fw && s.software.hasApp !== true ? `판독을 ${s.result.readout === "reader" ? "전용 리더기(펌웨어)" : "스마트폰 앱"}로 합니다 — 결과에 관여하는 소프트웨어라 IEC 62304 수명주기·검증이 필요합니다.` : "앱·소프트웨어가 함께 제공됩니다 — IEC 62304 수명주기·검증이 필요합니다.", "software.hasApp", "result.readout");
+    if (s.software.hasApp === null || s.result.readout === null) return unknown("앱·소프트웨어 제공 여부와 판독 방식이 정해지면 판정됩니다.", "software.hasApp", "result.readout");
+    return v("excluded", "육안 판독이고 앱·소프트웨어가 없는 제품입니다.", "software.hasApp", "result.readout");
+  },
   cybersecurity: triRule("software.hasApp", (s) => s.software.hasApp, "앱·연결 기능이 있어 사이버보안 문서(MDCG 2019-16)가 사실상 필수입니다.", "연결 기능이 없는 제품입니다.", "앱·소프트웨어 제공 여부가 정해지면 판정됩니다."),
   "sterilization-validation": triRule("sterile", (s) => s.sterile, "멸균 제품입니다.", "비멸균 제품입니다.", "멸균 여부가 정해지면 판정됩니다."),
   "packaging-validation": triRule("sterile", (s) => s.sterile, "멸균 배리어 포장 검증(ISO 11607)이 필요합니다.", "비멸균 제품이라 멸균 배리어 포장 검증은 대상이 아닙니다. 일반 포장 보호는 운송 밸리데이션에서 다룹니다.", "멸균 여부가 정해지면 판정됩니다."),

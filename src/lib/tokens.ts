@@ -31,7 +31,7 @@ export const TOKEN_LABEL: Record<string, string> = {
   cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
-  transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
+  swScope: "소프트웨어 범위", transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
   transportAcceptance: "운송 판정 기준", transportProcess: "운송 과정 관리",
   studyList: "실험 목록", analyticalPlan: "분석 성능 실험 설계", analyticalAcceptance: "분석 성능 판정 기준", analyticalResults: "분석 성능 결과",
   stabilityPlan: "안정성 실험 설계", stabilityResults: "안정성 결과", clinicalPlan: "임상 성능 연구 설계",
@@ -61,6 +61,19 @@ function ruleTable(s: ProductSpec, c: ClassResult): string {
     `Rule 7: 비해당 — 지정값 없는 관리물질이 아님`,
   ];
   return lines.join("\n");
+}
+
+/** 소프트웨어 구성과 분류 연결 — 판독 방식·앱·MDSW 여부로 조립. 모르면 null. */
+function swScope(s: ProductSpec, c: ClassResult): string | null {
+  const { hasApp, isMdsw } = s.software;
+  const r = s.result.readout;
+  if (hasApp === null && r === null) return null;
+  const parts: string[] = [];
+  if (r === "reader") parts.push("전용 리더기 펌웨어 (결과 판독)");
+  if (r === "app" || hasApp) parts.push(`스마트폰 앱${isMdsw ? " — 결과를 판정·해석하므로 의료기기 소프트웨어(MDSW)" : isMdsw === false ? " — 결과 판정을 하지 않는 보조 앱" : " — MDSW 해당 여부 [확인 필요]"}`);
+  if (!parts.length) return "소프트웨어 없음 (육안 판독, 앱 미제공)";
+  const cls = c.value ? `Class ${c.value}` : "[클래스 — 확정 전]";
+  return `${parts.join(" / ")}\n분류: 기기를 구동하거나 사용에 영향을 주는 소프트웨어는 그 기기와 같은 클래스(${cls})를 따르고, 독립 소프트웨어는 따로 분류한다 (IVDR Annex VIII 1.4).`;
 }
 
 /** 스펙 + 분류 결과 + 실험 결과 → 토큰 값. null 은 "스펙 미입력". */
@@ -101,6 +114,7 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
     targetSp: s.targets.specificity !== null ? `${s.targets.specificity}%` : null,
     referenceMethod: s.referenceMethod.name,
     lots: s.targets.lots !== null ? `${s.targets.lots}로트` : null,
+    swScope: swScope(s, c),
     ...transportTokens(s),
     ...plannerTokens(s),
     ...resultsTokens(s, results),
