@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ListChecks,
@@ -43,6 +43,9 @@ import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { MktCalc } from "./calcs/MktCalc";
 import { InlineEditor } from "./InlineEditor";
+import { useSpec } from "../hooks/useSpecStore";
+import { completion } from "../data/spec/validate";
+import { buildTokenContext, docMissingTokens, fillDoc, hasTokens, TOKEN_LABEL } from "../lib/tokens";
 import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
 import { hasDraft, docWithDrafts, getCheck, setCheck, countChecks, useStoreVersion } from "../hooks/useDraftStore";
@@ -227,7 +230,13 @@ function DocInfoPanel({ doc, color }: { doc: ReturnType<typeof resolveDoc> & obj
 /** /doc/:id — 문서 작성 워크스페이스 */
 export function DocumentWorkspace() {
   const { id } = useParams();
-  const doc = id ? resolveDoc(id) : undefined;
+  const rawDoc = id ? resolveDoc(id) : undefined;
+  // 제품 스펙으로 {{auto.*}} 자리를 채운 문서. 사람이 쓴 초안이 있는 섹션은 초안이 우선한다.
+  const spec = useSpec();
+  const tokenCtx = useMemo(() => buildTokenContext(spec), [spec]);
+  const doc = useMemo(() => (rawDoc ? fillDoc(rawDoc, tokenCtx) : undefined), [rawDoc, tokenCtx]);
+  const autoFilled = !!rawDoc && rawDoc.sections.some((s) => hasTokens(s.placeholder));
+  const autoMissing = rawDoc && autoFilled ? docMissingTokens(rawDoc, tokenCtx) : [];
 
   const isISODoc = (doc?.id ?? "").startsWith("iso-");
   const isIVDDDoc = (doc?.id ?? "").startsWith("ivdd-");
@@ -485,6 +494,25 @@ export function DocumentWorkspace() {
                 {doc.sections.length}개 섹션
               </span>
             </div>
+
+            {autoFilled && (
+              <div
+                className="flex flex-wrap items-center rounded-[var(--r-md)]"
+                style={{ gap: "6px var(--s-3)", padding: "var(--s-3) var(--s-4)", background: autoMissing.length ? "var(--warning-bg)" : "var(--success-bg)", border: `1px solid ${autoMissing.length ? "var(--warning)" : "var(--success)"}` }}
+              >
+                <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: autoMissing.length ? "var(--warning)" : "var(--success)" }}>
+                  제품 스펙으로 자동 채움
+                </span>
+                <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
+                  {autoMissing.length && completion(spec).filled === 0
+                    ? "제품 스펙을 입력하면 이 문서의 제품명·의도된 목적·분류 등이 자동으로 채워집니다."
+                    : autoMissing.length
+                    ? `스펙이 비어 있는 항목: ${autoMissing.map((k) => TOKEN_LABEL[k] ?? k).join(", ")}`
+                    : "직접 고치지 않은 섹션은 스펙을 바꾸면 함께 바뀝니다. 직접 고친 섹션은 그대로 유지됩니다."}
+                </span>
+                <Link to="/auto" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>제품 스펙 →</Link>
+              </div>
+            )}
 
             {/* 섹션 카드들 */}
             {doc.sections.map((s, i) => {

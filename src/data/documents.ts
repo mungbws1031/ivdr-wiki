@@ -70,24 +70,24 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 제품 식별",
         guidance: "제품명·모델·버전·제조자를 적는다.",
-        placeholder: "제품명: [____]\n모델/버전: [____]\n제조자: [____]",
+        placeholder: "제품명: {{auto.productName}}\n모델/버전: {{auto.model}}\n제조자: {{auto.manufacturer}}",
       },
       {
         heading: "2. 의도된 목적 (5요소)",
         guidance:
           "무엇·검체·사용자·환경·결정을 한 문단으로. 라벨/IFU와 정확히 일치해야 한다.",
         placeholder:
-          "본 기기는 [검체: 예 정맥혈]에서 [측정대상: 예 ___ 항원]을 [정성/정량] 검출하여, [사용자: 전문가/자가검사]가 [환경: 실험실/근접검사/가정]에서 [임상적 결정: 예 ___ 진단 보조]를 하도록 돕는 체외진단 의료기기다.",
+          "{{auto.intendedPurpose}}\n\n[5요소]\n검체: {{auto.specimen}}\n측정 대상: {{auto.analyte}} — {{auto.resultKind}}\n사용자: {{auto.user}}\n사용 환경: {{auto.environment}}\n임상적 결정: {{auto.clinicalDecision}}\n대상 집단: {{auto.targetPopulation}}",
       },
       {
         heading: "3. IVD 해당성 판단",
         guidance: "IVDR Art.2 정의에 해당하는지 근거와 함께 명시.",
-        placeholder: "Art.2 IVD 정의 해당 여부: [해당/비해당]\n근거: [____]",
+        placeholder: "Art.2 IVD 정의 해당 여부: {{auto.ivdJustification}}",
       },
       {
         heading: "4. 미사용 목적 (Out of scope)",
         guidance: "오용을 막기 위해 의도하지 않은 용도를 명시.",
-        placeholder: "본 기기는 [____] 용도로는 사용하지 않는다.",
+        placeholder: "본 기기는 {{auto.outOfScope}} 용도로는 사용하지 않는다.",
       },
     ],
     requiredData: [
@@ -117,24 +117,24 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 의도된 목적 요약",
         guidance: "정의서에서 핵심을 옮겨온다.",
-        placeholder: "검체/측정대상/사용자/환경/결정: [____]",
+        placeholder: "{{auto.intendedPurpose}}",
       },
       {
         heading: "2. Rule 적용 내역",
         guidance:
           "Rule 1~7을 순서대로 검토하고 해당 여부·사유를 표로. 둘 이상 해당 시 최고 등급 채택.",
         placeholder:
-          "Rule 1: [해당/비해당] — 사유 [____]\nRule 2: [____]\nRule 3: [____]\nRule 4(자가/근접검사): [____]\nRule 5: [____]\nRule 6: [____]\nRule 7: [____]",
+          "{{auto.ruleTable}}",
       },
       {
         heading: "3. 최종 분류 및 근거",
         guidance: "결정 클래스와 결정적 Rule을 명시.",
-        placeholder: "최종 클래스: [A/B/C/D]\n결정 Rule: [____]\n근거 요약: [____]",
+        placeholder: "최종 클래스: {{auto.cls}} (추천값 — 담당자 확정 필요)\n결정 Rule: {{auto.rule}}\n근거 요약: {{auto.rationale}}",
       },
       {
         heading: "4. 경로 영향",
         guidance: "분류에 따른 NB 개입·전환 기한을 적는다.",
-        placeholder: "NB 개입: [필요/불필요]\n전환 기한: [____]",
+        placeholder: "NB 개입: {{auto.nb}}\n전환 기한: [신규 제품은 해당 없음 / 레거시 기기면 IVDR Art.110 전환 기한 기재]",
       },
     ],
     experiments: [
@@ -171,7 +171,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 클래스 및 경로 선택",
         guidance: "클래스에 맞는 Annex 경로(주로 IX, 또는 X+XI)를 명시.",
-        placeholder: "클래스: [____]\n선택 경로: [Annex IX / Annex X+XI]\n사유: [____]",
+        placeholder: "클래스: {{auto.cls}}\n선택 경로:\n{{auto.route}}\n사유: {{auto.rationale}}",
       },
       {
         heading: "2. 산출물 체크리스트",
@@ -182,7 +182,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. NB 관여 범위",
         guidance: "심사 대상(QMS/기술문서 표본 등)을 적는다.",
-        placeholder: "NB 심사 대상: [____]",
+        placeholder: "NB 심사 대상: {{auto.nbScope}}",
       },
     ],
     certTests: [
@@ -308,7 +308,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 과학적 타당성 (Scientific Validity)",
         guidance: "분석물질이 목표 임상 상태와 연관된다는 과학적 근거를 문헌·가이드라인으로 제시한다. (IVDR Annex XIII 1조)",
-        placeholder: "분석물질: [예: SARS-CoV-2 뉴클레오캡시드 항원]\n임상 상태: [예: COVID-19 급성 감염]\n\n근거 문헌:\n1. [저자, 제목, 저널, 연도] — 핵심: [____]\n2. [____]\n\n공식 가이드라인:\n- [예: WHO Emergency Use Listing Procedure, 2021]\n- [예: CLSI EP27 또는 EP15]\n\n결론: [분석물질 ↔ 임상 상태 연관성 확립됨 / 추가 근거 필요]",
+        placeholder: "분석물질: {{auto.analyte}} (Cut-off {{auto.cutoff}})\n임상 상태: [예: COVID-19 급성 감염]\n\n근거 문헌:\n1. [저자, 제목, 저널, 연도] — 핵심: [____]\n2. [____]\n\n공식 가이드라인:\n- [예: WHO Emergency Use Listing Procedure, 2021]\n- [예: CLSI EP27 또는 EP15]\n\n결론: [분석물질 ↔ 임상 상태 연관성 확립됨 / 추가 근거 필요]",
       },
       {
         heading: "2. 분석적 성능 연구 설계",
@@ -318,7 +318,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. 임상적 성능 연구 설계",
         guidance: "민감도·특이도를 통계적으로 입증할 임상 연구를 설계한다. MDCG 2025-5의 성능 연구 유형을 참조하라.",
-        placeholder: "연구 유형: [전향적 / 후향적 / 레지스트리 — MDCG 2025-5 Table 1 참조]\n대상 집단: [____] (나이·성별·임상 상태)\n참조 검사(Reference Standard): [예: PCR, 배양, 임상 진단]\n목표 Se: [____]% · 허용 오차: ±____% · 신뢰 수준: 95%\n목표 Sp: [____]% · 허용 오차: ±____%\n→ 최소 양성 검체: n ≥ [계산기 사용 →____] (Wilson 방법)\n→ 최소 음성 검체: n ≥ [____]\n참여 기관 수: [≥2개 기관 권장]\n통계 방법: [95% CI, Wilson 방법, Clopper-Pearson]",
+        placeholder: "연구 유형: [전향적 / 후향적 / 레지스트리 — MDCG 2025-5 Table 1 참조]\n대상 집단: {{auto.targetPopulation}} (나이·임상 상태 세부: [____])\n참조 검사(Reference Standard): {{auto.referenceMethod}}\n목표 Se: {{auto.targetSe}} · 허용 오차: ±____% · 신뢰 수준: 95%\n목표 Sp: {{auto.targetSp}} · 허용 오차: ±____%\n→ 최소 양성 검체: n ≥ [계산기 사용 →____] (Wilson 방법)\n→ 최소 음성 검체: n ≥ [____]\n참여 기관 수: [≥2개 기관 권장]\n통계 방법: [95% CI, Wilson 방법, Clopper-Pearson]",
       },
       {
         heading: "4. 연구 일정 및 책임",
@@ -371,7 +371,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 위험관리 계획 (ISO 14971 Clause 4.4)",
         guidance: "범위·적용 표준·위험 수용 기준·검토 시점을 정의한다.",
-        placeholder: "적용 표준: ISO 14971:2019 + IVDR Annex I\n범위: [제품명 및 수명 주기 단계 — 설계부터 폐기까지]\n\n위험 수용 기준 행렬:\n- 수용 가능: P × S ≤ 3\n- ALARP 필요: 4 ≤ P × S ≤ 12\n- 수용 불가: P × S ≥ 15\n\n위험관리 팀: [이름/직책]\n검토 시점: [설계 단계별 / 시판 후 연간]",
+        placeholder: "적용 표준: ISO 14971:2019 + IVDR Annex I\n범위: {{auto.productName}} ({{auto.model}}) — 설계부터 폐기까지 전 수명 주기\n\n위험 수용 기준 행렬:\n- 수용 가능: P × S ≤ 3\n- ALARP 필요: 4 ≤ P × S ≤ 12\n- 수용 불가: P × S ≥ 15\n\n위험관리 팀: [이름/직책]\n검토 시점: [설계 단계별 / 시판 후 연간]",
       },
       {
         heading: "2. 위험 분석 — IVD 특유 위해요인",
@@ -636,22 +636,22 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 제품 식별",
         guidance: "제품명·모델·버전·제조자·SRN·Basic UDI-DI.",
-        placeholder: "제품명: [____]\n모델/버전: [____]\n제조자: [____] / SRN: [____]\nBasic UDI-DI: [____]",
+        placeholder: "제품명: {{auto.productName}}\n모델/버전: {{auto.model}}\n제조자: {{auto.manufacturer}} / SRN: [____]\nBasic UDI-DI: {{auto.basicUdiDi}}",
       },
       {
         heading: "2. 기기 설명 및 의도된 목적",
         guidance: "의도된 목적 정의서에서 옮겨와 기기 유형·작동 원리를 설명.",
-        placeholder: "기기 유형: [반응키트 / 분석기 / SW / 조합]\n작동 원리: [____]\n의도된 목적(요약): [____]",
+        placeholder: "기기 유형: {{auto.productType}}\n작동 원리: [____]\n의도된 목적(요약): {{auto.intendedPurpose}}",
       },
       {
         heading: "3. 구성 및 부품 목록",
         guidance: "시약·소모품·주요 부품·소프트웨어 버전. BOM 참조.",
-        placeholder: "구성품:\n- [부품명] Rev.[__] — [역할]\n- SW [버전]: [기능 요약]\n참조 BOM: [문서번호/위치]",
+        placeholder: "구성품:\n{{auto.components}}\n참조 BOM: [문서번호/위치]",
       },
       {
         heading: "4. 기술 사양",
         guidance: "분석 범위·측정 단위·보관조건·환경 조건.",
-        placeholder: "측정 범위: [____]\n검체 유형/부피: [____]\n보관 온도: [____] · 유효기간: [____]\n사용 환경 조건: [____]",
+        placeholder: "결과 형태: {{auto.resultKind}} · Cut-off: {{auto.cutoff}}\n검체 유형/부피: {{auto.specimen}} / [부피]\n보관 온도: {{auto.storage}} · 유효기간: {{auto.shelfLife}}\n사용 환경: {{auto.environment}}",
       },
       {
         heading: "5. 이전 세대·유사 기기",
@@ -690,17 +690,17 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 제조자·연락처",
         guidance: "제조자명·주소·웹·EU 대리인(해당 시).",
-        placeholder: "제조자: [____]\n주소: [____]\nEU 대리인: [____] (비EU 제조자)",
+        placeholder: "제조자: {{auto.manufacturer}}\n주소: [____]\nEU 대리인: {{auto.authRep}}",
       },
       {
         heading: "2. 기기 식별 정보",
         guidance: "제품명·모델·배치/로트·유효기간·보관.",
-        placeholder: "제품명: [____] · 모델: [____]\nLot/Ref: [____] · 유효기간: [____]\nBasic UDI-DI: [____] · UDI 캐리어 형식: [GS1 DataMatrix / 바코드]",
+        placeholder: "제품명: {{auto.productName}} · 모델: {{auto.model}}\nLot/Ref: [____] · 유효기간: {{auto.shelfLife}}\nBasic UDI-DI: {{auto.basicUdiDi}} · UDI 캐리어 형식: [GS1 DataMatrix / 바코드]",
       },
       {
         heading: "3. 성능·용도 표시",
         guidance: "사용 목적(축약)·주의·사용 제한.",
-        placeholder: "사용 목적(라벨 축약): [____]\n경고/주의: [____]\n취급주의 심볼(ISO 15223-1): [____]",
+        placeholder: "사용 목적(라벨 축약): {{auto.analyte}} {{auto.resultKind}} 검출 · {{auto.user}}\n보관 조건: {{auto.storage}}\n경고/주의: [____]\n취급주의 심볼(ISO 15223-1): [____]",
       },
       {
         heading: "4. CE 마킹 및 NB",
@@ -710,7 +710,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "5. 언어",
         guidance: "출시 국가별 요구 언어.",
-        placeholder: "출시 국가: [____]\n표기 언어: [____]",
+        placeholder: "출시 시장: {{auto.markets}}\n표기 언어: [출시 회원국 공용어 — 자가검사 라벨·IFU는 해당국 언어 필수]",
       },
     ],
     certTests: [
@@ -748,12 +748,12 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 기기 식별 및 제조자",
         guidance: "제품명·모델·Basic UDI-DI·제조자 연락처.",
-        placeholder: "제품명: [____] / Basic UDI-DI: [____]\n제조자: [____] / 연락처: [____]",
+        placeholder: "제품명: {{auto.productName}} / Basic UDI-DI: {{auto.basicUdiDi}}\n제조자: {{auto.manufacturer}} / 연락처: [____]",
       },
       {
         heading: "2. 의도된 목적 및 적응증",
         guidance: "검출 대상·검체·사용자·환경·임상 결정을 명확히.",
-        placeholder: "의도된 목적: [____]\n적응증/대상 집단: [____]\n금기 사항: [____]",
+        placeholder: "의도된 목적: {{auto.intendedPurpose}}\n대상 집단: {{auto.targetPopulation}}\n사용하면 안 되는 용도: {{auto.outOfScope}}\n금기 사항: [____]",
       },
       {
         heading: "3. 검사 원리",
@@ -763,17 +763,17 @@ export const documents: DocTemplate[] = [
       {
         heading: "4. 사용 방법 (단계별)",
         guidance: "검체 채취→보관→검사→판독을 순서대로. 자가검사는 그림 포함 권장.",
-        placeholder: "검체 채취: [____]\n검사 절차:\n  1. [____]\n  2. [____]\n  3. [____]\n결과 판독: [____]\n음성/양성/무효 기준: [____]",
+        placeholder: "검체 채취: {{auto.specimen}} — [채취 방법]\n검사 절차:\n  1. [____]\n  2. [____]\n  3. [____]\n결과 판독: [____]\n음성/양성/무효 기준: [____]",
       },
       {
         heading: "5. 성능 특성 요약",
         guidance: "민감도·특이도·정밀도 등 핵심 성능 지표.",
-        placeholder: "민감도: [___]%  특이도: [___]%\n정밀도(CV%): [____]\n측정 범위: [____]",
+        placeholder: "민감도: [실험 후 입력 — 목표 {{auto.targetSe}}]  특이도: [실험 후 입력 — 목표 {{auto.targetSp}}]\nCut-off: {{auto.cutoff}}\n재현성: [실험 후 입력]",
       },
       {
         heading: "6. 한계·주의·경고",
         guidance: "결과 한계·오용 방지 경고·보관 조건.",
-        placeholder: "결과의 한계: [____]\n보관: [____] / 유효기간: [____]\n경고: [____]",
+        placeholder: "결과의 한계: [____]\n보관: {{auto.storage}} / 유효기간: {{auto.shelfLife}}\n개봉 후: {{auto.openedStability}}\n경고: [____]",
       },
       {
         heading: "7. 심볼 범례",
@@ -1036,7 +1036,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "1. 사용 명세 (Use Specification)",
         guidance: "사용자·사용 환경·사용 인터페이스·기존 지식 분석.",
-        placeholder: "사용자 프로파일: [비전문가 / 전문가 / 혼합]\n사용 환경: [가정 / 근접검사 / 실험실]\n사용 인터페이스 요소: [시각·청각·촉각]\n사용자 역량·한계: [____]",
+        placeholder: "사용자 프로파일: {{auto.user}} — 대상 집단: {{auto.targetPopulation}}\n사용 환경: {{auto.environment}}\n사용 인터페이스 요소: {{auto.readout}} · 검체 {{auto.specimen}}\n사용자 역량·한계: [____]",
       },
       {
         heading: "2. 위험 관련 사용 시나리오",
