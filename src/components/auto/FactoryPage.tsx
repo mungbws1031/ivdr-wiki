@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
+import { AssumptionBanner } from "./AutoUi";
 import { resolveDoc } from "../../data/documents";
 import { completion, specHash, unresolvedFields } from "../../data/spec/validate";
-import { useSpec } from "../../hooks/useSpecStore";
+import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { useResults } from "../../hooks/useResultsStore";
 import { useClassConfirm } from "../../hooks/useClassConfirm";
 import { hasDraft, useStoreVersion } from "../../hooks/useDraftStore";
@@ -45,7 +46,7 @@ function readStatus(): Record<string, "not_started" | "in_progress" | "done"> {
 /** /auto/factory — 문서 공장 건물: 층(부서)마다 문서가 일하는 모습과 진행률. */
 export function FactoryPage() {
   useStoreVersion(); // 초안이 바뀌면 다시 계산
-  const spec = useSpec();
+  const { spec, assumed, assumeOn } = useWorkingSpec();
   const results = useResults();
   const confirm = useClassConfirm();
   const [view, setViewState] = useState<ViewKind>(initialView);
@@ -89,6 +90,7 @@ export function FactoryPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
           <AutoSteps current="/auto/factory" />
+          <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>IVDR 문서 공장</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             문서 한 장이 직원 한 명입니다. 층은 부서이고, 사람의 결정·입력이 필요한 문서는 대기줄에 서 있습니다. 직원을 누르면 그 문서가 열리고, 층을 누르면 그 층의 할 일이 펼쳐집니다.

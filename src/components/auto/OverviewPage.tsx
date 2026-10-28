@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { AlertTriangle, ArrowRight, Award, Building2, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { fieldHref, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, EvidenceBar, fieldHref, STATUS_META } from "./AutoUi";
 import { allLeaves } from "../../data/docTree";
 import { resolveDoc } from "../../data/documents";
 import { completion, specHash, unresolvedFields } from "../../data/spec/validate";
-import { useSpec } from "../../hooks/useSpecStore";
+import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { useClassConfirm } from "../../hooks/useClassConfirm";
 import { useResults } from "../../hooks/useResultsStore";
 import { classify } from "../../lib/rules/classify";
@@ -16,7 +16,9 @@ import { countByStatus, evaluateDocSet, type ApplStatus } from "../../lib/rules/
 import { planHumanTasks, planStudies } from "../../lib/planner";
 import { applicableStandards, hasTransportInput } from "../../lib/transport";
 import { resultsProgress } from "../../lib/results";
-import { buildTokenContext, docMissingTokens, hasTokens } from "../../lib/tokens";
+import { buildTokenContext, docMissingTokens, fillDoc, hasTokens } from "../../lib/tokens";
+import { docEvidence, markAssumed } from "../../lib/evidence";
+import { hasDraft } from "../../hooks/useDraftStore";
 
 function Card({ icon: Icon, title, to, cta, children }: { icon: typeof Layers; title: string; to: string; cta: string; children: React.ReactNode }) {
   return (
@@ -108,7 +110,7 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
 
 /** /auto/overview — 스펙을 넣으면 나오는 결과를 한 화면에. 각 카드는 상세 단계로 이어진다. */
 export function OverviewPage() {
-  const spec = useSpec();
+  const { spec, assumed, assumeOn } = useWorkingSpec();
   const results = useResults();
   const confirm = useClassConfirm();
   const { filled, total } = completion(spec);
@@ -120,13 +122,17 @@ export function OverviewPage() {
   const tasks = useMemo(() => planHumanTasks(plans), [plans]);
   const standards = useMemo(() => applicableStandards(spec), [spec]);
   const prog = resultsProgress(spec, results);
-  const ctx = useMemo(() => buildTokenContext(spec, cls, results), [spec, cls, results]);
+  const ctx = useMemo(() => markAssumed(buildTokenContext(spec, cls, results), assumed), [spec, cls, results, assumed]);
+  const assumedPaths = useMemo(() => new Set(assumed.map((a) => a.path)), [assumed]);
   const filledDocs = useMemo(
     () => allLeaves()
       .map((l) => ({ leaf: l, doc: resolveDoc(l.id) }))
       .filter((x) => x.doc && x.doc.sections.some((s) => hasTokens(s.placeholder)))
-      .map((x) => ({ id: x.leaf.id, title: x.leaf.title, missing: docMissingTokens(x.doc!, ctx).length, status: docSet.find((a) => a.leafId === x.leaf.id)?.status })),
-    [ctx, docSet],
+      .map((x) => ({
+        id: x.leaf.id, title: x.leaf.title, missing: docMissingTokens(x.doc!, ctx).length, status: docSet.find((a) => a.leafId === x.leaf.id)?.status,
+        ev: docEvidence(x.doc!, fillDoc(x.doc!, ctx), ctx, assumedPaths, (i) => hasDraft(x.leaf.id, i)),
+      })),
+    [ctx, docSet, assumedPaths],
   );
   const confirmed = confirm && confirm.specHash === specHash(spec) && confirm.value === cls.value;
   const studyCounts = plans.reduce((m, p) => ({ ...m, [p.status]: (m[p.status] ?? 0) + 1 }), {} as Partial<Record<ApplStatus, number>>);
@@ -143,6 +149,7 @@ export function OverviewPage() {
       <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-8) var(--margin) var(--s-16)" }}>
         <header className="flex flex-col" style={{ gap: "var(--s-3)", marginBottom: "var(--s-6)" }}>
           <AutoSteps current="/auto/overview" />
+          <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>자동작성 결과</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             {spec.identity.productName ? <b className="text-text">{spec.identity.productName}</b> : "입력한 제품"}의 스펙으로 만든 결과입니다. 스펙을 고치면 이 화면과 모든 문서가 바로 바뀝니다. 카드를 눌러 자세히 보세요.
@@ -238,6 +245,14 @@ export function OverviewPage() {
                           {d.missing ? `스펙 미입력 항목 ${d.missing}개` : "스펙 항목 모두 채워짐"}
                           {d.status === "excluded" && <span className="text-text-subtle"> · 이 제품엔 불필요</span>}
                         </span>
+                        {d.ev.confirmed !== null && (
+                          <span className="flex items-center" style={{ gap: 6, marginTop: 4, fontSize: 11 }}>
+                            <span style={{ width: 90 }}><EvidenceBar counts={d.ev.counts} height={5} /></span>
+                            <span className="font-bold text-text-muted" style={{ fontVariantNumeric: "tabular-nums" }}>근거 확정 {Math.round(d.ev.confirmed * 100)}%</span>
+                            {d.ev.counts.assumed > 0 && <span style={{ color: "var(--warning)" }}>가정 {d.ev.counts.assumed}</span>}
+                            {d.ev.counts.missing > 0 && <span style={{ color: "var(--danger)" }}>누락 {d.ev.counts.missing}</span>}
+                          </span>
+                        )}
                       </span>
                       <ArrowRight size={16} className="shrink-0 text-text-subtle" aria-hidden />
                     </Link>
