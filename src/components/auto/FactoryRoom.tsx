@@ -75,7 +75,7 @@ function MiniHair({ style, color }: { style: number; color: string }) {
 }
 
 /** 시안의 사람 모양(동그란 머리·사원증 셔츠·두 다리)에 눈·코·입. 표정은 상태에 따라 바뀐다. */
-function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
+export function Minimi({ seed, state, shirt, walking }: { seed: string; state: DocState; shirt: string; walking: boolean }) {
   const n = seedOf(seed);
   const skin = SKIN[n % SKIN.length];
   const hair = HAIR[(n >>> 3) % HAIR.length];
