@@ -51,6 +51,10 @@ const RULES: Rule[] = [
   // 결과·판독·소프트웨어
   { path: "result.kind", value: "quantitative", shown: "정량", re: /정량|수치|농도|측정값|quantitative/i },
   { path: "result.kind", value: "qualitative", shown: "정성 (양성/음성)", re: /정성|양성|음성|qualitative/i },
+  { path: "assay.method", value: "lateral-flow", shown: "측방유동 면역크로마토그래피", re: /면역크로마토|측방\s*유동|래피드|lateral/i },
+  { path: "assay.method", value: "fluorescence", shown: "형광 면역분석", re: /형광|fluoresc/i },
+  { path: "assay.method", value: "electrochemical", shown: "전기화학", re: /전기화학|바이오센서|electrochem/i },
+  { path: "assay.method", value: "molecular", shown: "분자진단", re: /PCR|등온|LAMP|분자진단/i },
   { path: "result.readout", value: "app", shown: "스마트폰 앱", re: /앱|스마트폰|어플|app/i },
   { path: "result.readout", value: "reader", shown: "전용 리더기", re: /리더기|reader|측정기/i },
   { path: "result.readout", value: "visual", shown: "육안 판독", re: /육안|눈으로/ },
@@ -93,6 +97,9 @@ export function parseConcept(text: string): ConceptHit[] {
     hits.push({ path: "analyte.name", value: ANALYTE_NAME[preset], shown: ANALYTE_NAME[preset], word: preset });
     hits.push({ path: "intendedPurpose.clinicalDecision", value: DECISION[preset], shown: DECISION[preset], word: preset });
   }
+  // 스틱만이고 검사 방식을 말하지 않았으면 측방유동으로 본다 (추정)
+  if (hits.some((h) => h.path === "formFactor" && h.value === "strip-only") && !hits.some((h) => h.path === "assay.method"))
+    hits.push({ path: "assay.method", value: "lateral-flow", shown: "측방유동 면역크로마토그래피", word: "스틱" });
   // 병원 대형 장비면 사용자는 전문가로 본다 (따로 말하지 않았을 때)
   if (hits.some((h) => h.path === "formFactor" && h.value === "lab-analyzer") && !hits.some((h) => h.path === "user"))
     hits.push({ path: "user", value: "professional", shown: "전문가", word: "대형 장비" });

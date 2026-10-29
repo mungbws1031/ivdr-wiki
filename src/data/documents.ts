@@ -365,28 +365,28 @@ export const documents: DocTemplate[] = [
     docTitle: "위험관리 계획 (ISO 14971) + GSPR↔위험 추적표",
     purpose:
       "ISO 14971 프로세스를 수립하고, 위험-요구(GSPR)-성능을 양방향 추적한다.",
-    rationale: "IVDR Annex I §8은 {{iso-14971|ISO 14971}} 기반 위험관리 시스템을 요구한다. 계획 없이 작성한 위험관리 파일은 위험 수용 기준·통제 조치 검증이 일관성 없어 NB 지적을 받는다.",
+    rationale: "IVDR Annex I 1장(위험관리 시스템은 §3 — 원문 확인 필요)은 {{iso-14971|ISO 14971}} 기반 위험관리 시스템을 요구한다. 계획 없이 작성한 위험관리 파일은 위험 수용 기준·통제 조치 검증이 일관성 없어 NB 지적을 받는다.",
     intent: "위험 식별 → 평가 → 통제 → 잔여위험 수용의 전체 흐름을 착수 전에 기획하도록 안내하여, 성능·사용적합성 팀과 위험관리 팀이 데이터를 공유할 수 있도록 설계했다.",
     sections: [
       {
         heading: "1. 위험관리 계획 (ISO 14971 Clause 4.4)",
         guidance: "범위·적용 표준·위험 수용 기준·검토 시점을 정의한다.",
-        placeholder: "적용 표준: ISO 14971:2019 + IVDR Annex I\n범위: {{auto.productName}} ({{auto.model}}) — 설계부터 폐기까지 전 수명 주기\n\n위험 수용 기준 행렬:\n- 수용 가능: P × S ≤ 3\n- ALARP 필요: 4 ≤ P × S ≤ 12\n- 수용 불가: P × S ≥ 15\n\n위험관리 팀: [이름/직책]\n검토 시점: [설계 단계별 / 시판 후 연간]",
+        placeholder: "적용 표준: ISO 14971:2019 + IVDR Annex I\n범위: {{auto.productName}} ({{auto.model}}) — 설계부터 폐기까지 전 수명 주기\n\n위험 수용 기준 (P × S 행렬): [회사 위험 수용 기준 — 위험관리 절차서에서 정한 값. 가이드의 예시 행렬은 참고용]\n\n위험관리 팀: [이름/직책]\n검토 시점: [설계 단계별 / 시판 후 연간]",
       },
       {
         heading: "2. 위험 분석 — IVD 특유 위해요인",
         guidance: "IVD에 특화된 위해요인을 위해요인→위험상황→위해 형식으로 기술한다.",
-        placeholder: "| 위해요인 | 위험상황 | 위해 | P | S | 초기위험 | 통제수단 | 잔여위험 | 검증 참조 |\n|---|---|---|---|---|---|---|---|---|\n| 위양성 결과 | 감염 없는 환자에게 불필요 항생제 처방 | 약물 부작용 | 2 | 4 | 8(ALARP) | IFU 확인 지침 + 임상 검증 기준 강화 | 2 | PER §3 |\n| 위음성 결과 | 감염 환자 미진단 | 치료 지연 | 2 | 5 | 10(ALARP) | 민감도 ≥95% 요건 + 재검사 지침 | 3 | PER §3 |\n| 교차반응 | 유사 항원 위양성 | 오진단 | 2 | 3 | 6(ALARP) | 교차반응 시험 목록 최소화 | 2 | 분석적 §5 |\n| 검체 오염 | 취급 오류 | 잘못된 결과 | 3 | 3 | 9(ALARP) | IFU 취급 절차 강화 | 2 | 사용적합성 |\n| [추가] | [____] | [____] | [__] | [__] | [__] | [____] | [__] | [____] |",
+        placeholder: "{{auto.hazardTable}}",
       },
       {
         heading: "3. GSPR↔위험↔성능 추적표",
         guidance: "GSPR 각 조항이 어떤 위험과 연결되고, 어떤 성능 증거로 충족되는지 매핑한다.",
-        placeholder: "| GSPR 조항 | 요구사항 요약 | 관련 위험 | 충족 방법 | 성능 증거 위치 |\n|---|---|---|---|---|\n| Annex I §1 | 설계·제조가 의도된 목적 충족 | R-001, R-002 | 분석·임상 성능 시험 | PER §2, §3 |\n| Annex I §8 | 위험 최소화 | R-001~R-006 | ISO 14971 통제 | 위험관리 파일 |\n| Annex I §9 | 라벨·IFU 완전성 | R-004 | IFU 사용적합성 | IFU v[__] |\n| Annex I §13 | 자가검사 사용편의성 (해당 시) | R-005 | IEC 62366 | 사용적합성 보고서 |",
+        placeholder: "{{auto.riskGsprTrace}}",
       },
       {
         heading: "4. 사용적합성 연계 (IEC 62366 — 자가검사·근접검사 해당 시)",
         guidance: "자가검사 또는 근접검사 제품은 사용 오류 위험을 IEC 62366으로 연계해야 한다.",
-        placeholder: "적용 여부: [ ] 자가검사  [ ] 근접검사  [ ] 해당 없음 (전문가용)\n\n주요 사용 오류 위험:\n- [예: 검체 채취 방법 오류 → 잘못된 결과] — 완화: IFU 그림 지침 + 색상 코딩\n- [예: 판독 시간 초과 → 위음성] — 완화: 타이머 알람 기능\n\nIEC 62366 요약 가용성 파일(SUM) 참조: [위치]",
+        placeholder: "{{auto.usabilityScope}}\n\nIEC 62366 요약 가용성 파일(SUM) 참조: [위치]",
       },
     ],
     experiments: [
@@ -641,7 +641,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "2. 기기 설명 및 의도된 목적",
         guidance: "의도된 목적 정의서에서 옮겨와 기기 유형·작동 원리를 설명.",
-        placeholder: "기기 유형: {{auto.productType}}\n제품 형태: {{auto.formFactor}}\n주요 재질: {{auto.materials}}\n작동 원리: [____]\n의도된 목적(요약): {{auto.intendedPurpose}}",
+        placeholder: "기기 유형: {{auto.productType}}\n제품 형태: {{auto.formFactor}}\n주요 재질: {{auto.materials}}\n작동 원리:\n{{auto.principle}}\n의도된 목적(요약): {{auto.intendedPurpose}}",
       },
       {
         heading: "3. 구성 및 부품 목록",
@@ -700,7 +700,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. 성능·용도 표시",
         guidance: "사용 목적(축약)·주의·사용 제한.",
-        placeholder: "사용 목적(라벨 축약): {{auto.analyte}} {{auto.resultKind}} 검출 · {{auto.user}}\n보관 조건: {{auto.storage}}\n경고/주의: [____]\n취급주의 심볼(ISO 15223-1): [____]",
+        placeholder: "사용 목적(라벨 축약): {{auto.analyte}} {{auto.resultKind}} 검출 · {{auto.user}}\n보관 조건: {{auto.storage}}\n경고/주의:\n{{auto.labelWarnings}}\n\n심볼:\n{{auto.labelSymbols}}",
       },
       {
         heading: "4. CE 마킹 및 NB",
@@ -758,12 +758,12 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. 검사 원리",
         guidance: "측정 원리·시약 반응 요약.",
-        placeholder: "검사 원리: [____]\n관련 간섭 물질: [____]",
+        placeholder: "{{auto.principle}}\n관련 간섭 물질: [분석 성능 시험 결과 참조]",
       },
       {
         heading: "4. 사용 방법 (단계별)",
         guidance: "검체 채취→보관→검사→판독을 순서대로. 자가검사는 그림 포함 권장.",
-        placeholder: "검체 채취: {{auto.specimen}} — [채취 방법]\n검사 절차:\n  1. [____]\n  2. [____]\n  3. [____]\n결과 판독: [____]\n음성/양성/무효 기준: [____]",
+        placeholder: "검체: {{auto.specimen}}\n검사 절차:\n{{auto.ifuSteps}}\n\n결과 판독:\n{{auto.ifuReading}}",
       },
       {
         heading: "5. 성능 특성 요약",
@@ -773,12 +773,12 @@ export const documents: DocTemplate[] = [
       {
         heading: "6. 한계·주의·경고",
         guidance: "결과 한계·오용 방지 경고·보관 조건.",
-        placeholder: "결과의 한계: [____]\n보관: {{auto.storage}} / 유효기간: {{auto.shelfLife}}\n개봉 후: {{auto.openedStability}}\n경고: [____]",
+        placeholder: "결과의 한계:\n{{auto.ifuLimitations}}\n\n보관: {{auto.storage}} / 유효기간: {{auto.shelfLife}}\n개봉 후: {{auto.openedStability}}\n\n경고:\n{{auto.ifuWarnings}}",
       },
       {
         heading: "7. 심볼 범례",
         guidance: "라벨에 쓰인 ISO 15223-1 심볼 설명.",
-        placeholder: "심볼 → 의미:\n[심볼] → [____]",
+        placeholder: "{{auto.labelSymbols}}",
       },
     ],
     experiments: [

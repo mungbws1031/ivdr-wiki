@@ -16,6 +16,7 @@ export function emptySpec(): ProductSpec {
     analyte: { preset: null, name: null, cutoffValue: null, cutoffUnit: null },
     specimen: null,
     result: { kind: null, readout: null },
+    assay: { method: null },
     user: null,
     environment: null,
     intendedPurpose: { clinicalDecision: null, targetPopulation: null, outOfScope: null },
@@ -53,6 +54,7 @@ export function exampleSpec(): ProductSpec {
   s.analyte = { preset: "LH", name: "황체형성호르몬(LH)", cutoffValue: 25, cutoffUnit: "mIU/mL" };
   s.specimen = "urine";
   s.result = { kind: "qualitative", readout: "visual" };
+  s.assay = { method: "lateral-flow" };
   s.user = "lay";
   s.environment = "home";
   s.intendedPurpose = {

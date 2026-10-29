@@ -180,6 +180,17 @@ export const specSections: FieldSection[] = [
         ],
       },
       {
+        path: "assay.method", label: "검사 방식", kind: "select", usedBy: ["device-description", "ifu"],
+        help: "작동 원리와 사용설명서의 결과 판독 방법 초안이 이 값으로 정해집니다.",
+        options: [
+          { value: "lateral-flow", label: "측방유동 면역크로마토그래피 (래피드 테스트)" },
+          { value: "fluorescence", label: "형광 면역분석" },
+          { value: "electrochemical", label: "전기화학 (바이오센서)" },
+          { value: "molecular", label: "분자진단 (PCR·등온증폭)" },
+          { value: "other", label: "기타" },
+        ],
+      },
+      {
         path: "result.readout", label: "판독 방식", kind: "select", usedBy: ["usability-file", "sw-validation"],
         options: [
           { value: "visual", label: "육안 판독" },
