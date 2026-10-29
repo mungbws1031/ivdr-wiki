@@ -12,6 +12,7 @@ import { ruleJustification, ruleTableMarkdown } from "./rules/justify";
 import { evaluateDocSet } from "./rules/applicability";
 import { gsprChecklist, gsprTableMarkdown } from "./gspr";
 import { leafById } from "../data/docTree";
+import { draftTokens } from "./drafts";
 import { transportTokens } from "./transport";
 import { plannerTokens } from "./planner";
 import { resultsTokens, type ResultsMap } from "./results";
@@ -34,7 +35,9 @@ export const TOKEN_LABEL: Record<string, string> = {
   productType: "제품 유형", formFactor: "제품 형태", materials: "주요 재질", analyte: "분석물", cutoff: "Cut-off", specimen: "검체", resultKind: "결과 형태", readout: "판독 방식",
   user: "사용자", environment: "사용 환경", clinicalDecision: "결과로 내리는 판단", targetPopulation: "대상 집단", outOfScope: "사용하면 안 되는 용도",
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
-  cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", gsprTable: "GSPR 1차 판정", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
+  cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", gsprTable: "GSPR 1차 판정",
+  principle: "작동 원리", labelSymbols: "라벨 심볼", labelWarnings: "경고·주의", ifuSteps: "사용 단계", ifuReading: "결과 판독 기준",
+  ifuLimitations: "결과의 한계", ifuWarnings: "경고", hazardTable: "위해요인 분석", riskGsprTrace: "GSPR↔위험 추적", usabilityScope: "사용적합성 연계", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
   swScope: "소프트웨어 범위", transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
@@ -67,6 +70,7 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
   const cutoff = s.analyte.cutoffValue !== null ? `${s.analyte.cutoffValue}${s.analyte.cutoffUnit ? ` ${s.analyte.cutoffUnit}` : ""}` : null;
   const st = s.storage;
   const comps = s.kitComponents.filter((k) => k.name.trim());
+  const docSet = evaluateDocSet(s, c);
   return {
     productName: id.productName, model: id.model, manufacturer: id.manufacturerName, manufacturerCountry: id.manufacturerCountry,
     basicUdiDi: id.basicUdiDi,
@@ -88,7 +92,8 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
     cls: c.value, rule: c.value ? c.rule : null,
     rationale: c.rationale.length ? c.rationale.join(" ") : null,
     ruleTable: ruleTableMarkdown(ruleJustification(s), c),
-    gsprTable: gsprTableMarkdown(gsprChecklist(s, evaluateDocSet(s, c)), (id) => leafById(id)?.title ?? id),
+    gsprTable: gsprTableMarkdown(gsprChecklist(s, docSet), (id) => leafById(id)?.title ?? id),
+    ...draftTokens(s, c, docSet),
     route: c.route.length ? c.route.map((r) => `- ${r}`).join("\n") : null,
     nb: c.value === null ? null : c.value === "A" && s.sterile !== true ? "불필요 — Class A 비멸균 (자기선언)" : `필요 — Class ${c.value}${c.value === "A" ? " 멸균 (멸균 측면)" : ""}`,
     nbScope: c.route.length ? c.route.join(" / ") : null,

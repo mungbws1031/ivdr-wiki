@@ -15,6 +15,8 @@ export type AnalytePreset = "LH" | "hCG" | "other";
 export type SpecimenType = "urine" | "capillary-blood" | "venous-blood" | "saliva" | "swab" | "other";
 export type ResultKind = "qualitative" | "semi-quantitative" | "quantitative";
 export type Readout = "visual" | "reader" | "app";
+/** 검사 방식 — 작동 원리·판독 규칙 초안이 이걸로 갈린다 */
+export type AssayMethod = "lateral-flow" | "fluorescence" | "electrochemical" | "molecular" | "other";
 export type UserType = "lay" | "professional" | "both";
 export type Environment = "home" | "near-patient" | "lab";
 export type Destination = "KR" | "EU" | "US" | "JP" | "SEA" | "ME" | "AU" | "other";
@@ -50,6 +52,9 @@ export interface ProductSpec {
   result: {
     kind: Maybe<ResultKind>;
     readout: Maybe<Readout>;
+  };
+  assay: {
+    method: Maybe<AssayMethod>;
   };
   user: Maybe<UserType>;
   environment: Maybe<Environment>;

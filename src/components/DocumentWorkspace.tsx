@@ -35,6 +35,8 @@ import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { PageHeader } from "./PageHeader";
 import { DocxExport } from "./DocxExport";
+import { PipelineExportButton } from "./auto/PipelineExportButton";
+import { P1_DOCS } from "../lib/pipelineExport";
 import { TranslatePanel } from "./TranslatePanel";
 import { LevelMeter } from "./LevelMeter";
 import { EffortTimeline } from "./EffortTimeline";
@@ -604,6 +606,13 @@ export function DocumentWorkspace() {
 
             {/* 워드(.docx) 내보내기 — 완성 후 내보내는 도구 */}
             <DocxExport doc={doc} />
+
+            {/* P1 초안 — sug-doc-pipeline 형식(초안 docx + state.json + input.json) */}
+            {P1_DOCS.some((d) => d.id === doc.id) && (
+              <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--border)", padding: "16px 20px" }} aria-label="파이프라인용 내보내기">
+                <PipelineExportButton ids={[doc.id]} label="파이프라인용 내보내기 (sug-doc-pipeline)" />
+              </section>
+            )}
 
             {/* 영문 번역 (AI) — 해외 인증을 고른 경우 (한국만 골랐으면 숨김) */}
             {!(spec.markets?.length && spec.markets.every((m) => m === "KR")) && <TranslatePanel doc={doc} />}

@@ -12,6 +12,7 @@ import { useClassConfirm } from "../../hooks/useClassConfirm";
 import { useResults } from "../../hooks/useResultsStore";
 import { classify } from "../../lib/rules/classify";
 import { gsprChecklist, gsprCounts } from "../../lib/gspr";
+import { PipelineExportButton } from "./PipelineExportButton";
 import { certRoutes, missingQms, type CertRoute } from "../../lib/rules/certRoutes";
 import { countByStatus, evaluateDocSet, type ApplStatus } from "../../lib/rules/applicability";
 import { planHumanTasks, planStudies } from "../../lib/planner";
@@ -278,6 +279,10 @@ export function OverviewPage() {
               <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "4px 0 var(--s-4)" }}>
                 눌러서 열면 스펙·분류·실험계획·결과가 들어간 초안이 보입니다. 그대로 고쳐 쓰고 Word로 내보낼 수 있습니다.
               </p>
+              <div className="rounded-[var(--r-md)]" style={{ padding: "12px 14px", marginBottom: "var(--s-4)", background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 6 }}>P1 초안 — 기기 설명서 · 라벨 · 사용설명서 · 위험관리 계획</p>
+                <PipelineExportButton />
+              </div>
               <ul className="grid" style={{ gap: "var(--s-2)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))" }}>
                 {filledDocs.map((d) => (
                   <li key={d.id}>
