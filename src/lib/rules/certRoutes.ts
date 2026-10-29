@@ -7,6 +7,7 @@
 
 import type { ProductSpec } from "../../data/spec/types";
 import type { ClassResult } from "./classify";
+import { classifyKr, krRouteLabel, KR_SOURCES } from "../kr";
 
 export interface CertRoute {
   market: string;
@@ -23,34 +24,20 @@ export interface CertRoute {
   source: string;
 }
 
-const MFDS_SOURCE = "체외진단의료기기법·시행규칙, 체외진단의료기기 품목 및 품목별 등급에 관한 규정(식약처 고시)";
-
 function krRoute(s: ProductSpec): CertRoute {
-  const g = s.krGrade;
-  const lay = s.user === "lay" || s.user === "both";
-  const route =
-    g === null ? "등급을 확인하면 신고·인증·허가 중 어느 경로인지 정해집니다."
-    : g === "1" ? "1등급 — 신고 (한국의료기기안전정보원)"
-    : g === "2" ? "2등급 — 인증 (한국의료기기안전정보원)"
-    : `${g}등급 — 허가 (식품의약품안전처)`;
+  const kr = classifyKr(s);
+  const g = kr.confirmed.value;
   return {
     market: "KR",
     name: "한국 — 식약처(MFDS) 체외진단의료기기",
     support: "guide",
-    headline: route,
-    steps: [
-      g === null ? "품목 분류 검색으로 품목명·등급 확인 (의료기기안전정보원 품목분류 데이터)" : `품목·등급 확정: ${g}등급`,
-      "KGMP(의료기기 제조 및 품질관리 기준) 적합인정 — 제조소 심사",
-      "기술문서 작성·심사 — 사용 목적, 작용 원리, 성능, 시험 규격, 저장 방법·사용 기간 등",
-      g === "3" || g === "4" ? "임상적 성능시험 — 식약처 지정 임상적 성능시험기관에서 수행 (계획 승인 대상 여부 확인)" : "임상적 성능시험 자료 필요 여부 확인 (등급·품목에 따라 다름)",
-      ...(lay ? ["자가검사용 표시·사용설명서 요건 확인 (일반인 사용)"] : []),
-      "표시기재·UDI 등록, 시판 후 안전관리(부작용 보고·추적관리 해당 여부)",
-    ],
+    headline: g ? krRouteLabel(g) : kr.grade ? `${krRouteLabel(kr.grade)} — 추천 (품목 분류로 확인)` : krRouteLabel(null),
+    steps: kr.steps,
     qms: ["KGMP 적합인정 (필수)", "ISO 13485 인증이 있으면 KGMP 심사 준비에 활용 가능"],
     todo: [g === null ? "식약처 품목 분류로 등급 확인" : "등급 근거(품목 분류 코드) 기록", "KGMP 심사 일정 확인", "국내 대리인·수입업 허가(해외 제조 시) 확인"],
-    links: [],
+    links: [{ to: "/auto/kr", label: "한국(MFDS) 상세" }],
     verify: true,
-    source: MFDS_SOURCE,
+    source: `${KR_SOURCES.law}, ${KR_SOURCES.notice}`,
   };
 }
 

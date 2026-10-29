@@ -9,11 +9,12 @@ describe("인증 선택", () => {
     expect(specSections[0].title).toBe("어떤 인증을 받아야 하나요?");
     expect(specSections[0].fields[0].options!.map((o) => o.value)).toEqual(expect.arrayContaining(["KR", "EU"]));
   });
-  it("한국 — 등급을 모르면 추측하지 않고, 등급별 신고·인증·허가", () => {
+  it("한국 — 확인 등급이 없으면 추천으로 표시, 등급별 신고·인증·허가", () => {
     const s = exampleSpec();
     s.markets = ["KR"];
     const r = () => certRoutes(s, classify(s))[0];
-    expect(r().headline).toContain("등급을 확인하면");
+    expect(r().headline).toContain("추천");
+    s.user = null; expect(r().headline).toContain("등급을 확인하면"); s.user = "lay";
     s.krGrade = "1"; expect(r().headline).toContain("신고");
     s.krGrade = "2"; expect(r().headline).toContain("인증");
     s.krGrade = "3"; expect(r().headline).toContain("허가");

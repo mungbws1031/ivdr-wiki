@@ -1516,6 +1516,34 @@ export const documents: DocTemplate[] = [
     refs: ["IVDR Annex I §7", "EN ISO 23640", "ISTA 3A", "ISTA 7E", "ASTM D4169", "ISO 13485 7.5.11", "Regulation (EU) 2025/40 (PPWR)"],
     calcTools: ["mkt"],
   },
+  {
+    id: "kr-technical-doc",
+    stationId: 2,
+    docTitle: "[한국] 체외진단의료기기 기술문서 초안 (식약처)",
+    purpose: "식약처 신고·인증·허가에 내는 기술문서 항목을 제품 스펙과 IVDR 문서에서 끌어와 초안으로 만든다.",
+    rationale: "국내 기술문서는 사용 목적·작용 원리·원재료·제조 방법·성능·시험 규격·저장 방법·사용 방법·주의사항·포장 단위를 요구한다. IVDR용으로 이미 쓴 내용과 겹치는 부분이 많아 한 번 쓴 근거를 다시 쓴다. 항목 구성은 원문(체외진단의료기기 허가·신고·심사 규정) 확인 필요.",
+    sections: [
+      { heading: "1. 등급 및 허가 경로", guidance: "식약처 품목 분류로 확인한 등급과 경로를 적는다.", placeholder: "{{auto.krGrade}}\n품목명·분류 코드: [____]" },
+      { heading: "2. 사용 목적", guidance: "IVDR 의도된 목적과 같은 내용을 국내 표현으로.", placeholder: "{{auto.intendedPurpose}}\n\n자가검사 품목: {{auto.krSelfTest}}" },
+      { heading: "3. 작용 원리", guidance: "검사 원리를 그림 없이 문장으로.", placeholder: "{{auto.principle}}" },
+      { heading: "4. 원재료", guidance: "구성품별 원재료와 규격 (회사 자료).", placeholder: "구성품:\n{{auto.components}}\n\n원재료(항체·항원·멤브레인 등)와 규격: [____]" },
+      { heading: "5. 제조 방법", guidance: "제조 공정 요약 (회사 자료).", placeholder: "[제조 공정 요약 — 회사 자료]" },
+      { heading: "6. 성능", guidance: "분석적·임상적 성능 시험 계획과 결과.", placeholder: "판정 기준:\n{{auto.analyticalAcceptance}}\n\n결과:\n{{auto.analyticalResults}}" },
+      { heading: "7. 시험 규격", guidance: "출하 시험 항목·기준 (회사 자료).", placeholder: "[출하 시험 항목·기준 — 회사 자료]" },
+      { heading: "8. 저장 방법 및 사용 기간", guidance: "안정성 시험 근거.", placeholder: "저장 방법: {{auto.storage}}\n사용 기간: {{auto.shelfLife}}\n개봉 후: {{auto.openedStability}}" },
+      { heading: "9. 사용 방법", guidance: "IFU 사용 단계와 결과 판독.", placeholder: "{{auto.ifuSteps}}\n\n결과 판독:\n{{auto.ifuReading}}" },
+      { heading: "10. 사용 시 주의사항", guidance: "IFU 한계·경고.", placeholder: "{{auto.ifuLimitations}}\n\n{{auto.ifuWarnings}}" },
+      { heading: "11. 포장 단위", guidance: "판매 포장 단위.", placeholder: "[__회 검사용 / 키트] — 구성품 표 참조" },
+    ],
+    checklist: [
+      "식약처 품목 분류로 등급·품목명을 확인했는가",
+      "자가검사용이면 허용 품목인지 고시 원문으로 확인했는가",
+      "원재료·제조 방법·시험 규격을 회사 자료로 채웠는가",
+      "성능·안정성 결과가 시험 보고서와 일치하는가",
+    ],
+    relatedConceptSlugs: [],
+    refs: ["체외진단의료기기법", "체외진단의료기기 품목 및 품목별 등급에 관한 규정"],
+  },
 ];
 
 export const docByStationId = (id: number): DocTemplate | undefined =>

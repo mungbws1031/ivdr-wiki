@@ -73,6 +73,7 @@ const TOKEN_DEPS: Record<string, string[]> = {
   ifuSteps: ["formFactor", "software.hasApp", "specimen"], ifuReading: ["result.kind", "assay.method", "analyte.preset"], ifuLimitations: ["analyte.preset"],
   ifuWarnings: ["user", "formFactor", "software.hasApp", "specimen"], hazardTable: ["user", "formFactor", "result.kind", "software.hasApp", "analyte.preset", "specimen"],
   riskGsprTrace: ["user", "environment", "formFactor", "result.kind", "software.hasApp", "specimen"], usabilityScope: ["user", "environment"],
+  krGrade: ["user", "analyte.preset"], krSelfTest: ["user", "analyte.preset"],
   studyList: PLAN_DEPS, analyticalPlan: PLAN_DEPS, analyticalAcceptance: PLAN_DEPS, clinicalPlan: PLAN_DEPS,
   clinicalAcceptance: PLAN_DEPS, sampleSize: PLAN_DEPS, studySchedule: PLAN_DEPS, stabilityPlan: ["environment"],
 };

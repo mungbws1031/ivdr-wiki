@@ -13,6 +13,7 @@ import { evaluateDocSet } from "./rules/applicability";
 import { gsprChecklist, gsprTableMarkdown } from "./gspr";
 import { leafById } from "../data/docTree";
 import { draftTokens } from "./drafts";
+import { krTokens } from "./kr";
 import { transportTokens } from "./transport";
 import { plannerTokens } from "./planner";
 import { resultsTokens, type ResultsMap } from "./results";
@@ -37,7 +38,7 @@ export const TOKEN_LABEL: Record<string, string> = {
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
   cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", gsprTable: "GSPR 1차 판정",
   principle: "작동 원리", labelSymbols: "라벨 심볼", labelWarnings: "경고·주의", ifuSteps: "사용 단계", ifuReading: "결과 판독 기준",
-  ifuLimitations: "결과의 한계", ifuWarnings: "경고", hazardTable: "위해요인 분석", riskGsprTrace: "GSPR↔위험 추적", usabilityScope: "사용적합성 연계", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
+  ifuLimitations: "결과의 한계", ifuWarnings: "경고", hazardTable: "위해요인 분석", riskGsprTrace: "GSPR↔위험 추적", usabilityScope: "사용적합성 연계", krGrade: "식약처 등급", krSelfTest: "자가검사 허용 품목", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",
   swScope: "소프트웨어 범위", transportRoute: "운송 경로·조건", transportStandards: "적용 규격", packagingSpec: "포장 구성", transportTests: "운송 시험 순서",
@@ -94,6 +95,7 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
     ruleTable: ruleTableMarkdown(ruleJustification(s), c),
     gsprTable: gsprTableMarkdown(gsprChecklist(s, docSet), (id) => leafById(id)?.title ?? id),
     ...draftTokens(s, c, docSet),
+    ...krTokens(s),
     route: c.route.length ? c.route.map((r) => `- ${r}`).join("\n") : null,
     nb: c.value === null ? null : c.value === "A" && s.sterile !== true ? "불필요 — Class A 비멸균 (자기선언)" : `필요 — Class ${c.value}${c.value === "A" ? " 멸균 (멸균 측면)" : ""}`,
     nbScope: c.route.length ? c.route.join(" / ") : null,

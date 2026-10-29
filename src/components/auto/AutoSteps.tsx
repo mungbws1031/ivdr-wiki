@@ -4,6 +4,7 @@ const STEPS = [
   { to: "/auto", label: "제품 스펙" },
   { to: "/auto/overview", label: "결과 한눈에" },
   { to: "/auto/docs", label: "분류·문서 세트" },
+  { to: "/auto/kr", label: "한국(MFDS)" },
   { to: "/auto/transport", label: "운송·포장" },
   { to: "/auto/plan", label: "실험계획" },
   { to: "/auto/results", label: "결과 입력" },
