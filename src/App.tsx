@@ -18,6 +18,7 @@ const PrepNotePage = lazy(() => import("./components/PrepNotePage").then((m) => 
 const SchedulePlanner = lazy(() => import("./components/SchedulePlanner").then((m) => ({ default: m.SchedulePlanner })));
 const SpecPage = lazy(() => import("./components/auto/SpecPage").then((m) => ({ default: m.SpecPage })));
 const DocSetPage = lazy(() => import("./components/auto/DocSetPage").then((m) => ({ default: m.DocSetPage })));
+const KrPage = lazy(() => import("./components/auto/KrPage").then((m) => ({ default: m.KrPage })));
 const OverviewPage = lazy(() => import("./components/auto/OverviewPage").then((m) => ({ default: m.OverviewPage })));
 const ResultsPage = lazy(() => import("./components/auto/ResultsPage").then((m) => ({ default: m.ResultsPage })));
 const FactoryPage = lazy(() => import("./components/auto/FactoryPage").then((m) => ({ default: m.FactoryPage })));
@@ -68,6 +69,7 @@ export default function App() {
           {/* 자동작성: 제품 스펙 */}
           <Route path="/auto" element={<SpecPage />} />
           <Route path="/auto/docs" element={<DocSetPage />} />
+          <Route path="/auto/kr" element={<KrPage />} />
           <Route path="/auto/transport" element={<TransportPage />} />
           <Route path="/auto/plan" element={<PlanPage />} />
           <Route path="/auto/overview" element={<OverviewPage />} />
