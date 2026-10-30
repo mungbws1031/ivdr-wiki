@@ -12,6 +12,12 @@
 | 2F | [`ivdr-quality`](ivdr-quality/SKILL.md) | 품질(QA)팀 | 21 |
 | 1F | [`ivdr-intake`](ivdr-intake/SKILL.md) | 접수 | — |
 
+## 검증 스킬
+
+| 스킬 | 하는 일 |
+|---|---|
+| [`mfds-review-panel`](mfds-review-panel/SKILL.md) | 식약처 심사관 관점의 **가상** 5인 패널이 체크리스트(51개 항목)와 시험 제품 6개로 이 툴을 점검하고 보고서를 쓴다. 실제 식약처 심사·자문이 아니다. 1차 보고서: [`reports/2026-10-30-1차.md`](mfds-review-panel/reports/2026-10-30-1차.md) |
+
 ## 일의 흐름
 
 1F 접수(스펙) → 6F RA(분류·문서 세트) → 4F 성능평가(실험계획) · 3F 생산(운송·공정) → 5F 개발·설계 · 2F 품질 → 7F 결재실(사람의 결정·서명)
