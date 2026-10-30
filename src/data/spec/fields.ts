@@ -76,6 +76,10 @@ export const specSections: FieldSection[] = [
           { value: "4", label: "4등급" },
         ],
       },
+      {
+        path: "usProductCode", label: "FDA 제품 코드 (미국 출시 시)", kind: "text", optional: true, usedBy: ["conformity-route-plan"],
+        help: "FDA 제품 분류 데이터베이스에서 찾은 3글자 코드 (예: LCX). 모르면 비워두세요 — 앱은 추천만 하고 '확인 필요'로 남깁니다.",
+      },
     ],
   },
   {

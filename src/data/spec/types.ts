@@ -84,6 +84,8 @@ export interface ProductSpec {
   qmsCerts: Maybe<string[]>;
   /** 식약처 체외진단의료기기 등급 (사람이 품목 분류로 확인) */
   krGrade: Maybe<"1" | "2" | "3" | "4">;
+  /** FDA 제품 코드 (분류 데이터베이스에서 사람이 확인한 값, 예: LCX) */
+  usProductCode: Maybe<string>;
   storage: {
     tempMinC: Maybe<number>;
     tempMaxC: Maybe<number>;

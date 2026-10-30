@@ -8,6 +8,7 @@
 import type { ProductSpec } from "../../data/spec/types";
 import type { ClassResult } from "./classify";
 import { classifyKr, krRouteLabel, KR_SOURCES } from "../kr";
+import { classifyUs, PATHWAY_LABEL } from "../us";
 
 export interface CertRoute {
   market: string;
@@ -41,6 +42,22 @@ function krRoute(s: ProductSpec): CertRoute {
   };
 }
 
+function usRoute(s: ProductSpec): CertRoute {
+  const us = classifyUs(s);
+  return {
+    market: "US",
+    name: "미국 — FDA",
+    support: "guide",
+    headline: `${us.deviceClass ? `Class ${us.deviceClass}` : "등급 확인 필요"} — ${PATHWAY_LABEL[us.pathway]}${us.confirmedCode ? ` (제품 코드 ${us.confirmedCode})` : " — 추천"}`,
+    steps: us.steps,
+    qms: ["QMSR (21 CFR 820, ISO 13485 기반 — 2026-02-02 시행)", "MDSAP 감사로 FDA 정기 실사 대체 가능"],
+    todo: ["FDA 분류 데이터베이스에서 제품 코드 확인", "US Agent·등록 일정 확인"],
+    links: [{ to: "/auto/us", label: "미국(FDA) 상세" }, { to: "/mdsap", label: "MDSAP 여정 지도" }],
+    verify: true,
+    source: "21 CFR 807·809·820·830·862, FDA 제품 분류 데이터베이스",
+  };
+}
+
 function euRoute(cls: ClassResult): CertRoute {
   return {
     market: "EU",
@@ -69,6 +86,7 @@ export function certRoutes(s: ProductSpec, cls: ClassResult): CertRoute[] {
   return markets.map((m) => {
     if (m === "EU") return euRoute(cls);
     if (m === "KR") return krRoute(s);
+    if (m === "US") return usRoute(s);
     const o = OTHER[m];
     return {
       market: m,

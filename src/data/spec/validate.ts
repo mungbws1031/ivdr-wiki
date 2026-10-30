@@ -29,6 +29,7 @@ export function emptySpec(): ProductSpec {
     markets: null,
     qmsCerts: null,
     krGrade: null,
+    usProductCode: null,
     storage: { tempMinC: null, tempMaxC: null, shelfLifeMonths: null, openedStabilityMin: null },
     kitComponents: [],
     referenceMethod: { name: null, ceMarked: null, lab: null },
