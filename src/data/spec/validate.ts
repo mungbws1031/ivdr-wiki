@@ -34,6 +34,7 @@ export function emptySpec(): ProductSpec {
     kitComponents: [],
     referenceMethod: { name: null, ceMarked: null, lab: null },
     targets: { sensitivity: null, specificity: null, confidence: null, lots: null },
+    plan: { startDate: null, launchDate: null, durations: null },
     transport: {
       destinations: null, modes: null, lengthCm: null, widthCm: null, heightCm: null, grossWeightKg: null,
       kitsPerShipper: null, liquidReagent: null, dangerousGoods: null, primaryPlastic: null, outerMaterial: null,
@@ -154,6 +155,12 @@ export function validateSpec(x: unknown): ValidateResult {
       }));
       spec = setAt(spec, f.path, list);
     } else spec = setAt(spec, f.path, v);
+  }
+  // 기획: 사람이 고친 기간 (항목 id → 개월)
+  const dur = (src.plan as Record<string, unknown> | undefined)?.durations;
+  if (dur && typeof dur === "object") {
+    const clean = Object.fromEntries(Object.entries(dur).filter(([, v]) => typeof v === "number" && Number.isFinite(v) && v >= 0)) as Record<string, number>;
+    if (Object.keys(clean).length) spec = setAt(spec, "plan.durations", clean);
   }
   const meta = src.meta as Record<string, unknown> | undefined;
   spec.meta.updatedAt = typeof meta?.updatedAt === "string" ? meta.updatedAt : null;

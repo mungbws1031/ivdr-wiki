@@ -184,6 +184,11 @@ export const documents: DocTemplate[] = [
         guidance: "심사 대상(QMS/기술문서 표본 등)을 적는다.",
         placeholder: "NB 심사 대상: {{auto.nbScope}}",
       },
+      {
+        heading: "4. 인증 일정 로드맵",
+        guidance: "제품 기획(/auto/start)에서 정한 시작일·목표 판매일과 항목별 기간으로 계산한다. 기간은 추정 범위 — 회사 계획으로 바꾼다.",
+        placeholder: "{{auto.roadmapTable}}",
+      },
     ],
     certTests: [
       "NB scope 적합성 사전 확인 — NANDO에서 선정 NB가 해당 분류·제품군을 심사 가능한지 확인",

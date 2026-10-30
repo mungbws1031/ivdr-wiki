@@ -247,7 +247,7 @@ export function CertHub() {
 
         {/* 자동작성 진입점 (베타) */}
         <Link
-          to="/auto"
+          to="/auto/start"
           className="block rounded-[var(--r-lg)] border hover:shadow-md"
           style={{
             borderColor: "var(--accent)",
@@ -266,10 +266,10 @@ export function CertHub() {
           </span>
           <div>
             <div className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
-              제품 스펙으로 자동 작성 <span style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>베타</span>
+              제품 기획부터 시작 — 문서까지 자동 <span style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>베타</span>
             </div>
             <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-              제품 스펙을 한 번 입력하면 클래스 추천·문서 세트·실험계획·문서 초안으로 이어집니다 · 지금: 스펙 입력, 클래스 추천·문서 세트
+              컨셉 한 줄 → 필요한 인증·기간·일정 로드맵·개념 스케치 → 클래스 추천·문서 세트·실험계획·문서 초안까지 이어집니다
             </div>
           </div>
           <span className="font-bold shrink-0" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>

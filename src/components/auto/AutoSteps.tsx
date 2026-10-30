@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 const STEPS = [
+  { to: "/auto/start", label: "제품 기획" },
   { to: "/auto", label: "제품 스펙" },
   { to: "/auto/overview", label: "결과 한눈에" },
   { to: "/auto/docs", label: "분류·문서 세트" },
