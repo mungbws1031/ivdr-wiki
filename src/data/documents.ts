@@ -1544,6 +1544,33 @@ export const documents: DocTemplate[] = [
     relatedConceptSlugs: [],
     refs: ["체외진단의료기기법", "체외진단의료기기 품목 및 품목별 등급에 관한 규정"],
   },
+  {
+    id: "us-510k-draft",
+    stationId: 2,
+    docTitle: "[미국] FDA 510(k) 제출 초안 (eSTAR 흐름)",
+    purpose: "FDA 시판 전 신고(510(k)) 또는 De Novo 제출 내용을 제품 스펙과 IVDR 문서에서 끌어와 초안으로 만든다.",
+    rationale: "510(k)는 비교 대상 기기(predicate)와의 실질적 동등성을 성능 자료로 보여 주는 제출이다. 기기 설명·사용 적응증·성능·라벨은 IVDR 문서와 겹쳐 한 번 쓴 근거를 다시 쓴다. 섹션 순서는 eSTAR 흐름의 요약이며 원문(FDA eSTAR·21 CFR 807.87) 확인 필요.",
+    sections: [
+      { heading: "1. 분류와 제출 경로", guidance: "FDA 분류 데이터베이스에서 제품 코드를 확인한다.", placeholder: "{{auto.usClass}}" },
+      { heading: "2. 사용 적응증 (Indications for Use)", guidance: "FDA 3881 양식에 들어갈 문장. OTC/Rx 표시.", placeholder: "{{auto.intendedPurpose}}\n\n대상 집단: {{auto.targetPopulation}}\n사용하면 안 되는 용도: {{auto.outOfScope}}" },
+      { heading: "3. 기기 설명", guidance: "구성·원리·형태.", placeholder: "제품 형태: {{auto.formFactor}}\n작동 원리:\n{{auto.principle}}\n\n구성품:\n{{auto.components}}" },
+      { heading: "4. 실질적 동등성 비교", guidance: "비교 대상 기기(predicate)와 같은 점·다른 점을 표로.", placeholder: "| 항목 | 이 기기 | 비교 대상 기기 (K[______]) |\n|---|---|---|\n| 사용 적응증 | {{auto.analyte}} {{auto.resultKind}} · {{auto.user}} | [____] |\n| 검체 | {{auto.specimen}} | [____] |\n| 원리 | [위 작동 원리 요약] | [____] |\n| Cut-off | {{auto.cutoff}} | [____] |\n| 판독 | {{auto.readout}} | [____] |" },
+      { heading: "5. 분석 성능", guidance: "CLSI 기준 시험 설계와 결과.", placeholder: "판정 기준:\n{{auto.analyticalAcceptance}}\n\n결과:\n{{auto.analyticalResults}}" },
+      { heading: "6. 임상 / 일반인 사용 연구", guidance: "가정용은 일반인이 쓴 결과와 기준 방법 비교.", placeholder: "판정 기준:\n{{auto.clinicalAcceptance}}\n\nCLIA: {{auto.usClia}}" },
+      { heading: "7. 안정성", guidance: "유효기간·개봉 후 안정성 근거.", placeholder: "보관: {{auto.storage}}\n유효기간: {{auto.shelfLife}}\n개봉 후: {{auto.openedStability}}" },
+      { heading: "8. 라벨·사용설명서 (21 CFR 809.10)", guidance: "IFU 초안을 영어로 옮길 바탕.", placeholder: "사용 방법:\n{{auto.ifuSteps}}\n\n결과 판독:\n{{auto.ifuReading}}\n\n한계:\n{{auto.ifuLimitations}}" },
+      { heading: "9. 소프트웨어·사이버보안", guidance: "앱·펌웨어가 있으면 FDA 소프트웨어 문서와 524B 사이버보안 자료.", placeholder: "{{auto.swScope}}" },
+    ],
+    checklist: [
+      "FDA 분류 데이터베이스에서 제품 코드·규정 번호를 확인했는가",
+      "비교 대상 기기(K-번호)를 정하고 동등성 표를 채웠는가 (510(k)일 때)",
+      "가정용이면 일반인 사용 연구를 계획했는가",
+      "라벨이 21 CFR 809.10 항목을 모두 담는가",
+      "영문 번역본을 만들었는가",
+    ],
+    relatedConceptSlugs: [],
+    refs: ["21 CFR 807", "21 CFR 809.10", "21 CFR 862", "FDA eSTAR"],
+  },
 ];
 
 export const docByStationId = (id: number): DocTemplate | undefined =>
