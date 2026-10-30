@@ -151,6 +151,9 @@ export const specSections: FieldSection[] = [
         options: [
           { value: "LH", label: "LH (배란)" },
           { value: "hCG", label: "hCG (임신)" },
+          { value: "glucose", label: "혈당" },
+          { value: "cholesterol", label: "콜레스테롤" },
+          { value: "urine-cells", label: "소변 적혈구·백혈구·세균 (소변 일반 검사)" },
           { value: "other", label: "기타" },
         ],
       },

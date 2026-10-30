@@ -99,6 +99,11 @@ export function classifyUs(s: ProductSpec): UsResult {
     if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
     return out(k.deviceClass, k.regulation, k.productCode, k.pathway, "provisional");
   }
+  if (p === "glucose" || p === "cholesterol" || p === "urine-cells") {
+    rationale.push(`${p === "glucose" ? "혈당" : p === "cholesterol" ? "콜레스테롤" : "소변 일반"} 검사: 규정 번호를 확인하지 못했습니다. 대부분 Class II·510(k)이며, 가정용은 FDA 가정용 가이드를 확인하세요. 제품 코드로 확정하세요.`);
+    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    return out("II", null, null, "check", "provisional");
+  }
   if (f.geneticTesting || f.cancerScreening) {
     rationale.push("유전자·암 관련 검사는 제품 코드에 따라 510(k)·De Novo·PMA로 갈립니다. 비교할 기존 기기가 없으면 De Novo입니다.");
     return out(null, null, null, "check", "provisional");

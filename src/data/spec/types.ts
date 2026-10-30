@@ -11,7 +11,8 @@ export type ProductType = "reagent-kit" | "instrument" | "software" | "accessory
 /** 제품 형태 — 스틱만 / 스틱+리더기 / 개인용 일체형 기기 / POCT 기기 / 병원·검사실 대형 장비 */
 export type FormFactor = "strip-only" | "strip-reader" | "personal-device" | "poct" | "lab-analyzer";
 export type Material = "plastic" | "paper-membrane" | "glass" | "metal" | "electronics" | "other";
-export type AnalytePreset = "LH" | "hCG" | "other";
+/** 분석물 종류 — IVDR Rule 4(a) 자가검사 예외 품목(LH·hCG·혈당·콜레스테롤·소변 일반)과 기타 */
+export type AnalytePreset = "LH" | "hCG" | "glucose" | "cholesterol" | "urine-cells" | "other";
 export type SpecimenType = "urine" | "capillary-blood" | "venous-blood" | "saliva" | "swab" | "other";
 export type ResultKind = "qualitative" | "semi-quantitative" | "quantitative";
 export type Readout = "visual" | "reader" | "app";

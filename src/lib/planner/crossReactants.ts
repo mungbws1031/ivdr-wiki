@@ -12,6 +12,9 @@ export const CROSS_REACTANTS_REVIEWED = false;
 export const CROSS_REACTANTS: Record<AnalytePreset, string[]> = {
   LH: ["hCG (임신·hCG 투여)", "FSH (폐경기 고농도)", "TSH"],
   hCG: ["LH (배란기 급증)", "FSH (폐경기 고농도)", "TSH"],
+  glucose: [],
+  cholesterol: [],
+  "urine-cells": [],
   other: [],
 };
 
