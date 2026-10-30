@@ -105,6 +105,12 @@ export interface ProductSpec {
     lots: Maybe<number>;
   };
   /** 운송·포장 — /auto/transport 에서만 입력. 분류(specHash)에는 영향 없음. */
+  /** 제품 기획 — 개발 시작일·목표 판매일(YYYY-MM-DD), 사람이 고친 항목별 기간(개월) */
+  plan: {
+    startDate: Maybe<string>;
+    launchDate: Maybe<string>;
+    durations: Maybe<Record<string, number>>;
+  };
   transport: {
     destinations: Maybe<Destination[]>;
     modes: Maybe<ShipMode[]>;

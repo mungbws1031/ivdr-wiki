@@ -75,6 +75,7 @@ const TOKEN_DEPS: Record<string, string[]> = {
   riskGsprTrace: ["user", "environment", "formFactor", "result.kind", "software.hasApp", "specimen"], usabilityScope: ["user", "environment"],
   krGrade: ["user", "analyte.preset"], krSelfTest: ["user", "analyte.preset"],
   usClass: ["user", "analyte.preset"], usClia: ["user", "environment"],
+  roadmapTable: ["user", "analyte.preset", "formFactor", "software.hasApp", "environment"],
   studyList: PLAN_DEPS, analyticalPlan: PLAN_DEPS, analyticalAcceptance: PLAN_DEPS, clinicalPlan: PLAN_DEPS,
   clinicalAcceptance: PLAN_DEPS, sampleSize: PLAN_DEPS, studySchedule: PLAN_DEPS, stabilityPlan: ["environment"],
 };

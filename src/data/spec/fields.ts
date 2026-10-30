@@ -367,8 +367,14 @@ export const transportSections: FieldSection[] = [
 ];
 
 /** /auto 의 기본 스펙 필드 (진행률·미입력 집계 대상). */
+/** 제품 기획 화면(/auto/start)에서만 입력 — /auto 진행률·미입력 집계에서 뺀다 */
+export const planFields: FieldDef[] = [
+  { path: "plan.startDate", label: "개발 시작일", kind: "text", optional: true, usedBy: ["conformity-route-plan"], help: "YYYY-MM-DD" },
+  { path: "plan.launchDate", label: "목표 판매일", kind: "text", optional: true, usedBy: ["conformity-route-plan"], help: "YYYY-MM-DD" },
+];
+
 export const allSpecFields: FieldDef[] = specSections.flatMap((s) => s.fields);
 export const transportFields: FieldDef[] = transportSections.flatMap((s) => s.fields);
 /** 가져오기 검증·경로 조회용 — 운송 필드까지 전부. */
-export const everySpecField: FieldDef[] = [...allSpecFields, ...transportFields];
+export const everySpecField: FieldDef[] = [...allSpecFields, ...transportFields, ...planFields];
 export const fieldByPath = (path: string): FieldDef | undefined => everySpecField.find((f) => f.path === path);
