@@ -16,7 +16,7 @@
 
 | 스킬 | 하는 일 |
 |---|---|
-| [`mfds-review-panel`](mfds-review-panel/SKILL.md) | 식약처 심사관 관점의 **가상** 5인 패널이 체크리스트(51개 항목)와 시험 제품 6개로 이 툴을 점검하고 보고서를 쓴다. 실제 식약처 심사·자문이 아니다. 1차 보고서: [`reports/2026-10-30-1차.md`](mfds-review-panel/reports/2026-10-30-1차.md) |
+| [`mfds-review-panel`](mfds-review-panel/SKILL.md) | 식약처 심사관 관점의 **가상** 5인 패널이 체크리스트(51개 항목)와 시험 제품 6개로 이 툴을 점검하고 보고서를 쓴다. 실제 식약처 심사·자문이 아니다. 보고서: [1차](mfds-review-panel/reports/2026-10-30-1차.md) · [2차](mfds-review-panel/reports/2026-10-30-2차.md) |
 
 ## 일의 흐름
 

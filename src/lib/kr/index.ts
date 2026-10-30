@@ -68,7 +68,8 @@ export function krRouteLabel(g: KrGrade | null): string {
 
 const isLay = (s: ProductSpec) => s.user === "lay" || s.user === "both";
 /** 분석물 이름으로만 품목을 찾는다 — 임상적 판단 문장("임신 시도 시기")은 다른 품목과 헷갈린다 */
-const analyteText = (s: ProductSpec) => (s.analyte.preset === "LH" ? "LH 배란" : s.analyte.preset === "hCG" ? "hCG 임신" : s.analyte.name ?? "");
+const PRESET_TEXT: Record<string, string> = { LH: "LH 배란", hCG: "hCG 임신", glucose: "혈당", cholesterol: "콜레스테롤", "urine-cells": "소변 일반" };
+const analyteText = (s: ProductSpec) => (s.analyte.preset && PRESET_TEXT[s.analyte.preset]) || s.analyte.name || "";
 
 export function krSelfTest(s: ProductSpec): KrSelfTest {
   const labelling = ["외부 포장에 '자가검사용' 표시", "'확진용이 아닌 보조검사용' 주의 문구 (표시 의무화 예정 — 시행일 확인 필요)"];
@@ -137,7 +138,10 @@ export function classifyKr(s: ProductSpec): KrResult {
   }
   if (isLay(s)) {
     const p = s.analyte.preset;
-    if (p === "LH" || p === "hCG") up("2", "자가검사 — 저위해 품목", `일반인 자가검사는 원칙적으로 높은 등급이지만, ${p === "LH" ? "배란(가임력)" : "임신"} 검사는 결과 오류의 위해가 낮아 2등급 후보입니다 (품목 분류로 확인 필요).`);
+    if (p === "glucose" || p === "cholesterol" || p === "urine-cells") {
+      rationale.push(`${p === "glucose" ? "혈당" : p === "cholesterol" ? "콜레스테롤" : "소변 일반"} 자가검사는 위해가 낮은 품목일 수 있으나 국내 품목별 등급을 확인하지 못했습니다 — 고시 원문으로 확인 필요.`);
+      if (!rule) rule = "저위해 자가검사 품목 — 품목별 등급 원문 확인 필요";
+    } else if (p === "LH" || p === "hCG") up("2", "자가검사 — 저위해 품목", `일반인 자가검사는 원칙적으로 높은 등급이지만, ${p === "LH" ? "배란(가임력)" : "임신"} 검사는 결과 오류의 위해가 낮아 2등급 후보입니다 (품목 분류로 확인 필요).`);
     else {
       up("3", "자가검사", "일반인 자가검사는 결과 오류를 전문가가 걸러 주지 못해 3등급 후보입니다. 혈당 등 일부 품목은 다를 수 있어 품목 분류로 확인해야 합니다.");
       if (p === null) openQuestions.push("analyte.preset");

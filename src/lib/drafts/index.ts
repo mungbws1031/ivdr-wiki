@@ -150,6 +150,8 @@ export function ifuLimitations(s: ProductSpec): string {
     "고농도에서 결과가 낮게 나올 수 있는지(hook 효과): [분석 성능 시험 결과 참조]",
   ];
   if (s.analyte.preset === "LH") l.push("LH 급증은 배란이 일어났음을 확인하지 않습니다. 배란 여부 확인이나 피임 목적으로 사용하지 마십시오. (검토 필요)", "다낭성 난소 증후군·폐경 전후·일부 약물(불임 치료제 등)은 결과에 영향을 줄 수 있습니다. (검토 필요)");
+  if (s.analyte.preset === "glucose") l.push("이 결과만으로 인슐린·약 용량을 바꾸지 말고 의료진의 지시를 따르십시오. (검토 필요)");
+  if (s.analyte.preset === "cholesterol" || s.analyte.preset === "urine-cells") l.push("이 검사는 진료가 필요한지 판단을 돕는 보조 검사입니다. 결과가 이상하면 의사와 상담하십시오. (검토 필요)");
   if (s.analyte.preset === "hCG") l.push("임신 초기에는 hCG 농도가 낮아 음성이 나올 수 있습니다. 며칠 뒤 다시 검사하십시오. (검토 필요)", "hCG를 만드는 종양·최근 유산·hCG 주사는 양성을 낼 수 있습니다. (검토 필요)");
   if (s.intendedPurpose.outOfScope) l.push(`다음 용도로 사용하지 마십시오: ${s.intendedPurpose.outOfScope}`);
   return bullets(l);
@@ -172,6 +174,10 @@ export interface Hazard {
 function decisionHarm(s: ProductSpec): { fp: string; fn: string } {
   if (s.analyte.preset === "LH") return { fp: "가임기를 잘못 알아 임신 시도 시기를 놓침 — 임신 지연·정서적 부담", fn: "LH 급증을 놓쳐 가임기를 놓침 — 임신 지연·정서적 부담" };
   if (s.analyte.preset === "hCG") return { fp: "임신으로 잘못 알고 불필요한 조치·진료 지연", fn: "임신을 모른 채 약물·음주·방사선 노출, 산전 관리 지연" };
+  if (s.analyte.preset === "glucose") return { fp: "혈당을 높게 잘못 알고 인슐린·약을 더 써 저혈당 [검토 필요]", fn: "고혈당·저혈당을 놓쳐 대처 지연 [검토 필요]" };
+  if (s.analyte.preset === "cholesterol") return { fp: "불필요한 걱정·진료 [검토 필요]", fn: "고콜레스테롤을 놓쳐 진료 지연 [검토 필요]" };
+  if (s.analyte.preset === "urine-cells") return { fp: "불필요한 진료·항생제 사용 [검토 필요]", fn: "요로 감염·혈뇨를 놓쳐 치료 지연 [검토 필요]" };
+  if (s.rule1to3Flags.transmissibleAgent) return { fp: "감염으로 잘못 알고 불필요한 격리·치료 [검토 필요]", fn: "감염자를 놓쳐 치료 지연·타인 전파 [검토 필요]" };
   const d = s.intendedPurpose.clinicalDecision;
   return d
     ? { fp: `'${d}' 판단을 잘못 내림 — 위해 [검토 필요]`, fn: `'${d}' 판단을 놓침 — 위해 [검토 필요]` }
@@ -183,6 +189,7 @@ export function hazards(s: ProductSpec): Hazard[] {
   const harm = decisionHarm(s);
   h.push({ hazard: "위양성 결과", situation: `${josa(analyteName(s), "이", "가")} cut-off 미만인데 양성 표시`, harm: harm.fp, controls: "cut-off 근처 정밀도 확인, 교차반응 시험, IFU에 결과 한계 표시", verify: ["analytical-performance", "clinical-performance", "ifu"], gspr: [1, 9] });
   h.push({ hazard: "위음성 결과", situation: `${josa(analyteName(s), "이", "가")} cut-off 이상인데 음성 표시`, harm: harm.fn, controls: "검출한계·hook 효과 시험, 재검사 안내", verify: ["analytical-performance", "clinical-performance", "ifu"], gspr: [1, 9] });
+  if (s.rule1to3Flags.transmissibleAgent) h.push({ hazard: "감염 전파 (공중보건)", situation: "위음성 결과로 감염자가 수혈·이식·접촉으로 다른 사람에게 전파", harm: "수혜자·접촉자 감염 — 공중보건 위해 [검토 필요]", controls: "민감도 목표 설정, 재검사·확진 검사 안내, 수혈 선별은 별도 규정 확인", verify: ["clinical-performance", "analytical-performance", "ifu"], gspr: [1, 9] });
   h.push({ hazard: "간섭·교차반응", situation: "약물·내인성 물질·유사 분석물이 결과를 바꿈", harm: "위양성·위음성과 같은 위해", controls: "간섭·교차반응 시험, IFU에 물질 목록 표시", verify: ["analytical-performance", "ifu"], gspr: [9] });
   if (s.result.kind === "qualitative") h.push({ hazard: "고농도 hook 효과", situation: "매우 높은 농도에서 신호가 약해짐", harm: "위음성과 같은 위해", controls: "고농도 시료 시험, 필요 시 IFU 한계 표시", verify: ["analytical-performance"], gspr: [9] });
   h.push({ hazard: "보관·운송 중 성능 저하", situation: "고온·습기·동결 노출 후 사용", harm: "위양성·위음성", controls: "안정성·운송 시험, 건조제 포장, 온도 표시", verify: ["stability-study", "transport-validation"], gspr: [6, 7] });

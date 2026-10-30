@@ -22,6 +22,15 @@ export interface ClassResult {
 /** 분류 규칙 코드가 RA 담당자 검토를 받았는지. 검토 후 이름·날짜를 채운다. */
 export const RULES_REVIEWED: { by: string | null; date: string | null } = { by: null, date: null };
 
+/** Rule 4(a) 자가검사 예외 품목 → B. LH·hCG 외 품목은 원문(Annex VIII Rule 4) 대조 전이다. */
+export const SELF_TEST_EXCEPTION: Record<Exclude<ProductSpec["analyte"]["preset"], null | "other">, { label: string; verify: boolean }> = {
+  LH: { label: "가임력(배란) 검사", verify: false },
+  hCG: { label: "임신 검사", verify: false },
+  glucose: { label: "혈당 검사", verify: true },
+  cholesterol: { label: "콜레스테롤 검사", verify: true },
+  "urine-cells": { label: "소변의 적혈구·백혈구·세균 검출", verify: true },
+};
+
 const RANK: Record<IvdClass, number> = { A: 1, B: 2, C: 3, D: 4 };
 
 const RULE3_FLAGS: { key: keyof ProductSpec["rule1to3Flags"]; label: string }[] = [
@@ -112,8 +121,9 @@ export function classify(s: ProductSpec): ClassResult {
   const selfTest = s.user === "lay" || s.user === "both";
   if (selfTest) {
     const preset = s.analyte.preset;
-    if (preset === "LH" || preset === "hCG") {
-      add("B", "Rule 4(a) 예외", `일반인 자가검사는 Rule 4(a)에 따라 원칙적으로 C이지만, ${preset === "LH" ? "가임력(배란) 검사" : "임신 검사"}는 예외로 B입니다.`);
+    if (preset && preset !== "other") {
+      const what = SELF_TEST_EXCEPTION[preset];
+      add("B", "Rule 4(a) 예외", `일반인 자가검사는 Rule 4(a)에 따라 원칙적으로 C이지만, ${what.label}는 예외로 B입니다.${what.verify ? " (예외 목록 원문 확인 필요)" : ""}`);
     } else {
       add("C", "Rule 4(a)", "일반인 자가검사는 Rule 4(a)에 따라 C입니다. 콜레스테롤·혈당·소변 적혈구/백혈구/세균 검사라면 예외로 B입니다.");
       if (preset === null) openQuestions.push("analyte.preset");

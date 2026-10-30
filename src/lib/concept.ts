@@ -42,6 +42,9 @@ const RULES: Rule[] = [
   // 분석물 (측정 목적이 등급을 가른다)
   { path: "analyte.preset", value: "LH", shown: "LH (배란)", re: /\bLH\b|배란|황체형성/i },
   { path: "analyte.preset", value: "hCG", shown: "hCG (임신)", re: /hCG|임신/i },
+  { path: "analyte.preset", value: "glucose", shown: "혈당", re: /혈당|포도당|글루코스|glucose/i },
+  { path: "analyte.preset", value: "cholesterol", shown: "콜레스테롤", re: /콜레스테롤|cholesterol/i },
+  { path: "analyte.preset", value: "urine-cells", shown: "소변 일반 검사 (적혈구·백혈구·세균)", re: /잠혈|백혈구|아질산|요검사|소변\s*일반|요로\s*감염/ },
   // 사용자·환경
   { path: "user", value: "professional", shown: "전문가", re: /전문가|의료진|임상\s*검사실|병원용/ },
   { path: "user", value: "lay", shown: "일반인 (자가검사)", re: /집에서|가정|자가|셀프|개인|home|self/i },
@@ -67,8 +70,13 @@ const RULES: Rule[] = [
   { path: "materials", value: ["plastic"], shown: "플라스틱", re: /플라스틱|plastic/i },
 ];
 
-const ANALYTE_NAME: Record<string, string> = { LH: "황체형성호르몬(LH)", hCG: "인간 융모성 생식선 자극호르몬(hCG)" };
-const DECISION: Record<string, string> = { LH: "배란 시기 예측 (가임기 확인)", hCG: "임신 여부 확인" };
+const ANALYTE_NAME: Record<string, string> = {
+  LH: "황체형성호르몬(LH)", hCG: "인간 융모성 생식선 자극호르몬(hCG)", glucose: "혈중 포도당(혈당)", cholesterol: "총 콜레스테롤", "urine-cells": "소변 적혈구·백혈구·아질산(세균)",
+};
+const DECISION: Record<string, string> = {
+  LH: "배란 시기 예측 (가임기 확인)", hCG: "임신 여부 확인", glucose: "혈당 관리 (식사·약물 조절 판단 보조)",
+  cholesterol: "콜레스테롤 수치 확인 (진료 필요 여부 판단 보조)", "urine-cells": "요로 감염·혈뇨 가능성 확인 (진료 필요 여부 판단 보조)",
+};
 
 function getAt(obj: unknown, path: string): unknown {
   return path.split(".").reduce<unknown>((o, k) => (o && typeof o === "object" ? (o as Record<string, unknown>)[k] : undefined), obj);
