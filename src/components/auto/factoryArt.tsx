@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
-import type { DocState, FactoryDoc, FactoryFloor } from "../../lib/factory";
+import type { DocState, FactoryDoc, FactoryFloor, FloorId } from "../../lib/factory";
 
 // 문서 공장 2D·3D 화면이 함께 쓰는 상태 색·캐릭터·층 상세.
 
@@ -107,11 +107,74 @@ function AnimalHead({ sp, fur }: { sp: Species; fur: string }) {
   }
 }
 
+// ── 부서별 직업 캐릭터 (파스텔 클레이) ───────────────────
+/** 부서마다 옷·소품이 다르다. 상태는 옷이 아니라 발밑 링·배지로 보여 준다. */
+export const OUTFIT: Record<FloorId, { label: string; body: string; trim: string; prop: string }> = {
+  "7F": { label: "정장·결재 도장", body: "#5B6BA8", trim: "#F4F1EA", prop: "stamp" },
+  "6F": { label: "니트 조끼·서류철", body: "#A795D6", trim: "#FFFFFF", prop: "folder" },
+  "5F": { label: "후드티·노트북", body: "#7EC4EC", trim: "#E3F3FC", prop: "laptop" },
+  "4F": { label: "실험 가운·보안경", body: "#F7F8FA", trim: "#BFD8F2", prop: "tube" },
+  "3F": { label: "작업복·안전모", body: "#F4A261", trim: "#FFD54F", prop: "wrench" },
+  "2F": { label: "폴로 셔츠·돋보기", body: "#6CC9B0", trim: "#E4F7F1", prop: "magnifier" },
+  "1F": { label: "카디건·헤드셋", body: "#F5A9C4", trim: "#FFF1F6", prop: "headset" },
+};
+
+const RING: Record<DocState, string> = { done: "#4CC38A", writing: "#5B9CF5", blocked: "#F2A23C", todo: "#C9CDD6" };
+
+/** 클레이 몸통·팔·다리·복장 (머리 아래, viewBox 30×40) */
+function ClayBody({ dept, walking }: { dept: FloorId; walking: boolean }) {
+  const o = OUTFIT[dept];
+  const shade = "rgba(40,30,60,.14)";
+  return (
+    <g>
+      {/* 다리 */}
+      <g className={walking ? "factory-leg" : undefined} style={{ transformOrigin: "12.5px 30px" }}><rect x="10.6" y="29" width="3.8" height="8.6" rx="1.9" fill={dept === "3F" ? "#4E6E9E" : "#59607A"} /></g>
+      <g className={walking ? "factory-leg factory-leg-r" : undefined} style={{ transformOrigin: "17.5px 30px" }}><rect x="15.6" y="29" width="3.8" height="8.6" rx="1.9" fill={dept === "3F" ? "#4E6E9E" : "#59607A"} /></g>
+      {/* 팔 */}
+      <ellipse cx="7.6" cy="23.8" rx="2.1" ry="3.6" fill={o.body} transform="rotate(14 7.6 23.8)" />
+      <ellipse cx="22.4" cy="23.8" rx="2.1" ry="3.6" fill={o.body} transform="rotate(-14 22.4 23.8)" />
+      {/* 몸통 — 둥근 클레이 */}
+      <rect x="8.3" y="16.6" width="13.4" height="14.4" rx="6.2" fill={o.body} />
+      <ellipse cx="15" cy="29.4" rx="6" ry="1.6" fill={shade} />
+      <ellipse cx="12" cy="19.6" rx="2.6" ry="1.4" fill="#fff" opacity="0.38" />
+      {/* 복장 디테일 */}
+      {dept === "7F" && <><path d="M12.6 16.8 L15 21.6 L17.4 16.8 Z" fill={o.trim} /><path d="M14.4 18.4 L15.6 18.4 L16 23.4 L15 24.6 L14 23.4 Z" fill="#E25B6E" /></>}
+      {dept === "6F" && <><path d="M12.4 16.8 L15 20.4 L17.6 16.8 Z" fill={o.trim} /><circle cx="15" cy="23" r="0.55" fill="#fff" opacity=".8" /><circle cx="15" cy="25.4" r="0.55" fill="#fff" opacity=".8" /></>}
+      {dept === "5F" && <><path d="M10.4 17.4 Q15 21 19.6 17.4" stroke={o.trim} strokeWidth="1.4" fill="none" strokeLinecap="round" /><line x1="13.6" y1="19" x2="13.4" y2="22.4" stroke="#fff" strokeWidth="0.5" /><line x1="16.4" y1="19" x2="16.6" y2="22.4" stroke="#fff" strokeWidth="0.5" /><rect x="11.8" y="25" width="6.4" height="2.6" rx="1.2" fill={o.trim} opacity=".7" /></>}
+      {dept === "4F" && <><path d="M12.2 16.8 L15 22.6 L17.8 16.8" stroke="#D5DBE6" strokeWidth="0.9" fill="none" /><line x1="15" y1="22.6" x2="15" y2="30.4" stroke="#D5DBE6" strokeWidth="0.6" /><rect x="16.6" y="23.4" width="2.6" height="1.8" rx="0.4" fill={o.trim} /></>}
+      {dept === "3F" && <><rect x="10.6" y="16.8" width="1.4" height="7" rx="0.7" fill="#3E6B9E" opacity=".55" /><rect x="18" y="16.8" width="1.4" height="7" rx="0.7" fill="#3E6B9E" opacity=".55" /><rect x="12.2" y="21.4" width="5.6" height="3.2" rx="1" fill="#FFE08A" opacity=".85" /></>}
+      {dept === "2F" && <><path d="M11.6 16.8 L15 19.2 L18.4 16.8 L17 18.8 L15 19.8 L13 18.8 Z" fill={o.trim} /><circle cx="15" cy="21.2" r="0.5" fill="#fff" /></>}
+      {dept === "1F" && <><path d="M12.6 16.8 L15 20.6 L17.4 16.8 Z" fill={o.trim} />{[21.6, 23.8, 26].map((y) => <circle key={y} cx="15" cy={y} r="0.55" fill="#fff" />)}</>}
+    </g>
+  );
+}
+
+/** 소품 — 오른손(화면 오른쪽) */
+function ClayProp({ dept }: { dept: FloorId }) {
+  switch (dept) {
+    case "7F": return (<g transform="translate(22.6 24.6)"><rect x="-1.4" y="-3.6" width="2.8" height="3.2" rx="1.2" fill="#C0392B" /><rect x="-2.2" y="-0.6" width="4.4" height="1.8" rx="0.6" fill="#E25B6E" /></g>);
+    case "6F": return (<g transform="translate(23.2 24.4) rotate(-10)"><rect x="-2.6" y="-3.4" width="5.2" height="6.4" rx="0.8" fill="#F6C453" /><rect x="-1.8" y="-2.2" width="3.6" height="0.6" rx="0.3" fill="#fff" opacity=".85" /><rect x="-1.8" y="-0.9" width="3" height="0.6" rx="0.3" fill="#fff" opacity=".85" /></g>);
+    case "5F": return (<g transform="translate(15 27.2)"><rect x="-5.4" y="-1" width="10.8" height="1.4" rx="0.6" fill="#B7BDC9" /><path d="M-4.4 -1 L-3.6 -5.4 L3.6 -5.4 L4.4 -1 Z" fill="#D7DCE5" /><circle cx="0" cy="-3.2" r="0.6" fill="#9AA3B2" /></g>);
+    case "4F": return (<g transform="translate(23.4 23.6) rotate(12)"><rect x="-0.9" y="-4.2" width="1.8" height="6" rx="0.9" fill="#E9F2FB" stroke="#9FB8D3" strokeWidth="0.35" /><rect x="-0.9" y="-0.6" width="1.8" height="2.4" rx="0.9" fill="#F27BA6" /></g>);
+    case "3F": return (<g transform="translate(23.4 24.2) rotate(-28)"><rect x="-0.6" y="-2.4" width="1.2" height="6" rx="0.6" fill="#9AA3B2" /><circle cx="0" cy="-3" r="1.6" fill="#9AA3B2" /><circle cx="0" cy="-3.6" r="0.8" fill="#F4A261" /></g>);
+    case "2F": return (<g transform="translate(23.2 23.4)"><circle cx="0" cy="-1.4" r="2.2" fill="#E8F6FF" stroke="#7A8699" strokeWidth="0.8" /><rect x="0.9" y="0.3" width="1" height="3" rx="0.5" fill="#7A8699" transform="rotate(-35 1.4 1.8)" /></g>);
+    default: return null;
+  }
+}
+
+/** 머리 장식 — 안전모·보안경·헤드셋 (머리 위에 그린다) */
+function HeadGear({ dept }: { dept: FloorId }) {
+  if (dept === "3F") return (<g><path d="M7.6 8.2 Q8 1.6 15 1.4 Q22 1.6 22.4 8.2 Z" fill="#FFD54F" /><rect x="6.4" y="7.4" width="17.2" height="1.6" rx="0.8" fill="#F4C430" /><ellipse cx="12.4" cy="4" rx="2" ry="1" fill="#fff" opacity=".45" /></g>);
+  if (dept === "4F") return (<g><rect x="7.6" y="5.4" width="14.8" height="1" rx="0.5" fill="#7FA9D6" /><rect x="10.4" y="4.6" width="3.8" height="2.6" rx="1.2" fill="#CFE6FA" stroke="#7FA9D6" strokeWidth="0.5" /><rect x="15.8" y="4.6" width="3.8" height="2.6" rx="1.2" fill="#CFE6FA" stroke="#7FA9D6" strokeWidth="0.5" /></g>);
+  if (dept === "1F") return (<g fill="none"><path d="M7.8 9.6 Q8 2.2 15 2.2 Q22 2.2 22.2 9.6" stroke="#5B6070" strokeWidth="1" /><rect x="6.6" y="8.4" width="2.4" height="3.6" rx="1.1" fill="#F5A9C4" stroke="#5B6070" strokeWidth="0.5" /><path d="M7.8 12 Q8.4 15 11.6 14.4" stroke="#5B6070" strokeWidth="0.6" /><circle cx="11.8" cy="14.3" r="0.7" fill="#5B6070" /></g>);
+  return null;
+}
+
 /** 동물 얼굴 직원 — 사원증 셔츠·두 다리, 표정은 상태(완료·작성 중·대기·시작 전)에 따라 바뀐다. */
 /** mood가 있으면 문서 상태 대신 난이도 표정 (결과 화면) — 쉬움 미소 · 보통 · 어려움 땀 · 매우 어려움 비명 */
 export type FaceMood = "easy" | "normal" | "hard" | "scream";
 
-export function Minimi({ seed, state, shirt, walking, mood }: { seed: string; state: DocState; shirt: string; walking: boolean; mood?: FaceMood }) {
+export function Minimi({ seed, state, shirt, walking, mood, dept }: { seed: string; state: DocState; shirt: string; walking: boolean; mood?: FaceMood; dept?: FloorId }) {
   const n = seedOf(seed);
   const sp = SPECIES[n % SPECIES.length];
   const furs = FUR[sp];
@@ -143,6 +206,31 @@ export function Minimi({ seed, state, shirt, walking, mood }: { seed: string; st
     : state === "done" ? <path d="M13.6 13 Q15 14.7 16.4 13 Z" fill="#D9535F" />
     : state === "blocked" ? <path d="M13.8 14 Q15 13.1 16.2 14" stroke={line} strokeWidth="0.65" fill="none" strokeLinecap="round" />
     : <path d="M13.8 12.9 Q14.4 13.6 15 12.9 Q15.6 13.6 16.2 12.9" stroke={line} strokeWidth="0.6" fill="none" strokeLinecap="round" />;
+  const face = (
+    <>
+      <AnimalHead sp={sp} fur={fur} />
+      {dept && <ellipse cx="12.2" cy="6" rx="2.6" ry="1.5" fill="#fff" opacity="0.3" />}
+      {eyes}
+      <ellipse cx="10.9" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
+      <ellipse cx="19.1" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
+      {mouth}
+      {!mood && state === "blocked" && <path d="M22 4.6 Q23.2 6.4 22 7.1 Q20.8 6.4 22 4.6 Z" fill="#7CC4F0" />}
+      {moodFace?.extra}
+    </>
+  );
+  if (dept) {
+    // 파스텔 클레이 직업 캐릭터 — 발밑 링 색이 상태, 시작 전은 흐리게
+    return (
+      <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible", opacity: state === "todo" ? 0.72 : 1 }} data-dept={dept}>
+        <ellipse cx="15" cy="38.4" rx="8.2" ry="2.6" fill="rgba(60,40,90,.12)" />
+        <ellipse cx="15" cy="38.2" rx="7" ry="2" fill="none" stroke={RING[state]} strokeWidth="1.1" opacity="0.9" />
+        <ClayBody dept={dept} walking={walking} />
+        {face}
+        <HeadGear dept={dept} />
+        <ClayProp dept={dept} />
+      </svg>
+    );
+  }
   return (
     <svg width="30" height="40" viewBox="0 0 30 40" aria-hidden style={{ overflow: "visible" }}>
       <ellipse cx="15" cy="38.6" rx="7.5" ry="2.4" fill="rgba(0,0,0,.14)" />
@@ -153,13 +241,7 @@ export function Minimi({ seed, state, shirt, walking, mood }: { seed: string; st
       <rect x="8.5" y="16.5" width="13" height="15" rx="5" fill={shirt} />
       <rect x="12.1" y="20" width="5.8" height="7" rx="1.1" fill="#fff" opacity="0.92" />
       <rect x="13.2" y="21.3" width="3.6" height="1" rx="0.5" fill={shirt} opacity="0.7" />
-      <AnimalHead sp={sp} fur={fur} />
-      {eyes}
-      <ellipse cx="10.9" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
-      <ellipse cx="19.1" cy="12" rx="1.1" ry="0.6" fill="#F59A9A" opacity="0.55" />
-      {mouth}
-      {!mood && state === "blocked" && <path d="M22 4.6 Q23.2 6.4 22 7.1 Q20.8 6.4 22 4.6 Z" fill="#7CC4F0" />}
-      {moodFace?.extra}
+      {face}
     </svg>
   );
 }
@@ -245,7 +327,7 @@ function moodParts(mood: FaceMood, ink: string, line: string, panda: boolean): {
 }
 
 /** 문서 한 장 = 직원 한 명. 상태에 따라 자리·색·동작이 바뀐다. */
-export function Worker({ d, color, walking = false }: { d: FactoryDoc; color: string; walking?: boolean }) {
+export function Worker({ d, color, walking = false, dept }: { d: FactoryDoc; color: string; walking?: boolean; dept?: FloorId }) {
   const st = STATE[d.state];
   const body = d.state === "todo" ? "var(--border-strong)" : d.state === "done" ? "var(--success)" : d.state === "blocked" ? "var(--warning)" : color;
   return (
@@ -261,7 +343,7 @@ export function Worker({ d, color, walking = false }: { d: FactoryDoc; color: st
           {[0, 1, 2].map((i) => <span key={i} className="rounded-full" style={{ width: 3, height: 3, background: color, animation: `factory-dot 1.2s ${i * 0.15}s infinite` }} />)}
         </span>
       )}
-      <Minimi seed={d.id} state={d.state} shirt={body} walking={walking} />
+      <Minimi seed={d.id} state={d.state} shirt={body} walking={walking} dept={dept} />
       {d.state === "done" && (
         <span aria-hidden className="absolute inline-grid place-items-center rounded-full" style={{ top: -4, right: 0, width: 13, height: 13, background: "var(--success)", color: "var(--text-on-color)" }}>
           <Check size={9} strokeWidth={3.5} />

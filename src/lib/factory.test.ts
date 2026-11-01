@@ -41,3 +41,10 @@ describe("문서 공장", () => {
     expect(f.floors.find((x) => x.id === "7F")!.tasks.some((t) => t.id === "confirm-class")).toBe(false);
   });
 });
+
+import { OUTFIT } from "../components/auto/factoryArt";
+describe("부서별 직업 캐릭터", () => {
+  it("모든 층에 복장이 있다", () => {
+    for (const f of FLOORS) expect(OUTFIT[f.id]?.label).toBeTruthy();
+  });
+});

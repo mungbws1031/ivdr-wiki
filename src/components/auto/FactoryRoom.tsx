@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import type { DocState, FactoryDoc, FactoryFloor } from "../../lib/factory";
-import { FloorDetail, Minimi, pct, seedOf, STATE } from "./factoryArt";
+import { FloorDetail, Minimi, OUTFIT, pct, seedOf, STATE } from "./factoryArt";
 
 // 미니룸 보기 — 모든 부서를 한 방에 모아 한눈에 본다 (싸이월드 미니룸처럼 고정 아이소메트릭).
 // 바닥 좌표(타일 x·y)를 화면 좌표로 바꿔 그린다: x는 오른쪽 아래, y는 왼쪽 아래 방향.
@@ -44,14 +44,14 @@ function Desk({ on, color }: { on: boolean; color: string }) {
   const p = (x: number, y: number, z = 0) => `${(x - y) * C + b * C},${(x + y) * 0.5 - z + 14}`;
   return (
     <svg width={(a + b) * C} height={(a + b) * 0.5 + 16} aria-hidden style={{ overflow: "visible" }}>
-      <polygon points={`${p(0, b, h)} ${p(a, b, h)} ${p(a, b)} ${p(0, b)}`} fill="#B98654" />
-      <polygon points={`${p(a, 0, h)} ${p(a, b, h)} ${p(a, b)} ${p(a, 0)}`} fill="#A0703F" />
-      <polygon points={`${p(0, 0, h)} ${p(a, 0, h)} ${p(a, b, h)} ${p(0, b, h)}`} fill="#DDB07A" stroke="#C39461" strokeWidth="0.6" />
+      <polygon points={`${p(0, b, h)} ${p(a, b, h)} ${p(a, b)} ${p(0, b)}`} fill={`color-mix(in srgb, ${color} 34%, #E6DCEF)`} />
+      <polygon points={`${p(a, 0, h)} ${p(a, b, h)} ${p(a, b)} ${p(a, 0)}`} fill={`color-mix(in srgb, ${color} 42%, #D8CCE6)`} />
+      <polygon points={`${p(0, 0, h)} ${p(a, 0, h)} ${p(a, b, h)} ${p(0, b, h)}`} fill={`color-mix(in srgb, ${color} 18%, #FFFFFF)`} stroke="#FFFFFF" strokeWidth="0.9" strokeLinejoin="round" />
       {/* 키보드 */}
       <polygon points={`${p(a * 0.32, b * 0.55, h + 0.4)} ${p(a * 0.68, b * 0.55, h + 0.4)} ${p(a * 0.68, b * 0.8, h + 0.4)} ${p(a * 0.32, b * 0.8, h + 0.4)}`} fill="#E6E8EE" />
       {/* 모니터 (뒷면이 보임) + 받침 */}
-      <polygon points={`${p(a * 0.48, b * 0.3, h)} ${p(a * 0.52, b * 0.3, h)} ${p(a * 0.52, b * 0.3, h + 4)} ${p(a * 0.48, b * 0.3, h + 4)}`} fill="#4A4F5C" />
-      <polygon points={`${p(a * 0.22, b * 0.3, h + 4)} ${p(a * 0.78, b * 0.3, h + 4)} ${p(a * 0.78, b * 0.3, h + 15)} ${p(a * 0.22, b * 0.3, h + 15)}`} fill={on ? color : "#2F333D"} stroke={on ? "#fff" : "#1F2229"} strokeWidth="0.6" />
+      <polygon points={`${p(a * 0.48, b * 0.3, h)} ${p(a * 0.52, b * 0.3, h)} ${p(a * 0.52, b * 0.3, h + 4)} ${p(a * 0.48, b * 0.3, h + 4)}`} fill="#8B90A8" />
+      <polygon points={`${p(a * 0.22, b * 0.3, h + 4)} ${p(a * 0.78, b * 0.3, h + 4)} ${p(a * 0.78, b * 0.3, h + 15)} ${p(a * 0.22, b * 0.3, h + 15)}`} fill={on ? `color-mix(in srgb, ${color} 55%, #fff)` : "#5A5F78"} stroke="#fff" strokeWidth="1" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -78,12 +78,13 @@ function Plant({ o, x, y, big = false }: { o: [number, number]; x: number; y: nu
   const r = big ? 1.25 : 1;
   return (
     <g>
-      <IsoBox o={o} x0={x - 0.4} y0={y - 0.4} x1={x + 0.4} y1={y + 0.4} h={9} top="#E9ECEF" left="#C9CED6" right="#B5BBC5" />
+      <IsoBox o={o} x0={x - 0.4} y0={y - 0.4} x1={x + 0.4} y1={y + 0.4} h={9} top="#FFE3D3" left="#F7C7B0" right="#EDB49B" />
       <g transform={`translate(${cx} ${cy - 9}) scale(${r})`}>
-        <circle cx="0" cy="-10" r="8" fill="#4FA35A" />
-        <circle cx="-7" cy="-4" r="6" fill="#62B86C" />
-        <circle cx="7" cy="-5" r="6" fill="#62B86C" />
-        <circle cx="1" cy="-17" r="5.5" fill="#74C77D" />
+        <circle cx="0" cy="-10" r="8" fill="#8FD3A6" />
+        <circle cx="-7" cy="-4" r="6" fill="#A6DEB8" />
+        <circle cx="7" cy="-5" r="6" fill="#A6DEB8" />
+        <circle cx="1" cy="-17" r="5.5" fill="#BDE8CA" />
+        <ellipse cx="-2.5" cy="-19" rx="2.4" ry="1.4" fill="#fff" opacity=".45" />
       </g>
     </g>
   );
@@ -121,9 +122,9 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
   return (
     <div className="flex flex-col" style={{ gap: "var(--s-3)" }}>
       {/* 상단 현황 — 진행률 + 상태별 인원 */}
-      <div className="rounded-[var(--r-md)] flex flex-wrap items-center" style={{ gap: "10px 14px", padding: "10px 16px", background: "#1F2430", color: "#fff" }} role="status">
+      <div className="rounded-[var(--r-md)] flex flex-wrap items-center" style={{ gap: "10px 14px", padding: "10px 16px", background: "linear-gradient(120deg, #6E62C9, #9D7FE0 55%, #F29AC0)", color: "#fff", boxShadow: "0 6px 18px rgba(110,98,201,.25)" }} role="status">
         <span className="inline-flex items-center font-extrabold" style={{ gap: 8, fontSize: "var(--t-base)" }}>
-          <span className="inline-grid place-items-center rounded-[6px]" style={{ width: 26, height: 26, background: "#F5B83D", color: "#1F2430", fontSize: 12 }}>IV</span>
+          <span className="inline-grid place-items-center rounded-[6px]" style={{ width: 26, height: 26, background: "#fff", color: "#6E62C9", fontSize: 12, borderRadius: 9 }}>IV</span>
           IVDR 문서 공장 오피스
         </span>
         <span className="flex items-center" style={{ gap: 8, minWidth: 160, flex: "1 1 160px" }}>
@@ -134,11 +135,11 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
         </span>
         <span className="flex flex-wrap" style={{ gap: 6 }}>
           {([["작성 중", counts.writing, "#4C8DF6"], ["사람 대기", counts.blocked, "#F0A03C"], ["완료", counts.done, "#3FB872"], ["할 일 ✋", overall.tasks, "#E8618C"]] as const).map(([k, v, c]) => (
-            <span key={k} className="inline-flex items-center rounded-full font-bold" style={{ gap: 5, padding: "3px 10px", fontSize: 12, background: "rgba(255,255,255,.08)", border: `1px solid ${c}` }}>
+            <span key={k} className="inline-flex items-center rounded-full font-bold" style={{ gap: 5, padding: "3px 10px", fontSize: 12, background: "rgba(255,255,255,.2)", border: "1px solid rgba(255,255,255,.35)" }}>
               <span className="rounded-full" style={{ width: 7, height: 7, background: c }} />{k} <span style={{ fontVariantNumeric: "tabular-nums" }}>{v}</span>
             </span>
           ))}
-          <button type="button" onClick={() => setTags((x) => !x)} aria-pressed={tags} className="inline-flex items-center rounded-full font-bold" style={{ padding: "3px 10px", fontSize: 12, background: tags ? "#fff" : "transparent", color: tags ? "#1F2430" : "#fff", border: "1px solid rgba(255,255,255,.5)" }}>
+          <button type="button" onClick={() => setTags((x) => !x)} aria-pressed={tags} className="inline-flex items-center rounded-full font-bold" style={{ padding: "3px 10px", fontSize: 12, background: tags ? "#fff" : "transparent", color: tags ? "#6E62C9" : "#fff", border: "1px solid rgba(255,255,255,.5)" }}>
             이름표 {tags ? "켜짐" : "보기"}
           </button>
         </span>
@@ -156,21 +157,20 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
         ))}
       </div>
 
-      <div ref={box} className="rounded-[var(--r-lg)] border overflow-hidden" style={{ borderColor: "var(--border)", background: "linear-gradient(to bottom, color-mix(in srgb, #FFC9DE 22%, var(--bg)), var(--bg))" }}>
+      <div ref={box} className="rounded-[var(--r-lg)] border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--room-bg, linear-gradient(160deg, #F3EEFF, #FFF1EA 60%, #EAF7F2))" }}>
         <div className="relative mx-auto" style={{ width: DW * scale, height: DH * scale }}>
           <div className="absolute left-0 top-0" style={{ width: DW, height: DH, transform: `scale(${scale})`, transformOrigin: "0 0" }}>
             <svg width={DW} height={DH} className="absolute left-0 top-0" aria-hidden>
               <defs>
                 {/* 원목 마루 (타일 좌표, 판자 한 장 = 4×0.8) */}
-                <pattern id="mr-floor" width="4" height="1.6" patternUnits="userSpaceOnUse">
-                  <rect width="4" height="1.6" fill="#E9D5B7" />
-                  <rect y="0.8" width="4" height="0.8" fill="#E3CCAA" />
-                  <rect x="2" y="0.8" width="0.04" height="0.8" fill="#D2B68E" />
-                  <rect x="0" y="0" width="0.04" height="0.8" fill="#D2B68E" />
+                {/* 크림색 둥근 타일 (타일 좌표 2×2) */}
+                <pattern id="mr-floor" width="2" height="2" patternUnits="userSpaceOnUse">
+                  <rect width="2" height="2" fill="var(--room-floor, #F7F0E8)" />
+                  <rect x="0.08" y="0.08" width="1.84" height="1.84" rx="0.35" fill="var(--room-tile, #FBF6F0)" />
                 </pattern>
                 <linearGradient id="mr-sky" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#9FD1F5" />
-                  <stop offset="1" stopColor="#E3F2FC" />
+                  <stop offset="0" stopColor="var(--room-wall-top, #E7E1FA)" />
+                  <stop offset="1" stopColor="var(--room-wall-bottom, #FCEDE4)" />
                 </linearGradient>
               </defs>
               {/* 뒤쪽 벽 두 장 = 통유리창 + 도시 풍경 */}
@@ -181,24 +181,23 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
                   {/* 건물 실루엣 */}
                   {Array.from({ length: Math.ceil(len / 1.6) }, (_, i) => {
                     const hgt = 22 + ((i * 37 + wi * 11) % 7) * 8;
-                    return <rect key={i} x={i * 1.6 + 0.1} y={-hgt - 8} width={1.3} height={hgt} fill={i % 3 ? "#B9CFE0" : "#A7C0D6"} opacity="0.8" />;
+                    return <rect key={i} x={i * 1.6 + 0.1} y={-hgt - 8} width={1.3} height={hgt} rx="0.4" fill={["#D9D0F5", "#F8D5E3", "#CFEBDF"][i % 3]} opacity="0.75" />;
                   })}
                   {/* 창틀 */}
-                  {Array.from({ length: Math.floor(len / 3.2) + 1 }, (_, i) => <rect key={i} x={i * 3.2 - 0.08} y={-WALL} width={0.16} height={WALL} fill="#EEF2F6" />)}
-                  <rect x={0} y={-WALL} width={len} height={5} fill="#D9DEE5" />
-                  <rect x={0} y={-8} width={len} height={8} fill="#C6CCD5" />
+                  {Array.from({ length: Math.floor(len / 3.2) + 1 }, (_, i) => <rect key={i} x={i * 3.2 - 0.1} y={-WALL} width={0.2} height={WALL} fill="#FFFFFF" opacity=".85" />)}
+                  <rect x={0} y={-WALL} width={len} height={5} fill="#FFFFFF" opacity=".9" />
+                  <rect x={0} y={-9} width={len} height={9} fill="var(--room-baseboard, #EADFF5)" />
                 </g>
               ))}
               {/* 바닥 + 부서 구역(러그) */}
               <g transform={m(1, 1)}>
                 <rect width={X} height={Y} fill="url(#mr-floor)" />
                 {zones.map((z) => (
-                  <rect key={z.f.id} x={z.x + 0.35} y={z.y + 0.35} width={z.w - 0.7} height={z.h - 0.7} rx="0.6"
-                    fill={`color-mix(in srgb, ${z.f.color} ${sel === z.f.id ? 30 : 12}%, transparent)`}
-                    stroke={z.f.color} strokeWidth={sel === z.f.id ? 0.22 : 0.08} strokeDasharray={sel === z.f.id ? undefined : "0.4 0.25"} />
+                  <rect key={z.f.id} x={z.x + 0.35} y={z.y + 0.35} width={z.w - 0.7} height={z.h - 0.7} rx="1.2" fill={`color-mix(in srgb, ${z.f.color} ${sel === z.f.id ? 26 : 11}%, transparent)`}
+                    stroke={`color-mix(in srgb, ${z.f.color} 55%, #fff)`} strokeWidth={sel === z.f.id ? 0.24 : 0.1} />
                 ))}
                 {/* 접수 라운지 러그 */}
-                {zones.filter((z) => z.f.id === "1F").map((z) => <rect key="rug" x={z.x + 1} y={z.y + z.h - 4} width={Math.min(9, z.w - 2)} height={3.4} rx="1.2" fill="#F4E3E9" stroke="#E7C6D2" strokeWidth="0.08" />)}
+                {zones.filter((z) => z.f.id === "1F").map((z) => <rect key="rug" x={z.x + 1} y={z.y + z.h - 4} width={Math.min(9, z.w - 2)} height={3.4} rx="1.7" fill="#FCE4EE" stroke="#F6C6D9" strokeWidth="0.1" />)}
               </g>
 
               {/* 가구 — 결재실은 유리벽 방 + 큰 결재 책상, 접수는 소파 라운지 */}
@@ -208,10 +207,10 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
                   const g = (x0: number, y0: number, x1: number, y1: number) => { const [a1, b1] = iso(ox, oy, x0, y0); const [a2, b2] = iso(ox, oy, x1, y1); return `${a1},${b1} ${a2},${b2} ${a2},${b2 - 44} ${a1},${b1 - 44}`; };
                   return (
                     <g key={z.f.id}>
-                      <IsoBox o={o} x0={z.x + z.w / 2 - 2.4} y0={z.y + 0.9} x1={z.x + z.w / 2 + 2.4} y1={z.y + 2.2} h={11} top="#8A5A3B" left="#6E452C" right="#5C3922" />
-                      <IsoBox o={o} x0={z.x + z.w / 2 - 0.6} y0={z.y + 1.1} x1={z.x + z.w / 2 + 0.6} y1={z.y + 1.4} h={6} z={11} top="#2F333D" left="#2F333D" right="#22252C" />
-                      <polygon points={g(z.x + 0.2, ey, ex, ey)} fill="rgba(190,225,255,.22)" stroke="rgba(255,255,255,.9)" strokeWidth="1.2" />
-                      <polygon points={g(ex, z.y + 0.2, ex, ey)} fill="rgba(190,225,255,.18)" stroke="rgba(255,255,255,.9)" strokeWidth="1.2" />
+                      <IsoBox o={o} x0={z.x + z.w / 2 - 2.4} y0={z.y + 0.9} x1={z.x + z.w / 2 + 2.4} y1={z.y + 2.2} h={11} top="#D9D2F5" left="#B9AEE6" right="#A99DDC" />
+                      <IsoBox o={o} x0={z.x + z.w / 2 - 0.6} y0={z.y + 1.1} x1={z.x + z.w / 2 + 0.6} y1={z.y + 1.4} h={6} z={11} top="#7D73C9" left="#6E62C9" right="#5E52B8" />
+                      <polygon points={g(z.x + 0.2, ey, ex, ey)} fill="rgba(214,200,255,.22)" stroke="rgba(255,255,255,.95)" strokeWidth="1.6" strokeLinejoin="round" />
+                      <polygon points={g(ex, z.y + 0.2, ex, ey)} fill="rgba(255,210,230,.18)" stroke="rgba(255,255,255,.95)" strokeWidth="1.6" strokeLinejoin="round" />
                     </g>
                   );
                 }
@@ -219,10 +218,10 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
                   const y1 = z.y + z.h - 0.9, x0 = z.x + 1.4;
                   return (
                     <g key={z.f.id}>
-                      <IsoBox o={o} x0={x0} y0={y1 - 2.6} x1={x0 + 4.4} y1={y1 - 1.9} h={15} top="#EADFD3" left="#D9CBBB" right="#C9B9A6" />
-                      <IsoBox o={o} x0={x0} y0={y1 - 1.9} x1={x0 + 4.4} y1={y1 - 0.9} h={7} top="#F2E8DC" left="#DCCDBC" right="#CDBCA8" />
-                      <IsoBox o={o} x0={x0 + 1.2} y0={y1 - 0.6} x1={x0 + 3.2} y1={y1} h={5} top="#C99A6B" left="#A87A4D" right="#946A42" />
-                      <IsoBox o={o} x0={x0 + 5.2} y0={y1 - 2.2} x1={x0 + 6.6} y1={y1 - 0.8} h={8} top="#4FA3A0" left="#3D8986" right="#337572" />
+                      <IsoBox o={o} x0={x0} y0={y1 - 2.6} x1={x0 + 4.4} y1={y1 - 1.9} h={15} top="#FBD3E2" left="#F4B8CF" right="#EBA6C1" />
+                      <IsoBox o={o} x0={x0} y0={y1 - 1.9} x1={x0 + 4.4} y1={y1 - 0.9} h={7} top="#FDE2EC" left="#F5C3D6" right="#EDB0C8" />
+                      <IsoBox o={o} x0={x0 + 1.2} y0={y1 - 0.6} x1={x0 + 3.2} y1={y1} h={5} top="#FFE7B8" left="#F6D08F" right="#ECC07A" />
+                      <IsoBox o={o} x0={x0 + 5.2} y0={y1 - 2.2} x1={x0 + 6.6} y1={y1 - 0.8} h={8} top="#B7E4D6" left="#97D3C1" right="#84C6B2" />
                     </g>
                   );
                 }
@@ -241,7 +240,7 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
                 <button key={z.f.id} type="button" onClick={() => setSel((x) => (x === z.f.id ? null : z.f.id))} aria-pressed={sel === z.f.id}
                   aria-label={`간판 ${z.f.id} ${z.f.name} — 진행률 ${pct(z.f.progress)}, 할 일 ${z.f.tasks.length}`}
                   className="absolute inline-flex items-center rounded-full whitespace-nowrap font-extrabold"
-                  style={{ left: sx - 12, top: sy - 12, zIndex: 5000, gap: 5, padding: "2px 9px", fontSize: 11, background: `linear-gradient(to right, color-mix(in srgb, ${z.f.color} 26%, #fff) ${pct(z.f.progress)}, #fff ${pct(z.f.progress)})`, border: `2px solid ${z.f.color}`, boxShadow: "0 2px 0 rgba(0,0,0,.12)", color: "#2B2321" }}>
+                  style={{ left: sx - 12, top: sy - 12, zIndex: 5000, gap: 5, padding: "2px 9px", fontSize: 11, background: `linear-gradient(to right, color-mix(in srgb, ${z.f.color} 26%, #fff) ${pct(z.f.progress)}, #fff ${pct(z.f.progress)})`, border: `2px solid color-mix(in srgb, ${z.f.color} 60%, #fff)`, boxShadow: "0 4px 10px rgba(90,70,140,.18)", color: "#2B2321" }}>
                   <span style={{ color: z.f.color }}>{z.f.id}</span> {z.f.name}
                   <span style={{ fontVariantNumeric: "tabular-nums" }}>{pct(z.f.progress)}</span>
                   {z.f.tasks.length > 0 && <span style={{ color: "#C26A00" }}>✋{z.f.tasks.length}</span>}
@@ -268,7 +267,7 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
                 const [hx, hy] = iso(ox, oy, z.x + 1.8 + (i % perRow) * 2.2, z.y + 3.6 + Math.floor(i / perRow) * 3.6);
                 return (
                   <Link key={t.id} to={t.to} title={`${t.title} — ${t.why}`} aria-label={`할 일: ${t.title}`} className="absolute block" style={{ left: hx - 15, top: hy - 38, zIndex: Math.round(hy), width: 30, height: 40, animation: "factory-bob 1.6s ease-in-out infinite", animationDelay: `${-(i % 5) * 0.3}s` }}>
-                    <Minimi seed={t.id} state="blocked" shirt="#FFC266" walking={false} />
+                    <Minimi seed={t.id} state="blocked" shirt="#FFC266" walking={false} dept={z.f.id} />
                     <span aria-hidden className="absolute" style={{ top: -6, right: -6, fontSize: 12 }}>✋</span>
                   </Link>
                 );
@@ -286,8 +285,17 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
           </div>
         </div>
       </div>
+      {/* 부서별 직원 범례 — 옷·소품으로 부서를 구분 */}
+      <ul className="flex flex-wrap" style={{ gap: 8 }} aria-label="부서별 직원">
+        {floors.map((f) => (
+          <li key={f.id} className="inline-flex items-center rounded-full" style={{ gap: 6, padding: "2px 10px 2px 2px", background: "var(--surface)", border: "1px solid var(--border)", fontSize: "var(--t-xs)" }}>
+            <span className="inline-block" style={{ width: 30, height: 40, overflow: "visible" }}><Minimi seed={`legend-${f.id}`} state="done" shirt={f.color} walking={false} dept={f.id} /></span>
+            <span><b className="text-text">{f.id} {f.name}</b> <span className="text-text-subtle">{OUTFIT[f.id].label}</span></span>
+          </li>
+        ))}
+      </ul>
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
-        시작 전·완료 직원은 돌아다니고, 작성 중이면 모니터 앞에서 일하고, 사람 대기면 "대기" 말풍선이 뜹니다. 직원에 마우스를 올리면 이름표가 보이고 멈춥니다. 결재실·접수에는 사람이 할 일(✋)이 줄을 서 있습니다. 부서 간판을 누르면 목록이 열립니다.
+        발밑 링 색이 상태입니다 (초록 완료 · 파랑 작성 중 · 주황 사람 대기 · 회색 시작 전). 시작 전·완료 직원은 돌아다니고, 작성 중이면 모니터 앞에서 일하고, 사람 대기면 "대기" 말풍선이 뜹니다. 직원에 마우스를 올리면 이름표가 보이고 멈춥니다. 결재실·접수에는 사람이 할 일(✋)이 줄을 서 있습니다. 부서 간판을 누르면 목록이 열립니다.
       </p>
 
       <Briefing floors={floors} overall={overall} counts={counts} />
@@ -346,7 +354,7 @@ function Spot({ d, color, hx, hy, zone, tx, ty, tags }: { d: FactoryDoc; color: 
         {d.title.length > 9 ? `${d.title.slice(0, 9)}…` : d.title}
       </span>
       <span className="block" style={{ animation: d.state === "blocked" ? "factory-bob 1.6s ease-in-out infinite" : undefined }}>
-        <Minimi seed={d.id} state={d.state} shirt={shirt} walking={walking} />
+        <Minimi seed={d.id} state={d.state} shirt={shirt} walking={walking} dept={zone.f.id} />
       </span>
       {d.state === "done" && <span aria-hidden className="absolute inline-grid place-items-center rounded-full font-extrabold" style={{ top: -3, right: -3, width: 12, height: 12, fontSize: 8, background: "var(--success)", color: "#fff" }}>✓</span>}
     </Link>
@@ -381,7 +389,7 @@ function Briefing({ floors, overall, counts }: { floors: FactoryFloor[]; overall
     <section className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--border)", background: "var(--bg)", padding: "var(--s-4)" }} aria-label="비서 브리핑">
       <div className="flex items-center" style={{ gap: 10, marginBottom: "var(--s-3)" }}>
         <span className="inline-grid place-items-center rounded-full overflow-hidden" style={{ width: 44, height: 44, background: "#FDE7EF" }}>
-          <span style={{ transform: "scale(1.6) translateY(5px)" }}><Minimi seed="secretary-2" state="done" shirt="#E8618C" walking={false} /></span>
+          <span style={{ transform: "scale(1.6) translateY(5px)" }}><Minimi seed="secretary-2" state="done" shirt="#E8618C" walking={false} dept="1F" /></span>
         </span>
         <span>
           <span className="block font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>비서 · 오늘의 브리핑</span>

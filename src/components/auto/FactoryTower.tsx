@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import type { FactoryDoc, FactoryFloor, FactoryTask } from "../../lib/factory";
+import type { FactoryDoc, FactoryFloor, FactoryTask, FloorId } from "../../lib/factory";
 import { FloorDetail, Minimi, pct, seedOf, STATE } from "./factoryArt";
 
 // 건물 단면 보기 — 고층 빌딩을 잘라 본 모습. 층마다 이름 띠, 부서별 실내, 가운데 엘리베이터.
@@ -132,7 +132,7 @@ function FrontDesk({ on, color }: { on: boolean; color: string }) {
   );
 }
 
-function Person({ d, color, walk }: { d: FactoryDoc; color: string; walk: number }) {
+function Person({ d, color, walk, dept }: { d: FactoryDoc; color: string; walk: number; dept: FloorId }) {
   const st = STATE[d.state];
   const shirt = d.state === "todo" ? `color-mix(in srgb, ${color} 70%, #fff)` : d.state === "done" ? "#7ED3A0" : d.state === "blocked" ? "#FFC266" : color;
   const walking = d.state === "todo" || d.state === "done";
@@ -151,7 +151,7 @@ function Person({ d, color, walk }: { d: FactoryDoc; color: string; walk: number
           {d.title.length > 10 ? `${d.title.slice(0, 10)}…` : d.title}
         </span>
         <span className={walking ? "block tower-flip" : "block"} style={{ ...(walking ? style : undefined), animation: d.state === "blocked" ? "factory-bob 1.6s ease-in-out infinite" : undefined }}>
-          <Minimi seed={d.id} state={d.state} shirt={shirt} walking={walking} />
+          <Minimi seed={d.id} state={d.state} shirt={shirt} walking={walking} dept={dept} />
         </span>
         {d.state === "done" && <span aria-hidden className="absolute inline-grid place-items-center rounded-full font-extrabold" style={{ top: -3, right: -3, width: 12, height: 12, fontSize: 8, background: "var(--success)", color: "#fff" }}>✓</span>}
       </Link>
@@ -159,10 +159,10 @@ function Person({ d, color, walk }: { d: FactoryDoc; color: string; walk: number
   );
 }
 
-function TaskPerson({ t }: { t: FactoryTask }) {
+function TaskPerson({ t, dept }: { t: FactoryTask; dept: FloorId }) {
   return (
     <Link to={t.to} title={`${t.title} — ${t.why}`} aria-label={`할 일: ${t.title}`} className="relative block" style={{ width: 30, height: 40, animation: "factory-bob 1.6s ease-in-out infinite" }}>
-      <Minimi seed={t.id} state="blocked" shirt="#FFC266" walking={false} />
+      <Minimi seed={t.id} state="blocked" shirt="#FFC266" walking={false} dept={dept} />
       <span aria-hidden className="absolute" style={{ top: -6, right: -6, fontSize: 12 }}>✋</span>
     </Link>
   );
@@ -209,7 +209,7 @@ function TowerFloor({ f, open, onToggle }: { f: FactoryFloor; open: boolean; onT
           const walk = Math.round((n % 2 ? 1 : -1) * Math.min(step * 0.42, 22));
           return (
             <div key={p.kind === "doc" ? p.d.id : p.t.id} className="absolute" style={{ left: cx - 15, bottom: 6 }}>
-              {p.kind === "doc" ? <Person d={p.d} color={f.color} walk={walk} /> : <TaskPerson t={p.t} />}
+              {p.kind === "doc" ? <Person d={p.d} color={f.color} walk={walk} dept={f.id} /> : <TaskPerson t={p.t} dept={f.id} />}
               {p.kind === "doc" && (
                 <div className="absolute pointer-events-none" style={{ left: -5, bottom: -6 }}>
                   <FrontDesk on={p.d.state === "writing"} color={f.color} />
