@@ -385,7 +385,7 @@ export function DocumentWorkspace() {
         {/* ── 미니 헤더: 1-2줄만 쓰고 바로 글쓰기 ─────────────── */}
         <div className="flex flex-wrap items-start gap-x-4 gap-y-2" style={{ marginBottom: "var(--s-4)" }}>
           {/* 왼쪽: 배지 + 브레드크럼 + 제목 + 목적 */}
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0" style={{ flex: "1 1 320px" }}>
             <div className="flex flex-wrap items-center gap-1.5" style={{ marginBottom: "var(--s-1)" }}>
               <span
                 className="inline-flex items-center rounded-full font-bold text-text-on-color"
@@ -481,30 +481,8 @@ export function DocumentWorkspace() {
 
           {/* 작성 영역 — 바로 시작 */}
           <div className="flex flex-col" style={{ gap: "var(--s-3)" }}>
-
-            {/* 문서 작성 패키지 — 가장 먼저 반갑게 맞이 (가이드·소스·지침서·참고문서) */}
-            <WritingKit doc={doc} color={color} />
-
-            {/* 계산 도구 (해당 있을 때만) */}
-            {doc.calcTools && doc.calcTools.length > 0 && (
-              <div id="calc-tools" style={{ scrollMarginTop: 80 }}>
-                <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)", marginTop: "var(--s-2)" }}>
-                  <Calculator size={16} style={{ color: "var(--warning)" }} aria-hidden />
-                  <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>내장 계산 도구</h2>
-                  <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-                    {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
-                  </span>
-                </div>
-                {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
-                {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
-                {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
-                {doc.calcTools.includes("lod-calc") && <LodCalc />}
-                {doc.calcTools.includes("mkt") && <MktCalc />}
-              </div>
-            )}
-
             {/* 템플릿 — 실제 작성 영역 */}
-            <div className="flex items-center gap-2" style={{ marginTop: "var(--s-2)" }}>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1" style={{ marginTop: "var(--s-2)" }}>
               <FileText size={16} style={{ color }} aria-hidden />
               <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>여기에 작성해요</h2>
               <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
@@ -533,6 +511,9 @@ export function DocumentWorkspace() {
                 <Link to="/auto" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>제품 스펙 →</Link>
               </div>
             )}
+
+            {/* 문서 작성 패키지 — 자동작성 문서는 접힌 한 줄로 (U-4) */}
+            <WritingKit doc={doc} color={color} defaultOpen={!autoFilled} />
 
             {impact && review && rawDoc && <ImpactPanel impact={impact} since={review.at} onReviewed={() => saveReview(rawDoc.id, snapshotOf(rawDoc, rawCtx))} />}
 
@@ -586,6 +567,24 @@ export function DocumentWorkspace() {
                 </section>
               );
             })}
+
+            {/* 계산 도구 (해당 있을 때만) */}
+            {doc.calcTools && doc.calcTools.length > 0 && (
+              <div id="calc-tools" style={{ scrollMarginTop: 80 }}>
+                <div className="flex items-center gap-2" style={{ marginBottom: "var(--s-3)", marginTop: "var(--s-2)" }}>
+                  <Calculator size={16} style={{ color: "var(--warning)" }} aria-hidden />
+                  <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>내장 계산 도구</h2>
+                  <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
+                    {doc.calcTools.map((t) => CALC_LABEL[t]).join(" · ")}
+                  </span>
+                </div>
+                {doc.calcTools.includes("sens-spec") && <SensSpecCalc />}
+                {doc.calcTools.includes("sample-size") && <SampleSizeCalc />}
+                {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
+                {doc.calcTools.includes("lod-calc") && <LodCalc />}
+                {doc.calcTools.includes("mkt") && <MktCalc />}
+              </div>
+            )}
           </div>
 
           {/* 사이드바 (sticky) */}

@@ -38,7 +38,7 @@ export function AutoSteps({ current }: { current: StepPath }) {
             <li key={g.id} className="flex items-center shrink-0" style={{ gap: 6 }}>
               {i > 0 && <span aria-hidden className="text-text-subtle" style={{ fontSize: 12 }}>›</span>}
               <Link to={g.steps[0].to} aria-current={on ? "step" : undefined} className="inline-flex items-center rounded-full font-bold"
-                style={{ gap: 6, padding: "6px 14px", minHeight: 36, fontSize: "var(--t-sm)", background: on ? "var(--accent)" : "var(--bg)", color: on ? "var(--text-on-color)" : "var(--text)", border: on ? "none" : "1px solid var(--border-strong)" }}>
+                style={{ gap: 6, padding: "6px 14px", minHeight: 40, fontSize: "var(--t-sm)", background: on ? "var(--accent)" : "var(--bg)", color: on ? "var(--text-on-color)" : "var(--text)", border: on ? "none" : "1px solid var(--border-strong)" }}>
                 <span aria-hidden className="inline-grid place-items-center rounded-full" style={{ width: 20, height: 20, fontSize: 11, background: on ? "var(--text-on-color)" : "var(--surface-2)", color: on ? "var(--accent)" : "var(--text-muted)" }}>{i + 1}</span>
                 {g.label}
               </Link>
@@ -51,7 +51,7 @@ export function AutoSteps({ current }: { current: StepPath }) {
           const on = s.to === current;
           return (
             <Link key={s.to} to={s.to} aria-current={on ? "page" : undefined} className="inline-flex items-center rounded-[var(--r-md)] font-semibold"
-              style={{ padding: "6px 12px", minHeight: 36, fontSize: "var(--t-xs)", color: on ? "var(--accent)" : "var(--text-muted)", background: on ? "var(--accent-weak)" : "transparent", border: on ? "1px solid var(--accent)" : "1px solid transparent" }}>
+              style={{ padding: "6px 12px", minHeight: 40, fontSize: "var(--t-xs)", color: on ? "var(--accent)" : "var(--text-muted)", background: on ? "var(--accent-weak)" : "transparent", border: on ? "1px solid var(--accent)" : "1px solid transparent" }}>
               {s.label}
             </Link>
           );

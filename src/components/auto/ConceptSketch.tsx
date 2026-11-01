@@ -148,7 +148,7 @@ export function ConceptSketch({ spec }: { spec: ProductSpec }) {
       </svg>
       <div className="flex flex-wrap" style={{ gap: 8 }}>
         {(["svg", "png"] as const).map((k) => (
-          <button key={k} type="button" onClick={() => save(k)} className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] border font-semibold" style={{ padding: "6px 12px", fontSize: "var(--t-xs)", borderColor: "var(--border)", minHeight: 36 }}>
+          <button key={k} type="button" onClick={() => save(k)} className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] border font-semibold" style={{ padding: "6px 12px", fontSize: "var(--t-xs)", borderColor: "var(--border)", minHeight: 40 }}>
             <Download size={14} aria-hidden /> {k.toUpperCase()} 내려받기
           </button>
         ))}

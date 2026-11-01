@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, ShieldCheck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
+import { WithTerms } from "../Term";
 import { AutoSteps } from "./AutoSteps";
 import { docTree } from "../../data/docTree";
 import { AssumptionBanner, Chip, FieldLink, STATUS_META } from "./AutoUi";
@@ -103,10 +104,10 @@ export function DocSetPage() {
                 <div className="flex-1 min-w-0 flex flex-col" style={{ gap: "var(--s-3)", minWidth: 260 }}>
                   <div className="flex flex-wrap items-center" style={{ gap: "var(--s-2)" }}>
                     <span className="rounded-full font-bold" style={{ fontSize: "var(--t-xs)", padding: "3px 10px", color: cs.fg, background: cs.bg }}>{cs.label}</span>
-                    <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>적용 규칙: {cls.rule}</span>
+                    <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>적용 규칙: <WithTerms text={cls.rule} /></span>
                   </div>
                   <ul className="flex flex-col" style={{ gap: 4, paddingLeft: 18, listStyle: "disc" }}>
-                    {cls.rationale.map((r) => <li key={r} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{r}</li>)}
+                    {cls.rationale.map((r) => <li key={r} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}><WithTerms text={r} /></li>)}
                   </ul>
                   {cls.openQuestions.length > 0 && (
                     <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
@@ -117,7 +118,7 @@ export function DocSetPage() {
                     <div>
                       <h2 className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 4 }}>적합성 평가 경로</h2>
                       <ul className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "disc" }}>
-                        {cls.route.map((r) => <li key={r} className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>{r}</li>)}
+                        {cls.route.map((r) => <li key={r} className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}><WithTerms text={r} /></li>)}
                       </ul>
                     </div>
                   )}

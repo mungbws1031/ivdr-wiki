@@ -7,8 +7,10 @@ import { AssumptionBanner } from "./AutoUi";
 import { ConceptBox } from "./ConceptBox";
 import { ConceptSketch } from "./ConceptSketch";
 import { SpecField } from "./SpecField";
-import { fieldByPath } from "../../data/spec/fields";
-import { getAt } from "../../data/spec/validate";
+import { fieldByPath, transportFields } from "../../data/spec/fields";
+import { StorageNote } from "../StorageNote";
+import { WithTerms } from "../Term";
+import { completion, getAt, isFilled } from "../../data/spec/validate";
 import { setSpecField, useWorkingSpec } from "../../hooks/useSpecStore";
 import { classify } from "../../lib/rules/classify";
 import { certRoutes } from "../../lib/rules/certRoutes";
@@ -44,7 +46,46 @@ function DurationInput({ it }: { it: Scheduled }) {
   return (
     <input type="number" min={0} step={0.5} defaultValue={it.overridden ? it.min : ""} placeholder={it.min === it.max ? fmt(it.min) : `${fmt(it.min)}~${fmt(it.max)}`}
       onBlur={(e) => set(e.target.value)} aria-label={`${it.title} 기간(개월) 직접 입력`} className="rounded-[var(--r-sm)] text-text"
-      style={{ width: 72, border: `1.5px solid ${it.overridden ? "var(--accent)" : "var(--border)"}`, background: "var(--bg)", padding: "4px 6px", fontSize: "var(--t-xs)" }} />
+      style={{ width: 76, minHeight: 40, border: `1.5px solid ${it.overridden ? "var(--accent)" : "var(--border)"}`, background: "var(--bg)", padding: "4px 6px", fontSize: "var(--t-xs)" }} />
+  );
+}
+
+/** 입력 현황판 (U-8) — 입력이 세 화면에 흩어져 있으니 한곳에서 상태를 보고 바로 간다. */
+function InputStatus() {
+  const { raw } = useWorkingSpec();
+  const c = completion(raw);
+  const dates = [raw.plan?.startDate, raw.plan?.launchDate].filter(Boolean).length;
+  const tFilled = transportFields.filter((f) => isFilled(f, raw)).length;
+  const items = [
+    { label: "제품 정보", n: c.filled, total: c.total, to: "/auto", cta: "제품 스펙" },
+    { label: "날짜", n: dates, total: 2, to: "#plan-in-title", cta: "아래에서 입력" },
+    { label: "운송 정보", n: tFilled, total: transportFields.length, to: "/auto/transport", cta: "운송·포장" },
+  ];
+  return (
+    <section aria-label="입력 현황" className="grid" style={{ gap: "var(--s-3)", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))" }}>
+      {items.map((it) => {
+        const st = it.n === 0 ? { t: "비어 있음", c: "var(--text-subtle)" } : it.n >= it.total ? { t: "완료", c: "var(--success)" } : { t: "일부", c: "var(--warning)" };
+        const body = (
+          <>
+            <span className="flex items-center justify-between" style={{ gap: 8 }}>
+              <b className="text-text" style={{ fontSize: "var(--t-sm)" }}>{it.label}</b>
+              <span className="font-bold" style={{ fontSize: 11, color: st.c }}>{st.t}</span>
+            </span>
+            <span className="block rounded-full overflow-hidden" style={{ height: 6, background: "var(--border)", margin: "6px 0 4px" }} aria-hidden>
+              <span className="block h-full" style={{ width: `${(it.n / Math.max(it.total, 1)) * 100}%`, background: st.c }} />
+            </span>
+            <span className="flex justify-between text-text-muted" style={{ fontSize: "var(--t-xs)", fontVariantNumeric: "tabular-nums" }}>
+              <span>{it.n}/{it.total}</span><span className="font-semibold" style={{ color: "var(--info)" }}>{it.cta} →</span>
+            </span>
+          </>
+        );
+        const cls = "block rounded-[var(--r-md)] border hover:bg-surface";
+        const sty = { borderColor: "var(--border)", padding: "10px 14px", minHeight: 44 };
+        return it.to.startsWith("#")
+          ? <a key={it.label} href={it.to} className={cls} style={sty} onClick={(e) => { e.preventDefault(); document.querySelector(it.to)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>{body}</a>
+          : <Link key={it.label} to={it.to} className={cls} style={sty}>{body}</Link>;
+      })}
+    </section>
   );
 }
 
@@ -77,6 +118,8 @@ export function StartPage() {
         <div className="flex flex-col" style={{ gap: "var(--s-6)" }}>
           <ConceptBox />
 
+          <InputStatus />
+
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="plan-in-title">
             <h2 id="plan-in-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginBottom: "var(--s-3)" }}>어디서 팔고, 언제까지</h2>
             <div className="grid" style={{ gap: "var(--s-4)", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))" }}>
@@ -95,8 +138,8 @@ export function StartPage() {
                 {routes.map((r) => (
                   <li key={r.market} className="flex flex-wrap items-baseline" style={{ gap: 8, fontSize: "var(--t-sm)" }}>
                     <b className="text-text">{r.name}</b>
-                    <span className="text-text-muted">{r.headline}</span>
-                    {r.links[0] && <Link to={r.links[0].to} className="font-semibold hover:underline" style={{ color: "var(--info)", fontSize: "var(--t-xs)" }}>{r.links[0].label} →</Link>}
+                    <span className="text-text-muted"><WithTerms text={r.headline} /></span>
+                    {r.links[0] && <Link to={r.links[0].to} className="inline-flex items-center font-semibold hover:underline" style={{ color: "var(--info)", fontSize: "var(--t-xs)", minHeight: 40 }}>{r.links[0].label} →</Link>}
                   </li>
                 ))}
                 {(spec.qmsCerts ?? []).length === 0 && <li className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>품질 인증(ISO 13485·KGMP)을 아직 갖고 있지 않으면 로드맵에 준비 기간이 들어갑니다.</li>}
@@ -134,7 +177,7 @@ export function StartPage() {
                   <div key={lane} style={{ borderTop: "1px solid var(--border)", padding: "6px 0" }}>
                     <p className="font-bold" style={{ fontSize: "var(--t-xs)", color: LANE_COLOR[lane], marginBottom: 2 }}>{LANE_LABEL[lane]}</p>
                     {rows.filter((r) => r.lane === lane).map((it) => (
-                      <div key={it.id} data-road={it.id} className="grid items-center" style={{ gridTemplateColumns: "230px 1fr 84px", gap: 0, minHeight: 30 }}>
+                      <div key={it.id} data-road={it.id} className="grid items-center" style={{ gridTemplateColumns: "230px 1fr 84px", gap: 0, minHeight: 46 }}>
                         <span className="text-text" style={{ fontSize: "var(--t-xs)", lineHeight: 1.3, paddingRight: 8 }} title={`${it.source}${it.latestStart !== null ? ` · 늦어도 시작: ${at(it.latestStart)}` : ""}`}>
                           {it.critical && <b style={{ color: "var(--danger)" }}>★ </b>}{it.title}
                           {it.latestStart !== null && <span className="block" style={{ color: it.latestStart < 0 ? "var(--danger)" : "var(--text-subtle)", fontSize: 10 }}>늦어도 시작 {at(Math.max(it.latestStart, 0))}{it.latestStart < 0 ? " (이미 늦음)" : ""}</span>}
@@ -168,6 +211,8 @@ export function StartPage() {
             <ConceptSketch spec={spec} />
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>제품 형태·판독 방식·검체·앱 여부로 그린 구성도입니다. 실제 디자인 이미지는 AI 서버 연결 후 지원할 예정입니다.</p>
           </section>
+
+          <StorageNote />
 
           <Link to="/auto/overview" className="flex items-center justify-between rounded-[var(--r-lg)] font-bold self-end" style={{ padding: "var(--s-4) var(--s-6)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)", gap: "var(--s-4)" }}>
             다음: 문서 자동작성 (결과 한눈에) <ArrowRight size={16} aria-hidden />

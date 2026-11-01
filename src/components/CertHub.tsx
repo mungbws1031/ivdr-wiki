@@ -7,6 +7,7 @@ import { allISO13485DocIds } from "../data/iso13485/docTree";
 import { concepts } from "../data/concepts";
 import { getSpec } from "../hooks/useSpecStore";
 import { completion } from "../data/spec/validate";
+import { StorageNote } from "./StorageNote";
 
 export function CertHub() {
   const ivdrProgress = useProgress("ivdr");
@@ -82,6 +83,7 @@ export function CertHub() {
             </span>
           </a>
         </div>
+        <div style={{ marginBottom: "var(--s-6)" }}><StorageNote /></div>
 
         {/* 처음이신가요? — 3단계 오리엔테이션 (규제가 처음이어도 30초면 감 잡을 수 있게) */}
         <section

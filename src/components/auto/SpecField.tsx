@@ -55,7 +55,7 @@ function Choice({
       style={{
         fontSize: "var(--t-sm)",
         padding: "6px 14px",
-        minHeight: 36,
+        minHeight: 40,
         border: `1.5px solid ${active ? "var(--accent)" : "var(--border)"}`,
         background: active ? "var(--accent-weak)" : "var(--bg)",
         color: disabled ? "var(--text-subtle)" : active ? "var(--accent)" : "var(--text)",
@@ -88,7 +88,7 @@ function Components({ value, onChange }: { value: KitComponent[]; onChange: (v: 
           <button
             type="button" aria-label={`${r.name || "구성품"} 삭제`} onClick={() => onChange(rows.filter((_, j) => j !== i))}
             className="inline-flex items-center justify-center rounded-[var(--r-sm)] hover:bg-surface"
-            style={{ width: 36, height: 36, color: "var(--text-subtle)" }}
+            style={{ width: 40, height: 40, color: "var(--text-subtle)" }}
           >
             <Trash2 size={16} aria-hidden />
           </button>
@@ -98,7 +98,7 @@ function Components({ value, onChange }: { value: KitComponent[]; onChange: (v: 
         type="button"
         onClick={() => onChange([...rows, { name: "", qtyPerKit: null, isReagent: false }])}
         className="inline-flex items-center gap-1.5 self-start rounded-[var(--r-sm)] font-semibold hover:bg-surface"
-        style={{ fontSize: "var(--t-sm)", padding: "6px 10px", color: "var(--info)" }}
+        style={{ fontSize: "var(--t-sm)", padding: "6px 10px", minHeight: 40, color: "var(--info)" }}
       >
         <Plus size={15} aria-hidden /> 구성품 추가
       </button>
