@@ -5,6 +5,8 @@ import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
 import { allISO13485DocIds } from "../data/iso13485/docTree";
 import { concepts } from "../data/concepts";
+import { getSpec } from "../hooks/useSpecStore";
+import { completion } from "../data/spec/validate";
 
 export function CertHub() {
   const ivdrProgress = useProgress("ivdr");
@@ -17,6 +19,8 @@ export function CertHub() {
 
   const ivdrCount = ivdrProgress.countByStatus(ivdrDocIds);
   const isoCount = isoProgress.countByStatus(isoDocIds);
+  // 자동작성에 이미 입력한 스펙이 있으면 "이어서" 링크를 보여 준다
+  const specFilled = completion(getSpec()).filled;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -25,7 +29,7 @@ export function CertHub() {
         style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin) var(--s-16)" }}
       >
         {/* Hero */}
-        <header style={{ marginBottom: "var(--s-12)", textAlign: "center" }}>
+        <header style={{ marginBottom: "var(--s-8)", textAlign: "center" }}>
           <span
             className="inline-flex items-center gap-2 rounded-full font-semibold"
             style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)", padding: "4px 12px" }}
@@ -37,15 +41,47 @@ export function CertHub() {
             className="font-extrabold text-text"
             style={{ fontSize: "var(--t-3xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-4)" }}
           >
-            인증을 선택하세요
+            의료기기 인증 문서, 어디서 시작할까요?
           </h1>
           <p
             className="text-text-muted"
             style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 680, margin: "var(--s-4) auto 0" }}
           >
-            공통 문서는 한 번 작성하면 양쪽 인증에 반영됩니다.
+            새 제품이면 컨셉 한 줄로, 이미 진행 중이면 인증별 여정에서 이어 쓰세요.
           </p>
         </header>
+
+        {/* 두 갈래 입구 — 새 제품(자동작성) / 인증별 여정 */}
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "var(--s-4)", marginBottom: "40px" }}>
+          <div className="rounded-[var(--r-lg)] border flex flex-col" style={{ borderColor: "var(--accent)", background: "var(--accent-weak)", padding: "var(--s-6)", gap: "var(--s-3)" }}>
+            <Link to="/auto/start" className="flex items-start" style={{ gap: "var(--s-4)" }}>
+              <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 48, height: 48, background: "var(--bg)" }}>
+                <Sparkles size={22} style={{ color: "var(--accent)" }} aria-hidden />
+              </span>
+              <span className="flex flex-col" style={{ gap: 4 }}>
+                <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>새 제품 — 컨셉 한 줄로 시작</span>
+                <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>필요한 인증·기간·일정과 문서 초안까지 자동으로 만들어요.</span>
+                <span className="inline-flex items-center gap-1 font-bold" style={{ color: "var(--accent)", fontSize: "var(--t-sm)", marginTop: 4 }}>시작하기 <ArrowRight size={15} aria-hidden /></span>
+              </span>
+            </Link>
+            {specFilled > 0 && (
+              <Link to="/auto/overview" className="self-start font-semibold underline decoration-dotted text-text" style={{ fontSize: "var(--t-sm)", marginLeft: 64 }}>
+                이어서: 결과 한눈에 (스펙 {specFilled}칸 입력됨) →
+              </Link>
+            )}
+          </div>
+          <a href="#certs" onClick={(e) => { e.preventDefault(); document.getElementById("certs")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+            className="rounded-[var(--r-lg)] border flex items-start" style={{ borderColor: "var(--border-strong)", background: "var(--bg)", padding: "var(--s-6)", gap: "var(--s-4)" }}>
+            <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 48, height: 48, background: "var(--surface)" }}>
+              <MapPinned size={22} className="text-text" aria-hidden />
+            </span>
+            <span className="flex flex-col" style={{ gap: 4 }}>
+              <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>인증별 여정에서 문서 쓰기</span>
+              <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>IVDR·ISO 13485·MDSAP 정거장별로 문서를 골라 이어 써요.</span>
+              <span className="inline-flex items-center gap-1 font-bold text-text" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>인증 고르기 <ArrowRight size={15} aria-hidden /></span>
+            </span>
+          </a>
+        </div>
 
         {/* 처음이신가요? — 3단계 오리엔테이션 (규제가 처음이어도 30초면 감 잡을 수 있게) */}
         <section
@@ -135,6 +171,7 @@ export function CertHub() {
 
         {/* 인증 카드 */}
         <div
+          id="certs"
           className="grid grid-cols-1 md:grid-cols-2"
           style={{ gap: "var(--s-6)", marginBottom: "var(--s-12)" }}
         >
@@ -244,38 +281,6 @@ export function CertHub() {
             </span>
           </Link>
         </div>
-
-        {/* 자동작성 진입점 (베타) */}
-        <Link
-          to="/auto/start"
-          className="block rounded-[var(--r-lg)] border hover:shadow-md"
-          style={{
-            borderColor: "var(--accent)",
-            background: "var(--accent-weak)",
-            padding: "var(--s-5) var(--s-8)",
-            marginBottom: "var(--s-6)",
-            transition: "box-shadow 0.15s",
-            display: "grid",
-            gridTemplateColumns: "auto 1fr auto",
-            gap: "var(--s-5)",
-            alignItems: "center",
-          }}
-        >
-          <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 44, height: 44, background: "var(--bg)" }}>
-            <Sparkles size={20} style={{ color: "var(--accent)" }} aria-hidden />
-          </span>
-          <div>
-            <div className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>
-              제품 기획부터 시작 — 문서까지 자동 <span style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>베타</span>
-            </div>
-            <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-              컨셉 한 줄 → 필요한 인증·기간·일정 로드맵·개념 스케치 → 클래스 추천·문서 세트·실험계획·문서 초안까지 이어집니다
-            </div>
-          </div>
-          <span className="font-bold shrink-0" style={{ color: "var(--accent)", fontSize: "var(--t-sm)" }}>
-            시작 →
-          </span>
-        </Link>
 
         {/* 프로젝트 일정 플래너 */}
         <Link
