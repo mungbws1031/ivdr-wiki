@@ -90,7 +90,7 @@ function Storey({ f, level, lifted, selected, view, onSelect }: {
         if (d.state === "writing") {
           return (
             <div key={d.id} className="absolute" style={{ left: x - 17, top: -50, transform: `translateZ(${z}px) ${face}`, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}>
-              <Worker d={d} color={f.color} />
+              <Worker d={d} color={f.color} dept={f.id} />
             </div>
           );
         }
@@ -109,7 +109,7 @@ function Storey({ f, level, lifted, selected, view, onSelect }: {
             <div className="factory-walk" style={{ ...walk, transformStyle: "preserve-3d" }}>
               <div style={{ transform: face, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}>
                 <div className="factory-flip" style={walk}>
-                  <Worker d={d} color={f.color} walking />
+                  <Worker d={d} color={f.color} walking dept={f.id} />
                 </div>
               </div>
             </div>
@@ -122,7 +122,7 @@ function Storey({ f, level, lifted, selected, view, onSelect }: {
         const z = D / 2 - 40 - Math.floor(i / 4) * 64;
         return (
           <div key={q.kind === "doc" ? q.d.id : q.t.id} className="absolute" style={{ left: x - 17, top: -50, transform: `translateZ(${z}px) ${face}`, transformOrigin: "50% 100%" }}>
-            {q.kind === "doc" ? <Worker d={q.d} color={f.color} /> : (
+            {q.kind === "doc" ? <Worker d={q.d} color={f.color} dept={f.id} /> : (
               <span title={`${q.t.title} — ${q.t.why}`} className="inline-grid place-items-center rounded-[4px] font-extrabold" style={{ width: 26, height: 34, marginTop: 10, background: "var(--bg)", border: "1.5px solid var(--warning)", color: "var(--warning)", fontSize: 13 }}>✋</span>
             )}
           </div>
