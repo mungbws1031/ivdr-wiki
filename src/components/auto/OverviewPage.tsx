@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { AlertTriangle, ArrowRight, Award, Building2, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Award, Building2, CheckCircle2, ClipboardList, FileText, FlaskConical, Layers, ShieldCheck, Truck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
+import { WithTerms } from "../Term";
 import { AutoSteps } from "./AutoSteps";
 import { AssumptionBanner, EvidenceBar, fieldHref, STATUS_META } from "./AutoUi";
 import { allLeaves } from "../../data/docTree";
@@ -25,6 +26,7 @@ import { Minimi } from "./factoryArt";
 import { docImpact } from "../../lib/impact";
 import { getReview } from "../../hooks/useReviewStore";
 import { hasDraft } from "../../hooks/useDraftStore";
+import { nextActions, type NextAction } from "../../lib/nextActions";
 
 function Card({ icon: Icon, title, to, cta, children }: { icon: typeof Layers; title: string; to: string; cta: string; children: React.ReactNode }) {
   return (
@@ -72,6 +74,36 @@ function Counts({ c, keys }: { c: Partial<Record<ApplStatus, number>>; keys: App
   );
 }
 
+/** 지금 할 일 3개 (U-5) — 가장 많이 막고 있는 결정·빈 칸부터 */
+function NextActions({ items, more }: { items: NextAction[]; more: number }) {
+  if (!items.length) return null;
+  return (
+    <section className="rounded-[var(--r-lg)] border bg-bg" aria-labelledby="next-title" style={{ borderColor: "var(--text)", boxShadow: "var(--shadow-card)", padding: "var(--s-5) var(--s-6)" }}>
+      <h2 id="next-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>지금 할 일 {items.length}개</h2>
+      <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>문서를 가장 많이 막고 있는 것부터 골랐습니다.</p>
+      <ol className="flex flex-col" style={{ gap: 6, marginTop: "var(--s-3)" }}>
+        {items.map((a, i) => (
+          <li key={a.title}>
+            <Link to={a.field ? fieldHref(a.field) : a.to!} className="flex items-center rounded-[var(--r-md)] border hover:bg-surface" style={{ gap: "var(--s-3)", padding: "8px 14px", minHeight: 48, borderColor: "var(--border)" }}>
+              <span className="grid place-items-center rounded-full font-extrabold shrink-0" style={{ width: 26, height: 26, background: "var(--text)", color: "var(--bg)", fontSize: 13 }}>{i + 1}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>{a.title}</span>
+                <span className="block text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{a.why}</span>
+              </span>
+              <ArrowRight size={16} className="shrink-0 text-text-subtle" aria-hidden />
+            </Link>
+          </li>
+        ))}
+      </ol>
+      {more > 0 && (
+        <Link to="/auto" className="inline-flex items-center gap-1 font-semibold hover:underline" style={{ fontSize: "var(--t-xs)", color: "var(--info)", minHeight: 40 }}>
+          그 밖에 비어 있는 스펙 {more}개 보기 <ArrowRight size={13} aria-hidden />
+        </Link>
+      )}
+    </section>
+  );
+}
+
 const SUPPORT: Record<CertRoute["support"], { label: string; fg: string; bg: string }> = {
   full: { label: "자동작성 지원", fg: "var(--success)", bg: "var(--success-bg)" },
   guide: { label: "경로 안내", fg: "var(--info)", bg: "var(--info-bg)" },
@@ -96,10 +128,10 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
                 <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{r.name}</h3>
                 <span className="rounded-full font-bold" style={{ fontSize: 11, padding: "2px 8px", color: SUPPORT[r.support].fg, background: SUPPORT[r.support].bg }}>{SUPPORT[r.support].label}</span>
               </div>
-              <p className="font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{r.headline}</p>
+              <p className="font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}><WithTerms text={r.headline} /></p>
               {r.steps.length > 0 && (
                 <ol className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "decimal" }}>
-                  {r.steps.map((x) => <li key={x} className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{x}</li>)}
+                  {r.steps.map((x) => <li key={x} className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}><WithTerms text={x} /></li>)}
                 </ol>
               )}
               {r.qms.length > 0 && <p className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}><b className="text-text">품질 인증:</b> {r.qms.join(" · ")}</p>}
@@ -132,7 +164,7 @@ export function OverviewPage() {
   const { spec, assumed, assumeOn, estimated } = useWorkingSpec();
   const results = useResults();
   const confirm = useClassConfirm();
-  const { filled, total } = completion(spec);
+  const { filled } = completion(spec);
   const missing = unresolvedFields(spec);
   const cls = useMemo(() => classify(spec), [spec]);
   const docSet = useMemo(() => evaluateDocSet(spec, cls), [spec, cls]);
@@ -167,6 +199,10 @@ export function OverviewPage() {
   const routes = useMemo(() => certRoutes(spec, cls), [spec, cls]);
   const qmsMissing = missingQms(spec);
   const euSelected = !!spec.markets?.includes("EU");
+  const classAssumed = assumed.some((a) => a.path === "user" || a.path === "analyte.preset");
+  const next = nextActions(spec, cls, { confirmed: !!confirmed, classAssumed, resultsEntered: prog.entered, resultsTotal: prog.total });
+  const shownFields = new Set(next.map((a) => a.field).filter(Boolean));
+  const moreMissing = missing.filter((f) => !shownFields.has(f.path)).length;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -196,14 +232,7 @@ export function OverviewPage() {
           </div>
         ) : (
           <div className="flex flex-col" style={{ gap: "var(--s-6)" }}>
-            {missing.length > 0 && (
-              <div className="flex flex-wrap items-center rounded-[var(--r-lg)]" style={{ gap: "var(--s-2)", padding: "var(--s-3) var(--s-4)", background: "var(--warning-bg)", color: "var(--warning)", fontSize: "var(--t-sm)" }}>
-                <AlertTriangle size={17} aria-hidden />
-                <span className="font-bold">스펙 {filled}/{total} 입력 — 비어 있는 {missing.length}개는 결과에 [미입력]으로 남습니다:</span>
-                {missing.slice(0, 6).map((f) => <Link key={f.path} to={fieldHref(f.path)} className="font-semibold underline decoration-dotted">{f.label}</Link>)}
-                {missing.length > 6 && <span>외 {missing.length - 6}개</span>}
-              </div>
-            )}
+            <NextActions items={next} more={moreMissing} />
 
             <CertRoutes routes={routes} missing={qmsMissing} />
 
@@ -221,8 +250,8 @@ export function OverviewPage() {
 
               <Card icon={ShieldCheck} title={euSelected ? "IVDR 클래스" : "IVDR 클래스 (EU 미선택 — 참고용)"} to="/auto/docs" cta={confirmed ? "분류 근거 보기" : "확인하고 확정하기"}>
                 <Big>{cls.value ? `Class ${cls.value}` : "판정 보류"}</Big>
-                <Muted>{cls.value ? `${cls.rule} · ${confirmed ? "확정됨" : "추천 — 담당자 확정 전"}` : cls.rationale[0]}</Muted>
-                {cls.route[0] && <Muted>적합성 평가: {cls.route[0]}</Muted>}
+                <Muted><WithTerms text={cls.value ? `${cls.rule} · ${confirmed ? "확정됨" : "추천 — 담당자 확정 전"}` : cls.rationale[0]} /></Muted>
+                {cls.route[0] && <Muted>적합성 평가: <WithTerms text={cls.route[0]} /></Muted>}
                 <Link to="/auto/docs#gspr" className="font-semibold text-text underline decoration-dotted" style={{ fontSize: "var(--t-xs)" }}>
                   GSPR 해당 {gsprC.applies} · 확인 필요 {gsprC.check} · 비해당 {gsprC.na}
                 </Link>

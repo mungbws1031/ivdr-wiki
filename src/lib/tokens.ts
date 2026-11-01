@@ -39,7 +39,7 @@ export const TOKEN_LABEL: Record<string, string> = {
   user: "사용자", environment: "사용 환경", clinicalDecision: "결과로 내리는 판단", targetPopulation: "대상 집단", outOfScope: "사용하면 안 되는 용도",
   intendedPurpose: "의도된 목적", ivdJustification: "IVD 해당 근거",
   cls: "클래스", rule: "결정 규칙", rationale: "분류 근거", ruleTable: "Rule 적용 내역", gsprTable: "GSPR 1차 판정",
-  principle: "작동 원리", labelSymbols: "라벨 심볼", labelWarnings: "경고·주의", ifuSteps: "사용 단계", ifuReading: "결과 판독 기준",
+  principle: "작동 원리", ifuPrinciple: "사용자용 검사 원리", labelSymbols: "라벨 심볼", labelWarnings: "경고·주의", ifuSteps: "사용 단계", ifuReading: "결과 판독 기준",
   ifuLimitations: "결과의 한계", ifuWarnings: "경고", hazardTable: "위해요인 분석", riskGsprTrace: "GSPR↔위험 추적", usabilityScope: "사용적합성 연계", krGrade: "식약처 등급", krSelfTest: "자가검사 허용 품목", usClass: "FDA 분류·경로", usClia: "CLIA", roadmapTable: "인증 일정 로드맵", route: "적합성 평가 경로", nb: "NB 개입", nbScope: "NB 심사 대상",
   storage: "보관 온도", shelfLife: "유효기간", openedStability: "개봉 후 사용 시한", components: "구성품", authRep: "EU 대리인", markets: "출시 시장",
   targetSe: "목표 민감도", targetSp: "목표 특이도", referenceMethod: "비교 기준 방법", lots: "평가 로트 수",

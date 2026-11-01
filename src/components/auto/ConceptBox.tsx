@@ -64,9 +64,9 @@ export function ConceptBox() {
           컨셉으로 채우기
         </button>
       </div>
-      <div className="flex flex-wrap items-center" style={{ gap: 6, marginTop: 8, fontSize: "var(--t-xs)" }}>
+      <div className="flex flex-wrap items-center" style={{ gap: 8, marginTop: 8, fontSize: "var(--t-xs)" }}>
         <span className="text-text-subtle">예시:</span>
-        {EXAMPLES.map((ex) => <button key={ex} type="button" onClick={() => setText(ex)} className="rounded-full hover:bg-surface text-text-muted" style={{ padding: "2px 10px", border: "1px solid var(--border)" }}>{ex}</button>)}
+        {EXAMPLES.map((ex) => <button key={ex} type="button" onClick={() => setText(ex)} className="rounded-full hover:bg-surface text-text-muted" style={{ padding: "6px 14px", minHeight: 40, border: "1px solid var(--border)" }}>{ex}</button>)}
       </div>
       {note && <p role="status" className="font-semibold" style={{ fontSize: "var(--t-sm)", color: "var(--accent)", marginTop: 10 }}>{note}</p>}
 
@@ -75,15 +75,15 @@ export function ConceptBox() {
           <div className="flex flex-wrap items-center" style={{ gap: 8 }}>
             <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>추정한 값 {concept.estimated.length}개</span>
             <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>문서에 "(추정)"이 붙습니다. 맞으면 확인을, 틀리면 아래 입력칸에서 고치세요.</span>
-            <button type="button" onClick={() => confirmEstimated()} className="ml-auto inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "4px 12px", fontSize: "var(--t-xs)", border: "1.5px solid var(--success)", color: "var(--success)" }}>
+            <button type="button" onClick={() => confirmEstimated()} className="ml-auto inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "4px 14px", minHeight: 40, fontSize: "var(--t-xs)", border: "1.5px solid var(--success)", color: "var(--success)" }}>
               <Check size={13} aria-hidden /> 모두 맞아요
             </button>
           </div>
-          <ul className="flex flex-wrap" style={{ gap: 6, marginTop: 6 }}>
+          <ul className="flex flex-wrap" style={{ gap: 8, marginTop: 6 }}>
             {concept.estimated.map((p) => (
-              <li key={p} className="inline-flex items-center rounded-full" style={{ gap: 6, padding: "3px 4px 3px 10px", fontSize: "var(--t-xs)", background: "color-mix(in srgb, #C9A227 14%, var(--bg))", border: "1px solid #C9A227" }}>
-                <a href={`#field-${p}`} className="text-text"><b>{fieldByPath(p)?.label ?? p}</b>: {showValue(p, getAt(spec, p))}</a>
-                <button type="button" onClick={() => confirmEstimated([p])} aria-label={`${fieldByPath(p)?.label ?? p} 확인`} className="inline-grid place-items-center rounded-full" style={{ width: 20, height: 20, background: "var(--bg)", color: "var(--success)" }}>
+              <li key={p} className="inline-flex items-center rounded-full" style={{ gap: 6, padding: "0 0 0 12px", minHeight: 40, fontSize: "var(--t-xs)", background: "color-mix(in srgb, #C9A227 14%, var(--bg))", border: "1px solid #C9A227" }}>
+                <a href={`#field-${p}`} className="inline-flex items-center text-text" style={{ minHeight: 40 }}><b>{fieldByPath(p)?.label ?? p}</b>: {showValue(p, getAt(spec, p))}</a>
+                <button type="button" onClick={() => confirmEstimated([p])} aria-label={`${fieldByPath(p)?.label ?? p} 확인`} className="inline-grid place-items-center rounded-full" style={{ width: 40, height: 40, color: "var(--success)" }}>
                   <Check size={12} aria-hidden />
                 </button>
               </li>
@@ -101,12 +101,12 @@ export function ConceptBox() {
               if (!f?.options) return null;
               const cur = getAt(spec, p);
               return (
-                <li key={p} className="flex flex-wrap items-center" style={{ gap: 6 }}>
+                <li key={p} className="flex flex-wrap items-center" style={{ gap: 8 }}>
                   <span className="font-semibold text-text" style={{ fontSize: "var(--t-sm)", minWidth: 160 }}>{f.label}</span>
                   {f.options.filter((o) => !o.disabled).map((o) => {
                     const on = Array.isArray(cur) ? cur.includes(o.value) : String(cur) === o.value;
                     return (
-                      <button key={o.value} type="button" onClick={() => answer(p, o.value)} aria-pressed={on} className="rounded-full font-semibold" style={{ padding: "3px 12px", fontSize: "var(--t-xs)", border: `1.5px solid ${on ? "var(--accent)" : "var(--border)"}`, background: on ? "var(--accent-weak)" : "var(--bg)", color: "var(--text)" }}>
+                      <button key={o.value} type="button" onClick={() => answer(p, o.value)} aria-pressed={on} className="rounded-full font-semibold" style={{ padding: "6px 14px", minHeight: 40, fontSize: "var(--t-xs)", border: `1.5px solid ${on ? "var(--accent)" : "var(--border)"}`, background: on ? "var(--accent-weak)" : "var(--bg)", color: "var(--text)" }}>
                         {o.label}
                       </button>
                     );
@@ -120,10 +120,10 @@ export function ConceptBox() {
 
       {(concept.text || concept.estimated.length > 0) && (
         <div className="flex flex-wrap" style={{ gap: 8, marginTop: 14 }}>
-          <Link to="/auto/overview" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", fontSize: "var(--t-sm)", background: "var(--text)", color: "var(--bg)" }}>
+          <Link to="/auto/overview" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", minHeight: 44, fontSize: "var(--t-sm)", background: "var(--text)", color: "var(--bg)" }}>
             이대로 문서 보기 (결과 한눈에) <ArrowRight size={15} aria-hidden />
           </Link>
-          <Link to="/auto/factory" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", fontSize: "var(--t-sm)", border: "1px solid var(--border-strong)", color: "var(--text)" }}>
+          <Link to="/auto/factory" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", minHeight: 44, fontSize: "var(--t-sm)", border: "1px solid var(--border-strong)", color: "var(--text)" }}>
             문서 공장 <ArrowRight size={15} aria-hidden />
           </Link>
         </div>

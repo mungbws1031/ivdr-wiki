@@ -763,7 +763,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. 검사 원리",
         guidance: "측정 원리·시약 반응 요약.",
-        placeholder: "{{auto.principle}}\n관련 간섭 물질: [분석 성능 시험 결과 참조]",
+        placeholder: "{{auto.ifuPrinciple}}\n관련 간섭 물질: [분석 성능 시험 결과 참조]",
       },
       {
         heading: "4. 사용 방법 (단계별)",

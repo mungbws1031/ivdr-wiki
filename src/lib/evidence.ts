@@ -69,7 +69,7 @@ const TOKEN_DEPS: Record<string, string[]> = {
   swScope: ["software.hasApp", "formFactor", ...CLASS_DEPS],
   formFactor: ["formFactor"],
   gsprTable: ["user", "environment", "formFactor", "result.kind", "software.hasApp", "specimen"],
-  principle: ["assay.method", "result.readout", "formFactor"], labelSymbols: ["user", "formFactor", "specimen"], labelWarnings: ["user", "formFactor", "software.hasApp", "specimen"],
+  principle: ["assay.method", "result.readout", "formFactor"], ifuPrinciple: ["assay.method", "result.readout", "user"], labelSymbols: ["user", "formFactor", "specimen"], labelWarnings: ["user", "formFactor", "software.hasApp", "specimen"],
   ifuSteps: ["formFactor", "software.hasApp", "specimen"], ifuReading: ["result.kind", "assay.method", "analyte.preset"], ifuLimitations: ["analyte.preset"],
   ifuWarnings: ["user", "formFactor", "software.hasApp", "specimen"], hazardTable: ["user", "formFactor", "result.kind", "software.hasApp", "analyte.preset", "specimen"],
   riskGsprTrace: ["user", "environment", "formFactor", "result.kind", "software.hasApp", "specimen"], usabilityScope: ["user", "environment"],
@@ -84,7 +84,7 @@ const TOKEN_DEPS: Record<string, string[]> = {
 const INPUT_FIELD: Record<string, string[]> = {
   productType: ["productType"], formFactor: ["formFactor"], materials: ["materials"], analyte: ["analyte.name"], specimen: ["specimen"],
   resultKind: ["result.kind"], readout: ["result.readout"], user: ["user"], environment: ["environment"],
-  clinicalDecision: ["intendedPurpose.clinicalDecision"], markets: ["markets"], principle: ["assay.method"],
+  clinicalDecision: ["intendedPurpose.clinicalDecision"], markets: ["markets"], principle: ["assay.method"], ifuPrinciple: ["assay.method"],
 };
 const depsOf = (key: string) => [...(TOKEN_DEPS[key] ?? []), ...(INPUT_FIELD[key] ?? [])];
 

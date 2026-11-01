@@ -80,3 +80,18 @@ describe("josa", () => {
     expect(josa("LH", "이", "가")).toBe("LH이(가)");
   });
 });
+
+describe("ifuPrinciple (일반인용 원리)", () => {
+  it("일반인 측방유동이면 쉬운 문장", () => {
+    const t = tok(exampleSpec());
+    expect(t.ifuPrinciple).toMatch(/C선/);
+    expect(t.ifuPrinciple).not.toMatch(/모세관|포획 항체|금 나노입자/);
+  });
+  it("전문가용이면 principle과 같다", () => {
+    const t = tok(setAt(exampleSpec(), "user", "professional"));
+    expect(t.ifuPrinciple).toBe(t.principle);
+  });
+  it("검사 방식 null이면 null", () => {
+    expect(tok(setAt(exampleSpec(), "assay.method", null)).ifuPrinciple).toBeNull();
+  });
+});

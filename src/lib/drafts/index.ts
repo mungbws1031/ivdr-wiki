@@ -55,6 +55,32 @@ export function principle(s: ProductSpec): string | null {
   }
 }
 
+/** IFU용 원리 문장 — 일반인 사용자면 전문 용어 없이 쓴다(패널 L-08). 전문가용은 principle과 같다. */
+export function principleLay(s: ProductSpec): string | null {
+  const m = method(s);
+  if (!m) return null;
+  if (!isLay(s)) return principle(s);
+  const a = s.analyte.name ?? "[검사 대상 — 스펙 미입력]";
+  const sp = s.specimen ? SPECIMEN[s.specimen] : "[검체 — 스펙 미입력]";
+  const read = s.result.readout === "reader" ? "전용 리더기가 결과를 화면에 보여 줍니다." : s.result.readout === "app" ? "스마트폰 앱이 사진을 찍어 결과를 알려 줍니다." : "검사창에 나타난 선을 눈으로 확인합니다.";
+  switch (m) {
+    case "lateral-flow":
+      return [
+        `${josa(sp, "을", "를")} 검사 막대에 묻히면 검체가 막대를 따라 스며듭니다.`,
+        `${sp} 속에 ${josa(a, "이", "가")} 기준보다 많으면 검사창에 선이 하나 더(T선) 나타납니다.`,
+        `C선은 검사가 제대로 되었는지 알려 주는 선으로, 결과와 관계없이 항상 나타나야 합니다.`,
+        read,
+      ].join("\n");
+    case "fluorescence":
+    case "electrochemical":
+      return `${sp} 속 ${a}의 양을 기기가 측정합니다. ${read}`;
+    case "molecular":
+      return `${sp}에서 ${a}의 유전자를 찾아 늘린 뒤 확인합니다. ${read}`;
+    default:
+      return `[사용자용 원리 설명 — 검사 방식이 '기타'라 직접 작성 필요]`;
+  }
+}
+
 // ── 라벨 심볼·경고 ───────────────────────────────────────────
 export function labelSymbols(s: ProductSpec, c: ClassResult): string {
   const rows: [string, string][] = [
@@ -256,6 +282,7 @@ export function usabilityScope(s: ProductSpec): string | null {
 export function draftTokens(s: ProductSpec, c: ClassResult, docSet: Applicability[]): Record<string, string | null> {
   return {
     principle: principle(s),
+    ifuPrinciple: principleLay(s),
     labelSymbols: labelSymbols(s, c),
     labelWarnings: labelWarnings(s),
     ifuSteps: ifuSteps(s),

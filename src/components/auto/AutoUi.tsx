@@ -41,7 +41,7 @@ export function AssumptionBanner({ assumed, assumeOn }: { assumed: Assumption[];
     return (
       <div className="flex flex-wrap items-center rounded-[var(--r-md)]" style={{ gap: 8, padding: "8px 14px", background: "var(--surface)", border: "1px solid var(--border)", fontSize: "var(--t-xs)" }}>
         <span className="text-text-muted">가정 모드 꺼짐 — 비어 있는 칸은 "확인 필요"로 멈춥니다.</span>
-        <button type="button" onClick={() => setAssumeMode(true)} className="font-bold underline" style={{ color: "var(--accent)" }}>가정으로 계속 진행하기</button>
+        <button type="button" onClick={() => setAssumeMode(true)} className="font-bold underline" style={{ color: "var(--accent)", minHeight: 40 }}>가정으로 계속 진행하기</button>
       </div>
     );
   }
@@ -62,12 +62,12 @@ function AssumptionDetails({ assumed }: { assumed: Assumption[] }) {
   };
   return (
     <div className="rounded-[var(--r-md)]" style={{ padding: "6px 12px", background: "var(--warning-bg)", border: "1px solid var(--warning)" }} role="note">
-      <div className="flex flex-wrap items-center" style={{ gap: 8, minHeight: 32 }}>
+      <div className="flex flex-wrap items-center" style={{ gap: 8, minHeight: 40 }}>
         <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>가정 {assumed.length}개로 진행 중</span>
-        <button type="button" onClick={toggle} aria-expanded={open} className="font-semibold underline" style={{ fontSize: "var(--t-xs)", color: "var(--text)", minHeight: 32 }}>
+        <button type="button" onClick={toggle} aria-expanded={open} className="font-semibold underline" style={{ fontSize: "var(--t-xs)", color: "var(--text)", minHeight: 40, padding: "0 6px" }}>
           {open ? "접기 ▴" : "자세히 ▾"}
         </button>
-        <button type="button" onClick={() => setAssumeMode(false)} className="ml-auto font-semibold underline text-text-muted" style={{ fontSize: "var(--t-xs)", minHeight: 32 }}>가정 끄기</button>
+        <button type="button" onClick={() => setAssumeMode(false)} className="ml-auto font-semibold underline text-text-muted" style={{ fontSize: "var(--t-xs)", minHeight: 40, padding: "0 6px" }}>가정 끄기</button>
       </div>
       {open && (
         <>
@@ -75,7 +75,7 @@ function AssumptionDetails({ assumed }: { assumed: Assumption[] }) {
           <ul className="flex flex-col" style={{ gap: 2, marginTop: 6 }}>
             {assumed.map((a) => (
               <li key={a.path} style={{ fontSize: "var(--t-xs)" }}>
-                <Link to={fieldHref(a.path)} className="font-bold underline decoration-dotted text-text">{a.label}</Link>
+                <Link to={fieldHref(a.path)} className="inline-flex items-center font-bold underline decoration-dotted text-text" style={{ minHeight: 40 }}>{a.label}</Link>
                 <span className="text-text-muted"> — {a.why}</span>
               </li>
             ))}

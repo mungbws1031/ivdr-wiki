@@ -89,7 +89,13 @@ type TabKey = "guide" | "source" | "ref" | "docs";
  * 문서 작성 패키지 — 한 문서를 쓰는 데 필요한 준비물을 한 상자에 담아
  * 4개 구성품 탭으로 보여준다: 가이드 · 내용 소스 · 지침서 · 참고 문서.
  */
-export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
+const KIT_OPEN_KEY = "ivdr-ui-kit-open";
+const readKitOpen = (fallback: boolean) => { try { const v = localStorage.getItem(KIT_OPEN_KEY); return v === null ? fallback : v === "1"; } catch { return fallback; } };
+
+/** defaultOpen: 사용자가 펼침·접힘을 고른 적이 없을 때의 기본값 (자동작성 문서는 접힘, 정거장 문서는 펼침). */
+export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; color: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(() => readKitOpen(defaultOpen));
+  const toggle = () => { const n = !open; setOpen(n); try { localStorage.setItem(KIT_OPEN_KEY, n ? "1" : "0"); } catch { /* 이번 화면에서만 */ } };
   const counts = {
     guide: (doc.knowledge?.length ?? 0),
     source:
@@ -124,13 +130,13 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
     >
       {/* ── 패키지 뚜껑: 헤더 + 탭 바 ───────────────────────── */}
       <div style={{ background: `color-mix(in srgb, ${color} 9%, var(--surface))`, borderBottom: `1px solid color-mix(in srgb, ${color} 22%, transparent)` }}>
-        <div className="flex items-center gap-3" style={{ padding: "var(--s-4) var(--s-4) var(--s-3)" }}>
+        <div className="flex flex-wrap items-center gap-3" style={{ padding: open ? "var(--s-4) var(--s-4) var(--s-3)" : "var(--s-3) var(--s-4)" }}>
           <span className="grid shrink-0 place-items-center rounded-[var(--r-md)]" style={{ width: 38, height: 38, background: color }} aria-hidden>
             <PackageIcon size={20} style={{ color: "#fff" }} />
           </span>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>문서 작성 패키지</span>
+          <div className="min-w-0" style={{ flex: "1 1 180px" }}>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-extrabold text-text" style={{ fontSize: open ? "var(--t-lg)" : "var(--t-base)" }}>문서 작성 패키지</span>
               {totalItems > 0 && (
                 <span className="rounded-full font-bold" style={{ background: color, color: "var(--text-on-color)", fontSize: 11, padding: "1px 9px" }}>
                   구성품 {totalItems}
@@ -138,10 +144,15 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
               )}
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: 1 }}>
-              이 문서 하나 완성하는 데 필요한 걸 한 상자에 담았어요 · 탭을 열어 챙겨보세요
+              {open ? "이 문서 하나 완성하는 데 필요한 걸 한 상자에 담았어요 · 탭을 열어 챙겨보세요" : "가이드·내용 소스·지침서·참고 문서"}
             </p>
           </div>
+          <button type="button" onClick={toggle} aria-expanded={open} className="shrink-0 rounded-[var(--r-md)] font-bold"
+            style={{ minHeight: 40, padding: "6px 14px", fontSize: "var(--t-sm)", border: `1px solid ${color}`, color: "var(--text)", background: "var(--bg)" }}>
+            {open ? "접기 ▴" : "펼치기 ▾"}
+          </button>
         </div>
+        {open && <>
 
         {/* 구성품 탭 */}
         <div className="flex flex-wrap gap-1.5" style={{ padding: "0 var(--s-4) var(--s-3)" }} role="tablist">
@@ -182,8 +193,10 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
             );
           })}
         </div>
+        </>}
       </div>
 
+      {open && <>
       {/* ── 패키지 속 내용: 탭 패널 ─────────────────────────── */}
       <div style={{ padding: "var(--s-4)", background: "var(--bg)" }}>
         {/* 활성 탭 한 줄 안내 */}
@@ -337,6 +350,7 @@ export function WritingKit({ doc, color }: { doc: KitDoc; color: string }) {
           </SubGroup>
         )}
       </div>
+      </>}
     </div>
   );
 }

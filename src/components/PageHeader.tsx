@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Map } from "lucide-react";
 
 /** 전체 페이지 공용 헤더 — 지도로 돌아가기 + 브레드크럼. */
@@ -9,6 +9,9 @@ export function PageHeader({
   crumb: string; // 현재 위치 (예: "문서 작성" / "개념 위키")
   accentColor?: string; // 페이즈/카테고리 색 (선택)
 }) {
+  // 자동작성 흐름 안에서는 흐름의 처음(제품 기획)으로, 기획 화면에서는 인증 홈으로 돌아간다 (U-9)
+  const { pathname } = useLocation();
+  const back = pathname === "/auto/start" ? { to: "/", label: "인증 홈" } : pathname.startsWith("/auto") ? { to: "/auto/start", label: "제품 기획(처음)" } : { to: "/", label: "여정 지도" };
   return (
     <header
       className="sticky top-0 z-30 border-b backdrop-blur"
@@ -19,12 +22,12 @@ export function PageHeader({
         style={{ maxWidth: "var(--max-w)", padding: "var(--s-3) var(--margin)" }}
       >
         <Link
-          to="/"
+          to={back.to}
           className="inline-flex items-center gap-1.5 rounded-[var(--r-sm)] font-semibold text-text-muted hover:bg-surface"
           style={{ fontSize: "var(--t-sm)", padding: "6px 10px", minHeight: 36 }}
         >
           <ArrowLeft size={16} aria-hidden />
-          여정 지도
+          {back.label}
         </Link>
         <span aria-hidden style={{ color: "var(--border-strong)" }}>
           /
