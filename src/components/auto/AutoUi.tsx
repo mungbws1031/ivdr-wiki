@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { fieldByPath } from "../../data/spec/fields";
 import type { ApplStatus } from "../../lib/rules/applicability";
@@ -45,21 +46,42 @@ export function AssumptionBanner({ assumed, assumeOn }: { assumed: Assumption[];
     );
   }
   if (!assumed.length) return null;
+  return <AssumptionDetails assumed={assumed} />;
+}
+
+const OPEN_KEY = "ivdr-ui-assume-open";
+const readOpen = () => { try { return localStorage.getItem(OPEN_KEY) === "1"; } catch { return false; } };
+
+/** 기본은 한 줄 — 펼치면 가정 목록(입력칸 링크·이유). 펼침 상태는 기억한다. */
+function AssumptionDetails({ assumed }: { assumed: Assumption[] }) {
+  const [open, setOpen] = useState(readOpen);
+  const toggle = () => {
+    const next = !open;
+    setOpen(next);
+    try { localStorage.setItem(OPEN_KEY, next ? "1" : "0"); } catch { /* 저장 불가 — 이번 화면에서만 */ }
+  };
   return (
-    <div className="rounded-[var(--r-md)]" style={{ padding: "10px 14px", background: "var(--warning-bg)", border: "1px solid var(--warning)" }} role="note">
-      <div className="flex flex-wrap items-center" style={{ gap: 8 }}>
+    <div className="rounded-[var(--r-md)]" style={{ padding: "6px 12px", background: "var(--warning-bg)", border: "1px solid var(--warning)" }} role="note">
+      <div className="flex flex-wrap items-center" style={{ gap: 8, minHeight: 32 }}>
         <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>가정 {assumed.length}개로 진행 중</span>
-        <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>비어 있는 칸을 요구사항이 더 많은 쪽으로 가정했습니다. 문서에는 "(가정)"이 붙고, 가정으로 나온 클래스는 확정할 수 없습니다.</span>
-        <button type="button" onClick={() => setAssumeMode(false)} className="ml-auto font-semibold underline text-text-muted" style={{ fontSize: "var(--t-xs)" }}>가정 끄기</button>
+        <button type="button" onClick={toggle} aria-expanded={open} className="font-semibold underline" style={{ fontSize: "var(--t-xs)", color: "var(--text)", minHeight: 32 }}>
+          {open ? "접기 ▴" : "자세히 ▾"}
+        </button>
+        <button type="button" onClick={() => setAssumeMode(false)} className="ml-auto font-semibold underline text-text-muted" style={{ fontSize: "var(--t-xs)", minHeight: 32 }}>가정 끄기</button>
       </div>
-      <ul className="flex flex-col" style={{ gap: 2, marginTop: 6 }}>
-        {assumed.map((a) => (
-          <li key={a.path} style={{ fontSize: "var(--t-xs)" }}>
-            <Link to={fieldHref(a.path)} className="font-bold underline decoration-dotted text-text">{a.label}</Link>
-            <span className="text-text-muted"> — {a.why}</span>
-          </li>
-        ))}
-      </ul>
+      {open && (
+        <>
+          <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>비어 있는 칸을 요구사항이 더 많은 쪽으로 가정했습니다. 문서에는 "(가정)"이 붙고, 가정으로 나온 클래스는 확정할 수 없습니다.</p>
+          <ul className="flex flex-col" style={{ gap: 2, marginTop: 6 }}>
+            {assumed.map((a) => (
+              <li key={a.path} style={{ fontSize: "var(--t-xs)" }}>
+                <Link to={fieldHref(a.path)} className="font-bold underline decoration-dotted text-text">{a.label}</Link>
+                <span className="text-text-muted"> — {a.why}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
