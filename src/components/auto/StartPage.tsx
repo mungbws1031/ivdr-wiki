@@ -209,7 +209,7 @@ export function StartPage() {
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="plan-sketch-title">
             <h2 id="plan-sketch-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginBottom: "var(--s-3)" }}>개념 스케치</h2>
             <ConceptSketch spec={spec} />
-            <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>제품 형태·판독 방식·검체·앱 여부로 그린 구성도입니다. 실제 디자인 이미지는 AI 서버 연결 후 지원할 예정입니다.</p>
+            <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>제품 형태·판독 방식·검체·앱 여부로 그린 산업디자인 개념 스케치입니다. 치수·시간은 설계·시험 후 확정하고, 실사 이미지는 AI 서버 연결 후 지원할 예정입니다.</p>
           </section>
 
           <StorageNote />

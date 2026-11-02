@@ -1,120 +1,59 @@
-import { useRef } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import type { ProductSpec } from "../../data/spec/types";
+import { sketchModel, type PartId } from "../../lib/sketch";
+import { Dim, INK, PALETTES, PAPER } from "./sketch/geom";
+import { drawBody, drawPhone } from "./sketch/parts";
+import { Storyboard } from "./sketch/story";
 
-// 개념 스케치 — 제품 형태·판독 방식·검체로 그린 단순 SVG. 디자인이 아니라 "이런 구성" 정도를 보여 준다.
-// 내려받아도 색이 그대로 보이도록 SVG 안에서는 고정 색(밝은 바탕)을 쓴다.
-const INK = "#2b2f36";
-const SOFT = "#e9edf3";
-const ACCENT = "#e5484d";
-const LINE = "#9aa3af";
+// 개념 스케치 — 산업디자인 손스케치 스타일: 3/4 시점 선화 + 마커 음영, 부품 콜아웃, 치수 자리, 사용 순서 3컷.
+// 디자인이 아니라 구성 확인용. 치수·시간은 지어내지 않는다([__]).
+const W = 960, H = 620;
+const COLOR_KEY = "ivdr-ui-sketch-color";
+const readColor = () => { try { return localStorage.getItem(COLOR_KEY) ?? "white"; } catch { return "white"; } };
+const textW = (s: string, fs: number) => [...s].reduce((n, ch) => n + (ch.charCodeAt(0) > 0x2000 ? fs * 0.98 : fs * 0.58), 0);
 
-function Cassette({ x, y, w = 150, h = 54, lines = true }: { x: number; y: number; w?: number; h?: number; lines?: boolean }) {
-  return (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx={14} fill="#fff" stroke={INK} strokeWidth={2} />
-      <circle cx={x + 28} cy={y + h / 2} r={11} fill={SOFT} stroke={INK} strokeWidth={1.5} />
-      <rect x={x + 58} y={y + h / 2 - 10} width={56} height={20} rx={4} fill={SOFT} stroke={INK} strokeWidth={1.5} />
-      {lines && <>
-        <line x1={x + 76} y1={y + h / 2 - 8} x2={x + 76} y2={y + h / 2 + 8} stroke={ACCENT} strokeWidth={3} />
-        <line x1={x + 96} y1={y + h / 2 - 8} x2={x + 96} y2={y + h / 2 + 8} stroke={ACCENT} strokeWidth={3} />
-        <text x={x + 71} y={y + h / 2 + 22} fontSize={9} fill={INK}>T</text>
-        <text x={x + 92} y={y + h / 2 + 22} fontSize={9} fill={INK}>C</text>
-      </>}
-    </g>
-  );
-}
+interface Callout { label: string; at: [number, number]; side: "L" | "R"; y: number; w: number }
 
-function Screen({ x, y, w, h, text }: { x: number; y: number; w: number; h: number; text: string }) {
-  return (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx={6} fill="#dff3ea" stroke={INK} strokeWidth={1.5} />
-      <text x={x + w / 2} y={y + h / 2 + 4} fontSize={11} textAnchor="middle" fill={INK} fontWeight={700}>{text}</text>
-    </g>
-  );
-}
-
-function Specimen({ x, y, kind }: { x: number; y: number; kind: ProductSpec["specimen"] }) {
-  if (kind === "urine") return (<g><path d={`M${x} ${y} h34 l-4 46 h-26 z`} fill="#fff6c9" stroke={INK} strokeWidth={1.5} /><text x={x + 17} y={y + 62} fontSize={10} textAnchor="middle" fill={INK}>소변</text></g>);
-  if (kind === "capillary-blood" || kind === "venous-blood") return (<g><path d={`M${x + 17} ${y} C ${x + 34} ${y + 24}, ${x + 30} ${y + 44}, ${x + 17} ${y + 44} C ${x + 4} ${y + 44}, ${x} ${y + 24}, ${x + 17} ${y} z`} fill={ACCENT} opacity={0.85} /><text x={x + 17} y={y + 62} fontSize={10} textAnchor="middle" fill={INK}>{kind === "capillary-blood" ? "손끝 혈액" : "혈액"}</text></g>);
-  if (kind === "swab") return (<g><line x1={x} y1={y + 44} x2={x + 34} y2={y + 4} stroke={INK} strokeWidth={2} /><ellipse cx={x + 34} cy={y + 4} rx={5} ry={8} fill="#fff" stroke={INK} /><text x={x + 17} y={y + 62} fontSize={10} textAnchor="middle" fill={INK}>면봉</text></g>);
-  if (kind === "saliva") return (<g><rect x={x + 6} y={y} width={22} height={44} rx={6} fill="#e8f1ff" stroke={INK} strokeWidth={1.5} /><text x={x + 17} y={y + 62} fontSize={10} textAnchor="middle" fill={INK}>타액</text></g>);
-  return (<g><rect x={x + 6} y={y} width={22} height={44} rx={6} fill={SOFT} stroke={INK} strokeWidth={1.5} /><text x={x + 17} y={y + 62} fontSize={10} textAnchor="middle" fill={INK}>검체</text></g>);
-}
-
-function Phone({ x, y, text }: { x: number; y: number; text: string }) {
-  return (
-    <g>
-      <rect x={x} y={y} width={62} height={116} rx={12} fill="#fff" stroke={INK} strokeWidth={2} />
-      <Screen x={x + 6} y={y + 12} w={50} h={84} text={text} />
-      <circle cx={x + 31} cy={y + 106} r={4} fill={LINE} />
-      <text x={x + 31} y={y + 132} fontSize={10} textAnchor="middle" fill={INK}>앱</text>
-    </g>
-  );
-}
-
-function Device({ s, result }: { s: ProductSpec; result: string }) {
-  switch (s.formFactor) {
-    case "strip-reader":
-      return (
-        <g>
-          <Cassette x={150} y={150} />
-          <rect x={150} y={40} width={150} height={92} rx={18} fill="#fff" stroke={INK} strokeWidth={2} />
-          <Screen x={170} y={56} w={110} h={40} text={result} />
-          <rect x={190} y={112} width={70} height={10} rx={3} fill={SOFT} stroke={INK} />
-          <text x={225} y={30} fontSize={10} textAnchor="middle" fill={INK}>리더기 (스틱을 꽂아 판독)</text>
-        </g>
-      );
-    case "personal-device":
-      return (
-        <g>
-          <rect x={160} y={40} width={110} height={170} rx={28} fill="#fff" stroke={INK} strokeWidth={2} />
-          <Screen x={176} y={64} w={78} h={56} text={result} />
-          <circle cx={215} cy={150} r={14} fill={SOFT} stroke={INK} />
-          <rect x={196} y={186} width={38} height={10} rx={3} fill={SOFT} stroke={INK} />
-          <text x={215} y={30} fontSize={10} textAnchor="middle" fill={INK}>개인용 일체형 기기</text>
-        </g>
-      );
-    case "poct":
-      return (
-        <g>
-          <rect x={130} y={50} width={200} height={140} rx={16} fill="#fff" stroke={INK} strokeWidth={2} />
-          <Screen x={150} y={68} w={100} h={60} text={result} />
-          <rect x={268} y={72} width={44} height={14} rx={3} fill={SOFT} stroke={INK} />
-          <text x={290} y={100} fontSize={9} textAnchor="middle" fill={INK}>카트리지</text>
-          <rect x={150} y={150} width={160} height={22} rx={4} fill={SOFT} stroke={INK} />
-          <text x={230} y={40} fontSize={10} textAnchor="middle" fill={INK}>POCT 기기 (약국·진료실)</text>
-        </g>
-      );
-    case "lab-analyzer":
-      return (
-        <g>
-          <rect x={110} y={30} width={240} height={190} rx={10} fill="#fff" stroke={INK} strokeWidth={2} />
-          <Screen x={130} y={46} w={90} h={52} text={result} />
-          {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={240 + i * 20} y={50} width={12} height={44} rx={3} fill={SOFT} stroke={INK} />)}
-          <rect x={130} y={120} width={200} height={80} rx={6} fill={SOFT} stroke={INK} />
-          <text x={230} y={165} fontSize={10} textAnchor="middle" fill={INK}>시약·검체 처리부</text>
-          <text x={230} y={22} fontSize={10} textAnchor="middle" fill={INK}>검사실 자동 분석 장비</text>
-        </g>
-      );
-    default:
-      return (
-        <g>
-          <Cassette x={140} y={100} w={180} h={64} />
-          <text x={230} y={86} fontSize={10} textAnchor="middle" fill={INK}>{s.formFactor === "strip-only" ? "테스트 스틱 (육안 판독)" : "제품 형태 미입력 — 스틱으로 표시"}</text>
-        </g>
-      );
+function layoutCallouts(items: { part: PartId; label: string; at: [number, number] }[]): Callout[] {
+  const FS = 12.5, TOP = 92, BOTTOM = 392, GAP = 30;
+  const body = items.filter((c) => c.part !== "phone");
+  const mid = body.reduce((n, c) => n + c.at[0], 0) / Math.max(body.length, 1);
+  const out: Callout[] = [];
+  for (const side of ["L", "R"] as const) {
+    const col = items.filter((c) => c.part === "phone" ? side === "R" : side === "L" ? c.at[0] < mid : c.at[0] >= mid).sort((a, b) => a.at[1] - b.at[1]);
+    // 폰이 있으면 오른쪽 본체 콜아웃은 위쪽에 모아 지시선이 폰을 가로지르지 않게 한다
+    const hasPhone = side === "R" && col.some((c) => c.part === "phone");
+    const ordered = hasPhone ? [...col.filter((c) => c.part !== "phone"), ...col.filter((c) => c.part === "phone")] : col;
+    let prev = TOP - GAP;
+    const placed = ordered.map((c) => {
+      const y = hasPhone && c.part !== "phone" ? prev + GAP : Math.max(c.at[1], prev + GAP, TOP);
+      prev = y;
+      return { label: c.label, at: c.at, side, y, w: textW(c.label, FS) };
+    });
+    const over = placed.length ? placed[placed.length - 1].y - BOTTOM : 0;
+    if (over > 0) placed.forEach((p) => (p.y -= over));
+    out.push(...placed);
   }
+  return out;
 }
 
 /** 개념 스케치 (SVG). 내려받기: SVG·PNG. */
 export function ConceptSketch({ spec }: { spec: ProductSpec }) {
   const ref = useRef<SVGSVGElement>(null);
-  const quantitative = spec.result.kind === "quantitative" || spec.result.kind === "semi-quantitative";
-  const result = quantitative ? `${spec.analyte.cutoffUnit ? `00 ${spec.analyte.cutoffUnit}` : "측정값"}` : "양성 / 음성";
-  const app = !!spec.software.hasApp || spec.result.readout === "app";
-  const name = spec.identity.productName ?? "제품명 미입력";
-  const analyte = [spec.analyte.name, spec.analyte.cutoffValue !== null ? `cut-off ${spec.analyte.cutoffValue} ${spec.analyte.cutoffUnit ?? ""}` : null].filter(Boolean).join(" · ");
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const [colorId, setColorId] = useState(readColor);
+  const pal = PALETTES.find((p) => p.id === colorId) ?? PALETTES[0];
+  const m = useMemo(() => sketchModel(spec), [spec]);
+  const body = drawBody(m.kind, pal, m.resultText, uid, m.phone);
+  const phone = m.phone ? drawPhone(pal, m.resultText, uid) : null;
+  const callouts = layoutCallouts(
+    m.callouts
+      .map((c) => ({ ...c, at: (c.part === "phone" ? phone?.anchors.phone : body.anchors[c.part]) as [number, number] | undefined }))
+      .filter((c): c is { part: PartId; label: string; at: [number, number] } => !!c.at),
+  );
+  const pick = (id: string) => { setColorId(id); try { localStorage.setItem(COLOR_KEY, id); } catch { /* 이번 화면에서만 */ } };
+  const today = new Date().toISOString().slice(0, 10);
 
   const save = (kind: "svg" | "png") => {
     const svg = ref.current;
@@ -127,8 +66,8 @@ export function ConceptSketch({ spec }: { spec: ProductSpec }) {
     const img = new Image();
     img.onload = () => {
       const c = document.createElement("canvas");
-      c.width = 960; c.height = 560;
-      c.getContext("2d")!.drawImage(img, 0, 0, 960, 560);
+      c.width = W * 2; c.height = H * 2;
+      c.getContext("2d")!.drawImage(img, 0, 0, W * 2, H * 2);
       URL.revokeObjectURL(url);
       c.toBlob((b) => { if (b) { const u = URL.createObjectURL(b); done(u); setTimeout(() => URL.revokeObjectURL(u), 1000); } });
     };
@@ -137,15 +76,61 @@ export function ConceptSketch({ spec }: { spec: ProductSpec }) {
 
   return (
     <div className="flex flex-col" style={{ gap: "var(--s-3)" }}>
-      <svg ref={ref} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" role="img" aria-label={`개념 스케치: ${name}`} style={{ width: "100%", maxWidth: 560, height: "auto", borderRadius: 12, border: "1px solid var(--border)" }} fontFamily="Pretendard, system-ui, sans-serif">
-        <rect width={480} height={280} fill="#fafbfc" />
-        <text x={16} y={22} fontSize={13} fontWeight={800} fill={INK}>{name}</text>
-        {analyte && <text x={16} y={38} fontSize={10} fill={INK}>{analyte}</text>}
-        {spec.specimen && <Specimen x={40} y={120} kind={spec.specimen} />}
-        <Device s={spec} result={result} />
-        {app && <Phone x={392} y={70} text={result} />}
-        <text x={16} y={270} fontSize={9} fill={LINE}>개념 스케치 — 디자인이 아니라 구성 확인용 (스펙으로 자동 생성)</text>
-      </svg>
+      <div className="flex flex-wrap items-center" style={{ gap: 8 }} role="group" aria-label="본체 색">
+        <span className="font-semibold text-text-muted" style={{ fontSize: "var(--t-xs)" }}>본체 색</span>
+        {PALETTES.map((p) => (
+          <button key={p.id} type="button" onClick={() => pick(p.id)} aria-pressed={p.id === pal.id} title={p.label}
+            className="inline-flex items-center rounded-full font-semibold" style={{ gap: 6, minHeight: 40, padding: "4px 12px 4px 6px", fontSize: "var(--t-xs)", border: `1.5px solid ${p.id === pal.id ? "var(--text)" : "var(--border)"}`, background: "var(--bg)", color: "var(--text)" }}>
+            <span aria-hidden className="rounded-full" style={{ width: 22, height: 22, background: p.base, border: `2px solid ${p.shade}` }} />
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <div className="overflow-x-auto rounded-[12px]" style={{ border: "1px solid var(--border)" }}>
+        <svg ref={ref} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`개념 스케치: ${m.title} — ${m.subtitle}`}
+          style={{ display: "block", width: "100%", minWidth: 640, height: "auto" }} fontFamily="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif">
+          <defs>
+            <pattern id={`${uid}dots`} width={16} height={16} patternUnits="userSpaceOnUse"><circle cx={1} cy={1} r={0.9} fill="#d9d4c6" /></pattern>
+            <filter id={`${uid}wob`} x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves={2} seed={4} result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale={2.2} xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+          <rect width={W} height={H} fill={PAPER} />
+          <rect width={W} height={H} fill={`url(#${uid}dots)`} />
+
+          <text x={24} y={38} fontSize={22} fontWeight={800} fill={INK}>{m.title}</text>
+          <text x={24} y={60} fontSize={12.5} fill={INK} opacity={0.75}>{m.subtitle}</text>
+
+          <g filter={`url(#${uid}wob)`}>
+            {body.node}
+            {phone?.node}
+          </g>
+          {body.dims.map((d) => <Dim key={d.label} x1={d.a[0]} y1={d.a[1]} x2={d.b[0]} y2={d.b[1]} label={d.label} />)}
+
+          {callouts.map((c) => {
+            const lx = c.side === "L" ? 24 : W - 24;
+            const end = c.side === "L" ? lx + c.w + 6 : lx - c.w - 6;
+            const elbow = c.side === "L" ? end + 18 : end - 18;
+            return (
+              <g key={c.label}>
+                <polyline points={`${end},${c.y - 4} ${elbow},${c.y - 4} ${c.at[0]},${c.at[1]}`} fill="none" stroke={INK} strokeWidth={1.1} />
+                <circle cx={c.at[0]} cy={c.at[1]} r={3.6} fill={INK} />
+                <circle cx={c.at[0]} cy={c.at[1]} r={7} fill="none" stroke={INK} strokeWidth={0.8} opacity={0.6} />
+                <text x={lx} y={c.y} fontSize={12.5} fontWeight={700} textAnchor={c.side === "L" ? "start" : "end"} fill={INK}>{c.label}</text>
+                <line x1={c.side === "L" ? lx : end} y1={c.y + 4} x2={c.side === "L" ? end : lx} y2={c.y + 4} stroke={INK} strokeWidth={0.8} opacity={0.5} />
+              </g>
+            );
+          })}
+
+          <g filter={`url(#${uid}wob)`}><Storyboard m={m} pal={pal} x={24} y={440} /></g>
+
+          <line x1={24} y1={590} x2={W - 24} y2={590} stroke={INK} strokeWidth={0.8} opacity={0.4} />
+          <text x={24} y={608} fontSize={10.5} fill={INK} opacity={0.7}>개념 스케치 — 디자인 아님 · 치수·시간은 설계·시험 후 확정 · 제품 스펙으로 자동 생성</text>
+          <text x={W - 24} y={608} fontSize={10.5} textAnchor="end" fill={INK} opacity={0.7}>{today} · {pal.label}</text>
+        </svg>
+      </div>
+      <p className="sm:hidden text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>옆으로 밀어서 전체 스케치 보기 →</p>
       <div className="flex flex-wrap" style={{ gap: 8 }}>
         {(["svg", "png"] as const).map((k) => (
           <button key={k} type="button" onClick={() => save(k)} className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] border font-semibold" style={{ padding: "6px 12px", fontSize: "var(--t-xs)", borderColor: "var(--border)", minHeight: 40 }}>
