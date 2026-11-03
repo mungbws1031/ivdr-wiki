@@ -24,7 +24,7 @@ export function Chip({ s }: { s: ApplStatus }) {
 }
 
 /** 운송 필드는 /auto/transport, 나머지는 /auto 의 해당 입력칸으로. */
-export const fieldHref = (path: string) => `${path.startsWith("transport.") ? "/auto/transport" : "/auto"}#field-${path}`;
+export const fieldHref = (path: string) => `${path.startsWith("transport.") ? "/auto/transport" : path.startsWith("market.") ? "/auto/market" : path.startsWith("plan.") ? "/auto/start" : "/auto"}#field-${path}`;
 
 export function FieldLink({ path }: { path: string }) {
   const f = fieldByPath(path);

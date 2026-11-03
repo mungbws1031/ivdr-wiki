@@ -129,6 +129,10 @@ export function StartPage() {
                 <DateInput path="plan.launchDate" label="목표 판매일" />
               </div>
             </div>
+            <Link to="/auto/market" className="inline-flex items-center gap-2 rounded-full font-bold" data-testid="market-cta"
+              style={{ marginTop: "var(--s-4)", minHeight: 44, padding: "8px 18px", fontSize: "var(--t-sm)", background: "var(--text)", color: "var(--bg)" }}>
+              💬 어때? 잘 팔릴 거 같아? <ArrowRight size={15} aria-hidden />
+            </Link>
           </section>
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="plan-cert-title">

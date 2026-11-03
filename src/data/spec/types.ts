@@ -11,6 +11,10 @@ export type ProductType = "reagent-kit" | "instrument" | "software" | "accessory
 /** 제품 형태 — 스틱만 / 스틱+리더기 / 개인용 일체형 기기 / POCT 기기 / 병원·검사실 대형 장비 */
 export type FormFactor = "strip-only" | "strip-reader" | "personal-device" | "poct" | "lab-analyzer";
 export type Material = "plastic" | "paper-membrane" | "glass" | "metal" | "electronics" | "other";
+export type Currency = "KRW" | "USD" | "EUR";
+export type SalesChannel = "online" | "pharmacy" | "hospital" | "b2b" | "other";
+export interface Competitor { name: string; company: string; price: number | null; cert: string; diff: string; source: string }
+
 /** 분석물 종류 — IVDR Rule 4(a) 자가검사 예외 품목(LH·hCG·콜레스테롤·소변 일반, 포도당은 소변일 때만)과 기타 */
 export type AnalytePreset = "LH" | "hCG" | "glucose" | "cholesterol" | "urine-cells" | "other";
 export type SpecimenType = "urine" | "capillary-blood" | "venous-blood" | "saliva" | "swab" | "other";
@@ -104,6 +108,24 @@ export interface ProductSpec {
     specificity: Maybe<number>; // %
     confidence: Maybe<number>; // %
     lots: Maybe<number>;
+  };
+  /** 시장성 — /auto/market 에서만 입력. 사람이 출처와 함께 넣는 값. 분류(specHash)에는 영향 없음. */
+  market: {
+    currency: Maybe<Currency>;
+    year: Maybe<number>;
+    /** 전체 시장(TAM)·목표 시장(SAM) — 단위: 백만 (currency) */
+    tam: Maybe<number>;
+    tamSource: Maybe<string>;
+    sam: Maybe<number>;
+    samSource: Maybe<string>;
+    /** 목표 점유율 % — 회사가 정하는 값 */
+    sharePct: Maybe<number>;
+    /** 목표 소비자 가격 — 단위: currency (1개 기준) */
+    price: Maybe<number>;
+    channels: Maybe<SalesChannel[]>;
+    target: Maybe<string>;
+    differentiator: Maybe<string>;
+    competitors: Competitor[];
   };
   /** 운송·포장 — /auto/transport 에서만 입력. 분류(specHash)에는 영향 없음. */
   /** 제품 기획 — 개발 시작일·목표 판매일(YYYY-MM-DD), 사람이 고친 항목별 기간(개월) */

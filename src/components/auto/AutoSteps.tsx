@@ -5,7 +5,7 @@ type Step = { to: string; label: string; market?: string };
 export interface StepGroup { id: string; label: string; steps: Step[] }
 
 const GROUPS: StepGroup[] = [
-  { id: "plan", label: "기획", steps: [{ to: "/auto/start", label: "제품 기획" }, { to: "/auto", label: "제품 스펙" }] },
+  { id: "plan", label: "기획", steps: [{ to: "/auto/start", label: "제품 기획" }, { to: "/auto/market", label: "시장성" }, { to: "/auto", label: "제품 스펙" }] },
   { id: "judge", label: "판정", steps: [
     { to: "/auto/docs", label: "분류·문서 세트" },
     { to: "/auto/kr", label: "한국(MFDS)", market: "KR" },
@@ -16,7 +16,7 @@ const GROUPS: StepGroup[] = [
   { id: "docs", label: "문서", steps: [{ to: "/auto/overview", label: "결과 한눈에" }, { to: "/auto/factory", label: "문서 공장" }] },
 ];
 
-export type StepPath = "/auto/start" | "/auto" | "/auto/docs" | "/auto/kr" | "/auto/us" | "/auto/transport" | "/auto/plan" | "/auto/results" | "/auto/overview" | "/auto/factory";
+export type StepPath = "/auto/start" | "/auto/market" | "/auto" | "/auto/docs" | "/auto/kr" | "/auto/us" | "/auto/transport" | "/auto/plan" | "/auto/results" | "/auto/overview" | "/auto/factory";
 
 /** 4단계 묶음 — 고르지 않은 시장의 국가 탭은 뺀다 (지금 보고 있는 화면이면 남긴다). 순수 함수. */
 export function stepGroups(markets: string[] | null, current?: string): StepGroup[] {

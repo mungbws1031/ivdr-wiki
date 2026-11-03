@@ -11,7 +11,7 @@ describe("stepGroups", () => {
     expect(tabs(["EU"])).not.toContain("/auto/kr");
     expect(tabs(["EU"])).not.toContain("/auto/us");
     expect(tabs(["EU", "KR"])).toContain("/auto/kr");
-    expect(tabs(null)).toHaveLength(8);
+    expect(tabs(null)).toHaveLength(9);
   });
   it("지금 보고 있는 국가 화면은 남긴다", () => {
     expect(tabs(["EU"], "/auto/us")).toContain("/auto/us");

@@ -376,8 +376,34 @@ export const planFields: FieldDef[] = [
   { path: "plan.launchDate", label: "목표 판매일", kind: "text", optional: true, usedBy: ["conformity-route-plan"], help: "YYYY-MM-DD" },
 ];
 
+/** 시장성 화면(/auto/market)에서만 입력 — 사람이 출처와 함께 넣는 값. 진행률 집계 밖. */
+export const marketSections: FieldSection[] = [
+  {
+    id: "market-size", title: "시장 규모", desc: "조사 자료의 값을 출처와 함께 넣으세요. 앱은 시장 규모를 추정하지 않습니다.",
+    fields: [
+      { path: "market.currency", label: "통화", kind: "select", optional: true, usedBy: [], options: [{ value: "KRW", label: "원 (KRW)" }, { value: "USD", label: "달러 (USD)" }, { value: "EUR", label: "유로 (EUR)" }] },
+      { path: "market.year", label: "기준 연도", kind: "number", optional: true, usedBy: [], placeholder: "예: 2025" },
+      { path: "market.tam", label: "전체 시장 (TAM)", help: "제품군 전체 시장 규모.", kind: "number", unit: "백만", optional: true, usedBy: [] },
+      { path: "market.tamSource", label: "전체 시장 출처", kind: "text", optional: true, usedBy: [], placeholder: "보고서명·발행처·URL" },
+      { path: "market.sam", label: "목표 시장 (SAM)", help: "고른 시장·고객층에서 실제로 닿을 수 있는 규모.", kind: "number", unit: "백만", optional: true, usedBy: [] },
+      { path: "market.samSource", label: "목표 시장 출처", kind: "text", optional: true, usedBy: [], placeholder: "보고서명·발행처·URL 또는 계산 근거" },
+      { path: "market.sharePct", label: "목표 점유율", help: "회사가 정하는 목표. SOM = SAM × 점유율.", kind: "number", unit: "%", optional: true, usedBy: [] },
+    ],
+  },
+  {
+    id: "market-sell", title: "가격 · 채널 · 고객", desc: "누구에게, 어디서, 얼마에 팔지.",
+    fields: [
+      { path: "market.price", label: "목표 소비자 가격 (1개)", kind: "number", optional: true, usedBy: [], help: "통화는 위에서 고른 것." },
+      { path: "market.channels", label: "판매 채널", kind: "multi", optional: true, usedBy: [], options: [{ value: "online", label: "온라인·앱" }, { value: "pharmacy", label: "약국" }, { value: "hospital", label: "병원·의원" }, { value: "b2b", label: "기업·보험 (B2B)" }, { value: "other", label: "기타" }] },
+      { path: "market.target", label: "타깃 고객", kind: "text", optional: true, usedBy: [], placeholder: "예: 갱년기 증상이 시작된 30~40대 여성" },
+      { path: "market.differentiator", label: "우리 제품 차별점", kind: "textarea", optional: true, usedBy: [], placeholder: "예: 앱으로 변화 추이 기록, 주기적 측정" },
+    ],
+  },
+];
+export const marketFields: FieldDef[] = marketSections.flatMap((s) => s.fields);
+
 export const allSpecFields: FieldDef[] = specSections.flatMap((s) => s.fields);
 export const transportFields: FieldDef[] = transportSections.flatMap((s) => s.fields);
 /** 가져오기 검증·경로 조회용 — 운송 필드까지 전부. */
-export const everySpecField: FieldDef[] = [...allSpecFields, ...transportFields, ...planFields];
+export const everySpecField: FieldDef[] = [...allSpecFields, ...transportFields, ...planFields, ...marketFields];
 export const fieldByPath = (path: string): FieldDef | undefined => everySpecField.find((f) => f.path === path);
