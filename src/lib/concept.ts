@@ -44,10 +44,11 @@ const RULES: Rule[] = [
   { path: "analyte.preset", value: "hCG", shown: "hCG (임신)", re: /hCG|임신/i },
   { path: "analyte.preset", value: "glucose", shown: "혈당", re: /혈당|포도당|글루코스|glucose/i },
   { path: "analyte.preset", value: "cholesterol", shown: "콜레스테롤", re: /콜레스테롤|cholesterol/i },
+  { path: "analyte.preset", value: "other", shown: "기타 — 난포자극호르몬(FSH, 갱년기)", re: /갱년기|폐경|완경|FSH|난포\s*자극/i },
   { path: "analyte.preset", value: "urine-cells", shown: "소변 일반 검사 (적혈구·백혈구·세균)", re: /잠혈|백혈구|아질산|요검사|소변\s*일반|요로\s*감염/ },
   // 사용자·환경
   { path: "user", value: "professional", shown: "전문가", re: /전문가|의료진|임상\s*검사실|병원용/ },
-  { path: "user", value: "lay", shown: "일반인 (자가검사)", re: /집에서|가정|자가|셀프|개인|home|self/i },
+  { path: "user", value: "lay", shown: "일반인 (자가검사)", re: /집에서|가정|자가|셀프|개인|본인|나만|\s내\s*(소변|몸|혈액|건강)|home|self/i },
   { path: "environment", value: "lab", shown: "검사실", re: /검사실|병원|대형|lab/i },
   { path: "environment", value: "near-patient", shown: "근접검사 (약국·진료실)", re: /약국|진료실|POCT|현장/i },
   { path: "environment", value: "home", shown: "가정", re: /집에서|가정|home/i },
@@ -71,9 +72,11 @@ const RULES: Rule[] = [
 ];
 
 const ANALYTE_NAME: Record<string, string> = {
+  other: "난포자극호르몬(FSH) — 확인 필요",
   LH: "황체형성호르몬(LH)", hCG: "인간 융모성 생식선 자극호르몬(hCG)", glucose: "혈중 포도당(혈당)", cholesterol: "총 콜레스테롤", "urine-cells": "소변 적혈구·백혈구·아질산(세균)",
 };
 const DECISION: Record<string, string> = {
+  other: "폐경 이행기(갱년기) 여부 확인 보조",
   LH: "배란 시기 예측 (가임기 확인)", hCG: "임신 여부 확인", glucose: "혈당 관리 (식사·약물 조절 판단 보조)",
   cholesterol: "콜레스테롤 수치 확인 (진료 필요 여부 판단 보조)", "urine-cells": "요로 감염·혈뇨 가능성 확인 (진료 필요 여부 판단 보조)",
 };
@@ -118,7 +121,7 @@ export function parseConcept(text: string): ConceptHit[] {
 
 /** 분석물 종류(LH·hCG)를 고르면 따라 정해지는 칸 — 정식 명칭·결과로 내리는 판단 */
 export function presetHits(preset: string): ConceptHit[] {
-  if (!ANALYTE_NAME[preset]) return [];
+  if (!ANALYTE_NAME[preset] || preset === "other") return [];
   return [
     { path: "analyte.name", value: ANALYTE_NAME[preset], shown: ANALYTE_NAME[preset], word: preset },
     { path: "intendedPurpose.clinicalDecision", value: DECISION[preset], shown: DECISION[preset], word: preset },
@@ -136,6 +139,40 @@ export function applyConcept(s: ProductSpec, hits: ConceptHit[]): { spec: Produc
     applied.push(h);
   }
   return { spec, applied };
+}
+
+const isEmpty = (v: unknown) => v === null || v === undefined || v === "" || (Array.isArray(v) && v.length === 0);
+const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+
+export interface ConceptConflict { path: string; current: unknown; next: unknown; shown: string }
+
+/**
+ * 컨셉을 바꿔 다시 적용한다.
+ * - 이전 컨셉에서 추정한 칸(estimated): 새 문장 값으로 바꾸고, 새 문장에 없으면 비운다.
+ * - 빈 칸: 채운다.
+ * - 사람이 넣었거나 확인한 칸: 바꾸지 않고, 새 값과 다르면 conflicts로 돌려준다 (사람이 고른다).
+ */
+export function reapplyConcept(s: ProductSpec, hits: ConceptHit[], estimated: string[]): {
+  spec: ProductSpec; applied: ConceptHit[]; cleared: string[]; conflicts: ConceptConflict[];
+} {
+  let spec = s;
+  const est = new Set(estimated);
+  const applied: ConceptHit[] = [];
+  const conflicts: ConceptConflict[] = [];
+  const hitPaths = new Set(hits.map((h) => h.path));
+  for (const h of hits) {
+    const cur = getAt(spec, h.path);
+    if (isEmpty(cur) || est.has(h.path)) {
+      if (!same(cur, h.value)) { spec = setAt(spec, h.path, h.value); applied.push(h); }
+    } else if (!same(cur, h.value)) conflicts.push({ path: h.path, current: cur, next: h.value, shown: h.shown });
+  }
+  const cleared: string[] = [];
+  for (const p of est) {
+    if (hitPaths.has(p) || isEmpty(getAt(spec, p))) continue;
+    spec = setAt(spec, p, null);
+    cleared.push(p);
+  }
+  return { spec, applied, cleared, conflicts };
 }
 
 /** 등급·문서 세트를 바꾸는데 아직 비어 있는 칸 — 영향이 큰 순서로 최대 n개 질문. */
