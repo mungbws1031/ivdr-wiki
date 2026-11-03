@@ -8,13 +8,29 @@ import { parseConcept } from "../concept";
 
 describe("Rule 4(a) 자가검사 예외 (1차 패널 T-01)", () => {
   for (const p of ["glucose", "cholesterol", "urine-cells"] as const) {
-    it(`${p} 일반인 → B, 원문 확인 표시`, () => {
-      const c = classify(setAt(exampleSpec(), "analyte.preset", p));
+    it(`${p} 일반인(소변) → B, 원문 확인 표시`, () => {
+      const c = classify(setAt(setAt(exampleSpec(), "analyte.preset", p), "specimen", "urine"));
       expect(c.value).toBe("B");
       expect(c.rule).toBe("Rule 4(a) 예외");
       expect(c.rationale.join()).toContain("원문 확인 필요");
     });
   }
+  it("혈당(혈액) 자가검사는 예외가 아니라 C", () => {
+    for (const sp of ["capillary-blood", "venous-blood"]) {
+      const c = classify(setAt(setAt(exampleSpec(), "analyte.preset", "glucose"), "specimen", sp));
+      expect(c.value).toBe("C");
+      expect(c.rule).toBe("Rule 4(a)");
+      expect(c.rationale.join()).toContain("소변 속 포도당");
+    }
+  });
+  it("혈당인데 검체 미입력 → 보수적으로 C, 검체 질문", () => {
+    const c = classify(setAt(setAt(exampleSpec(), "analyte.preset", "glucose"), "specimen", null));
+    expect(c.value).toBe("C");
+    expect(c.openQuestions).toContain("specimen");
+  });
+  it("콜레스테롤은 혈액이어도 B", () => {
+    expect(classify(setAt(setAt(exampleSpec(), "analyte.preset", "cholesterol"), "specimen", "capillary-blood")).value).toBe("B");
+  });
   it("LH는 원문 확인 표시 없이 B", () => {
     expect(classify(exampleSpec()).rationale.join()).not.toContain("예외 목록 원문 확인 필요");
   });
