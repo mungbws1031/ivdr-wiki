@@ -26,7 +26,7 @@ export const RULES_REVIEWED: { by: string | null; date: string | null } = { by: 
 export const SELF_TEST_EXCEPTION: Record<Exclude<ProductSpec["analyte"]["preset"], null | "other">, { label: string; verify: boolean }> = {
   LH: { label: "가임력(배란) 검사", verify: false },
   hCG: { label: "임신 검사", verify: false },
-  glucose: { label: "혈당 검사", verify: true },
+  glucose: { label: "소변 포도당 검출", verify: true },
   cholesterol: { label: "콜레스테롤 검사", verify: true },
   "urine-cells": { label: "소변의 적혈구·백혈구·세균 검출", verify: true },
 };
@@ -121,11 +121,16 @@ export function classify(s: ProductSpec): ClassResult {
   const selfTest = s.user === "lay" || s.user === "both";
   if (selfTest) {
     const preset = s.analyte.preset;
-    if (preset && preset !== "other") {
+    // 포도당 예외는 '소변 속' 포도당만 해당한다. 혈액(혈당) 자가검사는 예외가 아니어서 C.
+    const glucoseNotUrine = preset === "glucose" && s.specimen !== "urine";
+    if (preset && preset !== "other" && !glucoseNotUrine) {
       const what = SELF_TEST_EXCEPTION[preset];
       add("B", "Rule 4(a) 예외", `일반인 자가검사는 Rule 4(a)에 따라 원칙적으로 C이지만, ${what.label}는 예외로 B입니다.${what.verify ? " (예외 목록 원문 확인 필요)" : ""}`);
+    } else if (glucoseNotUrine) {
+      add("C", "Rule 4(a)", `일반인 자가검사는 Rule 4(a)에 따라 C입니다. 포도당 예외(B)는 소변 속 포도당 검출에만 해당하므로 ${s.specimen === null ? "검체가 정해지지 않은 동안은 보수적으로 C로 봅니다" : "혈액 등으로 측정하는 혈당 자가검사는 C입니다"}. (원문 확인 필요)`);
+      if (s.specimen === null) openQuestions.push("specimen");
     } else {
-      add("C", "Rule 4(a)", "일반인 자가검사는 Rule 4(a)에 따라 C입니다. 콜레스테롤·혈당·소변 적혈구/백혈구/세균 검사라면 예외로 B입니다.");
+      add("C", "Rule 4(a)", "일반인 자가검사는 Rule 4(a)에 따라 C입니다. 임신·가임력·콜레스테롤 검사와 소변의 포도당·적혈구·백혈구·세균 검출이라면 예외로 B입니다.");
       if (preset === null) openQuestions.push("analyte.preset");
     }
     citations.push("IVDR Annex VIII Rule 4");

@@ -56,7 +56,7 @@ export function ruleJustification(s: ProductSpec): RuleRow[] {
   else if (lay) {
     if (preset === "LH" || preset === "hCG") row("Rule 4", "applies", "B", `일반인 자가검사(4(a))는 원칙적으로 C이나 ${preset === "LH" ? "가임력(배란)" : "임신"} 검사 예외로 B`);
     else if (preset === null) row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 측정 목적이 입력되지 않아 예외(B) 여부 미확인", ["analyte.preset"]);
-    else row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 임신·가임력·콜레스테롤·혈당·소변 적혈구/백혈구/세균 예외가 아니면 C");
+    else row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 임신·가임력·콜레스테롤 검사와 소변의 포도당·적혈구·백혈구·세균 검출 예외가 아니면 C (혈액 혈당 자가검사는 C)");
   } else if (s.environment === "near-patient") row("Rule 4", "not", null, "전문가용 — 자가검사 아님. 근접검사 기기는 그 자체로 다른 규칙에 따라 분류(4(b))");
   else row("Rule 4", "not", null, "전문가용 — 자가검사·근접검사가 아님");
 
