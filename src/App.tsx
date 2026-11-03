@@ -20,6 +20,7 @@ const SpecPage = lazy(() => import("./components/auto/SpecPage").then((m) => ({ 
 const DocSetPage = lazy(() => import("./components/auto/DocSetPage").then((m) => ({ default: m.DocSetPage })));
 const UsPage = lazy(() => import("./components/auto/UsPage").then((m) => ({ default: m.UsPage })));
 const StartPage = lazy(() => import("./components/auto/StartPage").then((m) => ({ default: m.StartPage })));
+const MarketPage = lazy(() => import("./components/auto/MarketPage").then((m) => ({ default: m.MarketPage })));
 const KrPage = lazy(() => import("./components/auto/KrPage").then((m) => ({ default: m.KrPage })));
 const OverviewPage = lazy(() => import("./components/auto/OverviewPage").then((m) => ({ default: m.OverviewPage })));
 const ResultsPage = lazy(() => import("./components/auto/ResultsPage").then((m) => ({ default: m.ResultsPage })));
@@ -71,6 +72,7 @@ export default function App() {
           {/* 자동작성: 제품 스펙 */}
           <Route path="/auto" element={<SpecPage />} />
           <Route path="/auto/start" element={<StartPage />} />
+          <Route path="/auto/market" element={<MarketPage />} />
           <Route path="/auto/docs" element={<DocSetPage />} />
           <Route path="/auto/kr" element={<KrPage />} />
           <Route path="/auto/us" element={<UsPage />} />

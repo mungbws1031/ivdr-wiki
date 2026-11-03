@@ -35,6 +35,10 @@ export function emptySpec(): ProductSpec {
     referenceMethod: { name: null, ceMarked: null, lab: null },
     targets: { sensitivity: null, specificity: null, confidence: null, lots: null },
     plan: { startDate: null, launchDate: null, durations: null },
+    market: {
+      currency: null, year: null, tam: null, tamSource: null, sam: null, samSource: null, sharePct: null, price: null,
+      channels: null, target: null, differentiator: null, competitors: [],
+    },
     transport: {
       destinations: null, modes: null, lengthCm: null, widthCm: null, heightCm: null, grossWeightKg: null,
       kitsPerShipper: null, liquidReagent: null, dangerousGoods: null, primaryPlastic: null, outerMaterial: null,
@@ -162,6 +166,15 @@ export function validateSpec(x: unknown): ValidateResult {
     const clean = Object.fromEntries(Object.entries(dur).filter(([, v]) => typeof v === "number" && Number.isFinite(v) && v >= 0)) as Record<string, number>;
     if (Object.keys(clean).length) spec = setAt(spec, "plan.durations", clean);
   }
+  // 시장성: 경쟁 제품 목록
+  const comps = (src.market as Record<string, unknown> | undefined)?.competitors;
+  if (Array.isArray(comps)) {
+    const str = (v: unknown) => (typeof v === "string" ? v : "");
+    spec = setAt(spec, "market.competitors", comps.filter((c): c is Record<string, unknown> => !!c && typeof c === "object").map((c) => ({
+      name: str(c.name), company: str(c.company), price: typeof c.price === "number" && Number.isFinite(c.price) ? c.price : null,
+      cert: str(c.cert), diff: str(c.diff), source: str(c.source),
+    })));
+  }
   const meta = src.meta as Record<string, unknown> | undefined;
   spec.meta.updatedAt = typeof meta?.updatedAt === "string" ? meta.updatedAt : null;
   return { ok: true, spec, errors };
@@ -208,9 +221,10 @@ function stableStringify(v: unknown): string {
   return `{${Object.keys(o).filter((k) => k !== "meta").sort().map((k) => `${JSON.stringify(k)}:${stableStringify(o[k])}`).join(",")}}`;
 }
 
-/** 분류 확정의 변경 감지용. 운송 정보는 클래스에 영향이 없어 뺀다. */
+/** 분류 확정의 변경 감지용. 운송·시장성 정보는 클래스에 영향이 없어 뺀다. */
 export function specHash(s: ProductSpec): string {
-  const { transport: _transport, ...rest } = s;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { transport: _transport, market: _market, ...rest } = s;
   const str = stableStringify(rest);
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
