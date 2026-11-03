@@ -24,7 +24,7 @@ export const PATHWAY_LABEL: Record<UsPathway, string> = {
 };
 
 /** 확인한 품목 (규정 번호·등급). 출처는 2차 자료 — 원문(eCFR·FDA 분류 DB) 확인 필요. */
-export const US_KNOWN: Record<"LH" | "hCG", { regulation: string; deviceClass: UsClass; productCode: string | null; pathway: UsPathway; note: string; source: string; checked: string }> = {
+export const US_KNOWN: Record<"LH" | "hCG" | "FSH", { regulation: string; deviceClass: UsClass; productCode: string | null; pathway: UsPathway; note: string; source: string; checked: string }> = {
   hCG: {
     regulation: "21 CFR 862.1155 (Human chorionic gonadotropin test system)",
     deviceClass: "II", productCode: null, pathway: "510k",
@@ -37,7 +37,16 @@ export const US_KNOWN: Record<"LH" | "hCG", { regulation: string; deviceClass: U
     note: "Class I — 510(k) 면제이나 § 862.9 제한이 붙는다. 가정용 배란 검사는 510(k) 허가 사례가 있어(K981207 등) 제한 적용 여부를 862.9 원문으로 확인해야 한다.",
     source: "21 CFR 862.1485 본문, FDA 제품 코드 NGE (2차 자료)", checked: "2026-10-30",
   },
+  FSH: {
+    regulation: "21 CFR 862.1300 (Follicle-stimulating hormone test system)",
+    deviceClass: "I", productCode: "NGA (OTC) · CGJ", pathway: "check",
+    note: "Class I — 510(k) 면제이나 § 862.9 제한이 붙는다. 과거 가정용 폐경 FSH 소변 검사는 510(k)를 거친 사례가 있다(K040575·K030058·K052662, 제품 코드 CGJ). 앱 알고리즘으로 폐경 '단계'를 판정하는 등 새로운 용도·기술이면 면제 범위를 벗어날 수 있어 862.9 원문으로 확인해야 한다.",
+    source: "FDA 제품 분류 DB(NGA)·510(k) 사례 (2차 자료, 원문 확인 필요)", checked: "2026-11-03",
+  },
 };
+
+/** 분석물 이름으로 FSH(난포자극호르몬)인지 — 분석물 종류는 '기타'로 들어온다 */
+export const isFsh = (s: ProductSpec) => /FSH|난포\s*자극|follicle[-\s]*stimulating/i.test(s.analyte.name ?? "");
 
 export interface UsClia { status: "waived-otc" | "waiver-application" | "categorization" | "check"; label: string; reason: string }
 
@@ -97,6 +106,13 @@ export function classifyUs(s: ProductSpec): UsResult {
     const k = US_KNOWN[p];
     rationale.push(`${p === "LH" ? "LH(배란)" : "hCG(임신)"} 검사: ${k.regulation}. ${k.note}`);
     if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    return out(k.deviceClass, k.regulation, k.productCode, k.pathway, "provisional");
+  }
+  if (isFsh(s)) {
+    const k = US_KNOWN.FSH;
+    rationale.push(`FSH(난포자극호르몬) 검사: ${k.regulation}. ${k.note}`);
+    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    citations.push("21 CFR 862.1300", "21 CFR 862.9 (면제 한계)");
     return out(k.deviceClass, k.regulation, k.productCode, k.pathway, "provisional");
   }
   if (p === "glucose" || p === "cholesterol" || p === "urine-cells") {
