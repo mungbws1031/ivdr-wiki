@@ -66,3 +66,23 @@ describe("510(k) 초안 템플릿", () => {
     expect(usTokens(exampleSpec()).usClass).toBeNull();
   });
 });
+
+describe("FSH (갱년기) — 21 CFR 862.1300", () => {
+  const fsh = () => setAt(setAt(base(), "analyte.preset", "other"), "analyte.name", "난포자극호르몬(FSH) — 확인 필요");
+  it("Class I, 862.1300, 경로는 862.9 제한 확인", () => {
+    const u = classifyUs(fsh());
+    expect(u.deviceClass).toBe("I");
+    expect(u.regulation).toContain("862.1300");
+    expect(u.pathway).toBe("check");
+    expect(u.rationale.join()).toContain("862.9");
+  });
+  it("컨셉 문장(갱년기)에서 들어온 FSH도 인식", async () => {
+    const { parseConcept, reapplyConcept } = await import("../concept");
+    const { emptySpec } = await import("../../data/spec/validate");
+    const s = reapplyConcept(emptySpec(), parseConcept("집에서 쓰는 소변 갱년기 테스트, 미국 출시"), []).spec;
+    expect(classifyUs(s).regulation).toContain("862.1300");
+  });
+  it("FSH가 아닌 기타 분석물은 그대로 Class II 확인", () => {
+    expect(classifyUs(setAt(setAt(base(), "analyte.preset", "other"), "analyte.name", "비타민 D")).regulation).toBeNull();
+  });
+});
