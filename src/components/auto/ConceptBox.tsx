@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Lightbulb } from "lucide-react";
 import { fieldByPath } from "../../data/spec/fields";
-import { getAt } from "../../data/spec/validate";
+import { getAt, setAt } from "../../data/spec/validate";
 import { getSpec, replaceSpec, setSpecField, useSpec } from "../../hooks/useSpecStore";
 import { confirmEstimated, getConcept, saveConcept } from "../../hooks/useConceptStore";
-import { applyConcept, openQuestions, parseConcept, presetHits } from "../../lib/concept";
+import { applyConcept, openQuestions, parseConcept, presetHits, reapplyConcept, type ConceptConflict } from "../../lib/concept";
 
 const EXAMPLES = ["집에서 쓰는 소변 LH 배란 스틱, 기기 없이 판매, 유럽·한국 출시", "집에서 쓰는 소변 호르몬 측정기, 스마트폰 연동", "병원 검사실에 들어가는 대형 진단 장비"];
 
@@ -22,14 +22,33 @@ export function ConceptBox() {
   const concept = getConcept();
   const [text, setText] = useState(concept.text);
   const [note, setNote] = useState<string | null>(null);
+  const [conflicts, setConflicts] = useState<ConceptConflict[]>([]);
   const questions = openQuestions(spec);
+  const unapplied = text.trim() !== "" && text.trim() !== concept.text.trim();
 
   const run = () => {
     const hits = parseConcept(text);
-    const { spec: next, applied } = applyConcept(getSpec(), hits);
-    if (applied.length) replaceSpec(next);
-    saveConcept(text, [...getConcept().estimated, ...applied.map((a) => a.path)]);
-    setNote(applied.length ? `${applied.length}개 칸을 추정해서 채웠습니다. 이미 입력한 칸은 그대로 두었습니다.` : hits.length ? "뽑은 값이 모두 이미 입력되어 있어 바꾸지 않았습니다." : "문장에서 알아볼 수 있는 단어가 없었습니다. 검체·사용자·형태를 넣어 보세요.");
+    const prevEst = getConcept().estimated;
+    const r = reapplyConcept(getSpec(), hits, prevEst);
+    if (r.applied.length || r.cleared.length) replaceSpec(r.spec);
+    const est = [...prevEst.filter((p) => !r.cleared.includes(p)), ...r.applied.map((a) => a.path)];
+    saveConcept(text, est);
+    setConflicts(r.conflicts);
+    const parts = [
+      r.applied.length && `${r.applied.length}개 칸을 새 컨셉으로 채웠습니다`,
+      r.cleared.length && `이전 컨셉 값 ${r.cleared.length}개를 비웠습니다`,
+      r.conflicts.length && `직접 넣은 값 ${r.conflicts.length}개는 그대로 두었습니다 — 아래에서 바꿀 수 있습니다`,
+    ].filter(Boolean);
+    setNote(parts.length ? parts.join(" · ") + "." : hits.length ? "새 문장의 값이 지금 값과 같아 바뀐 것이 없습니다." : "문장에서 알아볼 수 있는 단어가 없었습니다. 검체·사용자·형태·검사 대상을 넣어 보세요.");
+  };
+
+  /** 충돌 칸을 새 컨셉 값으로 — 바꾼 칸은 추정으로 표시 */
+  const takeNew = (list: ConceptConflict[]) => {
+    let next = getSpec();
+    for (const c of list) next = setAt(next, c.path, c.next);
+    replaceSpec(next);
+    saveConcept(getConcept().text, [...getConcept().estimated, ...list.map((c) => c.path)]);
+    setConflicts((cur) => cur.filter((c) => !list.includes(c)));
   };
 
   const answer = (path: string, value: unknown) => {
@@ -68,7 +87,25 @@ export function ConceptBox() {
         <span className="text-text-subtle">예시:</span>
         {EXAMPLES.map((ex) => <button key={ex} type="button" onClick={() => setText(ex)} className="rounded-full hover:bg-surface text-text-muted" style={{ padding: "6px 14px", minHeight: 40, border: "1px solid var(--border)" }}>{ex}</button>)}
       </div>
+      {unapplied && <p className="font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--warning)", marginTop: 8 }}>문장을 바꿨습니다 — "컨셉으로 채우기"를 눌러야 반영됩니다.</p>}
       {note && <p role="status" className="font-semibold" style={{ fontSize: "var(--t-sm)", color: "var(--accent)", marginTop: 10 }}>{note}</p>}
+      {conflicts.length > 0 && (
+        <div className="rounded-[var(--r-md)]" style={{ marginTop: 10, padding: "10px 14px", background: "var(--bg)", border: "1px solid var(--warning)" }} aria-label="직접 넣은 값과 다른 칸">
+          <div className="flex flex-wrap items-center" style={{ gap: 8 }}>
+            <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>직접 넣은 값이라 바꾸지 않은 칸 {conflicts.length}개</span>
+            <button type="button" onClick={() => takeNew(conflicts)} className="ml-auto rounded-[var(--r-md)] font-bold" style={{ minHeight: 40, padding: "4px 14px", fontSize: "var(--t-xs)", background: "var(--accent)", color: "var(--text-on-color)" }}>모두 새 컨셉으로</button>
+          </div>
+          <ul className="flex flex-col" style={{ gap: 4, marginTop: 6 }}>
+            {conflicts.map((c) => (
+              <li key={c.path} className="flex flex-wrap items-center" style={{ gap: 8, fontSize: "var(--t-xs)" }}>
+                <b className="text-text">{fieldByPath(c.path)?.label ?? c.path}</b>
+                <span className="text-text-muted">{showValue(c.path, c.current)} → <b className="text-text">{showValue(c.path, c.next)}</b></span>
+                <button type="button" onClick={() => takeNew([c])} className="ml-auto rounded-[var(--r-md)] font-semibold" style={{ minHeight: 40, padding: "4px 12px", border: "1px solid var(--border-strong)", color: "var(--text)" }}>새 값으로</button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {concept.estimated.length > 0 && (
         <div style={{ marginTop: 12 }}>
