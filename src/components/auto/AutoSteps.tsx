@@ -12,11 +12,11 @@ const GROUPS: StepGroup[] = [
     { to: "/auto/us", label: "미국(FDA)", market: "US" },
     { to: "/auto/transport", label: "운송·포장" },
   ] },
-  { id: "test", label: "실험", steps: [{ to: "/auto/plan", label: "실험계획" }, { to: "/auto/results", label: "결과 입력" }] },
+  { id: "test", label: "실험", steps: [{ to: "/auto/plan", label: "실험계획" }, { to: "/auto/results", label: "결과 입력" }, { to: "/auto/trace", label: "추적성" }] },
   { id: "docs", label: "문서", steps: [{ to: "/auto/overview", label: "결과 한눈에" }, { to: "/auto/factory", label: "문서 공장" }] },
 ];
 
-export type StepPath = "/auto/start" | "/auto/market" | "/auto" | "/auto/docs" | "/auto/kr" | "/auto/us" | "/auto/transport" | "/auto/plan" | "/auto/results" | "/auto/overview" | "/auto/factory";
+export type StepPath = "/auto/start" | "/auto/market" | "/auto" | "/auto/docs" | "/auto/kr" | "/auto/us" | "/auto/transport" | "/auto/plan" | "/auto/results" | "/auto/trace" | "/auto/overview" | "/auto/factory";
 
 /** 4단계 묶음 — 고르지 않은 시장의 국가 탭은 뺀다 (지금 보고 있는 화면이면 남긴다). 순수 함수. */
 export function stepGroups(markets: string[] | null, current?: string): StepGroup[] {

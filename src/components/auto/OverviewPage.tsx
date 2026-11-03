@@ -27,6 +27,8 @@ import { docImpact } from "../../lib/impact";
 import { getReview } from "../../hooks/useReviewStore";
 import { hasDraft } from "../../hooks/useDraftStore";
 import { nextActions, type NextAction } from "../../lib/nextActions";
+import { buildTrace } from "../../lib/trace";
+import { useTraceStore } from "../../hooks/useTraceStore";
 
 function Card({ icon: Icon, title, to, cta, children }: { icon: typeof Layers; title: string; to: string; cta: string; children: React.ReactNode }) {
   return (
@@ -199,6 +201,10 @@ export function OverviewPage() {
   const routes = useMemo(() => certRoutes(spec, cls), [spec, cls]);
   const qmsMissing = missingQms(spec);
   const euSelected = !!spec.markets?.includes("EU");
+  const traceStore = useTraceStore();
+  const trace = useMemo(() => buildTrace(spec, results, traceStore), [spec, results, traceStore]);
+  const traceGaps = trace.gaps.filter((g) => g.level === "high").length;
+  const traceCov = trace.coverage.reqWithVfy;
   const classAssumed = assumed.some((a) => a.path === "user" || a.path === "analyte.preset");
   const next = nextActions(spec, cls, { confirmed: !!confirmed, classAssumed, resultsEntered: prog.entered, resultsTotal: prog.total });
   const shownFields = new Set(next.map((a) => a.field).filter(Boolean));
@@ -293,6 +299,9 @@ export function OverviewPage() {
                   {tasks.slice(0, 4).map((t) => <li key={t.task} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{t.task}</li>)}
                 </ul>
                 {tasks.length > 4 && <Muted>외 {tasks.length - 4}개</Muted>}
+                <Link to="/auto/trace" className="font-semibold underline decoration-dotted" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>
+                  추적성 빠진 연결 {traceGaps}개 · 검증 연결 {traceCov}% →
+                </Link>
               </Card>
             </div>
 
