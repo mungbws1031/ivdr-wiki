@@ -1,0 +1,34 @@
+filters:
+  and:
+    - file.inFolder("wiki")
+views:
+  - type: table
+    name: 전체 개념
+    order:
+      - file.name
+      - note.term
+      - note.category
+      - note.status
+      - note.summary
+      - note.refs
+    sort:
+      - property: note.order
+        direction: ASC
+  - type: table
+    name: 초안만
+    filters:
+      and:
+        - note.status == "draft"
+    order:
+      - file.name
+      - note.term
+      - note.summary
+  - type: table
+    name: 근거(refs) 없는 개념
+    filters:
+      and:
+        - note.refs.isEmpty()
+    order:
+      - file.name
+      - note.term
+      - note.category

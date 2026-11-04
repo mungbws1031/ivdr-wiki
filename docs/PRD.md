@@ -197,6 +197,7 @@
 | 검증 3차 | 가상 5인 패널 3차(S4 혈당 정정 재확인, FSH 시나리오 S7 추가), 사용성 3차(시장성·추적성·개념 스케치 화면), RA 전문가 검토 요청서, "심사관에게 물어보기" 버튼(결정적 규칙 기반 — 체크리스트·빈칸·초안 미작성만 점검, `src/lib/reviewerCheck.ts`) |
 | 06 사례 적용: 갱년기 FSH | '내 소변으로 갱년기 관리 시작' 컨셉을 끝까지 돌려 사례 보고서·IFU·라벨 초안·식약처 품목 확인 메모·이슈 목록 작성(`projects/06-case-fsh/`) — 코드 변경 없음, F-14(`intendedPurpose.clinicalDecision` 자동 채움 문구가 BRIEF 요구 안전 문구와 다름) 발견 |
 | 09 화면 품질 | 다크 모드(`prefers-color-scheme` 자동 + `data-theme="dark"` 수동 오버라이드 훅) 토큰 실체화, 흰 배경 가정 하드코딩 색 토큰화, 체크리스트 완료 축하 펄스. 번들 분석(rollup-plugin-visualizer): vendor manualChunks 분리는 초기 로딩 gzip이 127.41KB→133.82KB로 역효과라 되돌림(react-dom 자체가 index 청크 95KB 중 대부분이라 분리 이득 없음); 최종 index 청크는 토큰·색 변경 후 127.39KB(변화 거의 없음) |
+| 위키 원본 | 개념 위키 28개를 옵시디언 노트(`content/wiki/*.md`)로 분리 — 노트를 고치면 사이트가 바뀜, 깨진 링크·빈 칸은 빌드에서 차단, 초안(draft)은 배포 제외 |
 
 ## 11. 남은 과제 (우선순위)
 
