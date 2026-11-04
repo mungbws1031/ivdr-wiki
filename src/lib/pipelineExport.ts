@@ -81,7 +81,7 @@ export function pipelineInput(p: PipelineDoc, spec: ProductSpec) {
 
 /** docx 앞에 붙는 초안 표시 (목적 문단 앞) */
 export function withDraftNotice(doc: DocTemplate, ev: DocEvidence): DocTemplate {
-  return { ...doc, purpose: `[검토 전 초안 — 근거 확정 ${pct(ev.confirmed)}, 제품 스펙으로 자동 작성] ${doc.purpose}` };
+  return { ...doc, purpose: `[검토 전 초안 — 근거 확정 ${pct(ev.confirmed)}, 제품 정보로 자동 작성] ${doc.purpose}` };
 }
 
 export async function buildPipelineZip(

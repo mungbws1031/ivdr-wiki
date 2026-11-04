@@ -14,7 +14,7 @@ describe("인증 선택", () => {
     s.markets = ["KR"];
     const r = () => certRoutes(s, classify(s))[0];
     expect(r().headline).toContain("추천");
-    s.user = null; expect(r().headline).toContain("등급을 확인하면"); s.user = "lay";
+    s.user = null; expect(r().headline).toContain("등급이 정해지면"); s.user = "lay";
     s.krGrade = "1"; expect(r().headline).toContain("신고");
     s.krGrade = "2"; expect(r().headline).toContain("인증");
     s.krGrade = "3"; expect(r().headline).toContain("허가");

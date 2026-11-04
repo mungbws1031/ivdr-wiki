@@ -31,7 +31,7 @@ describe("운송 — 예시 스펙 (EU, 택배+항공, 2–30℃, 비멸균, 위
     const ppwr = packagingChecklist(s).find((g) => g.id === "ppwr")!;
     const recyc = ppwr.items.find((i) => i.text.startsWith("재활용 가능 설계"))!;
     expect(recyc.text).toContain("1차 포장만 예외");
-    expect(recyc.why).toContain("2·3차 포장은 예외가 아닙니다");
+    expect(recyc.why).toContain("2·3차 포장은 예외가 아니에요");
     expect(ppwr.items.every((i) => i.verify)).toBe(true);
   });
   it("시험 강도 수치를 지어내지 않는다", () => {

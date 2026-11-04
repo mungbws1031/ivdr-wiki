@@ -55,7 +55,7 @@ export function buildRoadmap(s: ProductSpec, cls: ClassResult): RoadItem[] {
   add({ id: "v-analytical", title: "분석 성능 시험", lane: "verify", min: 3, max: 6, depends: ["dev-freeze"], source: EST });
   add({ id: "v-stab-accel", title: "가속 안정성 (잠정 유효기간)", lane: "verify", min: 2, max: 4, depends: ["dev-freeze"], source: `${EST} — 잠정 유효기간 인정 여부는 기관별 확인` });
   const shelf = s.storage.shelfLifeMonths;
-  add({ id: "v-stab-real", title: `실시간 안정성 (${shelf !== null ? `${shelf}개월` : "유효기간 미입력"})`, lane: "verify", min: shelf ?? 12, max: shelf ?? 24, depends: ["dev-freeze"], source: shelf !== null ? "제품 스펙의 목표 유효기간" : EST, nonBlocking: true });
+  add({ id: "v-stab-real", title: `실시간 안정성 (${shelf !== null ? `${shelf}개월` : "유효기간 미입력"})`, lane: "verify", min: shelf ?? 12, max: shelf ?? 24, depends: ["dev-freeze"], source: shelf !== null ? "제품 정보의 목표 유효기간" : EST, nonBlocking: true });
   if (lay || s.environment === "near-patient") add({ id: "v-usability", title: "사용적합성 평가 (IEC 62366-1)", lane: "verify", min: 2, max: 4, depends: ["dev-freeze"], source: EST });
   add({ id: "v-clinical", title: lay ? "임상 성능·일반인 사용 연구" : "임상 성능 연구", lane: "verify", min: 3, max: 9, depends: ["v-analytical"], source: EST });
   add({ id: "v-transport", title: "운송 시험", lane: "verify", min: 1, max: 2, depends: ["dev-freeze"], source: EST });
@@ -80,7 +80,7 @@ export function buildRoadmap(s: ProductSpec, cls: ClassResult): RoadItem[] {
     } else {
       add({ id: "eu-nb", title: "인증기관(NB) 선정·계약", lane: "eu", min: 3, max: 6, depends: ["dev-concept"], source: `${EST} — NB 대기 기간이 길 수 있음` });
       const r: [number, number] = cls.value === "B" ? [6, 12] : cls.value === "C" ? [9, 18] : cls.value === "D" ? [12, 24] : [9, 18];
-      add({ id: "eu-cert", title: `NB 심사·CE 인증서 (Class ${cls.value ?? "?"})`, lane: "eu", min: r[0], max: r[1], depends: ["eu-tf", "eu-nb", ...iso], source: `${EST} (클래스별)` });
+      add({ id: "eu-cert", title: `NB 심사·CE 인증서 (Class ${cls.value ?? "?"})`, lane: "eu", min: r[0], max: r[1], depends: ["eu-tf", "eu-nb", ...iso], source: `${EST} (등급별)` });
     }
     certIds.push("eu-cert");
   }
