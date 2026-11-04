@@ -86,7 +86,7 @@ function Components({ value, onChange }: { value: KitComponent[]; onChange: (v: 
             시약 포함
           </label>
           <button
-            type="button" aria-label={`${r.name || "구성품"} 삭제`} onClick={() => onChange(rows.filter((_, j) => j !== i))}
+            type="button" aria-label={`${r.name || "구성품"} 지우기`} onClick={() => onChange(rows.filter((_, j) => j !== i))}
             className="inline-flex items-center justify-center rounded-[var(--r-sm)] hover:bg-surface"
             style={{ width: 40, height: 40, color: "var(--text-subtle)" }}
           >
@@ -183,7 +183,7 @@ export function SpecField({
         {def.optional ? (
           <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>선택</span>
         ) : !filled ? (
-          <span className="font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--danger)" }}>미입력</span>
+          <span className="font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--danger)" }}>아직 안 적음</span>
         ) : null}
       </div>
       {def.help && <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: -2 }}>{def.help}</p>}

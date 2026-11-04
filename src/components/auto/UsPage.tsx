@@ -40,13 +40,13 @@ export function UsPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>미국 FDA 인허가</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
-            체외진단기기 등급(Class I~III)과 인허가 경로(면제·510(k)·De Novo·PMA), CLIA 분류, 제출 자료를 정리합니다. 등급은 FDA 분류 데이터베이스의 제품 코드로 최종 정해지므로 추천은 제품 코드를 찾는 출발점입니다.
+            체외진단기기 등급(Class I~III), 인허가 경로(면제·510(k)·De Novo·PMA), CLIA 분류, 낼 자료를 정리해요. 최종 등급은 FDA 분류 데이터베이스의 제품 코드로 정해져요. 그래서 여기 추천은 제품 코드를 찾기 위한 출발점이에요.
           </p>
         </header>
 
         {!selected && (
           <div role="status" className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--warning)", background: "var(--warning-bg)", padding: "var(--s-4) var(--s-6)", marginBottom: "var(--s-6)", fontSize: "var(--t-sm)", color: "var(--warning)" }}>
-            제품 인증에서 '미국 (FDA)'을 고르지 않았습니다. 아래는 참고용입니다. <Link to={fieldHref("markets")} className="font-bold underline">인증 고르기</Link>
+            제품 인증에서 '미국 (FDA)'을 고르지 않았어요. 아래 내용은 참고만 해 주세요. <Link to={fieldHref("markets")} className="font-bold underline">인증 고르기</Link>
           </div>
         )}
 
@@ -69,7 +69,7 @@ export function UsPage() {
                 </ul>
                 <div className="rounded-[var(--r-md)] flex flex-wrap items-center" style={{ gap: "var(--s-3)", padding: "var(--s-3) var(--s-4)", background: "var(--surface)", border: "1px solid var(--border)" }}>
                   <span className={us.confirmedCode ? "font-bold text-text" : "text-text-muted"} style={{ fontSize: "var(--t-sm)" }}>
-                    {us.confirmedCode ? `담당자가 확인한 제품 코드: ${us.confirmedCode}` : "아직 FDA 분류 데이터베이스로 확인한 제품 코드가 없습니다."}
+                    {us.confirmedCode ? `담당자가 확인한 제품 코드: ${us.confirmedCode}` : "아직 FDA 분류 데이터베이스로 확인한 제품 코드가 없어요."}
                   </span>
                   <Link to={fieldHref("usProductCode")} className="ml-auto font-bold hover:underline" style={{ fontSize: "var(--t-sm)", color: "var(--accent)" }}>제품 코드 입력 →</Link>
                 </div>
@@ -83,7 +83,7 @@ export function UsPage() {
             </div>
             <p className="flex items-center gap-1.5 text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-4)", paddingTop: "var(--s-3)", borderTop: "1px solid var(--border)" }}>
               <ShieldCheck size={14} aria-hidden />
-              {US_RULES_REVIEWED.by ? `미국 규칙 검토: ${US_RULES_REVIEWED.by} · ${US_RULES_REVIEWED.date}` : `원문 확인 필요 — eCFR·FDA 제품 분류 데이터베이스. 확인한 품목: ${Object.entries(US_KNOWN).map(([k, v]) => `${k} ${v.regulation.split(" (")[0]} (${v.checked})`).join(", ")}. 담당자 검토 전 참고용입니다.`}
+              {US_RULES_REVIEWED.by ? `미국 규칙 검토: ${US_RULES_REVIEWED.by} · ${US_RULES_REVIEWED.date}` : `원문 확인 필요 — eCFR·FDA 제품 분류 데이터베이스. 확인한 품목: ${Object.entries(US_KNOWN).map(([k, v]) => `${k} ${v.regulation.split(" (")[0]} (${v.checked})`).join(", ")}. 담당자가 검토하기 전이라 참고용이에요.`}
             </p>
           </section>
 
@@ -102,7 +102,7 @@ export function UsPage() {
                 510(k) 초안 열기 <ChevronRight size={16} aria-hidden />
               </Link>
             </div>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>IVDR용으로 쓴 문서 중 다시 쓸 수 있는 것을 함께 보여 줍니다. FDA 제출은 영어로 하므로 번역이 필요합니다.</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>IVDR용으로 쓴 문서 중 다시 쓸 수 있는 것도 함께 보여 드려요. FDA에는 영어로 내야 해서 번역이 필요해요.</p>
             <ul style={{ marginTop: "var(--s-3)" }}>
               {docs.map((d) => (
                 <li key={d.id} data-usdoc={d.id} data-status={d.status} className="grid items-start" style={{ gridTemplateColumns: "minmax(0,1fr) auto", gap: "4px var(--s-3)", padding: "10px 0", borderBottom: "1px dashed var(--border)" }}>

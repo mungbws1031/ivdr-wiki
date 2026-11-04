@@ -111,7 +111,7 @@ function SizeTable({ label, target, conf, path }: { label: string; target: numbe
         </table>
       ) : (
         <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>
-          {target === null ? <>목표가 비어 있습니다 — <Link to={fieldHref(path)} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>입력하기</Link></> : <>신뢰수준이 비어 있습니다 — <Link to={fieldHref("targets.confidence")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>입력하기</Link></>}
+          {target === null ? <>목표가 비어 있어요 — <Link to={fieldHref(path)} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>입력하기</Link></> : <>신뢰수준이 비어 있어요 — <Link to={fieldHref("targets.confidence")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>입력하기</Link></>}
         </p>
       )}
     </div>
@@ -138,17 +138,17 @@ export function PlanPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험계획</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
-            제품 스펙으로 필요한 실험과 각 실험의 설계·시료·판정 기준을 정하고, 사람이 직접 해야 할 일을 모읍니다.
-            표본수처럼 계산되는 값은 계산하고, 규격 원문에 있는 값과 합격 수치는 지어내지 않고 <mark className="rounded-[4px]" style={{ background: "var(--warning-bg)", color: "var(--warning)", padding: "0 3px", fontWeight: 600 }}>[표시]</mark>로 남깁니다.
+            제품 정보를 보고 어떤 실험이 필요한지 알려 드려요. 실험마다 설계·시료·판정 기준을 정리하고, 사람이 직접 할 일도 모아 둬요.
+            표본수처럼 계산할 수 있는 값은 계산해요. 규격 원문에 있는 값과 합격 수치는 지어내지 않고 <mark className="rounded-[4px]" style={{ background: "var(--warning-bg)", color: "var(--warning)", padding: "0 3px", fontWeight: 600 }}>[표시]</mark>로 비워 둬요.
           </p>
         </header>
 
         {filled === 0 ? (
           <div className="rounded-[var(--r-lg)] border text-center" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-12) var(--s-6)" }}>
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 스펙을 입력하세요</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>결과 형태·검체·분석물·목표 성능을 넣으면 실험계획이 나옵니다.</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 정보를 적어 주세요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>결과 형태·검체·분석물·목표 성능을 적으면 실험계획이 나와요.</p>
             <Link to="/auto" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ marginTop: "var(--s-4)", padding: "10px 18px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-              제품 스펙 입력하기 <ChevronRight size={16} aria-hidden />
+              제품 정보 적기 <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
         ) : (
@@ -185,7 +185,7 @@ export function PlanPage() {
               })}
               {!CROSS_REACTANTS_REVIEWED && (
                 <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-                  교차반응·간섭 후보 목록은 일반적인 출발점이며 아직 RA·개발 담당자 검토 전입니다. 실제 시험 전에 제품 원료·문헌으로 확정하세요.
+                  교차반응·간섭 후보 목록은 흔히 쓰는 출발점이에요. 아직 RA·개발 담당자가 검토하지 않았어요. 실제 시험 전에 제품 원료·문헌을 보고 확정해 주세요.
                 </p>
               )}
             </div>
@@ -213,7 +213,7 @@ export function PlanPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>체크는 이 화면에서만 유지됩니다. 저장되는 할 일 목록은 "사람이 할 일" 단계에서 지원합니다.</p>
+                <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>여기 체크는 저장되지 않아요. 저장되는 할 일 목록은 "사람이 할 일" 단계에서 쓸 수 있어요.</p>
               </section>
 
               <section className="rounded-[var(--r-lg)] border flex flex-col" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-4)", gap: "var(--s-3)" }} aria-labelledby="size-title">
@@ -221,14 +221,14 @@ export function PlanPage() {
                   <Sigma size={15} aria-hidden /> 임상 성능 표본수
                 </h2>
                 <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-                  목표값을 {spec.targets.confidence ?? "?"}% 단측 신뢰하한(Clopper-Pearson)으로 입증하는 데 필요한 최소 양성·음성 검체 수입니다. 오판정을 몇 건까지 허용할지는 사람이 정합니다.
+                  목표값을 {spec.targets.confidence ?? "?"}% 단측 신뢰하한(Clopper-Pearson)으로 입증하는 데 필요한 최소 양성·음성 검체 수예요. 오판정을 몇 건까지 허용할지는 사람이 정해요.
                 </p>
                 <SizeTable label="민감도" target={spec.targets.sensitivity} conf={spec.targets.confidence} path="targets.sensitivity" />
                 <SizeTable label="특이도" target={spec.targets.specificity} conf={spec.targets.confidence} path="targets.specificity" />
               </section>
 
               <Link to="/auto/results" className="flex items-center justify-between rounded-[var(--r-lg)] font-bold" style={{ padding: "var(--s-4)", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-                실험을 마쳤으면: 결과 입력 <span aria-hidden>→</span>
+                실험을 마쳤다면 결과 적기 <span aria-hidden>→</span>
               </Link>
               <div className="flex flex-col" style={{ gap: 6 }}>
                 {[["performance-eval-plan", "성능평가 계획 (PEP)"], ["analytical-performance", "분석적 성능 보고서"], ["clinical-performance", "임상적 성능 보고서"], ["stability-study", "안정성 시험 계획·보고서"]].map(([id, t]) => (
@@ -237,7 +237,7 @@ export function PlanPage() {
                     <span aria-hidden>→</span>
                   </Link>
                 ))}
-                <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>이 계획이 위 문서의 설계·판정 기준·일정 섹션에 자동으로 들어갑니다. 직접 쓴 초안은 덮어쓰지 않습니다.</p>
+                <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>이 계획은 위 문서의 설계·판정 기준·일정 섹션에 자동으로 들어가요. 직접 쓴 초안은 덮어쓰지 않아요.</p>
               </div>
             </aside>
           </div>

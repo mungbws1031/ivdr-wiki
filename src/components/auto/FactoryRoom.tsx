@@ -295,7 +295,7 @@ export function FactoryRoom({ floors, overall }: { floors: FactoryFloor[]; overa
         ))}
       </ul>
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
-        발밑 링 색이 상태입니다 (초록 완료 · 파랑 작성 중 · 주황 사람 대기 · 회색 시작 전). 시작 전·완료 직원은 돌아다니고, 작성 중이면 모니터 앞에서 일하고, 사람 대기면 "대기" 말풍선이 뜹니다. 직원에 마우스를 올리면 이름표가 보이고 멈춥니다. 결재실·접수에는 사람이 할 일(✋)이 줄을 서 있습니다. 부서 간판을 누르면 목록이 열립니다.
+        발밑 링 색이 상태예요 (초록 완료 · 파랑 작성 중 · 주황 사람 대기 · 회색 시작 전). 시작 전·완료 직원은 돌아다니고, 작성 중이면 모니터 앞에서 일해요. 사람 대기면 "대기" 말풍선이 떠요. 직원에 마우스를 올리면 이름표가 보이고 멈춰요. 결재실·접수에는 사람이 할 일(✋)이 줄을 서 있어요. 부서 간판을 누르면 목록이 열려요.
       </p>
 
       <Briefing floors={floors} overall={overall} counts={counts} />
@@ -398,7 +398,7 @@ function Briefing({ floors, overall, counts }: { floors: FactoryFloor[]; overall
       </div>
       <div className="flex flex-col" style={{ gap: 8, maxWidth: 760 }}>
         <p className={bubble} style={bubbleStyle}>
-          전체 진행률 <b>{pct(overall.progress)}</b>, 문서 {overall.total}개 중 <b>{overall.done}개 완료</b>입니다. 작성 중 {counts.writing} · 사람 대기 {counts.blocked} · 시작 전 {counts.todo}.
+          전체 진행률 <b>{pct(overall.progress)}</b>, 문서 {overall.total}개 중 <b>{overall.done}개 완료</b>예요. 작성 중 {counts.writing} · 사람 대기 {counts.blocked} · 시작 전 {counts.todo}.
         </p>
         {tasks.length > 0 ? (
           <div className={bubble} style={bubbleStyle}>
@@ -411,7 +411,7 @@ function Briefing({ floors, overall, counts }: { floors: FactoryFloor[]; overall
                 </li>
               ))}
             </ol>
-            {tasks.length > 5 && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>외 {tasks.length - 5}건은 부서 간판을 눌러 확인하세요.</p>}
+            {tasks.length > 5 && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>나머지 {tasks.length - 5}건은 부서 간판을 누르면 볼 수 있어요.</p>}
           </div>
         ) : (
           <p className={bubble} style={bubbleStyle}>지금 사람이 할 일은 없어요. 🎉</p>

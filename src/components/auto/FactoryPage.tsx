@@ -93,16 +93,16 @@ export function FactoryPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>IVDR 문서 공장</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
-            문서 한 장이 직원 한 명입니다. 층은 부서이고, 사람의 결정·입력이 필요한 문서는 대기줄에 서 있습니다. 직원을 누르면 그 문서가 열리고, 층을 누르면 그 층의 할 일이 펼쳐집니다.
+            문서 한 장이 직원 한 명이에요. 층은 부서예요. 사람이 정하거나 적어 줘야 하는 문서는 대기줄에 서 있어요. 직원을 누르면 그 문서가 열리고, 층을 누르면 그 층의 할 일이 펼쳐져요.
           </p>
         </header>
 
         {filled === 0 ? (
           <div className="rounded-[var(--r-lg)] border text-center" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-12) var(--s-6)" }}>
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>아직 공장이 쉬고 있습니다</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 스펙을 넣으면 필요한 문서들이 각 층에 출근합니다.</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>아직 공장이 쉬고 있어요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 정보를 적으면 필요한 문서들이 층마다 출근해요.</p>
             <Link to="/auto" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ marginTop: "var(--s-4)", padding: "10px 18px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-              제품 스펙 입력하기 <ArrowRight size={16} aria-hidden />
+              제품 정보 적기 <ArrowRight size={16} aria-hidden />
             </Link>
           </div>
         ) : (
@@ -136,7 +136,7 @@ export function FactoryPage() {
               </Link>
             </div>
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: "var(--s-3)" }}>
-              진행률 = 문서마다 (완료면 100%, 아니면 직접 쓴 섹션 비율)의 평균. 문서 화면에서 상태를 "완료"로 바꾸면 완료로 셉니다. 이 제품에 불필요한 문서는 출근하지 않습니다.
+              진행률 = 문서마다 (완료면 100%, 아니면 직접 쓴 섹션 비율)의 평균이에요. 문서 화면에서 상태를 "완료"로 바꾸면 완료로 세요. 이 제품에 필요 없는 문서는 출근하지 않아요.
             </p>
           </div>
         )}
