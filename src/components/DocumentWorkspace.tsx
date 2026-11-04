@@ -499,16 +499,16 @@ export function DocumentWorkspace() {
                 style={{ gap: "6px var(--s-3)", padding: "var(--s-3) var(--s-4)", background: autoMissing.length ? "var(--warning-bg)" : "var(--success-bg)", border: `1px solid ${autoMissing.length ? "var(--warning)" : "var(--success)"}` }}
               >
                 <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: autoMissing.length ? "var(--warning)" : "var(--success)" }}>
-                  제품 스펙으로 자동 채움
+                  제품 정보로 자동 채움
                 </span>
                 <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
                   {autoMissing.length && completion(spec).filled === 0
-                    ? "제품 스펙을 입력하면 이 문서의 제품명·의도된 목적·분류 등이 자동으로 채워집니다."
+                    ? "제품 정보를 적으면 이 문서의 제품명·의도된 목적·분류 등이 자동으로 채워져요."
                     : autoMissing.length
-                    ? `스펙이 비어 있는 항목: ${autoMissing.map((k) => TOKEN_LABEL[k] ?? k).join(", ")}`
-                    : "직접 고치지 않은 섹션은 스펙을 바꾸면 함께 바뀝니다. 직접 고친 섹션은 그대로 유지됩니다."}
+                    ? `제품 정보가 비어 있는 항목: ${autoMissing.map((k) => TOKEN_LABEL[k] ?? k).join(", ")}`
+                    : "직접 고치지 않은 섹션은 제품 정보를 바꾸면 함께 바뀌어요. 직접 고친 섹션은 그대로 둬요."}
                 </span>
-                <Link to="/auto" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>제품 스펙 →</Link>
+                <Link to="/auto" className="ml-auto font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>제품 정보 →</Link>
               </div>
             )}
 

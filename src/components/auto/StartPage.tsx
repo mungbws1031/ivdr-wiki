@@ -57,14 +57,14 @@ function InputStatus() {
   const dates = [raw.plan?.startDate, raw.plan?.launchDate].filter(Boolean).length;
   const tFilled = transportFields.filter((f) => isFilled(f, raw)).length;
   const items = [
-    { label: "제품 정보", n: c.filled, total: c.total, to: "/auto", cta: "제품 스펙" },
+    { label: "제품 정보", n: c.filled, total: c.total, to: "/auto", cta: "제품 정보" },
     { label: "날짜", n: dates, total: 2, to: "#plan-in-title", cta: "아래에서 입력" },
     { label: "운송 정보", n: tFilled, total: transportFields.length, to: "/auto/transport", cta: "운송·포장" },
   ];
   return (
     <section aria-label="입력 현황" className="grid" style={{ gap: "var(--s-3)", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))" }}>
       {items.map((it) => {
-        const st = it.n === 0 ? { t: "비어 있음", c: "var(--text-subtle)" } : it.n >= it.total ? { t: "완료", c: "var(--success)" } : { t: "일부", c: "var(--warning)" };
+        const st = it.n === 0 ? { t: "비어 있음", c: "var(--text-subtle)" } : it.n >= it.total ? { t: "완료", c: "var(--success)" } : { t: "일부만", c: "var(--warning)" };
         const body = (
           <>
             <span className="flex items-center justify-between" style={{ gap: 8 }}>
@@ -137,7 +137,7 @@ export function StartPage() {
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="plan-cert-title">
             <h2 id="plan-cert-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>필요한 인증</h2>
-            {routes.length === 0 ? <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>위에서 판매할 곳(인증)을 고르세요.</p> : (
+            {routes.length === 0 ? <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>위에서 팔 곳(인증)을 먼저 골라 주세요.</p> : (
               <ul className="flex flex-col" style={{ gap: 6, marginTop: "var(--s-3)" }}>
                 {routes.map((r) => (
                   <li key={r.market} className="flex flex-wrap items-baseline" style={{ gap: 8, fontSize: "var(--t-sm)" }}>
@@ -146,7 +146,7 @@ export function StartPage() {
                     {r.links[0] && <Link to={r.links[0].to} className="inline-flex items-center font-semibold hover:underline" style={{ color: "var(--info)", fontSize: "var(--t-xs)", minHeight: 40 }}>{r.links[0].label} →</Link>}
                   </li>
                 ))}
-                {(spec.qmsCerts ?? []).length === 0 && <li className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>품질 인증(ISO 13485·KGMP)을 아직 갖고 있지 않으면 로드맵에 준비 기간이 들어갑니다.</li>}
+                {(spec.qmsCerts ?? []).length === 0 && <li className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>품질 인증(ISO 13485·KGMP)이 아직 없으면, 일정에 준비 기간을 넣어 계산해요.</li>}
               </ul>
             )}
           </section>
@@ -161,21 +161,21 @@ export function StartPage() {
                 color: plan.verdict === "ok" ? "var(--success)" : plan.verdict === "tight" ? "var(--warning)" : "var(--danger)",
                 background: plan.verdict === "ok" ? "var(--success-bg)" : plan.verdict === "tight" ? "var(--warning-bg)" : "var(--danger-bg)" }}>
                 {plan.verdict === "ok" ? <CheckCircle2 size={16} aria-hidden /> : <AlertTriangle size={16} aria-hidden />}
-                {plan.verdict === "ok" ? `목표 판매일(${raw.plan?.launchDate})에 맞출 수 있습니다 — 늦은 경우에도 여유가 있습니다.`
-                  : plan.verdict === "tight" ? `목표 판매일(${raw.plan?.launchDate})은 빠르게 진행될 때만 가능합니다 — ★ 항목을 먼저 시작하세요.`
-                  : `목표 판매일(${raw.plan?.launchDate})보다 최소 ${fmt(plan.shortage)}개월 부족합니다 — 판매일·시장·범위를 조정하세요.`}
+                {plan.verdict === "ok" ? `목표 판매일(${raw.plan?.launchDate})에 맞출 수 있어요. 늦어지더라도 여유가 있어요.`
+                  : plan.verdict === "tight" ? `목표 판매일(${raw.plan?.launchDate})은 일이 빨리 풀려야 맞출 수 있어요. ★ 항목부터 시작해 주세요.`
+                  : `목표 판매일(${raw.plan?.launchDate})까지 적어도 ${fmt(plan.shortage)}개월이 모자라요. 판매일·시장·범위를 다시 정해 주세요.`}
               </p>
             )}
-            {!start && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 6 }}>개발 시작일을 넣으면 날짜로, 목표 판매일을 넣으면 "늦어도 시작"이 계산됩니다.</p>}
+            {!start && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 6 }}>개발 시작일을 넣으면 날짜로 보여 줘요. 목표 판매일을 넣으면 "늦어도 시작"할 날을 계산해요.</p>}
 
             <div className="overflow-x-auto" style={{ marginTop: "var(--s-4)" }}>
               <div style={{ minWidth: 760 }}>
                 <div className="grid text-text-subtle" style={{ gridTemplateColumns: "230px 1fr 84px", fontSize: 11, padding: "0 0 4px" }}>
-                  <span>항목 · ★ 가장 긴 경로</span>
+                  <span>할 일 · ★ 가장 오래 걸리는 줄</span>
                   <div className="relative" style={{ height: 14 }}>
                     {Array.from({ length: Math.ceil(span / 6) + 1 }, (_, k) => k * 6).filter((m) => m <= span).map((m) => <span key={m} className="absolute" style={{ left: pos(m), transform: "translateX(-50%)" }}>{m}개월</span>)}
                   </div>
-                  <span style={{ textAlign: "right" }}>기간 직접</span>
+                  <span style={{ textAlign: "right" }}>기간 직접 입력</span>
                 </div>
                 {lanes.filter((l) => l !== "prod" || rows.some((r) => r.lane === "prod")).map((lane) => (
                   <div key={lane} style={{ borderTop: "1px solid var(--border)", padding: "6px 0" }}>
@@ -206,14 +206,14 @@ export function StartPage() {
               </div>
             </div>
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-3)", lineHeight: "var(--lh-base)" }}>
-              진한 막대는 가장 빠른 경우, 연한 막대는 늦은 경우까지입니다. 기간은 추정 범위이고 항목 이름에 마우스를 올리면 근거가 보입니다. 회사 계획이나 기관 안내가 있으면 "기간 직접"에 개월 수를 넣으세요. 실시간 안정성은 출시를 막지 않는 것으로 계산했습니다(가속 시험으로 잠정 유효기간 — 기관별 확인 필요).
+              진한 막대는 가장 빠를 때, 연한 막대는 늦어질 때까지예요. 기간은 어림잡은 범위예요. 할 일 이름에 마우스를 올리면 근거가 보여요. 회사 계획이나 기관 안내가 있으면 "기간 직접 입력"에 개월 수를 넣어 주세요. 실시간 안정성 시험은 출시를 막지 않는다고 보고 계산했어요(가속 시험으로 임시 유효기간을 정함 — 기관별 확인 필요).
             </p>
           </section>
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="plan-sketch-title">
             <h2 id="plan-sketch-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginBottom: "var(--s-3)" }}>개념 스케치</h2>
             <ConceptSketch spec={spec} />
-            <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>제품 형태·판독 방식·검체·앱 여부로 그린 산업디자인 개념 스케치입니다. 치수·시간은 설계·시험 후 확정하고, 실사 이미지는 AI 서버 연결 후 지원할 예정입니다.</p>
+            <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>제품 형태·결과 읽는 방식·검체·앱 여부를 보고 그린 개념 스케치예요. 치수·시간은 설계와 시험이 끝난 뒤 정해요. 실제 사진 같은 이미지는 AI 서버를 연결한 뒤에 지원할 예정이에요.</p>
           </section>
 
           <StorageNote />

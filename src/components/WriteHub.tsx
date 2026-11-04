@@ -299,7 +299,7 @@ export function WriteHub() {
             className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-semibold hover:shadow-sm"
             style={{ marginTop: "var(--s-3)", fontSize: "var(--t-sm)", padding: "8px 14px", border: "1px solid var(--accent)", background: "var(--accent-weak)", color: "var(--accent)" }}
           >
-            제품 스펙으로 자동 작성 (베타) →
+            제품 정보로 자동 작성 (베타) →
           </Link>
 
           {/* 전체 진행 요약 */}

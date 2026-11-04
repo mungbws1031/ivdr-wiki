@@ -22,7 +22,7 @@ function VerifyBadge() {
     <span
       className="inline-flex items-center rounded-full font-bold shrink-0"
       style={{ fontSize: 11, padding: "1px 8px", color: "var(--warning)", background: "var(--warning-bg)" }}
-      title="EUR-Lex 원문 대조 전 — 2차 자료 기준"
+      title="EUR-Lex 원문과 아직 맞춰 보지 않았어요 — 2차 자료 기준"
     >
       원문 확인 필요
     </span>
@@ -78,8 +78,8 @@ export function TransportPage() {
           <AutoSteps current="/auto/transport" />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>운송·포장</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
-            어디로, 어떻게, 어떤 박스로 보내는지 입력하면 적용 규정·규격, 포장 설계 체크리스트(EU 포장규정 PPWR 포함), 운송 시험 순서, 실제 운송 과정 관리가 나옵니다.
-            1차 지원 범위는 시약 키트를 택배·항공으로 보내는 경우입니다.
+            어디로, 어떻게, 어떤 박스로 보내는지 적어 주세요. 그러면 적용 규정·규격, 포장 설계 체크리스트(EU 포장규정 PPWR 포함), 운송 시험 순서, 실제 운송 과정 관리를 보여 드려요.
+            지금은 시약 키트를 택배·항공으로 보내는 경우만 지원해요.
           </p>
           {!started && (
             <button
@@ -112,18 +112,18 @@ export function TransportPage() {
 
           <aside className="flex flex-col min-w-0 lg:sticky lg:top-20" style={{ gap: "var(--s-4)" }}>
             <section className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-4)" }}>
-              <h2 className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-2)" }}>제품 스펙에서 가져온 값</h2>
+              <h2 className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-2)" }}>제품 정보에서 가져온 값</h2>
               <dl className="grid" style={{ gridTemplateColumns: "auto minmax(0,1fr)", gap: "6px var(--s-3)", fontSize: "var(--t-sm)" }}>
                 {fromSpec.map((r) => (
                   <div key={r.label} className="contents">
                     <dt className="text-text-muted">{r.label}</dt>
                     <dd className="text-text font-semibold min-w-0">
-                      {r.value ?? <Link to={fieldHref(r.path)} className="font-semibold underline decoration-dotted underline-offset-2" style={{ color: "var(--danger)" }}>미입력</Link>}
+                      {r.value ?? <Link to={fieldHref(r.path)} className="font-semibold underline decoration-dotted underline-offset-2" style={{ color: "var(--danger)" }}>아직 안 적음</Link>}
                     </dd>
                   </div>
                 ))}
               </dl>
-              <Link to="/auto" className="inline-block font-semibold hover:underline" style={{ fontSize: "var(--t-xs)", color: "var(--info)", marginTop: "var(--s-3)" }}>제품 스펙에서 고치기 →</Link>
+              <Link to="/auto" className="inline-block font-semibold hover:underline" style={{ fontSize: "var(--t-xs)", color: "var(--info)", marginTop: "var(--s-3)" }}>제품 정보에서 고치기 →</Link>
             </section>
 
             {plan.outOfScope && (
@@ -145,7 +145,7 @@ export function TransportPage() {
               다음: 실험계획 <ArrowRight size={16} aria-hidden />
             </Link>
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-              아래 결과가 문서의 운송 경로·적용 규격·포장 구성·시험 순서·판정 기준·운송 과정 섹션에 자동으로 들어갑니다. 직접 쓴 초안은 덮어쓰지 않습니다.
+              아래 결과는 문서의 운송 경로·적용 규격·포장 구성·시험 순서·판정 기준·운송 과정 섹션에 자동으로 들어가요. 직접 쓴 초안은 덮어쓰지 않아요.
             </p>
           </aside>
         </div>
@@ -153,7 +153,7 @@ export function TransportPage() {
         {/* 결과 */}
         <div className="flex flex-col" style={{ gap: "var(--s-6)" }}>
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="res-standards">
-            <SectionTitle n="①" id="res-standards" title="적용 규정·규격" desc="법적 요구와 업계 표준 시험법을 함께 보여줍니다. 시험 강도 수치는 각 규격 원문을 따릅니다." />
+            <SectionTitle n="①" id="res-standards" title="적용 규정·규격" desc="법으로 정한 요구와 업계 표준 시험법을 함께 보여 드려요. 시험 강도 수치는 각 규격 원문을 따라요." />
             <ul>
               {standards.map((x) => (
                 <li
@@ -179,7 +179,7 @@ export function TransportPage() {
 
           <section aria-labelledby="res-pack">
             <div className="rounded-[var(--r-lg)] border bg-bg" style={card}>
-              <SectionTitle n="②" id="res-pack" title="포장 설계 체크리스트" desc="1차(파우치) → 2차(키트 상자) → 3차(출하 박스) 순서로 정하고, EU 출시면 PPWR 의무를 함께 확인합니다." />
+              <SectionTitle n="②" id="res-pack" title="포장 설계 체크리스트" desc="1차(파우치) → 2차(키트 상자) → 3차(출하 박스) 순서로 정해요. EU에 낸다면 PPWR 의무도 함께 확인해요." />
               <div className="grid" style={{ gap: "var(--s-4)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))" }}>
                 {packing.map((g) => (
                   <div key={g.id} className="rounded-[var(--r-md)] border" style={{ borderColor: g.id === "ppwr" ? "var(--warning)" : "var(--border)", padding: "var(--s-4)", background: g.id === "ppwr" ? "var(--surface)" : "var(--bg)" }}>
@@ -205,7 +205,7 @@ export function TransportPage() {
                     {g.id === "ppwr" && (
                       <p className="flex text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: "var(--s-3)", gap: 6 }}>
                         <Info size={14} className="shrink-0" style={{ marginTop: 2 }} aria-hidden />
-                        <span>출처: {PPWR_SOURCES}. 이 내용은 EUR-Lex 원문과 대조하기 전입니다. 제출 전에 관보(OJ) 원문과 시행법으로 확인하세요.</span>
+                        <span>출처: {PPWR_SOURCES}. 이 내용은 아직 EUR-Lex 원문과 맞춰 보지 않았어요. 제출하기 전에 관보(OJ) 원문과 시행법으로 확인해 주세요.</span>
                       </p>
                     )}
                   </div>
@@ -215,7 +215,7 @@ export function TransportPage() {
           </section>
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="res-tests">
-            <SectionTitle n="③" id="res-tests" title="운송 시험 순서" desc="낙하 높이·진동 강도·박스 수는 ISTA 원문 표를 따릅니다. 이 화면은 순서와 이 제품에 맞는 단계만 정합니다." />
+            <SectionTitle n="③" id="res-tests" title="운송 시험 순서" desc="낙하 높이·진동 강도·박스 수는 ISTA 원문 표를 따라요. 이 화면은 순서와 이 제품에 맞는 단계만 정해요." />
             <ol className="flex flex-col" style={{ gap: "var(--s-3)" }}>
               {plan.steps.map((st, i) => (
                 <li key={st.id} className="flex" style={{ gap: "var(--s-3)", opacity: st.required ? 1 : 0.8 }}>
@@ -242,12 +242,12 @@ export function TransportPage() {
               <ul className="flex flex-col" style={{ gap: 4, paddingLeft: 18, listStyle: "disc" }}>
                 {plan.acceptance.map((a) => <li key={a} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{a}</li>)}
               </ul>
-              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>[사양: …] 칸은 지어내지 않고 남겨 둔 값입니다. 위험관리·성능 목표에서 정해 문서에 적어 주세요.</p>
+              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)" }}>[사양: …] 칸은 지어내지 않으려고 비워 둔 값이에요. 위험관리·성능 목표에서 정한 뒤 문서에 적어 주세요.</p>
             </div>
           </section>
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="res-process">
-            <SectionTitle n="④" id="res-process" title="운송 과정 관리" desc="출하부터 사용자 수령까지 단계별로 무엇이 위험하고, 어떻게 관리하고, 무엇을 기록으로 남기는지." />
+            <SectionTitle n="④" id="res-process" title="운송 과정 관리" desc="출하부터 사용자가 받을 때까지, 단계마다 무엇이 위험한지·어떻게 관리할지·무엇을 기록할지 정리해요." />
             <ol className="grid" style={{ gap: "var(--s-3)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 240px), 1fr))" }}>
               {process.map((p, i) => (
                 <li key={p.id} className="rounded-[var(--r-md)] border flex flex-col" style={{ borderColor: "var(--border)", borderTop: "4px solid var(--accent)", padding: "var(--s-4)", gap: "var(--s-2)" }}>

@@ -77,17 +77,17 @@ export function DocSetPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>분류·문서 세트</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
-            제품 스펙으로 IVDR 클래스를 추천하고, 문서 {set.length}개 각각이 이 제품에 필요한지 이유와 함께 판정합니다.
-            추천일 뿐이며 클래스는 담당자가 확정합니다.
+            제품 정보로 IVDR 클래스를 추천해요. 문서 {set.length}개가 이 제품에 필요한지도 이유와 함께 알려 줘요.
+            어디까지나 추천이에요. 클래스는 담당자가 확정해요.
           </p>
         </header>
 
         {filled === 0 ? (
           <div className="rounded-[var(--r-lg)] border text-center" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-12) var(--s-6)" }}>
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 스펙을 입력하세요</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 유형, 사용자, 분석물만 입력해도 클래스 추천이 나옵니다.</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 정보를 적어 주세요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 유형, 사용자, 분석물만 적어도 클래스를 추천해 드려요.</p>
             <Link to="/auto" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ marginTop: "var(--s-4)", padding: "10px 18px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-              제품 스펙 입력하기 <ChevronRight size={16} aria-hidden />
+              제품 정보 적으러 가기 <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
         ) : (
@@ -111,12 +111,12 @@ export function DocSetPage() {
                   </ul>
                   {cls.openQuestions.length > 0 && (
                     <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
-                      답하지 않은 항목: {cls.openQuestions.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}
+                      아직 답하지 않은 항목: {cls.openQuestions.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}
                     </p>
                   )}
                   {cls.route.length > 0 && (
                     <div>
-                      <h2 className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 4 }}>적합성 평가 경로</h2>
+                      <h2 className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 4 }}>인증 받는 방법(적합성 평가 경로)</h2>
                       <ul className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "disc" }}>
                         {cls.route.map((r) => <li key={r} className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}><WithTerms text={r} /></li>)}
                       </ul>
@@ -137,10 +137,10 @@ export function DocSetPage() {
                       <>
                         {stale && (
                           <span className="inline-flex items-center gap-1 font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>
-                            <AlertTriangle size={16} aria-hidden /> 확정 후 스펙이 바뀌었습니다 (확정: Class {confirm!.value}) — 다시 확인해 주세요
+                            <AlertTriangle size={16} aria-hidden /> 확정한 뒤에 제품 정보가 바뀌었어요 (확정: Class {confirm!.value}). 다시 확인해 주세요
                           </span>
                         )}
-                        {!stale && <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 확정 전입니다. 확정하면 다음 단계(실험계획·문서 작성)가 이 클래스로 진행됩니다.</span>}
+                        {!stale && <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 확정하지 않았어요. 확정하면 다음 단계(실험계획·문서 작성)를 이 클래스로 진행해요.</span>}
                         <button
                           type="button"
                           disabled={!cls.value || cls.status === "blocked" || cls.status === "needs-review" || classAssumed}
@@ -148,17 +148,17 @@ export function DocSetPage() {
                           className="ml-auto rounded-[var(--r-md)] font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                           style={{ fontSize: "var(--t-sm)", padding: "8px 16px", minHeight: 40, background: "var(--accent)", color: "var(--text-on-color)" }}
                         >
-                          {classAssumed ? "가정으로 나온 등급 — 확정 불가" : cls.value ? `Class ${cls.value}로 확정` : "확정할 수 없음"}
+                          {classAssumed ? "가정으로 나온 등급이라 확정할 수 없어요" : cls.value ? `Class ${cls.value}로 확정` : "아직 확정할 수 없어요"}
                         </button>
                       </>
                     )}
                   </div>
-                  {cls.status === "provisional" && cls.value && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>잠정 추천도 확정할 수 있지만, 답하지 않은 항목을 먼저 채우는 것을 권합니다.</p>}
+                  {cls.status === "provisional" && cls.value && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>잠정 추천도 확정할 수는 있어요. 그래도 답하지 않은 항목을 먼저 채우는 게 좋아요.</p>}
                 </div>
               </div>
               <p className="flex items-center gap-1.5 text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-4)", paddingTop: "var(--s-3)", borderTop: "1px solid var(--border)" }}>
                 <ShieldCheck size={14} aria-hidden />
-                {RULES_REVIEWED.by ? `분류 규칙 검토: ${RULES_REVIEWED.by} · ${RULES_REVIEWED.date}` : "분류 규칙은 아직 RA 담당자 검토 전입니다. 참고용으로 쓰고, 실제 제출 전에는 최신 IVDR·MDCG 가이드로 확인하세요."}
+                {RULES_REVIEWED.by ? `분류 규칙 검토: ${RULES_REVIEWED.by} · ${RULES_REVIEWED.date}` : "분류 규칙은 아직 RA 담당자가 검토하지 않았어요. 참고용으로만 쓰고, 실제로 제출하기 전에는 최신 IVDR·MDCG 가이드로 확인해 주세요."}
               </p>
             </section>
 
@@ -169,7 +169,7 @@ export function DocSetPage() {
               <div className="flex flex-wrap items-baseline justify-between" style={{ gap: "var(--s-3)" }}>
                 <div>
                   <h2 id="set-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>이 제품에 필요한 문서</h2>
-                  <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>이유가 적히지 않은 필수 문서는 제품과 관계없이 모든 IVDR 제품에 필요한 문서입니다.</p>
+                  <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>이유가 없는 필수 문서는 어떤 제품이든 IVDR 제품이라면 다 필요한 문서예요.</p>
                 </div>
                 <div className="flex flex-wrap" style={{ gap: 6 }}>
                   {(["required", "recommended", "optional", "unknown", "excluded"] as ApplStatus[]).map((s) => (
@@ -182,7 +182,7 @@ export function DocSetPage() {
 
               {unknowns.length > 0 && (
                 <div className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--warning)", background: "var(--warning-bg)", padding: "var(--s-4) var(--s-6)" }}>
-                  <h3 className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>확인 필요 {unknowns.length}개 — 스펙을 채우거나 직접 판단해 주세요</h3>
+                  <h3 className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>확인 필요 {unknowns.length}개 — 제품 정보를 채우거나 직접 판단해 주세요</h3>
                   <ul>{unknowns.map((a) => <DocRow key={a.leafId} a={a} title={titleOf.get(a.leafId) ?? a.leafId} />)}</ul>
                 </div>
               )}
@@ -213,8 +213,8 @@ export function DocSetPage() {
                   style={{ padding: "var(--s-4) var(--s-6)", fontSize: "var(--t-sm)" }}
                 >
                   {showExcluded ? <ChevronDown size={16} aria-hidden /> : <ChevronRight size={16} aria-hidden />}
-                  불필요로 판정된 문서 {excluded.length}개
-                  <span className="font-normal text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>NB 심사 때 제외 사유로 그대로 쓸 수 있습니다</span>
+                  필요 없다고 본 문서 {excluded.length}개
+                  <span className="font-normal text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>NB 심사 때 빼는 이유로 그대로 쓸 수 있어요</span>
                 </button>
                 {showExcluded && (
                   <ul style={{ padding: "0 var(--s-6) var(--s-4)" }}>
