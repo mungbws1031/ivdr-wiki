@@ -253,7 +253,7 @@ export function CertHub() {
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-6)" }}>
               4 페이즈 · 7 정거장 · IVDR 전환 기한 대응<br />
-              Class D→2025 · Class C→2026 · Class B→2027
+              NB 신청 기한 Class D 2025 · C 2026 · B 2027
             </p>
             <span className="font-bold" style={{ color: "var(--p2)", fontSize: "var(--t-sm)" }}>
               여정 시작 →

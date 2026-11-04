@@ -269,13 +269,17 @@ export function IVDDMap() {
             }}
           >
             <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 4 }}>
-              ⚠️ IVDR 전환 마감 일정
+              ⚠️ IVDR 전환 — NB 신청 마감 (등급별)
             </p>
             <ul className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
               <li>Class D (List A) → <strong>2025.5.26</strong> (지남)</li>
               <li>Class C (List B) → <strong>2026.5.26</strong></li>
               <li>Class B/A (일반+자가검사) → <strong>2027.5.26</strong></li>
             </ul>
+            <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: 6 }}>
+              위 날짜는 NB(인증기관) 신청 기한이에요. 실제로 팔 수 있는 전환 종료일은 Regulation (EU) 2024/1860로 늘어났어요.
+              IVDD 인증서가 있는 기기는 2027.12.31, 자가선언 기기는 등급별로 2027.12.31~2029.12.31이에요. 기기마다 조건이 달라요. (2차 자료 기준·2026-11-04 확인, 원문 확인 필요)
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-3" style={{ marginTop: "var(--s-6)" }}>

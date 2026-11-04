@@ -43,7 +43,7 @@ const prepSections: PrepSection[] = [
           {
             task: "NB(인증기관) 지정 현황 확인 (NANDO)",
             detail:
-              "EC NANDO 데이터베이스(nando.nessie.eui.eu)에서 IVDR 지정 NB 목록과 NB별 심사 범위(Scope)를 확인해요. NB 수가 적어서 계약까지 오래 걸릴 수 있어요. 되도록 일찍 여러 NB에 미리 연락해 보세요.",
+              "EC NANDO 데이터베이스(ec.europa.eu/growth/tools-databases/nando — 2차 자료 기준 주소, 원문 확인 필요)에서 IVDR 지정 NB 목록과 NB별 심사 범위(Scope)를 확인해요. NB 수가 적어서 계약까지 오래 걸릴 수 있어요. 되도록 일찍 여러 NB에 미리 연락해 보세요.",
           },
           {
             task: "GSPR(Annex I) 항목별 적용 여부 정리",
@@ -143,7 +143,7 @@ const prepSections: PrepSection[] = [
           {
             task: "PSUR/PMSR 작성 주기 계획",
             detail:
-              "Class C/D는 PSUR(주기적 안전성 최신 보고서)가 필요해요. 연간 또는 2년 주기로 써야 하니, 책임자와 일정을 미리 정해 두세요.",
+              "Class C/D는 PSUR(주기적 안전성 최신 보고서)를 적어도 1년에 한 번 고쳐 써야 해요(IVDR Art.81). Class A/B는 PSUR 대신 PMS 보고서를 필요할 때 고쳐 써요(IVDR Art.80). 책임자와 일정을 미리 정해 두세요. (2차 자료 기준·2026-11-04 확인, 원문 확인 필요)",
           },
         ],
       },
@@ -324,7 +324,7 @@ const prepSections: PrepSection[] = [
           {
             task: "IVDR 전환 목표 일자 내부 합의",
             detail:
-              "등급별 전환 마감 일정(Class D → 2025.5.26, Class C → 2026.5.26, Class B/A → 2027.5.26)을 기준으로 내부 전환 목표를 정해 주세요. 경영진 승인을 받아 일정을 공식으로 정해 두세요.",
+              "Regulation (EU) 2024/1860로 바뀐 일정을 기준으로 내부 전환 목표를 정해 주세요. 전환 종료일은 Class D 2027.12.31, Class C 2028.12.31, Class B·A 멸균 2029.12.31이에요. 이 연장을 받으려면 QMS를 2025.5.26까지 갖추고, NB 신청(Class D 2025.5.26, Class C 2026.5.26, Class B·A 멸균 2027.5.26)과 NB 서면 계약(각각 같은 해 9.26)을 기한 안에 마쳐야 해요. (2차 자료 기준·2026-11-04 확인, 원문 확인 필요) 경영진 승인을 받아 일정을 공식으로 정해 두세요.",
           },
         ],
       },
