@@ -134,6 +134,15 @@ describe("한국 기술문서 템플릿", () => {
     expect(doc.sections[4].placeholder).toContain("제조원의 제조방법에 따른다");
     expect(doc.rationale).toContain("제2026-58호");
   });
+  it("표시기재 초안: 토큰이 모두 정의되고, 법 제13조 '체외진단의료기기' 표시를 담는다", () => {
+    const doc = resolveDoc("kr-labelling")!;
+    const ctx = buildTokenContext(base());
+    const keys = [...doc.sections.map((x) => x.placeholder).join("\n").matchAll(/\{\{auto\.([a-zA-Z]+)\}\}/g)].map((m) => m[1]);
+    expect(keys.length).toBeGreaterThan(5);
+    for (const k of keys) expect(k in ctx).toBe(true);
+    expect(doc.sections[0].placeholder).toContain("'체외진단의료기기' 표시");
+    expect(doc.rationale).toContain("제13조");
+  });
   it("한국을 고르지 않으면 한국 토큰은 비어 있다", () => {
     expect(krTokens(exampleSpec()).krGrade).toBeNull();
   });
