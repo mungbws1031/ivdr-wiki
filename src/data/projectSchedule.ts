@@ -13,35 +13,35 @@ export interface Milestone {
 
 export const MILESTONES: Milestone[] = [
   // IVDR
-  { key: "ivdr_kickoff",       label: "IVDR 프로젝트 킥오프",       hint: "인증 프로젝트 공식 시작일",          certType: "ivdr" },
-  { key: "ivdr_classify",      label: "제품 분류 확정",              hint: "Class A/B/C/D 분류 결정 완료",       certType: "ivdr" },
-  { key: "ivdr_nb_contract",   label: "NB 계약 체결",                hint: "공인기관(NB)과 계약 서명",           certType: "ivdr" },
-  { key: "ivdr_tech_doc",      label: "기술문서 초안 완성",           hint: "Annex II/III 기술문서 초안 마감",    certType: "ivdr" },
-  { key: "ivdr_submission",    label: "NB 제출",                     hint: "기술문서 공식 NB 제출일",            certType: "ivdr" },
-  { key: "ivdr_audit",         label: "NB 심사",                     hint: "Notified Body 현장 심사 예정일",     certType: "ivdr" },
-  { key: "ivdr_cert",          label: "CE 인증 취득 목표",            hint: "CE 마킹 인증서 발급 목표일",         certType: "ivdr" },
+  { key: "ivdr_kickoff",       label: "IVDR 프로젝트 킥오프",       hint: "인증 준비를 공식으로 시작하는 날이에요",          certType: "ivdr" },
+  { key: "ivdr_classify",      label: "제품 등급 확정",              hint: "Class A/B/C/D 중 등급을 정하는 날이에요",       certType: "ivdr" },
+  { key: "ivdr_nb_contract",   label: "NB 계약 체결",                hint: "NB(인증기관)와 계약서에 서명하는 날이에요",           certType: "ivdr" },
+  { key: "ivdr_tech_doc",      label: "기술문서 초안 완성",           hint: "Annex II/III 기술문서 초안을 마무리하는 날이에요",    certType: "ivdr" },
+  { key: "ivdr_submission",    label: "NB 제출",                     hint: "기술문서를 NB에 공식으로 내는 날이에요",            certType: "ivdr" },
+  { key: "ivdr_audit",         label: "NB 심사",                     hint: "NB가 현장 심사를 하러 오는 날이에요",     certType: "ivdr" },
+  { key: "ivdr_cert",          label: "CE 인증 취득 목표",            hint: "CE 마킹 인증서를 받으려는 목표일이에요",         certType: "ivdr" },
 
   // ISO 13485
-  { key: "iso_gap",            label: "갭 분석 완료",                hint: "현재 QMS vs 13485:2016 갭 분석",     certType: "iso13485" },
-  { key: "iso_doc_complete",   label: "문서 정비 완료",               hint: "절차서·QM 신규/개정 완료",           certType: "iso13485" },
-  { key: "iso_internal_audit", label: "내부심사",                    hint: "ISO 13485 내부심사 수행일",          certType: "iso13485" },
-  { key: "iso_mgmt_review",    label: "경영 검토",                   hint: "인증 직전 경영 검토 회의",           certType: "iso13485" },
-  { key: "iso_cert_audit",     label: "인증심사 (Stage 1/2)",         hint: "인증기관(CB) 심사 예정일",           certType: "iso13485" },
-  { key: "iso_cert",           label: "ISO 13485 인증 취득",          hint: "인증서 발급 목표일",                 certType: "iso13485" },
+  { key: "iso_gap",            label: "갭 분석 완료",                hint: "지금 QMS(품질경영시스템)와 13485:2016의 차이를 살펴봐요",     certType: "iso13485" },
+  { key: "iso_doc_complete",   label: "문서 정비 완료",               hint: "절차서·QM(품질 매뉴얼)을 새로 쓰거나 고치는 일을 마쳐요",           certType: "iso13485" },
+  { key: "iso_internal_audit", label: "내부심사",                    hint: "ISO 13485 내부심사를 하는 날이에요",          certType: "iso13485" },
+  { key: "iso_mgmt_review",    label: "경영 검토",                   hint: "인증 바로 전에 여는 경영 검토 회의예요",           certType: "iso13485" },
+  { key: "iso_cert_audit",     label: "인증심사 (Stage 1/2)",         hint: "CB(인증기관)가 심사하러 오는 날이에요",           certType: "iso13485" },
+  { key: "iso_cert",           label: "ISO 13485 인증 취득",          hint: "인증서를 받으려는 목표일이에요",                 certType: "iso13485" },
 
   // IVDD
-  { key: "ivdd_doc_review",    label: "기존 기술문서 검토 완료",       hint: "98/79/EC 기기파일 현황 파악",        certType: "ivdd" },
-  { key: "ivdd_doc_update",    label: "기술문서 갱신 완료",            hint: "DoC·기술문서 최신화",               certType: "ivdd" },
-  { key: "ivdd_conformity",    label: "적합성 평가 완료",              hint: "Annex IV/V/VI/VII 절차 완료",        certType: "ivdd" },
-  { key: "ivdd_ivdr_target",   label: "IVDR 전환 목표일",             hint: "IVDR 체계로 이전 완료 목표",         certType: "ivdd" },
+  { key: "ivdd_doc_review",    label: "기존 기술문서 검토 완료",       hint: "98/79/EC 기기 파일이 지금 어떤 상태인지 살펴봐요",        certType: "ivdd" },
+  { key: "ivdd_doc_update",    label: "기술문서 갱신 완료",            hint: "DoC(적합성 선언서)·기술문서를 최신으로 고쳐요",               certType: "ivdd" },
+  { key: "ivdd_conformity",    label: "적합성 평가 완료",              hint: "Annex IV/V/VI/VII 절차를 마치는 날이에요",        certType: "ivdd" },
+  { key: "ivdd_ivdr_target",   label: "IVDR 전환 목표일",             hint: "IVDR 체계로 옮기기를 마치려는 목표일이에요",         certType: "ivdd" },
 
   // MDSAP
-  { key: "mdsap_gap",          label: "갭 분석 완료",                hint: "7챕터 기반 갭 분석 완료",            certType: "mdsap" },
-  { key: "mdsap_ao_select",    label: "AO 선정",                     hint: "심사기관(AO) 최종 선정",             certType: "mdsap" },
-  { key: "mdsap_ao_contract",  label: "AO 계약 체결",                hint: "심사기관과 계약 서명",               certType: "mdsap" },
-  { key: "mdsap_stage1",       label: "Stage 1 심사",                hint: "문서 심사 (Desk Review)",            certType: "mdsap" },
-  { key: "mdsap_stage2",       label: "Stage 2 심사",                hint: "현장 심사 (On-site Audit)",          certType: "mdsap" },
-  { key: "mdsap_cert",         label: "MDSAP 인증 취득",             hint: "MDSAP 인증서 발급 목표일",           certType: "mdsap" },
+  { key: "mdsap_gap",          label: "갭 분석 완료",                hint: "7개 챕터를 기준으로 차이를 살펴보는 일을 마쳐요",            certType: "mdsap" },
+  { key: "mdsap_ao_select",    label: "AO 선정",                     hint: "AO(심사기관)를 최종으로 고르는 날이에요",             certType: "mdsap" },
+  { key: "mdsap_ao_contract",  label: "AO 계약 체결",                hint: "AO(심사기관)와 계약서에 서명하는 날이에요",               certType: "mdsap" },
+  { key: "mdsap_stage1",       label: "Stage 1 심사",                hint: "문서를 살펴보는 심사(Desk Review)예요",            certType: "mdsap" },
+  { key: "mdsap_stage2",       label: "Stage 2 심사",                hint: "현장에 와서 하는 심사(On-site Audit)예요",          certType: "mdsap" },
+  { key: "mdsap_cert",         label: "MDSAP 인증 취득",             hint: "MDSAP 인증서를 받으려는 목표일이에요",           certType: "mdsap" },
 ];
 
 export const CERT_META: Record<string, { label: string; colorVar: string; tintVar: string }> = {

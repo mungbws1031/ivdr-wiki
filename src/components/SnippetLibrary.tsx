@@ -311,7 +311,7 @@ export function SnippetLibrary({ certTypeKey }: { certTypeKey: SnippetCertType }
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="문구 검색..."
+              placeholder="문구 찾기"
               className="flex-1 bg-transparent outline-none text-text placeholder:text-text-subtle"
               style={{ fontSize: "var(--t-xs)" }}
             />
@@ -325,7 +325,7 @@ export function SnippetLibrary({ certTypeKey }: { certTypeKey: SnippetCertType }
           {/* 결과 없음 */}
           {totalCount === 0 && (
             <p className="text-text-subtle text-center" style={{ fontSize: "var(--t-xs)", padding: "var(--s-4) 0" }}>
-              검색 결과가 없습니다
+              찾는 문구가 없어요
             </p>
           )}
 
@@ -376,7 +376,7 @@ export function SnippetLibrary({ certTypeKey }: { certTypeKey: SnippetCertType }
               <textarea
                 value={newText}
                 onChange={(e) => setNewText(e.target.value)}
-                placeholder="문구 내용을 입력하세요..."
+                placeholder="문서에 넣을 문구를 적어 주세요"
                 rows={4}
                 className="rounded-[var(--r-sm)] text-text outline-none resize-none"
                 style={{

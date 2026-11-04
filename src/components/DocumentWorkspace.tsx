@@ -530,7 +530,7 @@ export function DocumentWorkspace() {
           </div>
 
           {/* 오른쪽: 액션 버튼들 */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0" style={{ paddingTop: "var(--s-1)" }}>
+          <div className="flex flex-wrap items-center gap-2 min-w-0 max-w-full" style={{ paddingTop: "var(--s-1)" }}>
             <button
               type="button"
               onClick={() => setStatus(doc.id, nextStatus)}

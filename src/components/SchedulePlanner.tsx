@@ -239,7 +239,7 @@ export function SchedulePlanner() {
   }, []);
 
   const handleClear = useCallback(() => {
-    if (!confirm("모든 일정 데이터를 초기화하시겠습니까?")) return;
+    if (!confirm("입력한 일정을 모두 지울까요?")) return;
     setStore({});
     saveSchedule({});
   }, []);
@@ -270,8 +270,8 @@ export function SchedulePlanner() {
                 프로젝트 일정 플래너
               </h1>
               <p className="text-text-muted" style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-2)", maxWidth: 640 }}>
-                인증별 마일스톤 날짜를 한 번 설정하면 문서 작성 전반에 자동 반영됩니다.
-                데이터는 이 브라우저에만 저장됩니다.
+                인증마다 중요한 날짜(마일스톤)를 한 번 넣어 두면 문서를 쓸 때 자동으로 보여요.
+                이 브라우저에만 저장돼요.
               </p>
             </div>
           </div>
@@ -283,12 +283,12 @@ export function SchedulePlanner() {
               style={{ background: "var(--surface)", border: "1px solid var(--border)", padding: "8px 16px" }}
             >
               <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>
-                {totalFilled} / {MILESTONES.length} 일정 입력됨
+                일정 {totalFilled} / {MILESTONES.length}개를 넣었어요
               </span>
             </div>
             {saved && (
               <span className="inline-flex items-center gap-1 text-[var(--success)]" style={{ fontSize: "var(--t-sm)" }}>
-                <Check size={14} aria-hidden /> 저장됨
+                <Check size={14} aria-hidden /> 저장했어요
               </span>
             )}
             <button
@@ -296,7 +296,7 @@ export function SchedulePlanner() {
               className="text-text-subtle hover:text-text"
               style={{ fontSize: "var(--t-sm)" }}
             >
-              전체 초기화
+              모두 지우기
             </button>
           </div>
         </header>
@@ -322,7 +322,7 @@ export function SchedulePlanner() {
           className="text-text-subtle"
           style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-12)", lineHeight: "var(--lh-base)" }}
         >
-          입력한 날짜는 브라우저 localStorage에만 저장됩니다. 서버에 전송되지 않습니다. 다른 기기에서 사용하려면 날짜를 다시 입력하세요.
+          입력한 날짜는 이 브라우저(localStorage)에만 저장돼요. 서버로 보내지 않아요. 다른 기기에서 쓰려면 날짜를 다시 넣어 주세요.
         </footer>
       </main>
     </div>
