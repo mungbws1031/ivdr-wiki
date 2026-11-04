@@ -101,8 +101,8 @@ export function JourneyMap() {
             className="text-text-muted"
             style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 640 }}
           >
-            11개 정거장을 5개 페이즈로 묶어 색으로 구분했다. 카드를 누르면 본문·지금 할 일·관련
-            조항이 열린다. 개요는 늘 깨끗하게.
+            11개 정거장을 5개 페이즈(큰 단계)로 묶고, 색으로 나눴어요. 카드를 누르면 설명·지금 할 일·관련
+            조항이 열려요.
           </p>
 
           {/* 진입 버튼 */}
@@ -187,8 +187,8 @@ export function JourneyMap() {
           className="text-text-subtle"
           style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-12)", lineHeight: "var(--lh-base)" }}
         >
-          규제 날짜는 2026년 6월 기준 확인값입니다. 실제 인증 진행 시 최신 관보·인증기관 공지로
-          반드시 재확인하세요. 본 가이드는 정보 제공용이며 법적 자문이 아닙니다.
+          규제 날짜는 2026년 6월에 확인한 값이에요. 실제로 인증을 진행할 때는 최신 관보·인증기관 공지로
+          꼭 다시 확인해 주세요. 이 안내는 정보를 드리기 위한 것이고, 법률 자문이 아니에요.
         </footer>
       </main>
 

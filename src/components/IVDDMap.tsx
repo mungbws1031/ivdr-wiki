@@ -254,7 +254,7 @@ export function IVDDMap() {
               maxWidth: 640,
             }}
           >
-            98/79/EC Directive 기반 체외진단기기 인증 여정. 카드를 누르면 단계별 할 일과 문서 목록이 열린다.
+            98/79/EC Directive(지침)에 따른 체외진단기기 인증 여정이에요. 카드를 누르면 단계별 할 일과 문서 목록이 열려요.
           </p>
 
           {/* IVDR 전환 배너 */}
@@ -272,7 +272,7 @@ export function IVDDMap() {
               ⚠️ IVDR 전환 마감 일정
             </p>
             <ul className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-              <li>Class D (List A) → <strong>2025.5.26</strong> (경과)</li>
+              <li>Class D (List A) → <strong>2025.5.26</strong> (지남)</li>
               <li>Class C (List B) → <strong>2026.5.26</strong></li>
               <li>Class B/A (일반+자가검사) → <strong>2027.5.26</strong></li>
             </ul>
@@ -349,7 +349,7 @@ export function IVDDMap() {
             lineHeight: "var(--lh-base)",
           }}
         >
-          98/79/EC 정보는 2026년 6월 기준입니다. IVDR 전환 일정·요건은 최신 EU 공식 문서로 확인하세요.
+          98/79/EC 정보는 2026년 6월 기준이에요. IVDR 전환 일정·요건은 최신 EU 공식 문서로 꼭 확인해 주세요.
         </footer>
       </main>
 

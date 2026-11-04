@@ -38,7 +38,7 @@ export function CertStructure({ onOpen }: { onOpen: (id: number) => void }) {
         IVDR 인증의 전체 구조
       </h2>
       <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginTop: 4, maxWidth: 720 }}>
-        5개 페이즈 · 11개 정거장으로 진행하며, 단계마다 문서를 만든다. 아래는 인증 전체를 한 장에 담은 지도입니다.
+        5개 페이즈(큰 단계) · 11개 정거장으로 진행하고, 단계마다 문서를 만들어요. 아래는 인증 전체를 한 장에 담은 지도예요.
       </p>
 
       {/* 통계 */}

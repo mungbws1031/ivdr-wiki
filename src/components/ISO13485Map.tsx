@@ -117,8 +117,8 @@ export function ISO13485Map() {
               maxWidth: 640,
             }}
           >
-            Clause 4–8을 4개 페이즈로 구분했다. 카드를 누르면 본문·지금 할
-            일·관련 조항이 열린다.
+            QMS(품질경영시스템) 요구사항인 Clause 4–8을 4개 페이즈로 나눴어요. 카드를 누르면
+            설명·지금 할 일·관련 조항이 열려요.
           </p>
 
           <div className="flex flex-wrap gap-3" style={{ marginTop: "var(--s-6)" }}>
@@ -192,8 +192,8 @@ export function ISO13485Map() {
             lineHeight: "var(--lh-base)",
           }}
         >
-          ISO 13485:2016 내용은 2026년 6월 기준 확인값입니다. 실제 인증 진행 시
-          최신 표준 원문·인증기관 요건으로 재확인하세요.
+          ISO 13485:2016 내용은 2026년 6월에 확인한 값이에요. 실제로 인증을 진행할 때는
+          최신 표준 원문·인증기관 요건으로 다시 확인해 주세요.
         </footer>
       </main>
 

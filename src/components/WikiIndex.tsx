@@ -60,8 +60,8 @@ export function WikiIndex() {
           개념 위키
         </h1>
         <p className="text-text-muted" style={{ fontSize: "var(--t-base)", marginTop: "var(--s-2)", maxWidth: 680 }}>
-          IVDR 조항·부속서·표준·핵심 개념을 한곳에. 정거장 본문이나 문서 템플릿에서 용어를
-          누르면 이 페이지로 연결됩니다. 총 {concepts.length}개 개념.
+          IVDR 조항·부속서·표준·핵심 개념을 한곳에 모았어요. 정거장 설명이나 문서 템플릿에서 용어를
+          누르면 이 페이지로 와요. 모두 {concepts.length}개 개념이 있어요.
         </p>
 
         {/* 검색 */}
