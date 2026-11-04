@@ -49,6 +49,8 @@ npm run build       # tsc -b && vite build → dist/
 | 위치 | 내용 |
 |---|---|
 | `src/data/spec/` | 제품 스펙 `types.ts` · 필드 정의 `fields.ts`(폼·진행률·미입력 목록의 원천) · `validate.ts`(emptySpec·exampleSpec·validateSpec·specHash) |
+| `content/wiki/*.md` | **개념 위키 원본**(옵시디언 노트, `content/`가 볼트). 파일 이름 = slug, 본문 링크 `[[slug\|표시]]`. 사용법 `content/README.md` |
+| `vite/wikiContent.ts` | 노트 → `virtual:wiki-concepts` 변환(`src/data/concepts.ts`가 씀). 깨진 링크·빈 칸이면 빌드 중단, `status: draft`는 배포 제외 |
 | `src/data/documents.ts`, `docTree.ts` | 문서 템플릿(IVDR 76+ · 한국 기술문서 · 510(k) 초안 등), 문서 트리·의존 관계 |
 | `src/lib/rules/` | IVDR 분류(`classify`), 문서 세트(`applicability`), Rule 1~7 표(`justify`), 국가별 인증 경로(`certRoutes`) |
 | `src/lib/kr/`, `src/lib/us/` | 한국 MFDS·미국 FDA 판정(등급·경로·제출 자료). 확인한 품목은 `US_KNOWN` 등에 출처·날짜와 함께 |
@@ -63,6 +65,10 @@ npm run build       # tsc -b && vite build → dist/
 | `reviews/` | 사용성 점검 기록 |
 
 자주 하는 변경
+- **위키 개념 추가·수정**
+  - `content/wiki/<slug>.md`를 고친다. `src/data/concepts.ts`에 글을 직접 넣지 않는다.
+  - 속성: `term`·`aliases`·`category`·`summary`·`refs`·`stations`·`related`·`order`·`status`. 양식은 `content/_templates/위키 개념.md`.
+  - slug를 바꾸면 문서 템플릿의 `relatedConceptSlugs`도 고친다(`src/data/concepts.test.ts`가 잡음).
 - **새 스펙 칸**
   - `types.ts`에 키를 추가한다.
   - `fields.ts`에 한 줄을 추가한다.
