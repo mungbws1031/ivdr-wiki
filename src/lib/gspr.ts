@@ -54,7 +54,7 @@ const DEFS: Def[] = [
   { no: 11, title: "감염·미생물 오염", evidence: ["design-manufacturing-info", "risk-management-file", "sterilization-validation"],
     judge: (s) => ({ verdict: "applies", reason: s.sterile ? "적용 — 검체 취급 감염 위험 + 멸균 제품이라 멸균 밸리데이션 필요" : "적용 — 검체 취급·폐기 시 감염 위험, 미생물 오염 관리", fields: ["sterile", "specimen"] }) },
   { no: 12, title: "생물 유래 물질을 포함한 기기", evidence: ["design-manufacturing-info"],
-    judge: () => ({ verdict: "check", reason: "원료(항체·항원·혈청 등)에 사람·동물·미생물 유래 물질이 있는지 스펙에 없음 — 원료 목록으로 판정" }) },
+    judge: () => ({ verdict: "check", reason: "원료(항체·항원·혈청 등)에 사람·동물·미생물 유래 물질이 있는지 제품 정보에 없음 — 원료 목록으로 판정" }) },
   { no: 13, title: "기기 구성과 환경 상호작용", evidence: ["device-description", "design-verification", "electrical-safety-emc"],
     judge: (s) => ({ verdict: "applies", reason: s.formFactor && s.formFactor !== "strip-only" ? "적용 — 기기·구성품 조합, 사용 환경, 다른 기기와의 간섭" : "적용 — 키트 구성품 조합과 사용 환경(온도·습도·조명)", fields: ["formFactor", "environment"] }) },
   { no: 14, title: "측정 기능이 있는 기기", evidence: ["metrological-traceability", "analytical-performance"],
@@ -77,8 +77,8 @@ const DEFS: Def[] = [
       if (s.software.hasApp || s.result.readout === "app" || s.result.readout === "reader" || device)
         return { verdict: "applies", reason: [s.software.hasApp || s.result.readout === "app" ? "스마트폰 앱" : "", s.result.readout === "reader" || device ? "기기 펌웨어" : ""].filter(Boolean).join(" + ") + " — SW 수명주기(IEC 62304)·사이버보안", fields };
       if (s.formFactor === "strip-only" && s.software.hasApp === false && s.result.readout !== null)
-        return { verdict: "na", reason: "스틱만·육안 판독, 앱 없음 — 소프트웨어 없음", fields };
-      return { verdict: "check", reason: "앱·판독 방식·제품 형태 중 입력되지 않은 칸이 있음", fields };
+        return { verdict: "na", reason: "스틱만·눈으로 결과 읽기, 앱 없음 — 소프트웨어 없음", fields };
+      return { verdict: "check", reason: "앱·결과 읽는 방식·제품 형태 중 입력되지 않은 칸이 있음", fields };
     } },
   { no: 17, title: "에너지원에 연결되거나 내장한 기기", evidence: ["electrical-safety-emc"],
     judge: (s) => {

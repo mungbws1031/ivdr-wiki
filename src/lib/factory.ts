@@ -20,7 +20,7 @@ export const FLOORS: { id: FloorId; name: string; color: string; desc: string; g
   { id: "4F", name: "성능평가 실험실", color: "var(--p3)", desc: "성능 문서와 실험", groups: ["performance"] },
   { id: "3F", name: "생산", color: "var(--info)", desc: "공정·포장·운송·제조 기록", groups: ["production"] },
   { id: "2F", name: "품질(QA)", color: "var(--p5)", desc: "QMS 절차·시판 후 감시", groups: ["qms", "post-market"] },
-  { id: "1F", name: "접수", color: "var(--p1)", desc: "제품 스펙 접수·외부 업무", groups: [] },
+  { id: "1F", name: "접수", color: "var(--p1)", desc: "제품 정보 접수·외부 업무", groups: [] },
 ];
 
 export type DocState = "done" | "writing" | "blocked" | "todo";
@@ -89,7 +89,7 @@ export function buildFactory(inp: FactoryInput): { floors: FactoryFloor[]; overa
     const waitingStudies = (RESULT_DOCS[id] ?? []).filter((s) => pending.has(s));
     const missing = inp.missingSpec(id);
     if (waitingStudies.length || missing) {
-      const why = [missing ? `스펙 미입력 ${missing}개` : "", waitingStudies.length ? `실험 결과 대기 ${waitingStudies.length}건` : ""].filter(Boolean).join(" · ");
+      const why = [missing ? `제품 정보 ${missing}개 아직 안 적음` : "", waitingStudies.length ? `실험 결과 대기 ${waitingStudies.length}건` : ""].filter(Boolean).join(" · ");
       return { id, title, state: "blocked", progress: ratio, why };
     }
     if (filled > 0 || inp.status(id) === "in_progress") return { id, title, state: "writing", progress: ratio };
@@ -104,17 +104,17 @@ export function buildFactory(inp: FactoryInput): { floors: FactoryFloor[]; overa
       .map((l) => docState(l.id, l.title));
     const tasks: FactoryTask[] = [];
     if (f.id === "7F") {
-      if (inp.cls.value && !inp.classConfirmed) tasks.push({ id: "confirm-class", title: `Class ${inp.cls.value} 확정`, why: "분류 근거서·적합성 경로·NB 신청이 이 결정을 기다립니다", to: "/auto/docs" });
+      if (inp.cls.value && !inp.classConfirmed) tasks.push({ id: "confirm-class", title: `Class ${inp.cls.value} 확정`, why: "분류 근거서·적합성 경로·NB 신청이 이 결정을 기다려요", to: "/auto/docs" });
       const unknown = inp.docSet.filter((a) => a.status === "unknown").length;
-      if (unknown) tasks.push({ id: "doc-unknown", title: `해당 여부 판단 ${unknown}건`, why: "스펙만으로 정할 수 없는 문서", to: "/auto/docs" });
+      if (unknown) tasks.push({ id: "doc-unknown", title: `해당 여부 판단 ${unknown}건`, why: "제품 정보만으로는 정할 수 없는 문서예요", to: "/auto/docs" });
     }
     if (f.id === "4F") {
-      for (const p of plans.filter((x) => pending.has(x.id) && x.category !== "usability")) tasks.push({ id: `res-${p.id}`, title: `${p.title} 결과 입력`, why: "실험을 마치면 결과를 넣어 주세요", to: "/auto/results" });
-      for (const p of plans.filter((x) => inp.results[x.id]?.verdict === "fail")) tasks.push({ id: `fail-${p.id}`, title: `${p.title} 불합격 — 원인 조사`, why: "설계 변경 또는 재시험", to: "/auto/results" });
+      for (const p of plans.filter((x) => pending.has(x.id) && x.category !== "usability")) tasks.push({ id: `res-${p.id}`, title: `${p.title} 결과 적기`, why: "실험을 마치면 결과를 적어 주세요", to: "/auto/results" });
+      for (const p of plans.filter((x) => inp.results[x.id]?.verdict === "fail")) tasks.push({ id: `fail-${p.id}`, title: `${p.title} 불합격 — 원인 조사`, why: "설계를 바꾸거나 다시 시험해야 해요", to: "/auto/results" });
     }
-    if (f.id === "5F") for (const p of plans.filter((x) => x.category === "usability" && pending.has(x.id))) tasks.push({ id: `res-${p.id}`, title: `${p.title} 결과 입력`, why: "사용적합성 파일이 기다립니다", to: "/auto/results" });
+    if (f.id === "5F") for (const p of plans.filter((x) => x.category === "usability" && pending.has(x.id))) tasks.push({ id: `res-${p.id}`, title: `${p.title} 결과 적기`, why: "사용적합성 파일이 이 결과를 기다려요", to: "/auto/results" });
     if (f.id === "1F") {
-      if (inp.specMissingCount) tasks.push({ id: "spec", title: `제품 스펙 ${inp.specMissingCount}개 입력`, why: "비어 있으면 문서에 [미입력]으로 남습니다", to: "/auto" });
+      if (inp.specMissingCount) tasks.push({ id: "spec", title: `제품 정보 ${inp.specMissingCount}개 적기`, why: "비어 있으면 문서에 [미입력]으로 남아요", to: "/auto" });
       for (const t of planHumanTasks(plans)) tasks.push({ id: `ext-${t.task}`, title: t.task, why: t.studies.join(", "), to: "/auto/plan" });
     }
     const counts: Record<DocState, number> = { done: 0, writing: 0, blocked: 0, todo: 0 };

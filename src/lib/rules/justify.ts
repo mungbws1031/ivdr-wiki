@@ -28,14 +28,14 @@ export function ruleJustification(s: ProductSpec): RuleRow[] {
     rows.push({ rule, verdict, cls, reason, fields });
 
   // Rule 1
-  if (f.transmissibleAgent === null) row("Rule 1", "unknown", null, "감염병(전파성 병원체) 검출 여부가 답해지지 않았습니다.", ["rule1to3Flags.transmissibleAgent"]);
+  if (f.transmissibleAgent === null) row("Rule 1", "unknown", null, "감염병(전파성 병원체) 검출 여부에 아직 답하지 않았습니다.", ["rule1to3Flags.transmissibleAgent"]);
   else if (f.transmissibleAgent) row("Rule 1", "applies", null, "감염병 검출 제품 — 전파 위험도에 따라 D(Rule 1) 또는 C(Rule 3). RA 판단 필요");
   else row("Rule 1", "not", null, "전파성 병원체·수혈·이식 안전성 표지자를 검출하지 않음");
 
   // Rule 2
   const r2Missing = [f.bloodGrouping === null && "rule1to3Flags.bloodGrouping", f.tissueTyping === null && "rule1to3Flags.tissueTyping"].filter(Boolean) as string[];
   if (f.bloodGrouping || f.tissueTyping) row("Rule 2", "applies", "C", "혈액형·조직 적합성 판정 (ABO·Rh 등 일부 표지자는 D — 표지자 확인 필요)");
-  else if (r2Missing.length) row("Rule 2", "unknown", null, "혈액형·조직형 판정 여부가 답해지지 않았습니다.", r2Missing);
+  else if (r2Missing.length) row("Rule 2", "unknown", null, "혈액형·조직형 판정 여부에 아직 답하지 않았습니다.", r2Missing);
   else row("Rule 2", "not", null, "혈액형·조직 적합성을 판정하지 않음");
 
   // Rule 3
@@ -55,7 +55,7 @@ export function ruleJustification(s: ProductSpec): RuleRow[] {
   if (s.user === null) row("Rule 4", "unknown", null, "사용자(일반인 자가검사 / 전문가)가 입력되지 않았습니다.", ["user"]);
   else if (lay) {
     if (preset === "LH" || preset === "hCG") row("Rule 4", "applies", "B", `일반인 자가검사(4(a))는 원칙적으로 C이나 ${preset === "LH" ? "가임력(배란)" : "임신"} 검사 예외로 B`);
-    else if (preset === null) row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 측정 목적이 입력되지 않아 예외(B) 여부 미확인", ["analyte.preset"]);
+    else if (preset === null) row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 검사 대상이 입력되지 않아 예외(B) 여부 미확인", ["analyte.preset"]);
     else row("Rule 4", "applies", "C", "일반인 자가검사(4(a)) — 임신·가임력·콜레스테롤 검사와 소변의 포도당·적혈구·백혈구·세균 검출 예외가 아니면 C (혈액 혈당 자가검사는 C)");
   } else if (s.environment === "near-patient") row("Rule 4", "not", null, "전문가용 — 자가검사 아님. 근접검사 기기는 그 자체로 다른 규칙에 따라 분류(4(b))");
   else row("Rule 4", "not", null, "전문가용 — 자가검사·근접검사가 아님");
@@ -63,7 +63,7 @@ export function ruleJustification(s: ProductSpec): RuleRow[] {
   // Rule 5
   if (s.productType === "instrument") row("Rule 5", "applies", "A", "IVD 전용 기기 (5(b)) — 특별한 위험 특성이 없다고 보고 A");
   else if (s.productType === null) row("Rule 5", "unknown", null, "제품 유형이 입력되지 않았습니다.", ["productType"]);
-  else row("Rule 5", "not", null, "특정 분석물 검출 시약 — 범용 실험실 시약·IVD 전용 기기·검체 용기가 아님");
+  else row("Rule 5", "not", null, "특정 검사 대상을 검출하는 시약 — 범용 실험실 시약·IVD 전용 기기·검체 용기가 아님");
 
   // Rule 6 — 앞 규칙이 모두 비해당으로 기록된 뒤에만
   const before = rows.slice(0, 5);
@@ -87,8 +87,8 @@ export function ruleTableMarkdown(rows: RuleRow[], c: ClassResult): string {
   const lines = [
     "| 규칙 | 해당 여부 | 클래스 | 이유 |",
     "|---|---|---|---|",
-    ...rows.map((r) => `| ${r.rule} | ${r.verdict === "unknown" ? "[답변 필요 — 제품 스펙의 분류 판단 질문]" : RULE_VERDICT_LABEL[r.verdict]} | ${r.cls ?? "—"} | ${esc(r.reason)} |`),
+    ...rows.map((r) => `| ${r.rule} | ${r.verdict === "unknown" ? "[답변 필요 — 제품 정보의 분류 판단 질문]" : RULE_VERDICT_LABEL[r.verdict]} | ${r.cls ?? "—"} | ${esc(r.reason)} |`),
   ];
-  lines.push("", `둘 이상 해당하면 가장 높은 클래스를 적용한다 (IVDR Annex VIII 적용 규칙 — 조항 번호 원문 확인 필요). 결정 규칙: ${c.rule}`);
+  lines.push("", `둘 이상 해당하면 가장 높은 등급을 적용한다 (IVDR Annex VIII 적용 규칙 — 조항 번호 원문 확인 필요). 결정 규칙: ${c.rule}`);
   return lines.join("\n");
 }

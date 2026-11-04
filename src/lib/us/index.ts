@@ -28,24 +28,24 @@ export const US_KNOWN: Record<"LH" | "hCG" | "FSH", { regulation: string; device
   hCG: {
     regulation: "21 CFR 862.1155 (Human chorionic gonadotropin test system)",
     deviceClass: "II", productCode: null, pathway: "510k",
-    note: "Class II — 510(k) 필요. FDA 가이드 'Over the Counter (OTC) Human Chorionic Gonadotropin (hCG) 510(k)s' 참조.",
+    note: "Class II — 510(k)가 필요해요. FDA 가이드 'Over the Counter (OTC) Human Chorionic Gonadotropin (hCG) 510(k)s'를 참고하세요.",
     source: "FDA 가이드·510(k) 허가 사례 (K012215 등)", checked: "2026-10-30",
   },
   LH: {
     regulation: "21 CFR 862.1485 (Luteinizing hormone test system)",
     deviceClass: "I", productCode: "NGE (OTC)", pathway: "check",
-    note: "Class I — 510(k) 면제이나 § 862.9 제한이 붙는다. 가정용 배란 검사는 510(k) 허가 사례가 있어(K981207 등) 제한 적용 여부를 862.9 원문으로 확인해야 한다.",
+    note: "Class I — 510(k) 면제지만 § 862.9 제한이 붙어요. 가정용 배란 검사는 510(k) 허가 사례가 있어서(K981207 등) 제한에 걸리는지 862.9 원문으로 확인해야 해요.",
     source: "21 CFR 862.1485 본문, FDA 제품 코드 NGE (2차 자료)", checked: "2026-10-30",
   },
   FSH: {
     regulation: "21 CFR 862.1300 (Follicle-stimulating hormone test system)",
     deviceClass: "I", productCode: "NGA (OTC) · CGJ", pathway: "check",
-    note: "Class I — 510(k) 면제이나 § 862.9 제한이 붙는다. 과거 가정용 폐경 FSH 소변 검사는 510(k)를 거친 사례가 있다(K040575·K030058·K052662, 제품 코드 CGJ). 앱 알고리즘으로 폐경 '단계'를 판정하는 등 새로운 용도·기술이면 면제 범위를 벗어날 수 있어 862.9 원문으로 확인해야 한다.",
+    note: "Class I — 510(k) 면제지만 § 862.9 제한이 붙어요. 예전 가정용 폐경 FSH 소변 검사는 510(k)를 거친 사례가 있어요(K040575·K030058·K052662, 제품 코드 CGJ). 앱 알고리즘으로 폐경 '단계'를 판정하는 것처럼 새로운 용도·기술이면 면제 범위를 벗어날 수 있어서 862.9 원문으로 확인해야 해요.",
     source: "FDA 제품 분류 DB(NGA)·510(k) 사례 (2차 자료, 원문 확인 필요)", checked: "2026-11-03",
   },
 };
 
-/** 분석물 이름으로 FSH(난포자극호르몬)인지 — 분석물 종류는 '기타'로 들어온다 */
+/** 검사 대상 이름으로 FSH(난포자극호르몬)인지 — 검사 대상 종류는 '기타'로 들어온다 */
 export const isFsh = (s: ProductSpec) => /FSH|난포\s*자극|follicle[-\s]*stimulating/i.test(s.analyte.name ?? "");
 
 export interface UsClia { status: "waived-otc" | "waiver-application" | "categorization" | "check"; label: string; reason: string }
@@ -69,7 +69,7 @@ const isLay = (s: ProductSpec) => s.user === "lay" || s.user === "both";
 const foreignOf = (s: ProductSpec) => (s.identity.manufacturerCountry === null ? null : !/미국|USA|United States|US\b/i.test(s.identity.manufacturerCountry));
 
 export function usClia(s: ProductSpec): UsClia {
-  if (s.user === null) return { status: "check", label: "확인 필요", reason: "사용자가 입력되지 않았습니다." };
+  if (s.user === null) return { status: "check", label: "확인 필요", reason: "사용자를 아직 안 적었어요." };
   if (isLay(s)) return { status: "waived-otc", label: "CLIA 면제 (가정용)", reason: "가정용(OTC)으로 허가받은 검사는 CLIA 면제(waived)로 분류됩니다 — 별도 waiver 신청 없음 (원문 확인 필요)." };
   if (s.environment === "near-patient") return { status: "waiver-application", label: "CLIA waiver 신청", reason: "진료실·약국 등 근접검사로 쓰려면 CLIA waiver가 필요합니다. 510(k)와 함께 내는 Dual 510(k)/CLIA Waiver 경로가 있습니다." };
   return { status: "categorization", label: "CLIA 복잡도 분류", reason: "검사실용은 허가 후 FDA가 CLIA 복잡도(moderate/high)를 분류합니다." };
@@ -85,47 +85,47 @@ export function classifyUs(s: ProductSpec): UsResult {
   });
 
   if (!s.productType) {
-    rationale.push("제품 유형이 입력되지 않았습니다.");
+    rationale.push("제품 유형을 아직 안 적었어요.");
     return out(null, null, null, "check", "blocked");
   }
   const f = s.rule1to3Flags;
   if (f.transmissibleAgent) {
-    rationale.push("감염병 검출 제품입니다. 혈액·조직 공여자 선별이면 CBER 관할(BLA·PMA), 진단용이면 질환에 따라 Class II(510(k)) 또는 Class III(PMA)입니다. 제품 코드로 확인해 주세요.");
+    rationale.push("감염병을 찾는 제품이에요. 혈액·조직 공여자 선별이면 CBER 관할(BLA·PMA), 진단용이면 질환에 따라 Class II(510(k)) 또는 Class III(PMA)예요. 제품 코드로 확인해 주세요.");
     return out(null, null, null, "check", "needs-review");
   }
   if (f.companionDiagnostic) {
-    rationale.push("동반진단은 치료제 결정에 직접 쓰여 대개 Class III·PMA 대상입니다 (치료제 허가와 함께 검토).");
+    rationale.push("동반진단은 치료제를 고르는 데 직접 쓰여서 대개 Class III·PMA 대상이에요 (치료제 허가와 함께 검토).");
     return out("III", null, null, "pma", "provisional");
   }
   if (f.bloodGrouping || f.tissueTyping) {
-    rationale.push("혈액형·조직 적합성 검사는 수혈·이식 안전과 연결돼 CBER 관할(BLA 또는 510(k))일 수 있습니다.");
+    rationale.push("혈액형·조직 적합성 검사는 수혈·이식 안전과 이어져서 CBER 관할(BLA 또는 510(k))일 수 있어요.");
     return out(null, null, null, "bla", "needs-review");
   }
   const p = s.analyte.preset;
   if (p === "LH" || p === "hCG") {
     const k = US_KNOWN[p];
     rationale.push(`${p === "LH" ? "LH(배란)" : "hCG(임신)"} 검사: ${k.regulation}. ${k.note}`);
-    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요해요.");
     return out(k.deviceClass, k.regulation, k.productCode, k.pathway, "provisional");
   }
   if (isFsh(s)) {
     const k = US_KNOWN.FSH;
     rationale.push(`FSH(난포자극호르몬) 검사: ${k.regulation}. ${k.note}`);
-    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요해요.");
     citations.push("21 CFR 862.1300", "21 CFR 862.9 (면제 한계)");
     return out(k.deviceClass, k.regulation, k.productCode, k.pathway, "provisional");
   }
   if (p === "glucose" || p === "cholesterol" || p === "urine-cells") {
-    rationale.push(`${p === "glucose" ? "혈당" : p === "cholesterol" ? "콜레스테롤" : "소변 일반"} 검사: 규정 번호를 확인하지 못했습니다. 대부분 Class II·510(k)이며, 가정용은 FDA 가정용 가이드를 확인하세요. 제품 코드로 확정하세요.`);
-    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요합니다.");
+    rationale.push(`${p === "glucose" ? "혈당" : p === "cholesterol" ? "콜레스테롤" : "소변 일반"} 검사: 규정 번호는 아직 확인하지 못했어요. 대부분 Class II·510(k)이고, 가정용은 FDA 가정용 가이드를 확인하세요. 제품 코드로 확정하세요.`);
+    if (isLay(s)) rationale.push("가정용(OTC)이면 일반인 사용 연구와 OTC 라벨이 필요해요.");
     return out("II", null, null, "check", "provisional");
   }
   if (f.geneticTesting || f.cancerScreening) {
-    rationale.push("유전자·암 관련 검사는 제품 코드에 따라 510(k)·De Novo·PMA로 갈립니다. 비교할 기존 기기가 없으면 De Novo입니다.");
+    rationale.push("유전자·암 관련 검사는 제품 코드에 따라 510(k)·De Novo·PMA로 갈려요. 비교할 기존 기기가 없으면 De Novo예요.");
     return out(null, null, null, "check", "provisional");
   }
-  rationale.push("대부분의 진단 시약은 Class II·510(k)입니다. FDA 분류 데이터베이스에서 같은 분석물의 제품 코드를 찾아 확정하세요. 비교할 기존 기기(predicate)가 없으면 De Novo입니다.");
-  if (s.productType === "instrument") rationale.push("범용 분석기는 Class I(면제)일 수 있습니다 — 제품 코드로 확인.");
+  rationale.push("대부분의 진단 시약은 Class II·510(k)예요. FDA 분류 데이터베이스에서 같은 검사 대상의 제품 코드를 찾아 확정하세요. 비교할 기존 기기(predicate)가 없으면 De Novo예요.");
+  if (s.productType === "instrument") rationale.push("범용 분석기는 Class I(면제)일 수 있어요 — 제품 코드로 확인하세요.");
   return out("II", null, null, "check", "provisional");
 }
 
@@ -160,22 +160,22 @@ export function usDocSet(s: ProductSpec, us: UsResult): UsDoc[] {
   const foreign = foreignOf(s);
   const v = (id: string, title: string, status: UsDocStatus, reason: string, reuse: string[] = []): UsDoc => ({ id, title, status, reason, reuse });
   return [
-    v("us-description", "기기 설명 (Device Description)", "required", "구성·원리·사용 방법", ["device-description", "us-510k-draft"]),
-    v("us-ifu", "사용 적응증 (Indications for Use, FDA 3881)", premarket ? "required" : "check", premarket ? "제출 경로 공통" : "면제 기기도 라벨의 사용 목적으로 남긴다", ["intended-purpose"]),
-    v("us-se", "실질적 동등성 비교 (predicate)", is510k ? (us.pathway === "check" ? "check" : "required") : "excluded", is510k ? "510(k)면 비교 대상 기기(K-번호)와 차이점 표" : "510(k) 경로가 아님", ["us-510k-draft"]),
-    v("us-analytical", "분석 성능 (CLSI 기준 시험)", premarket ? "required" : "check", "정밀도·검출한계·간섭·교차반응 등", ["analytical-performance"]),
-    v("us-clinical", lay ? "일반인 사용 연구 (OTC 비교 연구)" : "임상 성능 / 비교 연구", lay ? "required" : "check", lay ? "가정용은 일반인이 쓴 결과와 기준 방법 비교가 필요" : "경로·품목에 따라 다름", ["clinical-performance"]),
-    v("us-label", "라벨·사용설명서 (21 CFR 809.10)", "required", lay ? "OTC 일반인 표시 포함" : "전문가용 표시", ["labelling-spec", "ifu"]),
-    v("us-stability", "안정성 (유효기간·개봉 후)", "required", "라벨의 유효기간 근거", ["stability-study"]),
-    v("us-software", "소프트웨어 문서", sw ? "required" : "excluded", sw ? "앱·펌웨어가 결과에 관여" : "소프트웨어 없음", ["sw-validation"]),
-    v("us-cyber", "사이버보안 (FD&C Act 524B)", app ? "required" : "excluded", app ? "인터넷에 연결되는 앱 — 사이버 기기 요건" : "연결 기능 없음", ["cybersecurity"]),
-    v("us-biocomp", "생체적합성", contact ? "required" : "excluded", contact ? "피부·점막에 닿는 구성품" : "검체만 닿음", ["biocompatibility"]),
-    v("us-sterility", "멸균", s.sterile ? "required" : "excluded", s.sterile ? "멸균 제품" : "비멸균", ["sterilization-validation"]),
-    v("us-risk", "위험관리 (ISO 14971)", "required", "QMSR·심사 공통", ["risk-management-plan", "risk-management-file"]),
-    v("us-qmsr", "QMSR (21 CFR 820)", "required", "ISO 13485 기반 품질시스템", ["quality-manual"]),
-    v("us-reg", "시설 등록·기기 리스팅 (21 CFR 807)", "required", "판매 전 등록", []),
-    v("us-udi", "UDI·GUDID (21 CFR 830)", "required", "라벨 UDI와 데이터베이스 등록", ["udi-assignment"]),
-    v("us-agent", "US Agent 지정", foreign === null ? "check" : foreign ? "required" : "excluded", foreign === null ? "제조국 미입력" : foreign ? "해외 제조자" : "미국 제조", []),
+    v("us-description", "기기 설명 (Device Description)", "required", "구성·원리·사용 방법을 설명해요.", ["device-description", "us-510k-draft"]),
+    v("us-ifu", "사용 적응증 (Indications for Use, FDA 3881)", premarket ? "required" : "check", premarket ? "어느 제출 경로든 필요해요." : "면제 기기도 라벨에 사용 목적을 남겨요.", ["intended-purpose"]),
+    v("us-se", "실질적 동등성 비교 (predicate)", is510k ? (us.pathway === "check" ? "check" : "required") : "excluded", is510k ? "510(k)면 비교 대상 기기(K-번호)와 차이점을 표로 정리해요." : "510(k) 경로가 아니에요.", ["us-510k-draft"]),
+    v("us-analytical", "분석 성능 (CLSI 기준 시험)", premarket ? "required" : "check", "정밀도·검출한계·간섭·교차반응 등을 시험해요.", ["analytical-performance"]),
+    v("us-clinical", lay ? "일반인 사용 연구 (OTC 비교 연구)" : "임상 성능 / 비교 연구", lay ? "required" : "check", lay ? "가정용은 일반인이 쓴 결과를 기준 방법과 비교해야 해요." : "경로·품목에 따라 달라요.", ["clinical-performance"]),
+    v("us-label", "라벨·사용설명서 (21 CFR 809.10)", "required", lay ? "OTC 일반인 표시를 넣어요." : "전문가용으로 표시해요.", ["labelling-spec", "ifu"]),
+    v("us-stability", "안정성 (유효기간·개봉 후)", "required", "라벨에 적는 유효기간의 근거예요.", ["stability-study"]),
+    v("us-software", "소프트웨어 문서", sw ? "required" : "excluded", sw ? "앱·펌웨어가 결과에 관여해요." : "소프트웨어가 없어요.", ["sw-validation"]),
+    v("us-cyber", "사이버보안 (FD&C Act 524B)", app ? "required" : "excluded", app ? "인터넷에 연결되는 앱이 있어 사이버 기기 요건이 붙어요." : "연결 기능이 없어요.", ["cybersecurity"]),
+    v("us-biocomp", "생체적합성", contact ? "required" : "excluded", contact ? "피부·점막에 닿는 구성품이 있어요." : "검체만 닿아요.", ["biocompatibility"]),
+    v("us-sterility", "멸균", s.sterile ? "required" : "excluded", s.sterile ? "멸균 제품이에요." : "비멸균 제품이에요.", ["sterilization-validation"]),
+    v("us-risk", "위험관리 (ISO 14971)", "required", "QMSR과 심사에 공통으로 필요해요.", ["risk-management-plan", "risk-management-file"]),
+    v("us-qmsr", "QMSR (21 CFR 820)", "required", "ISO 13485 기반 품질시스템이에요.", ["quality-manual"]),
+    v("us-reg", "시설 등록·기기 리스팅 (21 CFR 807)", "required", "판매 전에 등록해요.", []),
+    v("us-udi", "UDI·GUDID (21 CFR 830)", "required", "라벨에 UDI를 넣고 데이터베이스에 등록해요.", ["udi-assignment"]),
+    v("us-agent", "US Agent 지정", foreign === null ? "check" : foreign ? "required" : "excluded", foreign === null ? "제조국을 아직 안 적었어요." : foreign ? "해외 제조자예요." : "미국에서 만들어요.", []),
   ];
 }
 

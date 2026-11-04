@@ -17,8 +17,8 @@ const isLay = (s: ProductSpec) => s.user === "lay" || s.user === "both";
 const hasDevice = (s: ProductSpec) => s.formFactor !== null && s.formFactor !== "strip-only";
 const hasSw = (s: ProductSpec) => !!s.software.hasApp || s.result.readout === "app" || s.result.readout === "reader" || hasDevice(s);
 const method = (s: ProductSpec) => s.assay?.method ?? null;
-const analyteName = (s: ProductSpec) => s.analyte.name ?? "[분석물 — 스펙 미입력]";
-const specimenName = (s: ProductSpec) => (s.specimen ? SPECIMEN[s.specimen] : "[검체 — 스펙 미입력]");
+const analyteName = (s: ProductSpec) => s.analyte.name ?? "[검사 대상 — 제품 정보 미입력]";
+const specimenName = (s: ProductSpec) => (s.specimen ? SPECIMEN[s.specimen] : "[검체 — 제품 정보 미입력]");
 /** 받침에 맞는 조사 — "황체형성호르몬(LH)" 처럼 괄호로 끝나면 괄호 앞 글자로 본다 */
 export function josa(word: string, withBatchim: string, without: string): string {
   const base = word.replace(/\s*\([^)]*\)\s*$/, "").trim();
@@ -60,8 +60,8 @@ export function principleLay(s: ProductSpec): string | null {
   const m = method(s);
   if (!m) return null;
   if (!isLay(s)) return principle(s);
-  const a = s.analyte.name ?? "[검사 대상 — 스펙 미입력]";
-  const sp = s.specimen ? SPECIMEN[s.specimen] : "[검체 — 스펙 미입력]";
+  const a = s.analyte.name ?? "[검사 대상 — 제품 정보 미입력]";
+  const sp = s.specimen ? SPECIMEN[s.specimen] : "[검체 — 제품 정보 미입력]";
   const read = s.result.readout === "reader" ? "전용 리더기가 결과를 화면에 보여 줍니다." : s.result.readout === "app" ? "스마트폰 앱이 사진을 찍어 결과를 알려 줍니다." : "검사창에 나타난 선을 눈으로 확인합니다.";
   switch (m) {
     case "lateral-flow":
@@ -124,7 +124,7 @@ function warnings(s: ProductSpec): string[] {
   return w;
 }
 
-export const labelWarnings = (s: ProductSpec) => bullets(warnings(s)) + "\n(스펙으로 쓴 초안 — 위험관리 결과와 맞춰 검토 필요)";
+export const labelWarnings = (s: ProductSpec) => bullets(warnings(s)) + "\n(제품 정보로 쓴 초안 — 위험관리 결과와 맞춰 검토 필요)";
 
 // ── IFU ──────────────────────────────────────────────────────
 export function ifuSteps(s: ProductSpec): string | null {
@@ -140,7 +140,7 @@ export function ifuSteps(s: ProductSpec): string | null {
   const steps = [
     "준비: 검사 키트와 검체를 실온([__–__℃])에 [__분] 둡니다. 파우치를 열어 구성품을 확인합니다.",
     ...(hasDevice(s) ? [`기기 준비: 전원을 켜고 ${s.software.hasApp ? "앱과 연결한 뒤 " : ""}준비 완료 표시를 확인합니다.`] : []),
-    `검체 채취·적용 (${sp}): ${s.specimen ? collect[s.specimen] ?? "[채취 방법 — 직접 작성]" : "[검체 — 스펙 미입력]"}`,
+    `검체 채취·적용 (${sp}): ${s.specimen ? collect[s.specimen] ?? "[채취 방법 — 직접 작성]" : "[검체 — 제품 정보 미입력]"}`,
     `${s.formFactor === "strip-reader" ? "스트립을 리더기에 꽂고 " : ""}평평한 곳에 두고 [__분] 기다립니다. [__분]이 지난 뒤의 결과는 읽지 않습니다.`,
     `결과 판독: ${s.result.readout === "app" ? "앱 안내에 따라 결과를 확인합니다." : s.result.readout === "reader" || hasDevice(s) ? "기기 화면에 표시된 결과를 확인합니다." : "아래 결과 판독 기준에 따라 선을 확인합니다."}`,
     "사용한 구성품을 경고에 따라 버립니다.",
@@ -207,7 +207,7 @@ function decisionHarm(s: ProductSpec): { fp: string; fn: string } {
   const d = s.intendedPurpose.clinicalDecision;
   return d
     ? { fp: `'${d}' 판단을 잘못 내림 — 위해 [검토 필요]`, fn: `'${d}' 판단을 놓침 — 위해 [검토 필요]` }
-    : { fp: "[임상적 결정 — 스펙 미입력]", fn: "[임상적 결정 — 스펙 미입력]" };
+    : { fp: "[임상적 결정 — 제품 정보 미입력]", fn: "[임상적 결정 — 제품 정보 미입력]" };
 }
 
 export function hazards(s: ProductSpec): Hazard[] {
@@ -244,7 +244,7 @@ export function hazardTable(s: ProductSpec, docSet: Applicability[]): string {
     ...hazards(s).map((h) => `| ${h.id} | ${h.hazard} | ${esc(h.situation)} | ${esc(h.harm)} | [__] | [__] | ${esc(h.controls)} | ${k(h.verify).map(title).join(", ") || "[근거 문서 지정 필요]"} |`),
     "| [추가] | [____] | [____] | [____] | [__] | [__] | [____] | [____] |",
   ];
-  lines.push("", "P(발생 가능성)·S(심각도)는 위험관리 팀이 회사 기준으로 매긴다. 스펙으로 고른 위해요인 초안 — 검토 필요.");
+  lines.push("", "P(발생 가능성)·S(심각도)는 위험관리 팀이 회사 기준으로 매긴다. 제품 정보로 고른 위해요인 초안 — 검토 필요.");
   return lines.join("\n");
 }
 

@@ -114,7 +114,7 @@ export function clinicalText(r: StudyResult | undefined, s: ProductSpec): string
   }
   const m = clinicalMetrics(r, s);
   const lb = (v: number | null, meets: boolean | null, target: number | null) =>
-    v === null ? "[신뢰수준 — 스펙 미입력]" : `${pct(v)}${target !== null ? ` (목표 ${target}% ${meets ? "충족" : "미충족"})` : " (목표 — 스펙 미입력)"}`;
+    v === null ? "[신뢰수준 — 제품 정보 미입력]" : `${pct(v)}${target !== null ? ` (목표 ${target}% ${meets ? "충족" : "미충족"})` : " (목표 — 제품 정보 미입력)"}`;
   return [
     `2×2 표 (기준 방법 대비): 참양성 a=${r.tp}, 위양성 b=${r.fp}, 위음성 c=${r.fn}, 참음성 d=${r.tn}`,
     `민감도(양성 일치율) a/(a+c) = ${r.tp}/${r.tp + r.fn} = ${m.se !== null ? pct(m.se) : "—"} · Wilson 95% 구간 ${m.seCI ? `${pct(m.seCI[0])}–${pct(m.seCI[1])}` : "—"}`,

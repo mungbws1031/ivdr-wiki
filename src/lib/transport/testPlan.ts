@@ -19,7 +19,7 @@ export interface TestStep {
 
 export function transportTestPlan(s: ProductSpec): { steps: TestStep[]; acceptance: string[]; outOfScope: string | null } {
   const f = transportFacts(s);
-  const lots = f.lots !== null ? `${f.lots}개 로트` : "[평가 로트 수 — 스펙 미입력]";
+  const lots = f.lots !== null ? `${f.lots}개 로트` : "[평가 로트 수 — 제품 정보 미입력]";
   const outOfScope =
     f.overParcel === true ? `출하 박스 ${f.weightKg} kg은 ISTA 3A 범위(70 kg 이하)를 넘습니다 — 팔레트 시험(ISTA 3E 또는 ASTM D4169)으로 따로 계획하세요.`
     : s.transport.modes !== null && !s.transport.modes.some((m) => m === "parcel" || m === "air") ? "택배·항공 없이 육상 화물만 씁니다 — 1차 지원 범위(택배·항공) 밖이라 아래 순서는 참고용입니다."
@@ -61,7 +61,7 @@ export function transportTestPlan(s: ProductSpec): { steps: TestStep[]; acceptan
         },
     {
       id: "inspect", title: "외관 검사", required: true,
-      detail: "출하 박스·키트 상자·파우치 손상, 누액, 밀봉 상태, 건조제 상태, 라벨 판독성을 확인합니다.",
+      detail: "출하 박스·키트 상자·파우치 손상, 누액, 밀봉 상태, 건조제 상태와 라벨이 읽히는지를 확인합니다.",
     },
     {
       id: "performance", title: "운송 후 성능 확인", required: true, method: "EN ISO 23640",

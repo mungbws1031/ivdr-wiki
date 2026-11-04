@@ -37,7 +37,7 @@ export function docDifficulty(id: string, ev: Pick<DocEvidence, "confirmed" | "c
   if (ev && ev.confirmed !== null) {
     const pct = Math.round(ev.confirmed * 100);
     if (ev.confirmed < 0.4) { score++; reasons.push(`근거 확정 ${pct}%`); }
-    else if (ev.confirmed >= 0.9) { score--; reasons.push(`근거 확정 ${pct}% — 거의 다 채워짐`); }
+    else if (ev.confirmed >= 0.9) { score--; reasons.push(`근거 확정 ${pct}% — 거의 다 채워졌어요`); }
     if (ev.counts.missing >= 8) { score++; reasons.push(`빈칸 ${ev.counts.missing}개`); }
   }
   const s = Math.min(4, Math.max(1, score));
@@ -46,16 +46,16 @@ export function docDifficulty(id: string, ev: Pick<DocEvidence, "confirmed" | "c
 
 const CLASS_SCORE: Record<IvdClass, number> = { A: 1, B: 2, C: 3, D: 4 };
 const CLASS_WHY: Record<IvdClass, string> = {
-  A: "Class A — 대부분 자기선언",
-  B: "Class B — NB 심사(QMS + 대표 기술문서)",
-  C: "Class C — NB 심사, 자가검사면 기술문서 추가 평가",
-  D: "Class D — NB 전체 심사 + EURL 배치 검증",
+  A: "Class A — 대부분 제조사가 스스로 선언해요(자기선언)",
+  B: "Class B — 인증기관(NB)이 품질 시스템(QMS)과 대표 기술문서를 심사해요",
+  C: "Class C — 인증기관(NB) 심사를 받고, 자가검사면 기술문서도 따로 평가받아요",
+  D: "Class D — 인증기관(NB) 전체 심사에 EU 참조 실험실(EURL) 배치 검증까지 받아요",
 };
 
 /** 이 제품 인증 전체의 난이도 */
 export function overallDifficulty(cls: IvdClass | null, docs: Difficulty[]): Difficulty {
   let score = cls ? CLASS_SCORE[cls] : 3;
-  const reasons = [cls ? CLASS_WHY[cls] : "클래스 미정 — 보수적으로 어려움으로 봄"];
+  const reasons = [cls ? CLASS_WHY[cls] : "등급이 아직 안 정해져서 더 엄격한 쪽으로 어려움으로 봐요"];
   const hard = docs.filter((d) => d.score >= 3).length;
   if (docs.length && hard / docs.length >= 0.3) { score++; reasons.push(`어려운 문서 ${hard}/${docs.length}개`); }
   else if (docs.length) reasons.push(`어려운 문서 ${hard}/${docs.length}개`);

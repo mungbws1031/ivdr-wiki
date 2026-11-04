@@ -94,10 +94,10 @@ export function parseBackup(text: string): ParsedBackup {
     try {
       specRaw = JSON.parse(items["ivdr-spec-v1"]);
     } catch {
-      throw new Error("백업 안의 제품 스펙이 손상되었습니다.");
+      throw new Error("백업 안의 제품 정보가 손상됐어요.");
     }
     const r = validateSpec(specRaw);
-    if (!r.ok) throw new Error(r.errors[0] ?? "제품 스펙 형식이 맞지 않습니다.");
+    if (!r.ok) throw new Error(r.errors[0] ?? "제품 정보 형식이 맞지 않아요.");
     items["ivdr-spec-v1"] = JSON.stringify(r.spec);
   }
   return {

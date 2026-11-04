@@ -16,7 +16,7 @@ export interface NextAction {
   to?: string;
 }
 
-const CLASS_STATUS: Record<string, string> = { blocked: "등급 판정이 멈춰 있음", "needs-review": "등급 판정 보류", provisional: "등급이 잠정" };
+const CLASS_STATUS: Record<string, string> = { blocked: "등급 판정이 멈춰 있어요", "needs-review": "등급 판정이 보류됐어요", provisional: "등급이 아직 잠정이에요" };
 
 export function nextActions(
   spec: ProductSpec,
@@ -32,7 +32,7 @@ export function nextActions(
   for (const p of cls.openQuestions) {
     const f = byPath.get(p);
     if (!f) continue;
-    out.push({ title: `${f.label} 입력`, why: `${CLASS_STATUS[cls.status] ?? "등급에 영향"} — 문서 ${f.usedBy.length}개에도 쓰임`, field: p });
+    out.push({ title: `${f.label} 적기`, why: `${CLASS_STATUS[cls.status] ?? "등급에 영향을 줘요"} — 문서 ${f.usedBy.length}개에도 쓰여요`, field: p });
     byPath.delete(p);
   }
   // 2) 많이 막는 빈 칸
@@ -42,16 +42,16 @@ export function nextActions(
   // 3) 클래스 확정 — 가정으로 나온 등급은 확정할 수 없다
   const canConfirm = !!cls.value && !opts.confirmed && !opts.classAssumed && cls.status === "recommended";
   const confirmItem: NextAction | null = canConfirm
-    ? { title: `Class ${cls.value} 확인하고 확정`, why: "확정해야 등급이 문서에 '확정'으로 들어감", to: "/auto/docs" }
+    ? { title: `Class ${cls.value} 확인하고 확정`, why: "확정해야 등급이 문서에 '확정'으로 들어가요", to: "/auto/docs" }
     : null;
 
   if (confirmItem && out.length === 0 && blockers.length === 0) out.push(confirmItem);
-  for (const f of blockers) out.push({ title: `${f.label} 입력`, why: `문서 ${f.usedBy.length}개가 이 칸을 기다림`, field: f.path });
+  for (const f of blockers) out.push({ title: `${f.label} 적기`, why: `문서 ${f.usedBy.length}개가 이 칸을 기다려요`, field: f.path });
   if (confirmItem && !out.includes(confirmItem)) out.push(confirmItem);
 
   // 4) 실험 결과
   if (opts.resultsTotal > 0 && opts.resultsEntered === 0)
-    out.push({ title: "실험 결과 입력", why: `실험 ${opts.resultsTotal}개의 결과가 들어가야 성능 문서가 채워짐`, to: "/auto/results" });
+    out.push({ title: "실험 결과 적기", why: `실험 ${opts.resultsTotal}개의 결과를 적어야 성능 문서가 채워져요`, to: "/auto/results" });
 
   return out.slice(0, limit);
 }
