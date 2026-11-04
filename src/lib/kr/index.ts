@@ -6,8 +6,7 @@
 //  - 체외진단의료기기법 시행규칙 제2조·제5조·제6조·제8조·제9조 (총리령 제2155호, 2026-09-18 시행)
 //  - 체외진단의료기기 품목 및 품목별 등급에 관한 규정 제2조 (고시 제2026-45호, 2026-06-30)
 //  - 체외진단의료기기 허가·신고·심사 등에 관한 규정 제22조·제25조·제26조 (고시 제2026-58호, 2026-08-10)
-// 품목별 등급(별표)은 허가지침 폴더의 별표 사본으로 대조했다. 이 사본은 제2026-45호 개정 전 판이라
-// 최신 별표로 다시 확인해야 한다 — 화면에 "최신 별표 확인 필요"를 단다.
+// 품목별 등급은 같은 고시 제2026-45호의 별표(국가법령정보센터 첨부 hwpx, 2026-11-05 내려받음)로 대조했다.
 // 순수 함수 (DOM 의존 금지).
 // =====================================================================
 
@@ -23,13 +22,13 @@ export const KR_RULES_REVIEWED: { by: string | null; date: string | null } = { b
 export const KR_SOURCES = {
   law: "체외진단의료기기법 시행규칙 제2조(등급 지정 기준)·제5조(허가·인증·신고 대상) — 총리령 제2155호, 2026-09-18 시행",
   notice: "「체외진단의료기기 품목 및 품목별 등급에 관한 규정」 제2조·별표 (식약처 고시 제2026-45호, 2026-06-30)",
-  selfTest: "자가검사용 품목은 같은 고시 별표에 있어야 해요. 품목별 등급은 허가지침 폴더의 별표 사본(제2026-45호 개정 전 판) 기준이라 최신 별표 확인 필요",
+  selfTest: "자가검사용 품목은 같은 고시 별표에 있어야 해요. 품목번호·등급은 고시 제2026-45호 별표 기준 (2026-11-05 확인 — 고시가 바뀌면 다시 확인)",
   review: "「체외진단의료기기 허가·신고·심사 등에 관한 규정」 제22조·제25조·제26조 (식약처 고시 제2026-58호, 2026-08-10 시행)",
 };
 
 /**
  * 자가검사용 품목 (고시 별표에 품목이 있어야 자가검사용으로 허가·인증 가능).
- * grade 가 있으면 별표 사본에서 품목번호·등급을 확인한 것. 없으면 등급을 확인하지 못한 것.
+ * grade 는 고시 별표에서 확인한 품목 등급.
  * effective 가 있으면 그날부터 시행되는 품목.
  */
 export interface KrSelfTestItem {
@@ -43,7 +42,7 @@ export interface KrSelfTestItem {
   effective?: string;
 }
 
-const TABLE = "별표 사본 (제2026-45호 개정 전 판 — 최신 별표 확인 필요)";
+const TABLE = "고시 제2026-45호 별표 (2026-11-05 확인)";
 export const KR_SELF_TEST_ITEMS: KrSelfTestItem[] = [
   { key: "pregnancy", label: "임신·가임기 등 내분비 (hCG·LH) — 개인용임신내분비물질검사지/검사기", code: "J14030.01 / J04030.01", grade: "2", re: /hCG|LH|임신|배란|가임|융모성|황체형성/i, source: TABLE, checked: "2026-11-05" },
   { key: "glucose", label: "혈당·케톤 — 개인용혈당검사지/측정기", code: "J14010.01 / J04010.01", grade: "3", re: /혈당|포도당|glucose|케톤/i, source: TABLE, checked: "2026-11-05" },
@@ -51,11 +50,10 @@ export const KR_SELF_TEST_ITEMS: KrSelfTestItem[] = [
   { key: "coag", label: "혈액응고시간 — 개인용혈액응고시간검사지/검사기", code: "J14040.01 / J04040.01", grade: "3", re: /응고|INR|PT\b|프로트롬빈/i, source: TABLE, checked: "2026-11-05" },
   { key: "urine-analyzer", label: "소변 화학 성분 (분석기) — 개인용요화학분석기", code: "J04020.01", grade: "2", re: /요화학/i, source: TABLE, checked: "2026-11-05" },
   { key: "hiv", label: "HIV — 자가검사용HIV면역검사시약", code: "K05060.01", grade: "4", re: /HIV|면역결핍/i, source: TABLE, checked: "2026-11-05" },
-  { key: "flu", label: "인플루엔자", code: null, grade: null, re: /인플루엔자|독감|influenza/i, source: "고시 제2026-45호 개정으로 신설 (보도 자료 기준 — 품목번호·등급은 최신 별표 확인 필요)", checked: "2026-10-29" },
-  { key: "drug", label: "마약류 대사체 — 자가검사용마약류물질대사검사시약", code: "K06060.01", grade: null, re: /마약|대사체|drug/i, source: "고시 제2026-45호 부칙 제1조·제3조 — 2028-06-30부터 시행, 그 전에도 인증 절차는 진행 가능", checked: "2026-11-05", effective: "2028-06-30" },
+  { key: "respiratory", label: "인플루엔자·코로나19 (비강 검체 등, 항원·항체) — 자가검사용호흡기바이러스면역검사시약", code: "K05070.01", grade: "3", re: /인플루엔자|독감|influenza|코로나|COVID|SARS-CoV-2/i, source: TABLE, checked: "2026-11-05" },
+  { key: "drug", label: "마약류 대사체 (소변·타액) — 자가검사용마약류물질대사검사시약", code: "K06060.01", grade: "2", re: /마약|대마|대사체|drug/i, source: "고시 제2026-45호 별표·부칙 제1조·제3조 — 2028-06-30부터 시행, 그 전에도 인증 절차는 진행 가능", checked: "2026-11-05", effective: "2028-06-30" },
 ];
 const STI_RE = /성매개|성병|클라미디아|임질|매독|STI/i;
-const COVID_RE = /코로나|COVID|SARS-CoV-2/i;
 
 export interface KrSelfTest {
   status: "allowed" | "check" | "not-applicable";
@@ -110,7 +108,6 @@ export function krSelfTest(s: ProductSpec): KrSelfTest {
   if (hit?.effective) return { status: "check", item: hit.label, reason: `${hit.label} (${hit.code}) — ${hit.source}. 시행일 전에는 판매할 수 없어요.`, labelling };
   if (hit) return { status: "allowed", item: hit.label, reason: `자가검사용 품목 — ${hit.label}${hit.code ? ` (${hit.code}${hit.grade ? `, ${hit.grade}등급` : ""})` : ""}. ${hit.source}`, labelling };
   if (STI_RE.test(text)) return { status: "check", item: "성매개감염", reason: "성매개감염 자가검사는 2026-06 개정에서 보류됐습니다 — 추가 검토 결과 확인 필요 (HIV는 별도 품목이 있어요)", labelling };
-  if (COVID_RE.test(text)) return { status: "check", item: "코로나19", reason: "허가지침 폴더의 별표 사본에는 자가검사용 코로나19 품목이 없어요. 고시 제2026-45호에서 코로나19 항원·항체 시약의 분류가 바뀌었으니 최신 별표로 확인해 주세요.", labelling };
   return {
     status: "check",
     item: s.analyte.name,
@@ -149,6 +146,12 @@ export function classifyKr(s: ProductSpec): KrResult {
   const f = s.rule1to3Flags;
   (Object.keys(f) as (keyof typeof f)[]).forEach((k) => { if (f[k] === null) openQuestions.push(`rule1to3Flags.${k}`); });
 
+  const lay0 = krSelfTestItem(s);
+  // 감염병 자가검사 품목(HIV·호흡기 바이러스)은 별표에 등급이 따로 있다
+  if (f.transmissibleAgent && lay0?.grade && (lay0.key === "hiv" || lay0.key === "respiratory")) {
+    rationale.push(`감염병 검사지만 고시 별표에 자가검사용 품목 ${lay0.label} (${lay0.code})이 따로 있어 그 등급(${lay0.grade}등급)을 따라요 — ${TABLE}.`);
+    return finish(lay0.grade, KR_RULES_REVIEWED.by ? "recommended" : "provisional", `자가검사 품목 ${lay0.code}`);
+  }
   if (f.transmissibleAgent) {
     rationale.push("감염병을 찾는 제품이에요. 수혈·이식 안전과 관련되거나 잘 퍼지는 감염병이면 개인·공중보건 위해도가 모두 높아 4등급, 그 밖에는 3등급 후보예요.");
     rationale.push("질환마다 따로 판단해야 해서 앱이 정하지 않아요. 품목 분류로 확인해 주세요.");
@@ -175,7 +178,7 @@ export function classifyKr(s: ProductSpec): KrResult {
     if (item?.grade) {
       up(item.grade, `자가검사 품목 ${item.code}`, `고시 별표의 자가검사용 품목 ${item.label} (${item.code})은 ${item.grade}등급이에요 — ${TABLE}.`);
     } else if (s.analyte.preset === "urine-cells") {
-      rationale.push("소변 일반 자가검사는 별표 사본에 개인용요화학분석기(J04020.01, 2등급)는 있지만 검사지 품목은 찾지 못했어요 — 최신 별표로 확인 필요.");
+      rationale.push("소변 일반 자가검사는 별표에 개인용요화학분석기(J04020.01, 2등급)는 있지만 자가검사용 소변 검사지 품목은 없어요 — 검사지라면 품목 분류로 확인해 주세요.");
       if (!rule) rule = "소변 자가검사 — 품목별 등급 확인 필요";
     } else {
       up("3", "자가검사", "일반인 자가검사는 틀린 결과를 전문가가 걸러 주지 못해 3등급 후보예요. 고시 별표에서 품목을 찾으면 그 등급을 따라요.");

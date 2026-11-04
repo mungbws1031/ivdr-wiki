@@ -40,11 +40,18 @@ describe("classifyKr", () => {
     const st = kr(s).selfTest;
     expect(st.status).toBe("check");
     expect(st.reason).toContain("2028-06-30");
+    expect(kr(s).grade).toBe("2");
   });
-  it("코로나19 자가검사는 별표 사본에 없어 확인 필요", () => {
+  it("코로나19·인플루엔자 자가검사: 자가검사용호흡기바이러스면역검사시약(K05070.01) 3등급", () => {
     let s = setAt(base(), "analyte.preset", "other");
     s = setAt(s, "analyte.name", "SARS-CoV-2 항원");
-    expect(kr(s).selfTest.status).toBe("check");
+    s = setAt(s, "rule1to3Flags.transmissibleAgent", true);
+    const r = kr(s);
+    expect(r.selfTest.status).toBe("allowed");
+    expect(r.grade).toBe("3");
+    expect(r.rule).toContain("K05070.01");
+    s = setAt(s, "analyte.name", "인플루엔자 A/B 항원");
+    expect(kr(s).grade).toBe("3");
   });
   it("hCG 일반인: 2등급, 자가검사 허용", () => {
     let s = setAt(base(), "analyte.preset", "hCG");
