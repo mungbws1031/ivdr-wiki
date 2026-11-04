@@ -45,6 +45,7 @@ import { SampleSizeCalc } from "./calcs/SampleSizeCalc";
 import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { MktCalc } from "./calcs/MktCalc";
+import { RegressionCalc } from "./calcs/RegressionCalc";
 import { InlineEditor } from "./InlineEditor";
 import { useWorkingSpec } from "../hooks/useSpecStore";
 import { markAssumed } from "../lib/evidence";
@@ -67,6 +68,7 @@ const CALC_LABEL: Record<CalcToolType, string> = {
   "lod-calc": "검출한계(LoD)",
   "risk-matrix": "위험 매트릭스",
   "mkt": "평균동력학적온도(MKT)",
+  "regression": "방법비교 회귀분석",
 };
 
 // ── 작성 진척 바 (헤더) — 실제로 채운 섹션 수를 실시간 표시 ─────────
@@ -583,6 +585,7 @@ export function DocumentWorkspace() {
                 {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
                 {doc.calcTools.includes("lod-calc") && <LodCalc />}
                 {doc.calcTools.includes("mkt") && <MktCalc />}
+                {doc.calcTools.includes("regression") && <RegressionCalc />}
               </div>
             )}
           </div>
