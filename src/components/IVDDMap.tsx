@@ -269,16 +269,20 @@ export function IVDDMap() {
             }}
           >
             <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 4 }}>
-              ⚠️ IVDR 전환 — NB 신청 마감 (등급별)
+              ⚠️ IVDR 전환 — NB 신청·서면계약 마감과 판매 종료일
             </p>
             <ul className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-              <li>Class D (List A) → <strong>2025.5.26</strong> (지남)</li>
-              <li>Class C (List B) → <strong>2026.5.26</strong></li>
-              <li>Class B/A (일반+자가검사) → <strong>2027.5.26</strong></li>
+              <li>
+                IVDD NB 인증서가 있는 기기 (List A·List B·자가검사) → 신청 <strong>2025.5.26</strong> (지남) · 계약 2025.9.26 (지남) · 판매 <strong>2027.12.31</strong>까지
+              </li>
+              <li>자가선언 → IVDR Class D → 신청 <strong>2025.5.26</strong> (지남) · 계약 2025.9.26 (지남) · 판매 <strong>2027.12.31</strong>까지</li>
+              <li>자가선언 → IVDR Class C → 신청 <strong>2026.5.26</strong> (지남) · 계약 2026.9.26 (지남) · 판매 <strong>2028.12.31</strong>까지</li>
+              <li>자가선언 → IVDR Class B·A 멸균 → 신청 <strong>2027.5.26</strong> · 계약 2027.9.26 · 판매 <strong>2029.12.31</strong>까지</li>
+              <li>자가선언 → IVDR Class A 비멸균 → 연장 없음, <strong>2022.5.26</strong>부터 IVDR 적용</li>
             </ul>
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: 6 }}>
-              위 날짜는 NB(인증기관) 신청 기한이에요. 실제로 팔 수 있는 전환 종료일은 Regulation (EU) 2024/1860로 늘어났어요.
-              IVDD 인증서가 있는 기기는 2027.12.31, 자가선언 기기는 등급별로 2027.12.31~2029.12.31이에요. 기기마다 조건이 달라요. (2차 자료 기준·2026-11-04 확인, 원문 확인 필요)
+              List B·자가검사 기기도 IVDD에서 NB 인증서를 받았으니, IVDR 등급과 상관없이 첫 줄 일정을 따라요. 모든 경우 2025.5.26까지 Art.10(8) QMS를 갖추고, 설계·사용 목적을 크게 바꾸지 않아야 해요.
+              (근거: IVDR Art.110(3a)~(3c), Regulation (EU) 2024/1860로 개정 — EUR-Lex 원문 대조 2026-11-05)
             </p>
           </div>
 
