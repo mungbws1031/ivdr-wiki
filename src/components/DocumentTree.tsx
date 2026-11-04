@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { FolderTree, FolderOpen, FileText, Sparkles, List, Network, ListOrdered, Blend, Repeat2 } from "lucide-react";
 import {
   docTree,
@@ -17,6 +17,7 @@ import { LevelMeter } from "./LevelMeter";
 import { DocumentMindmap } from "./DocumentMindmap";
 import { DocumentOrder } from "./DocumentOrder";
 import { SchemeOverlap } from "./SchemeOverlap";
+import { ReuseVenn } from "./ReuseVenn";
 import { isSharedDoc, overlapSchemes } from "../data/schemes";
 
 /** 연결선(엘보) — 스파인에서 노드로 뻗는 가로선. */
@@ -34,7 +35,9 @@ function Elbow({ color, top = 26 }: { color: string; top?: number }) {
 export function DocumentTree() {
   const stats = docTreeStats();
   const register = toRegisterMarkdown();
-  const [tab, setTab] = useState<"list" | "map" | "order" | "schemes">("map");
+  const [params] = useSearchParams();
+  const initialTab = params.get("tab");
+  const [tab, setTab] = useState<"list" | "map" | "order" | "schemes">(initialTab === "list" || initialTab === "order" || initialTab === "schemes" ? initialTab : "map");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -133,7 +136,7 @@ export function DocumentTree() {
         )}
 
         {/* 규제 스킴 중복 (벤다이어그램) */}
-        {tab === "schemes" && <SchemeOverlap />}
+        {tab === "schemes" && (<><ReuseVenn /><SchemeOverlap /></>)}
 
         {/* 목록 (상세 트리) */}
         {tab === "list" && (
