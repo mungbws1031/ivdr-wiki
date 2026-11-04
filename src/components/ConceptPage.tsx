@@ -18,7 +18,7 @@ export function ConceptPage() {
         <PageHeader crumb="개념 위키" />
         <main className="mx-auto" style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin)" }}>
           <p className="text-text-muted">
-            개념을 찾을 수 없습니다. <Link to="/wiki" className="underline">개념 목록으로</Link>
+            이 개념을 찾지 못했어요. <Link to="/wiki" className="underline">개념 목록으로</Link>
           </p>
         </main>
       </div>
