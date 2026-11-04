@@ -18,6 +18,7 @@ import {
   Home,
   Square,
   CheckSquare,
+  Glasses,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META, parseLocalDate } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown, type DocTemplate } from "../data/documents";
@@ -60,6 +61,8 @@ import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
 import { hasDraft, docWithDrafts, getCheck, setCheck, countChecks, useStoreVersion } from "../hooks/useDraftStore";
 import type { CalcToolType } from "../data/documents";
+import { reviewerFindings } from "../lib/reviewerCheck";
+import { ReviewerPanel } from "./ReviewerPanel";
 
 // 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
 const CALC_LABEL: Record<CalcToolType, string> = {
@@ -190,6 +193,51 @@ function CopyMdButton({ doc, filename }: { doc: DocTemplate; filename: string })
       <Copy size={14} aria-hidden />
       {copied ? "복사됨!" : "MD 복사"}
     </button>
+  );
+}
+
+// ── "심사관에게 물어보기" 버튼 — 결정적 규칙 점검(C-01·C-05·C-10)만 본다 ────
+// rawDoc(제품 정보로 채우기 전 원본 템플릿)의 섹션을 넘긴다 — {{auto.*}} 토큰이 남아 있으면
+// "자동 채움 대상"이라 C-05(순수 예시) 판정에서 빠진다. 빈칸 패턴([____] 등)은 템플릿에 그대로
+// 있는 문구라 원본으로도 똑같이 잡힌다.
+function ReviewerButton({ doc, rawDoc }: { doc: DocTemplate; rawDoc: DocTemplate }) {
+  useStoreVersion(); // 체크·초안 변경 시 재계산
+  const [open, setOpen] = useState(false);
+  const findings = reviewerFindings({
+    docId: doc.id,
+    sections: rawDoc.sections.map((s) => ({ heading: s.heading, placeholder: s.placeholder })),
+    checklist: doc.checklist,
+    checkedIdx: doc.checklist.map((_, i) => i).filter((i) => getCheck(doc.id, i)),
+    draftedIdx: doc.sections.map((_, i) => i).filter((i) => hasDraft(doc.id, i)),
+  });
+  const hasMajor = findings.some((f) => f.severity === "주요");
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        title="심사관에게 물어보기"
+        className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-semibold hover:bg-surface transition-colors"
+        style={{
+          border: "1px solid var(--border)",
+          fontSize: "var(--t-sm)",
+          padding: "7px 14px",
+          color: hasMajor ? "var(--warning)" : "var(--text-muted)",
+        }}
+      >
+        <Glasses size={14} aria-hidden />
+        심사관에게 물어보기
+        {findings.length > 0 && (
+          <span
+            className="rounded-full font-bold"
+            style={{ fontSize: 11, padding: "0 6px", color: "var(--text-on-color)", background: hasMajor ? "var(--warning)" : "var(--text-subtle)" }}
+          >
+            {findings.length}
+          </span>
+        )}
+      </button>
+      {open && <ReviewerPanel docTitle={doc.docTitle} findings={findings} onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
@@ -475,6 +523,7 @@ export function DocumentWorkspace() {
               </Link>
             )}
             <CopyMdButton doc={doc} filename={filename} />
+            {rawDoc && <ReviewerButton doc={doc} rawDoc={rawDoc} />}
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-# 시험 시나리오 6개
+# 시험 시나리오 7개
 
 입력은 `exampleSpec()`(LH 배란 자가검사 스틱)에서 바꾼 값만 적었다. 모든 시나리오는 `markets = ["EU","KR","US"]`다.
 
@@ -14,6 +14,7 @@
 | S4 | 혈당 측정기 + 앱 (손끝 혈액, 정량) | `analyte.preset=glucose`, `analyte.name=혈당(포도당)`, `intendedPurpose.clinicalDecision=혈당 관리`, `specimen=capillary-blood`, `result.kind=quantitative`, `result.readout=app`, `formFactor=personal-device`, `software.hasApp=true`, `assay.method=electrochemical` |
 | S5 | 전문가용 암 표지자(PSA) 정량, 검사실 장비 | `analyte.preset=other`, `analyte.name=PSA`, `user=professional`, `environment=lab`, `specimen=venous-blood`, `result.kind=quantitative`, `rule1to3Flags.cancerScreening=true`, `formFactor=lab-analyzer`, `result.readout=reader`, `intendedPurpose.clinicalDecision=전립선암 위험 평가 보조` |
 | S6 | 수혈 혈액 선별 HIV 항체 (전문가) | `analyte.preset=other`, `analyte.name=HIV 항체 (수혈 혈액 선별)`, `user=professional`, `environment=lab`, `specimen=venous-blood`, `rule1to3Flags.transmissibleAgent=true`, `intendedPurpose.clinicalDecision=수혈용 혈액 적합 판정` |
+| S7 | 갱년기 FSH 자가검사 (소변) | `analyte.preset=other`, `analyte.name=FSH(난포자극호르몬)`, `specimen=urine`, `user=lay`, `environment=home`, `intendedPurpose.clinicalDecision=갱년기 호르몬 변화 모니터링(진단 아님)` |
 
 ## 기대 판정
 
@@ -25,3 +26,8 @@
 | S4 | C (Rule 4(a) — 포도당 예외는 소변만 해당, 손끝 혈액 혈당은 C · 원문 확인 필요) | 등급 확인 필요(추천 없음) · 자가검사 허용(혈당) | Class II 가능성 · 제품 코드 확인 | SW·사이버·전기·생체적합성·측정 소급성 필수 · §14·§16·§17·§18 해당 | 채혈침·전기·SW·사이버·개인정보 |
 | S5 | C (Rule 3) | 3등급 잠정 · 임상 자료 필수 · 자가검사 해당 없음 | 경로 확인 · CLIA 복잡도 분류 | SW·전기·소급성 필수 · §19 비해당 | 전기·SW, 사용 오류 없음 |
 | S6 | 담당자 판단 (Rule 1 후보 — D) | 담당자 판단 (4등급 후보) | 담당자 판단 · BLA 가능성 | §14~19 비해당 | **수혈 감염 전파(공중보건) 위해** |
+| S7 | C(원문 확인 필요) — Rule 4(a), FSH는 예외 목록 원문 확인 필요 | 등급 확인 필요 · 자가검사 확인 필요(품목) | Class I · 510(k) 면제(§862.9 제한, 원문 확인 필요) · 제품 코드 NGA/CGJ(확인 필요) | 사용적합성 필수 · SW·사이버·전기 불필요 · §16·§17 비해당 · §19 해당 | 위양성·위음성·사용 오류, 채혈침·전기·SW 없음 |
+
+## S7 메모 (FSH)
+- `analyte.preset`는 `other`로 두고 분석물 이름 텍스트(FSH)로만 미국 쪽 US_KNOWN.FSH를 찾는다(`src/lib/us/index.ts`의 `isFsh`). 한국·IVDR 분류 규칙은 preset이 `LH`·`hCG`·`glucose`·`cholesterol`·`urine-cells`일 때만 특례를 적용해서, FSH는 preset 특례를 못 받고 일반 자가검사 규칙(IVDR C, 국내 3등급 후보)으로 떨어진다.
+- 이 "C"는 Rule 4(a) 예외 목록에 FSH가 있는지 원문(Annex VIII)으로 확인하기 전까지는 확정이 아니다. 국내 등급·자가검사 허용 품목도 고시 원문 확인 전이다.
