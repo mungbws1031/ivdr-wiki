@@ -40,8 +40,8 @@ export function AssumptionBanner({ assumed, assumeOn }: { assumed: Assumption[];
   if (!assumeOn) {
     return (
       <div className="flex flex-wrap items-center rounded-[var(--r-md)]" style={{ gap: 8, padding: "8px 14px", background: "var(--surface)", border: "1px solid var(--border)", fontSize: "var(--t-xs)" }}>
-        <span className="text-text-muted">가정 모드 꺼짐 — 비어 있는 칸은 "확인 필요"로 멈춥니다.</span>
-        <button type="button" onClick={() => setAssumeMode(true)} className="font-bold underline" style={{ color: "var(--accent)", minHeight: 40 }}>가정으로 계속 진행하기</button>
+        <span className="text-text-muted">가정 모드가 꺼져 있어요. 비어 있는 칸은 "확인 필요"로 두고 멈춰요.</span>
+        <button type="button" onClick={() => setAssumeMode(true)} className="font-bold underline" style={{ color: "var(--accent)", minHeight: 40 }}>빈칸을 가정하고 계속하기</button>
       </div>
     );
   }
@@ -63,7 +63,7 @@ function AssumptionDetails({ assumed }: { assumed: Assumption[] }) {
   return (
     <div className="rounded-[var(--r-md)]" style={{ padding: "6px 12px", background: "var(--warning-bg)", border: "1px solid var(--warning)" }} role="note">
       <div className="flex flex-wrap items-center" style={{ gap: 8, minHeight: 40 }}>
-        <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>가정 {assumed.length}개로 진행 중</span>
+        <span className="font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>빈칸 {assumed.length}개를 가정하고 진행 중이에요</span>
         <button type="button" onClick={toggle} aria-expanded={open} className="font-semibold underline" style={{ fontSize: "var(--t-xs)", color: "var(--text)", minHeight: 40, padding: "0 6px" }}>
           {open ? "접기 ▴" : "자세히 ▾"}
         </button>
@@ -71,7 +71,7 @@ function AssumptionDetails({ assumed }: { assumed: Assumption[] }) {
       </div>
       {open && (
         <>
-          <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>비어 있는 칸을 요구사항이 더 많은 쪽으로 가정했습니다. 문서에는 "(가정)"이 붙고, 가정으로 나온 클래스는 확정할 수 없습니다.</p>
+          <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>비어 있는 칸은 더 엄격한 쪽(요구사항이 더 많은 쪽)으로 가정했어요. 문서에는 "(가정)"이 붙어요. 가정으로 나온 등급은 확정할 수 없어요.</p>
           <ul className="flex flex-col" style={{ gap: 2, marginTop: 6 }}>
             {assumed.map((a) => (
               <li key={a.path} style={{ fontSize: "var(--t-xs)" }}>

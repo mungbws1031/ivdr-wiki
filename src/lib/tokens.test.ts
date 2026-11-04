@@ -19,7 +19,7 @@ describe("tokens", () => {
     expect(all).toContain("| Rule 4 | 해당 | B |");
   });
   it("값이 없으면 지어내지 않고 미입력 표시", () => {
-    expect(fillTokens("특이도 {{auto.targetSp}}", buildTokenContext(exampleSpec()))).toBe("특이도 [목표 특이도 — 스펙 미입력]");
+    expect(fillTokens("특이도 {{auto.targetSp}}", buildTokenContext(exampleSpec()))).toBe("특이도 [목표 특이도 — 제품 정보 미입력]");
     expect(docMissingTokens(resolveDoc("ifu")!, buildTokenContext(exampleSpec()))).toEqual(expect.arrayContaining(["targetSp", "basicUdiDi"]));
   });
   it("핵심 문서의 모든 토큰은 정의된 이름이다", () => {

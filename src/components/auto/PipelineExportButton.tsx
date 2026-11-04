@@ -48,7 +48,7 @@ export function PipelineExportButton({ ids = P1_DOCS.map((d) => d.id), label }: 
         {state === "busy" ? "묶는 중…" : label ?? "P1 초안 묶음 내보내기 (sug-doc-pipeline)"}
       </button>
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }} role="status">
-        {state === "done" ? "내려받았습니다 — 폴더마다 초안 docx·state.json(S5 REG 전)·input.json" : state === "error" ? "내보내지 못했습니다. 다시 시도해 주세요." : "검토 전 초안 · 빈칸은 그대로 남깁니다"}
+        {state === "done" ? "내려받았어요. 폴더마다 초안 docx·state.json(S5 REG 전)·input.json이 들어 있어요." : state === "error" ? "내보내지 못했어요. 다시 시도해 주세요." : "검토 전 초안 · 빈칸은 그대로 남겨 둬요"}
       </p>
     </div>
   );

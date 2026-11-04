@@ -34,7 +34,7 @@ describe("실험 결과", () => {
     expect(clin).toContain("참양성 a=59");
     expect(clin).toContain("100.0%");
     expect(clin).toContain("목표 95% 충족");
-    expect(clin).toContain("목표 — 스펙 미입력");
+    expect(clin).toContain("목표 — 제품 정보 미입력");
     const stab = fillDoc(resolveDoc("stability-study")!, buildTokenContext(s, classify(s), r)).sections.map((x) => x.placeholder).join("\n");
     expect(stab).toContain("입증된 유효기간: 12개월");
     expect(stab).toContain("미충족");

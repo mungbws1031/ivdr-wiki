@@ -61,7 +61,7 @@ const RULES: Rule[] = [
   { path: "assay.method", value: "molecular", shown: "분자진단", re: /PCR|등온|LAMP|분자진단/i },
   { path: "result.readout", value: "app", shown: "스마트폰 앱", re: /앱|스마트폰|어플|app/i },
   { path: "result.readout", value: "reader", shown: "전용 리더기", re: /리더기|reader|측정기/i },
-  { path: "result.readout", value: "visual", shown: "육안 판독", re: /육안|눈으로/ },
+  { path: "result.readout", value: "visual", shown: "눈으로 결과 읽기", re: /육안|눈으로/ },
   { path: "software.hasApp", value: true, shown: "앱 있음", re: /앱|스마트폰|어플|app/i },
   // 출시 시장
   { path: "markets", value: ["EU"], shown: "EU (IVDR)", re: /유럽|EU|CE|IVDR/i },

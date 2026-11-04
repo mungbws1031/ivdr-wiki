@@ -126,11 +126,11 @@ export function ConceptSketch({ spec }: { spec: ProductSpec }) {
           <g filter={`url(#${uid}wob)`}><Storyboard m={m} pal={pal} x={24} y={440} /></g>
 
           <line x1={24} y1={590} x2={W - 24} y2={590} stroke={INK} strokeWidth={0.8} opacity={0.4} />
-          <text x={24} y={608} fontSize={10.5} fill={INK} opacity={0.7}>개념 스케치 — 디자인 아님 · 치수·시간은 설계·시험 후 확정 · 제품 스펙으로 자동 생성</text>
+          <text x={24} y={608} fontSize={10.5} fill={INK} opacity={0.7}>개념 스케치 — 실제 디자인 아님 · 치수·시간은 설계·시험 후 확정 · 제품 정보로 자동 생성</text>
           <text x={W - 24} y={608} fontSize={10.5} textAnchor="end" fill={INK} opacity={0.7}>{today} · {pal.label}</text>
         </svg>
       </div>
-      <p className="sm:hidden text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>옆으로 밀어서 전체 스케치 보기 →</p>
+      <p className="sm:hidden text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>옆으로 밀면 스케치 전체가 보여요 →</p>
       <div className="flex flex-wrap" style={{ gap: 8 }}>
         {(["svg", "png"] as const).map((k) => (
           <button key={k} type="button" onClick={() => save(k)} className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] border font-semibold" style={{ padding: "6px 12px", fontSize: "var(--t-xs)", borderColor: "var(--border)", minHeight: 40 }}>

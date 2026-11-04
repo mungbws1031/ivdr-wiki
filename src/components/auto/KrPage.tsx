@@ -48,13 +48,13 @@ export function KrPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>한국 식약처(MFDS) 인증</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
-            체외진단의료기기 등급을 추천하고, 자가검사용 허용 품목인지와 국내 제출 자료를 정리합니다. 등급은 식약처 고시의 품목별 등급으로 최종 정해지므로 추천은 품목을 찾는 출발점입니다.
+            체외진단의료기기 등급을 추천해요. 자가검사용으로 허용된 품목인지, 국내에 낼 자료는 무엇인지도 정리해요. 최종 등급은 식약처 고시의 품목별 등급으로 정해져요. 그래서 여기 추천은 품목을 찾기 위한 출발점이에요.
           </p>
         </header>
 
         {!selected && (
           <div role="status" className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--warning)", background: "var(--warning-bg)", padding: "var(--s-4) var(--s-6)", marginBottom: "var(--s-6)", fontSize: "var(--t-sm)", color: "var(--warning)" }}>
-            제품 인증에서 '한국 (MFDS)'을 고르지 않았습니다. 아래는 참고용입니다. <Link to={fieldHref("markets")} className="font-bold underline">인증 고르기</Link>
+            제품 인증에서 '한국 (MFDS)'을 고르지 않았어요. 아래 내용은 참고만 해 주세요. <Link to={fieldHref("markets")} className="font-bold underline">인증 고르기</Link>
           </div>
         )}
 
@@ -77,20 +77,20 @@ export function KrPage() {
                 </ul>
                 {kr.openQuestions.length > 0 && (
                   <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
-                    답하지 않은 항목: {kr.openQuestions.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}
+                    아직 답하지 않은 항목: {kr.openQuestions.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}
                   </p>
                 )}
                 <div className="rounded-[var(--r-md)] flex flex-wrap items-center" style={{ gap: "var(--s-3)", padding: "var(--s-3) var(--s-4)", background: "var(--surface)", border: `1px solid ${kr.confirmed.matches === false ? "var(--warning)" : "var(--border)"}` }}>
                   {kr.confirmed.value ? (
                     kr.confirmed.matches === false ? (
                       <span className="inline-flex items-center gap-1 font-bold" style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>
-                        <AlertTriangle size={16} aria-hidden /> 확인한 등급({kr.confirmed.value}등급)이 추천({kr.grade}등급)과 다릅니다 — 품목 분류 근거를 기록하세요. 경로는 확인한 등급을 따릅니다.
+                        <AlertTriangle size={16} aria-hidden /> 확인한 등급({kr.confirmed.value}등급)이 추천({kr.grade}등급)과 달라요. 품목 분류 근거를 적어 주세요. 경로는 확인한 등급을 따라가요.
                       </span>
                     ) : (
                       <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>담당자가 확인한 등급: {kr.confirmed.value}등급</span>
                     )
                   ) : (
-                    <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 품목 분류로 확인한 등급이 없습니다.</span>
+                    <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 품목 분류로 확인한 등급이 없어요.</span>
                   )}
                   <Link to={fieldHref("krGrade")} className="ml-auto font-bold hover:underline" style={{ fontSize: "var(--t-sm)", color: "var(--accent)" }}>확인한 등급 입력 →</Link>
                 </div>
@@ -104,7 +104,7 @@ export function KrPage() {
             </div>
             <p className="flex items-center gap-1.5 text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-4)", paddingTop: "var(--s-3)", borderTop: "1px solid var(--border)" }}>
               <ShieldCheck size={14} aria-hidden />
-              {KR_RULES_REVIEWED.by ? `한국 규칙 검토: ${KR_RULES_REVIEWED.by} · ${KR_RULES_REVIEWED.date}` : `원문 확인 필요 — ${KR_SOURCES.law} / ${KR_SOURCES.notice}. 담당자 검토 전 참고용입니다.`}
+              {KR_RULES_REVIEWED.by ? `한국 규칙 검토: ${KR_RULES_REVIEWED.by} · ${KR_RULES_REVIEWED.date}` : `원문 확인 필요 — ${KR_SOURCES.law} / ${KR_SOURCES.notice}. 담당자가 검토하기 전이라 참고용이에요.`}
             </p>
           </section>
 
@@ -121,11 +121,11 @@ export function KrPage() {
               </ul>
             )}
             <details style={{ marginTop: "var(--s-3)" }}>
-              <summary className="font-semibold text-text-muted cursor-pointer" style={{ fontSize: "var(--t-xs)" }}>앱이 알고 있는 허용 품목 {KR_SELF_TEST_ITEMS.length}개 (전체 목록 아님)</summary>
+              <summary className="font-semibold text-text-muted cursor-pointer" style={{ fontSize: "var(--t-xs)" }}>앱이 아는 허용 품목 {KR_SELF_TEST_ITEMS.length}개 (전체 목록은 아니에요)</summary>
               <ul className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "disc", marginTop: 6 }}>
                 {KR_SELF_TEST_ITEMS.map((i) => <li key={i.key} className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{i.label} — {i.source} (확인 {i.checked})</li>)}
               </ul>
-              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>{KR_SOURCES.selfTest}. 기존 9개 품목 전체는 고시 원문으로 확인하세요.</p>
+              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>{KR_SOURCES.selfTest}. 기존 9개 품목 전체는 고시 원문으로 확인해 주세요.</p>
             </details>
           </section>
 
@@ -137,7 +137,7 @@ export function KrPage() {
                 한국 기술문서 초안 열기 <ChevronRight size={16} aria-hidden />
               </Link>
             </div>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>IVDR용으로 쓴 문서 중 다시 쓸 수 있는 것을 함께 보여 줍니다.</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>IVDR용으로 쓴 문서 중 다시 쓸 수 있는 것도 함께 보여 드려요.</p>
             <ul style={{ marginTop: "var(--s-3)" }}>
               {docs.map((d) => (
                 <li key={d.id} data-krdoc={d.id} data-status={d.status} className="grid items-start" style={{ gridTemplateColumns: "minmax(0,1fr) auto", gap: "4px var(--s-3)", padding: "10px 0", borderBottom: "1px dashed var(--border)" }}>

@@ -216,7 +216,7 @@ export function Factory3D({ floors, overall }: { floors: FactoryFloor[]; overall
         ref={box}
         tabIndex={0}
         role="application"
-        aria-label="문서 공장 3D 건물. 끌어서 돌리고, 화살표 키로도 돌릴 수 있습니다. 층 바닥을 누르면 그 층이 펼쳐집니다."
+        aria-label="문서 공장 3D 건물. 끌거나 화살표 키로 돌릴 수 있어요. 층 바닥을 누르면 그 층이 펼쳐져요."
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}

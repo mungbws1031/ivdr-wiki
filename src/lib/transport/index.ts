@@ -18,7 +18,7 @@ export * from "./process";
 
 const STATUS_KO = { required: "필수", recommended: "권장", optional: "선택", excluded: "불필요", unknown: "확인 필요" } as const;
 
-/** 운송 입력이 하나라도 있는지 — 없으면 토큰은 "스펙 미입력"으로 둔다. */
+/** 운송 입력이 하나라도 있는지 — 없으면 토큰은 "제품 정보 미입력"으로 둔다. */
 export function hasTransportInput(s: ProductSpec): boolean {
   return Object.values(s.transport).some((v) => v !== null);
 }

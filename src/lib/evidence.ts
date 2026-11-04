@@ -1,7 +1,7 @@
 // =====================================================================
 // src/lib/evidence.ts
 // 근거 원장 — 문서에 들어간 값마다 어디서 왔는지 태그를 단다.
-//   입력: 사람이 스펙·결과에 넣은 값
+//   입력: 사람이 제품 정보·결과에 넣은 값
 //   규칙: 입력값에 규칙(분류·문서 세트·실험계획·운송)을 적용해 나온 값
 //   가정: 비어 있어 보수적인 기본값으로 채운 값 — 확인 전까지 문서에 "(가정)" 표시
 //   누락: 데이터가 없어 쓸 수 없는 칸 — 스펙 미입력, [실험 후 입력], [사양: …], [____], [… 원문 기준]
@@ -15,11 +15,11 @@ import { setAt } from "../data/spec/validate";
 export type EvidenceTag = "input" | "estimated" | "rule" | "assumed" | "missing";
 
 export const TAG_META: Record<EvidenceTag, { label: string; desc: string; color: string }> = {
-  input: { label: "입력", desc: "사람이 스펙·결과에 넣은 값", color: "var(--success)" },
-  estimated: { label: "추정", desc: "컨셉 문장에서 뽑은 값 — 사람이 확인하기 전", color: "#C9A227" },
-  rule: { label: "규칙", desc: "입력값에 규칙(분류·실험계획·운송 판정)을 적용해 나온 값", color: "var(--info)" },
-  assumed: { label: "가정", desc: "비어 있어 보수적인 기본값으로 채운 값 — 확인 필요", color: "var(--warning)" },
-  missing: { label: "누락", desc: "데이터가 없어 비워 둔 칸 — 스펙·실험·사람 결정이 필요", color: "var(--danger)" },
+  input: { label: "입력", desc: "사람이 제품 정보·결과에 직접 적은 값이에요", color: "var(--success)" },
+  estimated: { label: "추정", desc: "한 줄 설명에서 자동으로 채운 값이에요 — 아직 확인 전", color: "#C9A227" },
+  rule: { label: "규칙", desc: "적은 값에 규칙(분류·실험계획·운송 판정)을 적용해 나온 값이에요", color: "var(--info)" },
+  assumed: { label: "가정", desc: "비어 있어서 더 엄격한 쪽 기본값으로 채운 값이에요 — 확인 필요", color: "var(--warning)" },
+  missing: { label: "누락", desc: "데이터가 없어 비워 둔 칸이에요 — 제품 정보·실험·사람의 결정이 필요해요", color: "var(--danger)" },
 };
 
 // ── 가정 ─────────────────────────────────────────────────────
@@ -33,12 +33,12 @@ export interface Assumption {
 
 /** 등급·문서 세트·실험 범위를 바꾸는 칸만. 가정값은 요구사항이 더 많은(보수적인) 쪽. */
 export const ASSUMPTIONS: Assumption[] = [
-  { path: "user", value: "lay", label: "사용자 → 일반인(자가검사)", why: "일반인용이면 Rule 4(자가검사)·사용적합성·IFU 요구가 더 많다" },
-  { path: "analyte.preset", value: "other", label: "측정 목적 → 임신·가임 외", why: "Rule 4(a) 예외(임신·가임 → B)를 적용하지 않아 자가검사면 Class C로 본다" },
-  { path: "environment", value: "home", label: "사용 환경 → 가정", why: "가정 사용이면 사용 환경·보관·운송 조건 요구가 더 넓다" },
-  { path: "result.kind", value: "quantitative", label: "결과 형태 → 정량", why: "정량이면 정확도·측정범위·직선성 등 성능평가 범위가 가장 넓다" },
-  { path: "formFactor", value: "strip-reader", label: "제품 형태 → 스틱 + 리더기", why: "리더기가 있으면 전기안전·EMC·펌웨어(소프트웨어) 문서가 추가된다" },
-  { path: "software.hasApp", value: true, label: "앱 → 있음", why: "앱이 있으면 소프트웨어 밸리데이션·사이버보안 문서가 추가된다" },
+  { path: "user", value: "lay", label: "사용자 → 일반인(자가검사)", why: "일반인용이면 Rule 4(자가검사)·사용적합성·IFU 요구가 더 많아요" },
+  { path: "analyte.preset", value: "other", label: "측정 목적 → 임신·가임 외", why: "Rule 4(a) 예외(임신·가임 → B)를 적용하지 않아서, 자가검사면 Class C로 봐요" },
+  { path: "environment", value: "home", label: "사용 환경 → 가정", why: "가정 사용이면 사용 환경·보관·운송 조건 요구가 더 넓어요" },
+  { path: "result.kind", value: "quantitative", label: "결과 형태 → 정량", why: "정량이면 정확도·측정범위·직선성 등 성능평가 범위가 가장 넓어요" },
+  { path: "formFactor", value: "strip-reader", label: "제품 형태 → 스틱 + 리더기", why: "리더기가 있으면 전기안전·EMC·펌웨어(소프트웨어) 문서가 더 필요해요" },
+  { path: "software.hasApp", value: true, label: "앱 → 있음", why: "앱이 있으면 소프트웨어 밸리데이션·사이버보안 문서가 더 필요해요" },
 ];
 
 function getAt(obj: unknown, path: string): unknown {
@@ -119,9 +119,9 @@ export function markAssumed(ctx: Record<string, string | null>, assumed: Assumpt
   for (const [k, v] of Object.entries(ctx)) {
     if (isEmpty(v)) continue;
     if ((TOKEN_DEPS[k] ?? []).some((p) => paths.has(p)))
-      out[k] = v!.includes("\n") ? `${v}\n(가정 포함 — 비어 있는 스펙 칸을 보수적으로 가정함, 확인 필요)` : `${v} (가정)`;
+      out[k] = v!.includes("\n") ? `${v}\n(가정 포함 — 비어 있는 제품 정보 칸을 더 엄격한 쪽으로 가정함, 확인 필요)` : `${v} (가정)`;
     else if (depsOf(k).some((p) => est.has(p)))
-      out[k] = v!.includes("\n") ? `${v}\n(추정 포함 — 컨셉 문장에서 뽑은 값, 확인 필요)` : `${v} (추정)`;
+      out[k] = v!.includes("\n") ? `${v}\n(추정 포함 — 한 줄 설명에서 자동으로 채운 값, 확인 필요)` : `${v} (추정)`;
   }
   return out;
 }

@@ -82,7 +82,7 @@ function NextActions({ items, more }: { items: NextAction[]; more: number }) {
   return (
     <section className="rounded-[var(--r-lg)] border bg-bg" aria-labelledby="next-title" style={{ borderColor: "var(--text)", boxShadow: "var(--shadow-card)", padding: "var(--s-5) var(--s-6)" }}>
       <h2 id="next-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>지금 할 일 {items.length}개</h2>
-      <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>문서를 가장 많이 막고 있는 것부터 골랐습니다.</p>
+      <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>문서 작성을 가장 많이 막는 것부터 골랐어요.</p>
       <ol className="flex flex-col" style={{ gap: 6, marginTop: "var(--s-3)" }}>
         {items.map((a, i) => (
           <li key={a.title}>
@@ -99,7 +99,7 @@ function NextActions({ items, more }: { items: NextAction[]; more: number }) {
       </ol>
       {more > 0 && (
         <Link to="/auto" className="inline-flex items-center gap-1 font-semibold hover:underline" style={{ fontSize: "var(--t-xs)", color: "var(--info)", minHeight: 40 }}>
-          그 밖에 비어 있는 스펙 {more}개 보기 <ArrowRight size={13} aria-hidden />
+          그 밖에 비어 있는 제품 정보 {more}개 보기 <ArrowRight size={13} aria-hidden />
         </Link>
       )}
     </section>
@@ -120,7 +120,7 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
       </h2>
       {routes.length === 0 ? (
         <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>
-          아직 고른 인증이 없습니다. <Link to={fieldHref("markets")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>어떤 인증을 받아야 하는지 고르기</Link>
+          아직 고른 인증이 없어요. <Link to={fieldHref("markets")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>어떤 인증을 받아야 하는지 고르기</Link>
         </p>
       ) : (
         <div className="grid" style={{ gap: "var(--s-3)", marginTop: "var(--s-3)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))" }}>
@@ -152,7 +152,7 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
         <div className="rounded-[var(--r-md)]" style={{ marginTop: "var(--s-3)", padding: "var(--s-3) var(--s-4)", background: "var(--warning-bg)" }}>
           {missing.map((m) => (
             <p key={m.cert} style={{ fontSize: "var(--t-sm)", color: "var(--warning)", lineHeight: "var(--lh-base)" }}>
-              <b>{m.cert}</b>도 필요합니다 — {m.why} <Link to={fieldHref("qmsCerts")} className="font-semibold underline decoration-dotted">품질 인증 고르기</Link>
+              <b>{m.cert}</b>도 필요해요 — {m.why} <Link to={fieldHref("qmsCerts")} className="font-semibold underline decoration-dotted">품질 인증 고르기</Link>
             </p>
           ))}
         </div>
@@ -219,7 +219,7 @@ export function OverviewPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>자동작성 결과</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
-            {spec.identity.productName ? <b className="text-text">{spec.identity.productName}</b> : "입력한 제품"}의 스펙으로 만든 결과입니다. 스펙을 고치면 이 화면과 모든 문서가 바로 바뀝니다. 카드를 눌러 자세히 보세요.
+            {spec.identity.productName ? <b className="text-text">{spec.identity.productName}</b> : "입력한 제품"}의 제품 정보로 만든 결과예요. 제품 정보를 고치면 이 화면과 모든 문서가 바로 바뀌어요. 카드를 누르면 자세히 볼 수 있어요.
           </p>
           {filled > 0 && (
             <Link to="/auto/factory" className="inline-flex items-center gap-1.5 self-start rounded-[var(--r-md)] font-bold" style={{ fontSize: "var(--t-sm)", padding: "8px 16px", minHeight: 40, background: "var(--text)", color: "var(--bg)" }}>
@@ -230,10 +230,10 @@ export function OverviewPage() {
 
         {filled === 0 ? (
           <div className="rounded-[var(--r-lg)] border text-center" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-12) var(--s-6)" }}>
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>아직 제품 스펙이 비어 있습니다</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 스펙 화면에서 입력하거나 "예시로 채우기"를 눌러 보세요.</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>아직 제품 정보가 비어 있어요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 정보 화면에서 적거나 "예시로 채우기"를 눌러 보세요.</p>
             <Link to="/auto" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ marginTop: "var(--s-4)", padding: "10px 18px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-              제품 스펙 입력하기 <ArrowRight size={16} aria-hidden />
+              제품 정보 적기 <ArrowRight size={16} aria-hidden />
             </Link>
           </div>
         ) : (
@@ -266,7 +266,7 @@ export function OverviewPage() {
               <Card icon={Layers} title="필요한 문서" to="/auto/docs" cta="문서 세트 보기">
                 <Big>{docCounts.required}개 필수</Big>
                 <Counts c={docCounts} keys={["recommended", "optional", "unknown", "excluded"]} />
-                <Muted>IVDR 문서 {docSet.length}개를 이 제품 기준으로 판정했습니다.</Muted>
+                <Muted>IVDR 문서 {docSet.length}개가 이 제품에 필요한지 따져 봤어요.</Muted>
               </Card>
 
               <Card icon={FlaskConical} title="실험계획" to="/auto/plan" cta="실험계획 보기">
@@ -283,19 +283,19 @@ export function OverviewPage() {
                     <Muted>{reqStd.map((x) => x.name.split(" (")[0].split(" —")[0]).join(", ")}</Muted>
                   </>
                 ) : (
-                  <Muted>목적지·운송 방식·박스 정보를 넣으면 적용 규정(ISTA·IATA·PPWR 등), 포장 설계, 운송 시험 순서가 나옵니다.</Muted>
+                  <Muted>목적지·운송 방식·박스 정보를 적으면 적용 규정(ISTA·IATA·PPWR 등), 포장 설계, 운송 시험 순서가 나와요.</Muted>
                 )}
               </Card>
 
               <Card icon={CheckCircle2} title="실험 결과" to="/auto/results" cta="결과 입력하기">
                 <Big>판정 {prog.done} / {prog.total}</Big>
-                <Muted>{prog.entered ? `${prog.entered}개 실험에 결과가 입력됐습니다.` : "아직 입력된 결과가 없습니다. 실험을 마치면 건수·판정을 넣으세요 — 문서의 결과 섹션이 채워집니다."}</Muted>
+                <Muted>{prog.entered ? `${prog.entered}개 실험에 결과를 적었어요.` : "아직 적은 결과가 없어요. 실험을 마치면 건수·판정을 적어 주세요. 문서의 결과 섹션이 채워져요."}</Muted>
               </Card>
 
               <Card icon={ClipboardList} title="사람이 할 일" to="/auto/plan" cta="전체 보기">
                 <ul className="flex flex-col" style={{ gap: 4, paddingLeft: 16, listStyle: "disc" }}>
                   {!confirmed && cls.value && <li className="text-text" style={{ fontSize: "var(--t-sm)" }}>Class {cls.value} 확정</li>}
-                  {missing.length > 0 && <li className="text-text" style={{ fontSize: "var(--t-sm)" }}>비어 있는 스펙 {missing.length}개 채우기</li>}
+                  {missing.length > 0 && <li className="text-text" style={{ fontSize: "var(--t-sm)" }}>비어 있는 제품 정보 {missing.length}개 채우기</li>}
                   {tasks.slice(0, 4).map((t) => <li key={t.task} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>{t.task}</li>)}
                 </ul>
                 {tasks.length > 4 && <Muted>외 {tasks.length - 4}개</Muted>}
@@ -308,14 +308,14 @@ export function OverviewPage() {
             <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-6)" }} aria-labelledby="docs-title">
               {filledDocs.some((d) => d.impact.changes.length) && (
                 <p role="status" className="rounded-[var(--r-md)] font-semibold" style={{ fontSize: "var(--t-sm)", padding: "8px 12px", marginBottom: "var(--s-3)", color: "var(--danger)", background: "color-mix(in srgb, var(--danger) 8%, var(--bg))", border: "1px solid var(--danger)" }}>
-                  검토 이후 스펙·결과가 바뀐 문서 {filledDocs.filter((d) => d.impact.changes.length).length}개 — 직접 쓴 섹션 재검토 {filledDocs.reduce((n, d) => n + d.impact.review, 0)}개. 문서를 열어 바뀐 값을 확인하세요.
+                  검토한 뒤 제품 정보·결과가 바뀐 문서가 {filledDocs.filter((d) => d.impact.changes.length).length}개 있어요. 직접 쓴 섹션 {filledDocs.reduce((n, d) => n + d.impact.review, 0)}개를 다시 봐 주세요. 문서를 열면 바뀐 값을 볼 수 있어요.
                 </p>
               )}
               <h2 id="docs-title" className="flex items-center gap-2 font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>
                 <FileText size={20} style={{ color: "var(--accent)" }} aria-hidden /> 자동으로 채워진 문서 {filledDocs.length}개
               </h2>
               <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "4px 0 var(--s-4)" }}>
-                눌러서 열면 스펙·분류·실험계획·결과가 들어간 초안이 보입니다. 그대로 고쳐 쓰고 Word로 내보낼 수 있습니다.
+                누르면 제품 정보·분류·실험계획·결과가 들어간 초안이 열려요. 그 자리에서 고쳐 쓰고 Word로 내보낼 수 있어요.
               </p>
               <div className="rounded-[var(--r-md)]" style={{ padding: "12px 14px", marginBottom: "var(--s-4)", background: "var(--surface)", border: "1px solid var(--border)" }}>
                 <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 6 }}>P1 초안 — 기기 설명서 · 라벨 · 사용설명서 · 위험관리 계획</p>
@@ -335,7 +335,7 @@ export function OverviewPage() {
                         )}
                         <span className="block font-semibold text-text" style={{ fontSize: "var(--t-sm)" }}>{d.title}</span>
                         <span className="block" style={{ fontSize: "var(--t-xs)", color: d.missing ? "var(--warning)" : "var(--success)" }}>
-                          {d.missing ? `스펙 미입력 항목 ${d.missing}개` : "스펙 항목 모두 채워짐"}
+                          {d.missing ? `아직 안 적은 제품 정보 ${d.missing}개` : "제품 정보 모두 채워짐"}
                           {d.status === "excluded" && <span className="text-text-subtle"> · 이 제품엔 불필요</span>}
                         </span>
                         {d.ev.confirmed !== null && (

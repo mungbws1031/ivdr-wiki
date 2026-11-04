@@ -63,10 +63,10 @@ export function planStudies(s: ProductSpec): StudyPlan[] {
   const kind = s.result.kind;
   const qual = kind === "qualitative" || kind === "semi-quantitative";
   const lay = s.user === "lay" || s.user === "both";
-  const lots = s.targets.lots !== null ? `${s.targets.lots}개 로트` : "[평가 로트 수 — 스펙 미입력]";
+  const lots = s.targets.lots !== null ? `${s.targets.lots}개 로트` : "[평가 로트 수 — 제품 정보 미입력]";
   const cut = s.analyte.cutoffValue;
   const unit = s.analyte.cutoffUnit ? ` ${s.analyte.cutoffUnit}` : "";
-  const cutTxt = cut !== null ? `${cut}${unit}` : "[Cut-off — 스펙 미입력]";
+  const cutTxt = cut !== null ? `${cut}${unit}` : "[Cut-off — 제품 정보 미입력]";
   const specimen = s.specimen;
   const preset = s.analyte.preset;
   const analyticDocs = ["analytical-performance", "performance-eval-plan", "performance-eval-report"];
@@ -88,9 +88,9 @@ export function planStudies(s: ProductSpec): StudyPlan[] {
       why: "정성 검사의 핵심 성능입니다. cut-off 근처에서 양성 판정 비율이 어떻게 바뀌는지(C50, C5–C95 구간)와 반복·일간·로트 간 정밀도를 보여야 합니다.",
       standards: ["CLSI EP12", "IVDR Annex I §9.1", "IVDR Annex XIII 1.2.2"],
       design: [levels, `${lots} × 여러 날 × 판독자 2명 이상 반복 — 반복 수는 [EP12 원문 기준]`, lay ? "판독은 육안 판독 조건(조명·판독 시간)을 IFU와 같게 고정" : "판독 조건을 IFU와 같게 고정"],
-      samples: [`표준물질로 농도를 맞춘 ${specimen === "urine" ? "소변" : "검체"} 기질 시료`, "음성 기질 (분석물 없는 시료)"],
+      samples: [`표준물질로 농도를 맞춘 ${specimen === "urine" ? "소변" : "검체"} 기질 시료`, "음성 기질 (검사 대상 물질이 없는 시료)"],
       acceptance: [`cut-off 이상 +20%에서 양성 비율 ≥ ${SPEC("기준 %")}`, `cut-off 이하 −20%에서 음성 비율 ≥ ${SPEC("기준 %")}`, "로트 간 판정 차이 없음"],
-      humanTasks: [`${s.analyte.name ?? "분석물"} 국제표준물질(WHO IS 등) 확보와 추적성 기록`, "음성 기질 확보"],
+      humanTasks: [`${s.analyte.name ?? "검사 대상"} 국제표준물질(WHO IS 등) 확보와 추적성 기록`, "음성 기질 확보"],
       docs: analyticDocs, dependsOn: ["analyte.cutoffValue", "targets.lots"], duration: null,
     });
   } else {
@@ -116,7 +116,7 @@ export function planStudies(s: ProductSpec): StudyPlan[] {
     why: "구조가 비슷한 물질에 양성이 나오면 위양성이 됩니다.",
     standards: ["CLSI EP07", "IVDR Annex I §9.1"],
     design: [
-      xr.length ? `후보 물질: ${xr.join(", ")} — 생리적 최고 농도 수준에서 시험 (농도는 문헌·[EP07 원문 기준])` : "후보 물질 목록 — 분석물에 맞게 직접 정하세요",
+      xr.length ? `후보 물질: ${xr.join(", ")} — 생리적 최고 농도 수준에서 시험 (농도는 문헌·[EP07 원문 기준])` : "후보 물질 목록 — 검사 대상에 맞게 직접 정하세요",
       "음성 시료와 cut-off 부근 양성 시료 양쪽에 첨가해 위양성·위음성 모두 확인",
     ],
     samples: ["교차반응 후보 물질 정제품", "음성 기질과 cut-off 부근 양성 시료"],
@@ -163,7 +163,7 @@ export function planStudies(s: ProductSpec): StudyPlan[] {
 
   // ── 2. 안정성 ─────────────────────────────────────────────
   const st = s.storage;
-  const range = st.tempMinC !== null && st.tempMaxC !== null ? `${st.tempMinC}℃와 ${st.tempMaxC}℃` : "[보관 온도 — 스펙 미입력]";
+  const range = st.tempMinC !== null && st.tempMaxC !== null ? `${st.tempMinC}℃와 ${st.tempMaxC}℃` : "[보관 온도 — 제품 정보 미입력]";
   const stabDocs = ["stability-study", "labelling-spec", "ifu"];
   out.push({
     id: "stability-realtime", title: "실시간 안정성 (유효기간)", category: "stability", phase: 2,
@@ -241,8 +241,8 @@ export function planStudies(s: ProductSpec): StudyPlan[] {
     why: lay ? "자가검사는 의도된 사용자(일반인)가 직접 검사·판독한 결과로 임상 성능을 보여야 합니다." : "의도된 사용 조건에서 기준 방법 대비 일치도를 보여야 합니다.",
     standards: ["IVDR Annex XIII 1.2.3", "MDCG 2025-5", "ISO 20916"],
     design: [
-      `대상: ${s.intendedPurpose.targetPopulation ?? "[대상 집단 — 스펙 미입력]"}`,
-      `기준 방법: ${s.referenceMethod.name ?? "[기준 방법 — 스펙 미입력]"}`,
+      `대상: ${s.intendedPurpose.targetPopulation ?? "[대상 집단 — 제품 정보 미입력]"}`,
+      `기준 방법: ${s.referenceMethod.name ?? "[기준 방법 — 제품 정보 미입력]"}`,
       lay ? "참가자가 IFU만 보고 검사·판독 → 같은 검체를 기준 방법으로 측정, 전문가 판독과도 비교" : "같은 검체를 시험 제품과 기준 방법으로 측정",
       "판독자는 기준 방법 결과를 모르게 (맹검)",
     ],

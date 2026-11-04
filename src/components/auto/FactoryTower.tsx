@@ -111,7 +111,7 @@ function Decor({ id, color }: { id: string; color: string }) {
         <g>
           <rect x={x0 + 4} y={floorY - 26} width={62} height={26} rx={3} fill="#EADFD3" stroke="#D3C3B1" />
           <rect x={x0 + 4} y={floorY - 30} width={62} height={5} rx={2} fill="#C99A6B" />
-          <text x={x0 + 35} y={floorY - 11} textAnchor="middle" fontSize="8" fontWeight="800" fill="#8A6A4B">스펙 접수</text>
+          <text x={x0 + 35} y={floorY - 11} textAnchor="middle" fontSize="8" fontWeight="800" fill="#8A6A4B">정보 접수</text>
           <rect x={x0 + 78} y={floorY - 22} width={58} height={22} rx={6} fill="#4FA3A0" />
           <rect x={x0 + 78} y={floorY - 34} width={58} height={14} rx={6} fill="#3D8986" />
         </g>
@@ -283,7 +283,7 @@ export function FactoryTower({ floors, overall }: { floors: FactoryFloor[]; over
         </div>
       </div>
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
-        층 이름 띠를 누르면 그 층의 문서·할 일 목록이 열립니다. 직원에 마우스를 올리면 이름표가 보이고, 누르면 문서가 열립니다.
+        층 이름 띠를 누르면 그 층의 문서·할 일 목록이 열려요. 직원에 마우스를 올리면 이름표가 보이고, 누르면 문서가 열려요.
       </p>
       {selected && (
         <div className="rounded-[var(--r-md)] border overflow-hidden" style={{ borderColor: selected.color }}>

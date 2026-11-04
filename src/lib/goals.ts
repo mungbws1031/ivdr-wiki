@@ -30,7 +30,7 @@ export function buildGoals(g: GoalInput): Goal[] {
   const modes = g.spec.transport.modes?.length ?? 0;
   return [
     { id: "cert", title: "받아야 할 인증 고르기", hint: "어떤 인증을 받아야 하나요?", done: markets > 0 ? 1 : 0, total: 1, to: "/auto" },
-    { id: "spec", title: "제품 스펙 입력", hint: "필수 항목", done: g.specFilled.filled, total: g.specFilled.total, to: "/auto" },
+    { id: "spec", title: "제품 정보 적기", hint: "필수 항목", done: g.specFilled.filled, total: g.specFilled.total, to: "/auto" },
     { id: "class", title: "클래스 확정", hint: "추천 클래스를 사람이 확정", done: g.classConfirmed ? 1 : 0, total: 1, to: "/auto/docs" },
     { id: "transport", title: "운송·포장 정보", hint: "운송 방식 선택", done: modes > 0 ? 1 : 0, total: 1, to: "/auto/transport" },
     { id: "results", title: "실험 결과 입력", hint: "필수·권장 실험", done: g.results.entered, total: g.results.total, to: "/auto/results" },

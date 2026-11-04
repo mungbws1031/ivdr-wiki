@@ -48,7 +48,7 @@ export function CertHub() {
             className="text-text-muted"
             style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 680, margin: "var(--s-4) auto 0" }}
           >
-            새 제품이면 컨셉 한 줄로, 이미 진행 중이면 인증별 여정에서 이어 쓰세요.
+            새 제품이면 한 줄 설명으로 시작하고, 이미 진행 중이면 인증별 여정에서 이어 쓰세요.
           </p>
         </header>
 
@@ -60,7 +60,7 @@ export function CertHub() {
                 <Sparkles size={22} style={{ color: "var(--accent)" }} aria-hidden />
               </span>
               <span className="flex flex-col" style={{ gap: 4 }}>
-                <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>새 제품 — 컨셉 한 줄로 시작</span>
+                <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>새 제품 — 한 줄 설명으로 시작</span>
                 <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>필요한 인증·기간·일정과 문서 초안까지 자동으로 만들어요.</span>
                 <span className="inline-flex items-center gap-1 font-bold" style={{ color: "var(--accent)", fontSize: "var(--t-sm)", marginTop: 4 }}>시작하기 <ArrowRight size={15} aria-hidden /></span>
               </span>

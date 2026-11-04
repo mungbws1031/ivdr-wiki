@@ -5,7 +5,7 @@ type Step = { to: string; label: string; market?: string };
 export interface StepGroup { id: string; label: string; steps: Step[] }
 
 const GROUPS: StepGroup[] = [
-  { id: "plan", label: "기획", steps: [{ to: "/auto/start", label: "제품 기획" }, { to: "/auto/market", label: "시장성" }, { to: "/auto", label: "제품 스펙" }] },
+  { id: "plan", label: "기획", steps: [{ to: "/auto/start", label: "제품 기획" }, { to: "/auto/market", label: "시장성" }, { to: "/auto", label: "제품 정보" }] },
   { id: "judge", label: "판정", steps: [
     { to: "/auto/docs", label: "분류·문서 세트" },
     { to: "/auto/kr", label: "한국(MFDS)", market: "KR" },

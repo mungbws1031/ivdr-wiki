@@ -1,7 +1,7 @@
 // =====================================================================
 // src/lib/tokens.ts
 // 문서 템플릿의 {{auto.키}} 자리를 제품 스펙(+ 분류 결과)으로 채운다. 순수 함수.
-// 값이 없으면 지어내지 않고 "[제품명 — 스펙 미입력]"처럼 남긴다.
+// 값이 없으면 지어내지 않고 "[제품명 — 제품 정보 미입력]"처럼 남긴다.
 // 토큰에 "|" 를 쓰지 않는다 — 개념 링크 {{slug|표시}} 문법과 겹치지 않게.
 // =====================================================================
 
@@ -67,7 +67,7 @@ function swScope(s: ProductSpec, c: ClassResult): string | null {
   return `${parts.join(" / ")}\n분류: 기기를 구동하거나 사용에 영향을 주는 소프트웨어는 그 기기와 같은 클래스(${cls})를 따르고, 독립 소프트웨어는 따로 분류한다 (IVDR Annex VIII 1.4).`;
 }
 
-/** 스펙 + 분류 결과 + 실험 결과 → 토큰 값. null 은 "스펙 미입력". */
+/** 스펙 + 분류 결과 + 실험 결과 → 토큰 값. null 은 "제품 정보 미입력". */
 export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), results: ResultsMap = {}): Record<string, string | null> {
   const id = s.identity;
   const cutoff = s.analyte.cutoffValue !== null ? `${s.analyte.cutoffValue}${s.analyte.cutoffUnit ? ` ${s.analyte.cutoffUnit}` : ""}` : null;
@@ -120,12 +120,12 @@ export function buildTokenContext(s: ProductSpec, c: ClassResult = classify(s), 
   };
 }
 
-/** 텍스트 안의 {{auto.키}}를 채운다. 모르는 값은 [이름 — 스펙 미입력]. */
+/** 텍스트 안의 {{auto.키}}를 채운다. 모르는 값은 [이름 — 제품 정보 미입력]. */
 export function fillTokens(text: string, ctx: Record<string, string | null>): string {
   return text.replace(TOKEN_RE, (_m, key: string) => {
     const v = ctx[key];
     if (v !== null && v !== undefined && v !== "") return v;
-    return `[${TOKEN_LABEL[key] ?? key} — 스펙 미입력]`;
+    return `[${TOKEN_LABEL[key] ?? key} — 제품 정보 미입력]`;
   });
 }
 

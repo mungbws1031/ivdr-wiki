@@ -52,7 +52,7 @@ function Competitors({ rows }: { rows: Competitor[] }) {
           </tbody>
         </table>
       </div>
-      {!rows.length && <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 경쟁 제품이 없습니다. 비슷한 자가검사 제품을 찾아 이름·가격·인증을 넣으세요.</p>}
+      {!rows.length && <p className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>아직 적은 경쟁 제품이 없어요. 비슷한 자가검사 제품을 찾아 이름·가격·인증을 넣어 주세요.</p>}
       <button type="button" onClick={() => set([...rows, { ...EMPTY }])} className="inline-flex items-center gap-1 self-start rounded-[var(--r-md)] font-semibold" style={{ minHeight: 40, padding: "6px 14px", fontSize: "var(--t-sm)", border: "1px solid var(--border-strong)", color: "var(--text)" }}>
         <Plus size={15} aria-hidden /> 경쟁 제품 추가
       </button>
@@ -90,7 +90,7 @@ export function MarketPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>어때? 잘 팔릴 거 같아?</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
-            판매량을 예측하지는 않습니다. 앱이 아는 등급·인증 기간·필수 실험으로 <b className="text-text">규제·출시 준비도</b>를 보고, 시장 규모·경쟁·가격은 직접 넣은 근거로만 판단합니다.
+            판매량을 예측하는 화면이 아니에요. 등급·인증 기간·꼭 해야 할 실험으로 <b className="text-text">인증·출시 준비가 얼마나 됐는지</b> 봐요. 시장 규모·경쟁·가격은 직접 넣은 근거로만 판단해요.
           </p>
         </header>
 
@@ -106,7 +106,7 @@ export function MarketPage() {
               <div className="min-w-0" style={{ flex: "1 1 280px" }}>
                 <h2 id="mk-answer" className="font-extrabold" style={{ fontSize: "var(--t-lg)", color: mood.color }}>{mood.label === "쉬움" ? "괜찮은 출발이에요" : mood.label === "보통" ? "해볼 만해요" : mood.label === "어려움" ? "쉽지 않아요" : "각오가 필요해요"}</h2>
                 <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 4 }}>{check.headline}</p>
-                <p className="text-text-subtle" style={{ fontSize: 11, marginTop: 6 }}>판매 예측 아님 · 시장 근거 {check.evidence.filled}/{check.evidence.total} 입력 · 규제 판정은 RA 검토 전 참고용</p>
+                <p className="text-text-subtle" style={{ fontSize: 11, marginTop: 6 }}>판매 예측이 아니에요 · 시장 근거 {check.evidence.filled}/{check.evidence.total}개 입력 · 인증 판정은 RA 검토 전 참고용이에요</p>
               </div>
             </div>
             <ul className="grid" style={{ gap: "var(--s-3)", marginTop: "var(--s-5)", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 300px), 1fr))" }}>
@@ -114,7 +114,7 @@ export function MarketPage() {
                 <li key={d.id} className="rounded-[var(--r-md)] border" style={{ borderColor: "var(--border)", padding: "12px 14px", background: "var(--bg)" }} data-dim={d.id}>
                   <div className="flex items-baseline justify-between" style={{ gap: 8 }}>
                     <b className="text-text" style={{ fontSize: "var(--t-sm)" }}>{d.label}</b>
-                    <span className="font-bold" style={{ fontSize: "var(--t-xs)", color: d.score === null ? "var(--warning)" : "var(--text-muted)", fontVariantNumeric: "tabular-nums" }}>{d.score === null ? "입력 필요" : `${d.score} / 5`}</span>
+                    <span className="font-bold" style={{ fontSize: "var(--t-xs)", color: d.score === null ? "var(--warning)" : "var(--text-muted)", fontVariantNumeric: "tabular-nums" }}>{d.score === null ? "입력해 주세요" : `${d.score} / 5`}</span>
                   </div>
                   <span className="flex" style={{ gap: 3, margin: "6px 0" }} aria-hidden>
                     {[1, 2, 3, 4, 5].map((n) => <span key={n} className="flex-1 rounded-full" style={{ height: 6, background: d.score !== null && n <= d.score ? (d.score >= 4 ? "var(--success)" : d.score === 3 ? "var(--warning)" : "var(--danger)") : "var(--border)" }} />)}
@@ -145,9 +145,9 @@ export function MarketPage() {
                     <>
                       <b className="text-text">수익 가능 시장(SOM) {fmt(check.som.value)} 백만 {check.som.currency}</b>
                       <span className="text-text-muted"> = 목표 시장 {fmt(raw.market.sam!)} × 점유율 {raw.market.sharePct}%</span>
-                      {check.som.units !== null && <span className="block text-text-muted">→ 목표 가격 {fmt(raw.market.price!)} {cur} 기준 연간 약 {fmt(check.som.units)}개 — 입력값으로 한 계산이며 예측이 아닙니다.</span>}
+                      {check.som.units !== null && <span className="block text-text-muted">→ 목표 가격 {fmt(raw.market.price!)} {cur} 기준 연간 약 {fmt(check.som.units)}개 — 넣은 값으로 한 계산일 뿐, 판매 예측이 아니에요.</span>}
                     </>
-                  ) : <span className="text-text-muted">목표 시장(SAM)과 목표 점유율을 넣으면 SOM과 판매 수량을 계산합니다.</span>}
+                  ) : <span className="text-text-muted">목표 시장(SAM)과 목표 점유율을 넣으면 SOM과 판매 수량을 계산해 줘요.</span>}
                 </div>
               )}
             </section>
@@ -156,14 +156,14 @@ export function MarketPage() {
           {/* ③ 경쟁 제품 */}
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="mk-comp">
             <h2 id="mk-comp" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>경쟁 제품</h2>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "2px 0 var(--s-4)" }}>가격은 위에서 고른 통화로 넣으세요({cur || "통화 미선택"}). 출처를 함께 적어 두면 나중에 검토하기 쉽습니다.</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "2px 0 var(--s-4)" }}>가격은 위에서 고른 통화로 넣어 주세요({cur || "통화를 아직 안 고름"}). 출처도 같이 적어 두면 나중에 검토하기 쉬워요.</p>
             <Competitors rows={raw.market.competitors} />
           </section>
 
           {/* ④ 근거가 빈 칸 */}
           {check.gaps.length > 0 && (
-            <section className="rounded-[var(--r-lg)]" aria-label="근거가 빈 칸" style={{ padding: "var(--s-4) var(--s-5)", background: "var(--warning-bg)" }}>
-              <b style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>시장 근거가 빈 칸 {check.gaps.length}개</b>
+            <section className="rounded-[var(--r-lg)]" aria-label="근거가 비어 있는 칸" style={{ padding: "var(--s-4) var(--s-5)", background: "var(--warning-bg)" }}>
+              <b style={{ fontSize: "var(--t-sm)", color: "var(--warning)" }}>시장 근거가 비어 있는 칸 {check.gaps.length}개</b>
               <p className="flex flex-wrap" style={{ gap: "4px 12px", marginTop: 4 }}>
                 {check.gaps.map((g) => <Link key={g.path} to={fieldHref(g.path)} className="inline-flex items-center font-semibold underline decoration-dotted text-text" style={{ fontSize: "var(--t-sm)", minHeight: 40 }}>{g.label}</Link>)}
               </p>

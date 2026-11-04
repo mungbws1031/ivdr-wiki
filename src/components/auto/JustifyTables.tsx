@@ -32,7 +32,7 @@ export function RuleTable({ rows, decided }: { rows: RuleRow[]; decided: string 
     <section id="rules" className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="rules-title">
       <h2 id="rules-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>Rule 1~7 판정표</h2>
       <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-        모든 규칙을 순서대로 검토합니다. Rule 6은 Rule 1~5가 모두 비해당일 때만 적용합니다. 둘 이상 해당하면 높은 클래스를 씁니다. 결정 규칙: <b className="text-text">{decided}</b>
+        규칙을 하나씩 순서대로 봐요. Rule 6은 Rule 1~5에 모두 해당하지 않을 때만 써요. 둘 이상 해당하면 더 높은 클래스를 따라요. 정해진 규칙: <b className="text-text">{decided}</b>
       </p>
       <div className="overflow-x-auto" style={{ marginTop: "var(--s-4)" }}>
         <table className="w-full" style={{ borderCollapse: "collapse", fontSize: "var(--t-sm)", minWidth: 520 }}>
@@ -59,7 +59,7 @@ export function RuleTable({ rows, decided }: { rows: RuleRow[]; decided: string 
         </table>
       </div>
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-3)" }}>
-        이 표는 <Link to="/doc/classification-rationale" className="underline">분류 근거서</Link> 2절에 그대로 들어갑니다.
+        이 표는 <Link to="/doc/classification-rationale" className="underline">분류 근거서</Link> 2절에 그대로 들어가요.
       </p>
     </section>
   );
@@ -81,7 +81,7 @@ export function GsprTable({ rows, title }: { rows: GsprRow[]; title: (id: string
         </div>
       </div>
       <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-        제품 스펙으로 조항마다 적용 여부를 먼저 정했습니다. 충족 방법과 증거 위치는 <Link to="/doc/tech-doc-toc-gspr" className="underline">기술문서 GSPR 체크리스트</Link>에서 채웁니다.
+        제품 정보로 조항마다 적용되는지 먼저 정해 뒀어요. 어떻게 지키는지와 증거 위치는 <Link to="/doc/tech-doc-toc-gspr" className="underline">기술문서 GSPR 체크리스트</Link>에서 채워요.
       </p>
       {([1, 2, 3] as const).map((ch) => (
         <div key={ch} style={{ marginTop: "var(--s-4)" }}>
@@ -121,7 +121,7 @@ export function GsprTable({ rows, title }: { rows: GsprRow[]; title: (id: string
         </div>
       ))}
       <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-3)" }}>
-        원문 확인 필요 · 1차 판정 — 조항 제목은 요약이며 IVDR Annex I 원문과 대조하지 않았습니다. 확인 필요 조항은 담당자가 판정해 주세요.
+        원문 확인 필요 · 1차 판정이에요. 조항 제목은 요약이고, IVDR Annex I 원문과 맞춰 보지 않았어요. 확인 필요 조항은 담당자가 판정해 주세요.
       </p>
     </section>
   );

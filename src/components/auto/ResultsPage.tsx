@@ -54,8 +54,8 @@ const VERDICT_STYLE: Record<Verdict, { fg: string; bg: string; Icon: typeof Chec
 };
 
 function StatusBadge({ r }: { r: StudyResult | undefined }) {
-  if (!hasResult(r)) return <span className="rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", background: "var(--surface-2)", color: "var(--text-muted)" }}>미입력</span>;
-  if (!r!.verdict) return <span className="rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", background: "var(--warning-bg)", color: "var(--warning)" }}>판정 미입력</span>;
+  if (!hasResult(r)) return <span className="rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", background: "var(--surface-2)", color: "var(--text-muted)" }}>아직 안 적음</span>;
+  if (!r!.verdict) return <span className="rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", background: "var(--warning-bg)", color: "var(--warning)" }}>판정 안 고름</span>;
   const st = VERDICT_STYLE[r!.verdict];
   return (
     <span className="inline-flex items-center gap-1 rounded-full font-bold shrink-0" style={{ fontSize: "var(--t-xs)", padding: "2px 10px", background: st.bg, color: st.fg }}>
@@ -65,7 +65,7 @@ function StatusBadge({ r }: { r: StudyResult | undefined }) {
 }
 
 function Meets({ ok, label }: { ok: boolean | null; label: string }) {
-  if (ok === null) return <span className="text-text-subtle">{label}: 목표·신뢰수준 미입력</span>;
+  if (ok === null) return <span className="text-text-subtle">{label}: 목표·신뢰수준이 비어 있어요</span>;
   return <span className="font-bold" style={{ color: ok ? "var(--success)" : "var(--danger)" }}>{label} 목표 {ok ? "충족" : "미충족"}</span>;
 }
 
@@ -89,7 +89,7 @@ function ClinicalForm({ r, spec, save }: { r: StudyResult; spec: ProductSpec; sa
           {m.se !== null && <p className="text-text">민감도 <b>{pct(m.se)}</b> · Wilson 95% {m.seCI && `${pct(m.seCI[0])}–${pct(m.seCI[1])}`} · {m.conf ?? "?"}% 단측 하한 {m.seLower !== null ? pct(m.seLower) : "—"} · <Meets ok={m.meetsSe} label="민감도" /></p>}
           {m.sp !== null && <p className="text-text">특이도 <b>{pct(m.sp)}</b> · Wilson 95% {m.spCI && `${pct(m.spCI[0])}–${pct(m.spCI[1])}`} · {m.conf ?? "?"}% 단측 하한 {m.spLower !== null ? pct(m.spLower) : "—"} · <Meets ok={m.meetsSp} label="특이도" /></p>}
           {m.invalidRate !== null && <p className="text-text-muted">무효 결과 비율 {pct(m.invalidRate)}</p>}
-          <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>계산은 입력한 건수로만 합니다. 최종 판정은 아래에서 직접 고르세요.</p>
+          <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>입력한 건수로만 계산해요. 최종 판정은 아래에서 직접 골라 주세요.</p>
         </div>
       )}
     </div>
@@ -102,7 +102,7 @@ function CutoffForm({ r, spec, save }: { r: StudyResult; spec: ProductSpec; save
   const upd = (i: number, patch: Partial<CutoffLevel>) => save({ levels: levels.map((l, j) => (j === i ? { ...l, ...patch } : l)) });
   return (
     <div className="flex flex-col" style={{ gap: "var(--s-2)" }}>
-      <p className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>수준별 시험 횟수와 양성 판정 수 — 농도는 실험계획의 제안 수준이며 고칠 수 있습니다.</p>
+      <p className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>수준별 시험 횟수와 양성으로 나온 수를 적어 주세요. 농도는 실험계획이 제안한 값이고, 고칠 수 있어요.</p>
       {levels.map((l, i) => (
         <div key={l.label} className="grid items-end" style={{ gap: "var(--s-2)", gridTemplateColumns: "72px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 64px" }}>
           <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)", paddingBottom: 9 }}>{l.label}</span>
@@ -172,7 +172,7 @@ function StudyCard({ p, r, spec, titleOf }: { p: StudyPlan; r: StudyResult | und
             <Field label="완료일" kind="date" value={cur.date ?? ""} onCommit={(v) => save({ date: str(v) })} />
             <Field label="원자료·시험 보고서 번호" value={cur.rawRef ?? ""} placeholder="예: TR-2026-014" onCommit={(v) => save({ rawRef: str(v) })} />
           </div>
-          <Field label="결과 요약 (문서에 그대로 들어갑니다)" kind="textarea" value={cur.summary ?? ""} onCommit={(v) => save({ summary: str(v) })} />
+          <Field label="결과 요약 (문서에 그대로 들어가요)" kind="textarea" value={cur.summary ?? ""} onCommit={(v) => save({ summary: str(v) })} />
           <div className="flex flex-wrap items-center justify-between" style={{ gap: "var(--s-2)" }}>
             <p className="flex flex-wrap items-center text-text-subtle" style={{ fontSize: "var(--t-xs)", gap: 6 }}>
               <FileText size={13} aria-hidden /> 반영되는 문서:
@@ -209,8 +209,8 @@ export function ResultsPage() {
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험 결과 입력</h1>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
-            실험을 마치면 건수·판정·원자료 번호를 입력하세요. 민감도·특이도·신뢰하한은 입력한 건수로 계산하고, 분석적 성능·임상적 성능·안정성·운송 문서의 결과 섹션에 자동으로 들어갑니다.
-            값을 지어내지 않으며, 입력하지 않은 실험은 문서에 [실험 후 입력]으로 남습니다.
+            실험을 마치면 건수·판정·원자료 번호를 적어 주세요. 민감도·특이도·신뢰하한은 적은 건수로 계산해요. 결과는 분석적 성능·임상적 성능·안정성·운송 문서의 결과 섹션에 자동으로 들어가요.
+            값을 지어내지 않아요. 적지 않은 실험은 문서에 [실험 후 입력]으로 남아요.
           </p>
           {filled > 0 && (
             <div className="flex items-center rounded-[var(--r-md)] self-start" role="status" style={{ gap: "var(--s-3)", padding: "8px 14px", background: "var(--surface)", border: "1px solid var(--border)", minWidth: 260 }}>
@@ -225,10 +225,10 @@ export function ResultsPage() {
 
         {filled === 0 ? (
           <div className="rounded-[var(--r-lg)] border text-center" style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-12) var(--s-6)" }}>
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 스펙을 입력하세요</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>스펙으로 실험계획이 정해지면 실험별 결과 입력칸이 나옵니다.</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-lg)" }}>먼저 제품 정보를 적어 주세요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-2)" }}>제품 정보로 실험계획이 정해지면 실험마다 결과 입력칸이 나와요.</p>
             <Link to="/auto" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ marginTop: "var(--s-4)", padding: "10px 18px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-              제품 스펙 입력하기 <ChevronRight size={16} aria-hidden />
+              제품 정보 적기 <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
         ) : (
@@ -248,7 +248,7 @@ export function ResultsPage() {
               );
             })}
             <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>
-              결과는 이 브라우저에 저장되며 제품 스펙 화면의 "전체 백업"에 함께 들어갑니다. 문서 섹션에 직접 쓴 초안이 있으면 그 초안이 우선합니다.
+              결과는 이 브라우저에 저장돼요. 제품 정보 화면의 "전체 백업"에도 함께 들어가요. 문서 섹션에 직접 쓴 초안이 있으면 그 초안이 먼저예요.
             </p>
           </div>
         )}
