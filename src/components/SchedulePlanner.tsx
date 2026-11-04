@@ -260,7 +260,7 @@ export function SchedulePlanner() {
             style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-4)" }}
           >
             <ArrowLeft size={16} aria-hidden />
-            인증 허브
+            인증 홈
           </Link>
 
           <div className="flex items-start gap-3 flex-wrap" style={{ marginBottom: "var(--s-3)" }}>

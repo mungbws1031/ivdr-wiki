@@ -48,7 +48,7 @@ export function CertHub() {
             className="text-text-muted"
             style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 680, margin: "var(--s-4) auto 0" }}
           >
-            새 제품이면 한 줄 설명으로 시작하고, 이미 진행 중이면 인증별 여정에서 이어 쓰세요.
+            새 제품이면 한 줄 설명으로 시작하고, 이미 진행 중이면 인증별 여정에서 이어 써 주세요.
           </p>
         </header>
 
@@ -67,7 +67,7 @@ export function CertHub() {
             </Link>
             {specFilled > 0 && (
               <Link to="/auto/overview" className="self-start font-semibold underline decoration-dotted text-text" style={{ fontSize: "var(--t-sm)", marginLeft: 64 }}>
-                이어서: 결과 한눈에 (스펙 {specFilled}칸 입력됨) →
+                이어서: 결과 한눈에 (제품 정보 {specFilled}칸 채움) →
               </Link>
             )}
           </div>
@@ -91,13 +91,13 @@ export function CertHub() {
           style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-6) var(--s-8)", marginBottom: "var(--s-6)" }}
         >
           <div className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)", letterSpacing: "var(--ls-label)", marginBottom: "var(--s-4)", textTransform: "uppercase" }}>
-            처음이신가요? 이 앱은 이렇게 씁니다
+            처음이신가요? 이렇게 쓰면 돼요
           </div>
           <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--s-5)" }}>
             {([
-              { Icon: MapPinned, step: "1", title: "인증 선택 & 여정 확인", desc: "아래에서 내 상황에 맞는 인증을 고르면, 전체 여정과 지금 할 일이 지도로 보입니다." },
-              { Icon: FileEdit, step: "2", title: "정거장별 문서 작성", desc: "각 정거장의 문서 페이지에서 가이드를 보며 템플릿을 채웁니다. 자동 저장돼요." },
-              { Icon: Download, step: "3", title: "완성본 내보내기", desc: "MD 복사 또는 워드(.docx)로 바로 받아 제출·공유합니다." },
+              { Icon: MapPinned, step: "1", title: "인증 선택 & 여정 확인", desc: "아래에서 내 상황에 맞는 인증을 고르면, 인증을 받기까지의 전체 과정(여정)과 지금 할 일이 지도로 보여요." },
+              { Icon: FileEdit, step: "2", title: "단계(정거장)별 문서 작성", desc: "단계마다 필요한 문서를 열어 안내를 보며 예시 틀을 채워요. 자동으로 저장돼요." },
+              { Icon: Download, step: "3", title: "완성본 내보내기", desc: "글자로 복사(MD)하거나 워드(.docx)로 받아 제출·공유해요." },
             ] as const).map(({ Icon, step, title, desc }) => (
               <div key={step} className="flex gap-3">
                 <span
@@ -133,21 +133,21 @@ export function CertHub() {
               {
                 situation: "EU에 처음 출시하는 신제품이다",
                 answer: "IVDR",
-                detail: "CE 마킹을 받으려면 IVDR이 필수입니다. QMS 기반으로 ISO 13485도 함께 준비하세요.",
+                detail: "CE 마킹을 받으려면 IVDR이 꼭 필요해요. 품질 시스템(QMS) 바탕이 되는 ISO 13485도 함께 준비해 주세요.",
                 to: "/ivdr",
                 color: "var(--accent)",
               },
               {
                 situation: "이미 IVDD 인증이 있고, IVDR 전환 기한이 다가온다",
                 answer: "IVDD → IVDR",
-                detail: "먼저 IVDD 여정에서 내 클래스의 전환 기한을 확인한 뒤 IVDR로 넘어가세요.",
+                detail: "먼저 IVDD 여정에서 내 등급(클래스)의 전환 기한을 확인한 뒤 IVDR로 넘어가세요.",
                 to: "/ivdd",
                 color: "var(--p2)",
               },
               {
                 situation: "EU 외에 미국·캐나다·호주 등에도 동시 진출하고 싶다",
                 answer: "MDSAP",
-                detail: "ISO 13485 QMS를 기반으로 5개국 규제를 한 번의 심사로 동시에 충족합니다.",
+                detail: "ISO 13485 품질 시스템(QMS)을 바탕으로 5개국 규제를 한 번의 심사로 함께 맞출 수 있어요.",
                 to: "/mdsap",
                 color: "var(--p4)",
               },

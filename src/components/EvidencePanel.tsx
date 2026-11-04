@@ -16,7 +16,7 @@ export function EvidencePanel({ raw, filled, ctx, assumedPaths, estimatedPaths, 
   return (
     <section className="rounded-[var(--r-md)] border" style={{ borderColor: "var(--border)", background: "var(--bg)" }} aria-label="근거 원장">
       <button type="button" onClick={() => setOpen((x) => !x)} aria-expanded={open} className="w-full flex flex-wrap items-center text-left" style={{ gap: "6px 12px", padding: "10px 14px" }}>
-        <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>근거 원장</span>
+        <span className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>근거 원장 <span className="font-normal text-text-subtle">(값이 어디서 왔는지)</span></span>
         <span className="font-extrabold" style={{ fontSize: "var(--t-sm)", color: ev.confirmed >= 0.8 ? "var(--success)" : "var(--text)", fontVariantNumeric: "tabular-nums" }}>근거 확정 {Math.round(ev.confirmed * 100)}%</span>
         <span className="flex flex-wrap" style={{ gap: 8, fontSize: "var(--t-xs)" }}>
           {tags.map((k) => (
@@ -47,7 +47,7 @@ export function EvidencePanel({ raw, filled, ctx, assumedPaths, estimatedPaths, 
               </div>
             );
           })}
-          <p className="text-text-subtle">근거 확정 = (입력 + 규칙) ÷ 전체. 가정·누락이 남은 문서는 검토 전 초안입니다.</p>
+          <p className="text-text-subtle">근거 확정 = (입력 + 규칙) ÷ 전체. 가정이나 빈칸이 남은 문서는 아직 검토 전 초안이에요.</p>
         </div>
       )}
     </section>

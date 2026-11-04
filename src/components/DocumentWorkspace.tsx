@@ -145,7 +145,7 @@ function CompletionChecklist({ doc }: { doc: DocTemplate }) {
     >
       <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
         <ListChecks size={15} style={{ color: allDone ? "var(--success)" : "var(--text-muted)" }} aria-hidden />
-        <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>
+        <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>다 썼는지 확인하기</h3>
         <span
           className="ml-auto font-bold"
           style={{ fontSize: "var(--t-xs)", color: allDone ? "var(--success)" : "var(--text-subtle)" }}
@@ -219,7 +219,7 @@ function CopyMdButton({ doc, filename }: { doc: DocTemplate; filename: string })
       }}
     >
       <Copy size={14} aria-hidden />
-      {copied ? "복사됨!" : "MD 복사"}
+      {copied ? "복사됐어요!" : "글자로 복사(MD)"}
     </button>
   );
 }
@@ -378,8 +378,8 @@ export function DocumentWorkspace() {
   if (!doc || !station) {
     const NAV = [
       { to: "/documents", Icon: Files, label: "문서 전체 보기", desc: "모든 문서를 트리로", primary: true },
-      { to: "/write", Icon: PenLine, label: "문서 작성 허브", desc: "바로 쓸 문서 고르기" },
-      { to: "/", Icon: Home, label: "인증 허브", desc: "처음으로" },
+      { to: "/write", Icon: PenLine, label: "문서 작성 모음", desc: "바로 쓸 문서 고르기" },
+      { to: "/", Icon: Home, label: "인증 홈", desc: "처음으로" },
     ];
     return (
       <div className="min-h-screen bg-bg">
@@ -480,7 +480,7 @@ export function DocumentWorkspace() {
                 </span>
               )}
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }} aria-hidden>·</span>
-              <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 허브</Link>
+              <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 홈</Link>
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
               <Link to={journeyPath} className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>{journeyLabel}</Link>
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
@@ -511,7 +511,7 @@ export function DocumentWorkspace() {
                   style={{ background: "var(--warning)", fontSize: 11, padding: "3px 10px" }}
                 >
                   <Calculator size={12} aria-hidden />
-                  계산 필요
+                  계산이 필요해요
                 </span>
                 {doc.calcTools.map((t) => (
                   <button
@@ -565,7 +565,7 @@ export function DocumentWorkspace() {
               <FileText size={16} style={{ color }} aria-hidden />
               <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>여기에 작성해요</h2>
               <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-                예시를 우리 기기에 맞게 고치기만 하면 돼요 · 자동 저장
+                예시를 우리 제품에 맞게 고치기만 하면 돼요 · 자동으로 저장돼요
               </span>
               <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
                 {doc.sections.length}개 섹션

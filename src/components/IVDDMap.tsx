@@ -289,7 +289,7 @@ export function IVDDMap() {
                 minHeight: 44,
               }}
             >
-              ← 인증 허브
+              ← 인증 홈
             </Link>
             <Link
               to="/ivdr"

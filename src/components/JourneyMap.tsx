@@ -128,7 +128,7 @@ export function JourneyMap() {
               className="inline-flex items-center gap-2 rounded-[var(--r-md)] border font-bold text-text-muted hover:bg-surface"
               style={{ borderColor: "var(--border)", fontSize: "var(--t-sm)", padding: "11px 18px", minHeight: 44 }}
             >
-              ← 인증 허브
+              ← 인증 홈
             </Link>
           </div>
         </header>

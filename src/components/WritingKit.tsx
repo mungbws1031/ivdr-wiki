@@ -110,8 +110,8 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
   const TABS: { key: TabKey; label: string; Icon: LucideIcon; hint: string }[] = useMemo(
     () => [
       { key: "guide", label: "가이드", Icon: Compass, hint: "어떻게 쓰는지 먼저 볼까요" },
-      { key: "source", label: "내용 소스", Icon: PackageIcon, hint: "본문에 채울 자료·실험·테스트" },
-      { key: "ref", label: "지침서", Icon: BookMarked, hint: "따라야 할 규정·개념" },
+      { key: "source", label: "채울 자료", Icon: PackageIcon, hint: "본문에 넣을 자료·실험·시험" },
+      { key: "ref", label: "규정·개념", Icon: BookMarked, hint: "따라야 할 규정과 알아 둘 개념" },
       { key: "docs", label: "참고 문서", Icon: Files, hint: "함께 보면 좋은 다른 문서" },
     ],
     []
@@ -144,7 +144,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
               )}
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: 1 }}>
-              {open ? "이 문서 하나 완성하는 데 필요한 걸 한 상자에 담았어요 · 탭을 열어 챙겨보세요" : "가이드·내용 소스·지침서·참고 문서"}
+              {open ? "이 문서 하나를 완성하는 데 필요한 걸 한 상자에 담았어요 · 탭을 눌러 챙겨 보세요" : "가이드·채울 자료·규정·개념·참고 문서"}
             </p>
           </div>
           <button type="button" onClick={toggle} aria-expanded={open} className="shrink-0 rounded-[var(--r-md)] font-bold"
@@ -215,8 +215,8 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
             <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "var(--s-3)" }}>
               {([
                 { n: "1", title: "준비물 챙기기", desc: "위 탭들을 둘러보며 규정·자료·참고 문서를 먼저 챙겨요" },
-                { n: "2", title: "템플릿 채우기", desc: "아래 템플릿에 예시가 미리 들어 있어요. 우리 기기에 맞게 고치면 자동 저장돼요" },
-                { n: "3", title: "완성하고 내보내기", desc: "오른쪽 체크리스트를 확인하고 MD 복사나 Word로 내보내면 끝이에요" },
+                { n: "2", title: "예시 틀 채우기", desc: "아래 틀에 예시가 미리 들어 있어요. 우리 제품에 맞게 고치면 자동으로 저장돼요" },
+                { n: "3", title: "완성하고 내보내기", desc: "오른쪽 확인 목록을 보고 글자로 복사(MD)하거나 Word로 내보내면 끝이에요" },
               ] as const).map(({ n, title, desc }) => (
                 <div key={n} className="flex gap-3 items-start rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)", padding: "var(--s-3)" }}>
                   <span className="shrink-0 grid place-items-center rounded-full font-extrabold text-text-on-color" style={{ width: 26, height: 26, background: color, fontSize: 12 }} aria-hidden>{n}</span>
@@ -233,7 +233,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
               <div className="flex gap-2 rounded-[var(--r-md)]" style={{ background: "var(--info-bg)", border: "1px solid var(--info)", padding: "var(--s-3) var(--s-4)" }}>
                 <Lightbulb size={15} style={{ color: "var(--info)", flexShrink: 0, marginTop: 1 }} aria-hidden />
                 <p className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
-                  <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰는가 </span>
+                  <span className="font-bold" style={{ color: "var(--info)" }}>왜 쓰나요 </span>
                   {renderRich(doc.rationale)}
                 </p>
               </div>
@@ -241,7 +241,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
 
             {/* 사전 지식 */}
             {doc.knowledge && doc.knowledge.length > 0 && (
-              <SubGroup Icon={GraduationCap} title="작성 전 알아둘 것" color="var(--info)" count={doc.knowledge.length}>
+              <SubGroup Icon={GraduationCap} title="쓰기 전에 알아 둘 것" color="var(--info)" count={doc.knowledge.length}>
                 <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
                   {doc.knowledge.map((k, i) => <CheckLine key={i} text={k} color="var(--info)" />)}
                 </ul>
@@ -283,7 +283,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
             )}
 
             {doc.experiments && doc.experiments.length > 0 && (
-              <SubGroup Icon={FlaskConical} title="선행 실험" color="var(--p1)" count={doc.experiments.length}>
+              <SubGroup Icon={FlaskConical} title="먼저 해야 할 실험" color="var(--p1)" count={doc.experiments.length}>
                 <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
                   {doc.experiments.map((e, i) => <CheckLine key={i} text={e} color="var(--p1)" />)}
                 </ul>
@@ -291,7 +291,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
             )}
 
             {doc.certTests && doc.certTests.length > 0 && (
-              <SubGroup Icon={ListChecks} title="인증·테스트" color="var(--p3)" count={doc.certTests.length}>
+              <SubGroup Icon={ListChecks} title="인증·시험" color="var(--p3)" count={doc.certTests.length}>
                 <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
                   {doc.certTests.map((c, i) => <CheckLine key={i} text={c} color="var(--p3)" />)}
                 </ul>
