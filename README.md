@@ -100,10 +100,10 @@ npm run preview    # 빌드 결과 미리보기
 | `content/` | 개념 위키 원본(옵시디언 볼트). 사용법은 `content/README.md` |
 | `public/`, `vite/`, `scripts/` | 정적 파일, 위키 변환 플러그인, 로컬 확인용 스크립트 |
 | `docs/` | 제품 요구사항 `docs/PRD.md` |
-| `projects/` | 작업 묶음과 진행 상태 (`projects/README.md`) |
-| `reviews/` | 사용성·검토 기록 |
-| `server/` | 아직 배포하지 않은 AI 서버 초안 |
-| `skills/` | 에이전트(Claude)용 부서 스킬 |
+| `docs/projects/` | 작업 묶음과 진행 상태 (`docs/projects/README.md`) |
+| `docs/reviews/` | 사용성·검토 기록 |
+| `experimental/server/` | 아직 배포하지 않은 AI 서버 초안 |
+| `.claude/skills/` | 에이전트(Claude)용 부서 스킬 |
 
 에이전트 작업 규칙은 `CLAUDE.md`에 있다.
 

@@ -4,7 +4,7 @@
 
 제품 소개·기능 목록은 `README.md`, 요구사항과 할 일 범위는 **`docs/PRD.md`**(먼저 읽을 것)에 있다. 이 파일에는 작업 규칙만 둔다.
 - 도구(`/auto/*`)가 중심축이고, 가이드(인증 지도·개념 위키)는 도구 안의 설명으로 엮는다. 새 화면·문구도 이 방향을 따른다.
-- 저장은 **브라우저 localStorage만** 쓴다. 서버 기능을 추가하지 않는다(`server/`는 배포 전 초안).
+- 저장은 **브라우저 localStorage만** 쓴다. 서버 기능을 추가하지 않는다(`experimental/server/`는 배포 전 초안).
 - 사용자와는 한국어로, 쉬운 말로 대화한다. 사용자 대상 문구도 한국어로 쓴다.
 
 ## 절대 규칙
@@ -62,8 +62,8 @@ npm run build       # tsc -b && vite build → dist/
 | `src/lib/concept.ts`, `sketch.ts`, `nextActions.ts`, `difficulty.ts`, `factory.ts` | 컨셉 한 줄 추정, 개념 스케치 모델, 지금 할 일, 난이도 얼굴, 문서 공장 |
 | `src/components/auto/` | 자동작성 화면들. 단계 탭 `AutoSteps.tsx`(기획·판정·실험·문서) |
 | `src/hooks/` | localStorage 저장소. 키 접두 `ivdr-`는 전체 백업(`lib/backup.ts`)에 자동 포함 |
-| `skills/` | 부서 스킬 7개(`ivdr-*`) + 가상 심사관 5인 패널(`mfds-review-panel`, 실제 식약처 아님) |
-| `reviews/` | 사용성 점검 기록 |
+| `.claude/skills/` | 부서 스킬 7개(`ivdr-*`) + 가상 심사관 5인 패널(`mfds-review-panel`, 실제 식약처 아님) |
+| `docs/reviews/` | 사용성 점검 기록 |
 
 자주 하는 변경
 - **위키 개념 추가·수정**
@@ -85,6 +85,6 @@ npm run build       # tsc -b && vite build → dist/
 - **판단 로직은 `src/lib`의 순수 함수**로 짜고, 같은 이름의 `*.test.ts`를 붙인다.
 
 ## 다음 큰 작업
-새 대화 하나에 묶음 하나씩 맡긴다. 목록과 지금·다음·보류 구분, 브리프는 **`projects/README.md`**에 있다(마인드맵 `projects/mindmap.html`). "보류" 묶음은 사용자가 풀기 전까지 시작하지 않는다.
-- 시작 문장 예: `CLAUDE.md와 projects/01-traceability-2/BRIEF.md를 읽고, 계획부터 세워줘.`
-- 묶음을 끝내면 `docs/PRD.md` 출시 이력과 `projects/README.md`의 상태를 갱신한다.
+새 대화 하나에 묶음 하나씩 맡긴다. 목록과 지금·다음·보류 구분, 브리프는 **`docs/projects/README.md`**에 있다(마인드맵 `docs/projects/mindmap.html`). "보류" 묶음은 사용자가 풀기 전까지 시작하지 않는다.
+- 시작 문장 예: `CLAUDE.md와 docs/projects/01-traceability-2/BRIEF.md를 읽고, 계획부터 세워줘.`
+- 묶음을 끝내면 `docs/PRD.md` 출시 이력과 `docs/projects/README.md`의 상태를 갱신한다.
