@@ -4,7 +4,7 @@ aliases:
   - Summary of Safety and Performance
   - Art.29
 category: deliverable
-summary: Class C·D 기기의 안전성·성능 데이터를 일반에 공개하는 요약 문서 (EUDAMED 게시).
+summary: Class C·D 기기의 안전성·성능 데이터를 일반에 공개하는 요약 문서예요 (EUDAMED에 게시).
 refs:
   - IVDR Art.29
   - Annex III
@@ -19,6 +19,6 @@ order: 210
 status: published
 ---
 
-SSP(Summary of Safety and Performance, 안전성·성능 요약서)는 IVDR Art.29가 **Class C·D** 기기에 의무화한 공개 문서다. 기술문서(PER·위험 파일)의 핵심을 **일반인이 읽을 수 있는 수준**으로 요약하며, EUDAMED에 게시된다.
+SSP(Summary of Safety and Performance, 안전성·성능 요약서)는 IVDR Art.29가 **Class C·D** 기기에 의무로 정한 공개 문서예요. 기술문서(PER·위험 파일)의 핵심을 **일반인이 읽을 수 있는 수준**으로 요약해요. 이 문서는 EUDAMED에 게시돼요.
 
-필수 항목(Annex III 참조): 기기 식별(UDI-DI), 의도된 목적, 분류·경로, 설계 특성 요약, 분석·임상 성능 결론, 잔여위험 및 이익-위험 결론, 적용 규정·표준, [[pms|PMS]]/PMPF 계획 요약, 개정 이력. NB가 검토·승인 후 EUDAMED에 업로드한다.
+필수 항목(Annex III 참조)은 이래요. 기기 식별(UDI-DI), 의도된 목적, 분류·경로, 설계 특성 요약, 분석·임상 성능 결론, 잔여위험 및 이익-위험 결론, 적용 규정·표준, [[pms|PMS]]/PMPF 계획 요약, 개정 이력이에요. NB(인증기관)가 검토·승인한 뒤 EUDAMED에 올려요.
