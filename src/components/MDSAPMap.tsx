@@ -330,7 +330,7 @@ export function MDSAPMap() {
             }}
           >
             <span style={{ color: "var(--p4)" }}>
-              갭 분석 · QMS 구축 · NB 심사 · 인정 유지
+              갭 분석 · QMS 구축 · AO(심사기관) 심사 · 인정 유지
             </span>
           </h1>
           <p
