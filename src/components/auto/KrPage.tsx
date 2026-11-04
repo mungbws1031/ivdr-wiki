@@ -121,11 +121,11 @@ export function KrPage() {
               </ul>
             )}
             <details style={{ marginTop: "var(--s-3)" }}>
-              <summary className="font-semibold text-text-muted cursor-pointer" style={{ fontSize: "var(--t-xs)" }}>앱이 아는 허용 품목 {KR_SELF_TEST_ITEMS.length}개 (전체 목록은 아니에요)</summary>
+              <summary className="font-semibold text-text-muted cursor-pointer" style={{ fontSize: "var(--t-xs)" }}>앱이 아는 자가검사용 품목 {KR_SELF_TEST_ITEMS.length}가지</summary>
               <ul className="flex flex-col" style={{ gap: 2, paddingLeft: 18, listStyle: "disc", marginTop: 6 }}>
-                {KR_SELF_TEST_ITEMS.map((i) => <li key={i.key} className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{i.label} — {i.source} (확인 {i.checked})</li>)}
+                {KR_SELF_TEST_ITEMS.map((i) => <li key={i.key} className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>{i.label}{i.code ? ` (${i.code}${i.grade ? `, ${i.grade}등급` : ""})` : ""} — {i.source} (확인 {i.checked})</li>)}
               </ul>
-              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>{KR_SOURCES.selfTest}. 기존 9개 품목 전체는 고시 원문으로 확인해 주세요.</p>
+              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 4 }}>{KR_SOURCES.selfTest}.</p>
             </details>
           </section>
 
