@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { exampleSpec, setAt } from "../../data/spec/validate";
-import { classifyKr, krDocSet, krTokens } from "./index";
+import { classifyKr, krDocSet, krPostMarket, krTokens } from "./index";
 import { leafById } from "../../data/docTree";
 import { docById, resolveDoc } from "../../data/documents";
 import { buildTokenContext } from "../tokens";
@@ -113,6 +113,17 @@ describe("krDocSet", () => {
     const d = krDocSet(s, kr(s));
     expect(d.find((x) => x.id === "kr-import")!.status).toBe("excluded");
     for (const id of d.flatMap((x) => x.reuse)) expect(leafById(id) ?? docById(id)).toBeTruthy();
+  });
+});
+
+describe("krPostMarket", () => {
+  it("의료기기법 조문 근거로 시판 후 할 일을 주고, 재사용 문서는 모두 열린다", () => {
+    const s = base();
+    const p = krPostMarket(s, kr(s));
+    for (const id of ["kr-pm-adverse", "kr-pm-recall", "kr-pm-foreign", "kr-pm-supply", "kr-pm-pms", "kr-pm-renewal"]) expect(p.find((x) => x.id === id)).toBeTruthy();
+    expect(p.find((x) => x.id === "kr-pm-adverse")!.reason).toContain("제31조제1항");
+    expect(p.find((x) => x.id === "kr-pm-renewal")!.reason).toContain("5년");
+    for (const id of p.flatMap((x) => x.reuse)) expect(leafById(id) ?? docById(id)).toBeTruthy();
   });
 });
 
