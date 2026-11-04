@@ -77,8 +77,7 @@ npm run build       # tsc -b && vite build → dist/
   - `TOKEN_LABEL`, `evidence.ts`의 `TOKEN_DEPS`·`INPUT_FIELD`를 함께 고친다.
 - **판단 로직은 `src/lib`의 순수 함수**로 짜고, 같은 이름의 `*.test.ts`를 붙인다.
 
-## 다음 큰 작업 후보 (자세한 건 `docs/PRD.md` 11절)
-- **추적성 2단계**: 설계 출력(BOM·PCB·SW 버전)·변경 영향, 리비전·승인 기록(감사 추적). 다중 사용자는 서버가 필요하다.
-- **AI 서버(Vercel)**: 문장 다듬기·요구사항 리뷰. 승인된 데이터만 쓰고, 출처 표시와 사람 승인을 거친다.
-- **규정 원문 대조**: Rule 4(a) 예외, 국내 자가검사 허용 품목(FSH 포함 여부), 21 CFR 862.9·862.1300. 네트워크 허용이 필요하다.
-- **기타**: MDR(비IVD) 확장, 다크 모드
+## 다음 큰 작업
+새 대화 하나에 묶음 하나씩 맡긴다. 목록·우선순위·브리프는 **`projects/README.md`**에 있다(마인드맵 `projects/mindmap.html`).
+- 시작 문장 예: `CLAUDE.md와 projects/01-traceability-2/BRIEF.md를 읽고, 계획부터 세워줘.`
+- 묶음을 끝내면 `docs/PRD.md` 출시 이력과 `projects/README.md`의 상태를 갱신한다.
