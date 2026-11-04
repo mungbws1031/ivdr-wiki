@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { FileType2, Upload, Download, FileDown, Loader2, Check, AlertCircle } from "lucide-react";
+import { FileType2, Upload, Download, FileDown, Eye, Loader2, Check, AlertCircle } from "lucide-react";
 import type { DocTemplate } from "../data/documents";
 import { docWithDrafts } from "../hooks/useDraftStore";
+import { DocPreviewModal } from "./DocPreviewModal";
 
 // 무거운 워드 라이브러리(docx/docxtemplater/pizzip)는 사용할 때만 동적 로드.
 const loadDocx = () => import("../lib/docx");
@@ -15,6 +16,7 @@ type State =
 /** 워드(.docx) 내보내기 — 샘플 받기 + 내 템플릿에 자동 채우기. */
 export function DocxExport({ doc }: { doc: DocTemplate }) {
   const [state, setState] = useState<State>({ kind: "idle" });
+  const [previewOpen, setPreviewOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const safeName = doc.docTitle.replace(/[\\/:*?"<>|]/g, "_");
@@ -88,6 +90,17 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
         파일은 이 브라우저 안에서만 처리돼요.
       </p>
 
+      {/* 미리보기 — 받기 전에 화면에서 내용 확인 */}
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-[var(--r-md)] border font-semibold text-text hover:bg-bg"
+        style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "9px 14px", minHeight: 40, marginBottom: "var(--s-2)" }}
+      >
+        <Eye size={16} aria-hidden />
+        미리보기
+      </button>
+
       {/* 완성본 받기 — 서식 없이 바로, 실제 작성 내용 포함 */}
       <button
         type="button"
@@ -99,6 +112,8 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
         <FileDown size={16} aria-hidden />
         완성본 .docx 받기
       </button>
+
+      {previewOpen && <DocPreviewModal doc={docWithDrafts(doc)} onClose={() => setPreviewOpen(false)} />}
 
       {/* 회사 서식 사용 — 접이식 보조 옵션 */}
       <details style={{ marginTop: "var(--s-3)" }}>

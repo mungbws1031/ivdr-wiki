@@ -14,8 +14,8 @@ export function PageHeader({
   const back = pathname === "/auto/start" ? { to: "/", label: "인증 홈" } : pathname.startsWith("/auto") ? { to: "/auto/start", label: "제품 기획(처음)" } : { to: "/", label: "인증 홈" };
   return (
     <header
-      className="sticky top-0 z-30 border-b backdrop-blur"
-      style={{ background: "rgba(255,255,255,0.88)", borderColor: "var(--border)" }}
+      className="sticky top-0 z-30 border-b backdrop-blur ivdr-sticky-bg-88"
+      style={{ borderColor: "var(--border)" }}
     >
       <div
         className="mx-auto flex items-center gap-3"

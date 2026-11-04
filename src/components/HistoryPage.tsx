@@ -302,7 +302,7 @@ export function HistoryPage() {
                       <div
                         style={{
                           background: meta.color,
-                          color: "#fff",
+                          color: "var(--text-on-color)",
                           borderRadius: "var(--r-full)",
                           fontSize: 10,
                           fontWeight: 700,

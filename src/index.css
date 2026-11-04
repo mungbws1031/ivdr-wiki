@@ -227,6 +227,37 @@ h3 {
 }
 .mood-shake { animation: mood-shake 0.35s linear infinite; display: inline-block; }
 
+/* 완료 체크리스트 — 모두 체크(false→true)된 순간 0.6초 펄스로 축하 */
+@keyframes ivdr-checklist-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 45%, transparent); }
+  60% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--success) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 0%, transparent); }
+}
+.ivdr-checklist-celebrate { animation: ivdr-checklist-pulse 0.6s ease-out; }
+
+/* sticky 헤더 반투명 배경 — color-mix() 미지원 구형 브라우저(Safari 16.3 이하 등)용
+   폴백. 먼저 불투명도 비슷한 고정값을 선언해두고, 그 다음 줄의 color-mix() 선언이
+   지원되는 브라우저에서만 덮어쓴다(미지원이면 해당 줄이 무시되고 폴백이 남는다). */
+.ivdr-sticky-bg-88 {
+  background: rgba(255, 255, 255, 0.88);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+}
+.ivdr-sticky-bg-85 {
+  background: rgba(255, 255, 255, 0.85);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+}
+/* color-mix() 미지원 브라우저에서만 다크모드 폴백 색을 덮어쓴다.
+   color-mix() 지원 브라우저는 위 선언이 이미 --bg로 알아서 다크모드를 반영하므로
+   건드리지 않는다(다크모드 색상표는 리뷰어 확인 완료 — 그대로 둔다). */
+@supports not (background: color-mix(in srgb, white 1%, transparent)) {
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .ivdr-sticky-bg-88 { background: rgba(21, 23, 26, 0.88); }
+    :root:not([data-theme="light"]) .ivdr-sticky-bg-85 { background: rgba(21, 23, 26, 0.85); }
+  }
+  :root[data-theme="dark"] .ivdr-sticky-bg-88 { background: rgba(21, 23, 26, 0.88); }
+  :root[data-theme="dark"] .ivdr-sticky-bg-85 { background: rgba(21, 23, 26, 0.85); }
+}
+
 /* 마우스를 올리면 멈춰서 누르기 쉽게 */
 .factory-walk:hover,
 .factory-walk:hover .factory-flip,
@@ -242,7 +273,8 @@ h3 {
   .tower-flip,
   .tower-elev,
   .mood-shake,
-  .factory-leg { animation: none !important; }
+  .factory-leg,
+  .ivdr-checklist-celebrate { animation: none !important; }
   *,
   *::before,
   *::after {
