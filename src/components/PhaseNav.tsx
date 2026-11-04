@@ -18,9 +18,8 @@ export function PhaseNav({
   return (
     <nav
       aria-label="페이즈 빠른 이동"
-      className="sticky top-0 z-30 border-b backdrop-blur"
+      className="sticky top-0 z-30 border-b backdrop-blur ivdr-sticky-bg-85"
       style={{
-        background: "rgba(255,255,255,0.85)",
         borderColor: "var(--border)",
       }}
     >

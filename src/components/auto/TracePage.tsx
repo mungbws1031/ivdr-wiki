@@ -5,6 +5,7 @@ import { PageHeader } from "../PageHeader";
 import { StorageNote } from "../StorageNote";
 import { AutoSteps } from "./AutoSteps";
 import { AssumptionBanner, fieldHref } from "./AutoUi";
+import { DsoSection } from "./DsoSection";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { useResults } from "../../hooks/useResultsStore";
 import { updateTraceStore, useTraceStore } from "../../hooks/useTraceStore";
@@ -82,7 +83,7 @@ export function TracePage() {
   const t = useMemo(() => buildTrace(spec, results, store), [spec, results, store]);
   const [onlyGaps, setOnlyGaps] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
-  const [view, setView] = useState<"req" | "risk">("req");
+  const [view, setView] = useState<"req" | "risk" | "dso">("req");
   const [newText, setNewText] = useState("");
   const [newCat, setNewCat] = useState<ReqCategory>("성능");
   const gapRefs = new Set(t.gaps.filter((g) => g.level !== "info").map((g) => g.ref));
@@ -157,14 +158,15 @@ export function TracePage() {
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="tr-matrix">
             <div className="flex flex-wrap items-center" style={{ gap: 8, marginBottom: "var(--s-4)" }}>
-              <h2 id="tr-matrix" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginRight: "auto" }}>{view === "req" ? "요구사항 기준" : "위험 기준"}</h2>
-              {(["req", "risk"] as const).map((k) => (
-                <button key={k} type="button" aria-pressed={view === k} onClick={() => setView(k)} className="rounded-full font-semibold" style={{ minHeight: 40, padding: "4px 14px", fontSize: "var(--t-xs)", border: `1.5px solid ${view === k ? "var(--accent)" : "var(--border)"}`, background: view === k ? "var(--accent-weak)" : "var(--bg)", color: "var(--text)" }}>{k === "req" ? "요구사항 → 검증" : "위험 → 통제 → 검증"}</button>
+              <h2 id="tr-matrix" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)", marginRight: "auto" }}>{view === "req" ? "요구사항 기준" : view === "risk" ? "위험 기준" : "설계 출력(DSO)"}</h2>
+              {(["req", "risk", "dso"] as const).map((k) => (
+                <button key={k} type="button" aria-pressed={view === k} onClick={() => setView(k)} className="rounded-full font-semibold" style={{ minHeight: 40, padding: "4px 14px", fontSize: "var(--t-xs)", border: `1.5px solid ${view === k ? "var(--accent)" : "var(--border)"}`, background: view === k ? "var(--accent-weak)" : "var(--bg)", color: "var(--text)" }}>{k === "req" ? "요구사항 → 검증" : k === "risk" ? "위험 → 통제 → 검증" : "설계 출력"}</button>
               ))}
               {view === "req" && <label className="inline-flex items-center gap-1.5 text-text" style={{ fontSize: "var(--t-xs)", minHeight: 40 }}><input type="checkbox" checked={onlyGaps} onChange={(e) => setOnlyGaps(e.target.checked)} style={{ width: 18, height: 18 }} /> 빠진 연결만</label>}
-              <button type="button" onClick={csv} className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-semibold" style={{ minHeight: 40, padding: "4px 12px", fontSize: "var(--t-xs)", border: "1px solid var(--border-strong)", color: "var(--text)" }}><Download size={14} aria-hidden /> CSV (엑셀)</button>
+              {view !== "dso" && <button type="button" onClick={csv} className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-semibold" style={{ minHeight: 40, padding: "4px 12px", fontSize: "var(--t-xs)", border: "1px solid var(--border-strong)", color: "var(--text)" }}><Download size={14} aria-hidden /> CSV (엑셀)</button>}
             </div>
 
+            {view === "dso" ? <DsoSection trace={t} /> : (
             <div className="overflow-x-auto">
               {view === "req" ? (
                 <table className="w-full" style={{ borderCollapse: "collapse", minWidth: 900, fontSize: "var(--t-sm)" }}>
@@ -221,10 +223,13 @@ export function TracePage() {
                 </table>
               )}
             </div>
-            <p className="flex items-start gap-1.5 text-text-subtle" style={{ fontSize: 11, marginTop: "var(--s-3)", lineHeight: "var(--lh-base)" }}>
-              <Info size={13} aria-hidden style={{ marginTop: 2, flexShrink: 0 }} />
-              자동 연결은 규칙으로 만든 후보입니다(요구사항 → 해당 시험, 위험 → 같은 근거 문서를 쓰는 시험). 위험의 P·S와 수용 판단은 위험관리 계획에서 회사 기준으로 정합니다. 증거는 결과 입력 화면의 판정입니다.
-            </p>
+            )}
+            {view !== "dso" && (
+              <p className="flex items-start gap-1.5 text-text-subtle" style={{ fontSize: 11, marginTop: "var(--s-3)", lineHeight: "var(--lh-base)" }}>
+                <Info size={13} aria-hidden style={{ marginTop: 2, flexShrink: 0 }} />
+                자동 연결은 규칙으로 만든 후보입니다(요구사항 → 해당 시험, 위험 → 같은 근거 문서를 쓰는 시험). 위험의 P·S와 수용 판단은 위험관리 계획에서 회사 기준으로 정합니다. 증거는 결과 입력 화면의 판정입니다.
+              </p>
+            )}
           </section>
 
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="tr-add">
