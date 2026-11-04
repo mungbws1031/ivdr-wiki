@@ -5,7 +5,7 @@ import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
 import { AssumptionBanner, FieldLink, fieldHref } from "./AutoUi";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
-import { classifyKr, krDocSet, KR_DOC_STATUS_LABEL, KR_RULES_REVIEWED, KR_SELF_TEST_ITEMS, KR_SOURCES, type KrDocStatus, type KrStatus } from "../../lib/kr";
+import { classifyKr, krDocSet, krPostMarket, KR_POSTMARKET_SOURCE, KR_DOC_STATUS_LABEL, KR_RULES_REVIEWED, KR_SELF_TEST_ITEMS, KR_SOURCES, type KrDocStatus, type KrStatus } from "../../lib/kr";
 import { leafById } from "../../data/docTree";
 import { docById } from "../../data/documents";
 
@@ -35,6 +35,7 @@ export function KrPage() {
   const { spec, assumed, assumeOn } = useWorkingSpec();
   const kr = useMemo(() => classifyKr(spec), [spec]);
   const docs = useMemo(() => krDocSet(spec, kr), [spec, kr]);
+  const post = useMemo(() => krPostMarket(spec, kr), [spec, kr]);
   const selected = spec.markets?.includes("KR") ?? false;
   const st = STATUS[kr.status];
   const self = SELF[kr.selfTest.status];
@@ -146,6 +147,24 @@ export function KrPage() {
             <ul style={{ marginTop: "var(--s-3)" }}>
               {docs.map((d) => (
                 <li key={d.id} data-krdoc={d.id} data-status={d.status} className="grid items-start" style={{ gridTemplateColumns: "minmax(0,1fr) auto", gap: "4px var(--s-3)", padding: "10px 0", borderBottom: "1px dashed var(--border)" }}>
+                  <span className="font-semibold text-text min-w-0" style={{ fontSize: "var(--t-sm)" }}>{d.title}</span>
+                  <span className="rounded-full font-bold whitespace-nowrap" style={{ fontSize: "var(--t-xs)", padding: "2px 9px", color: DOC_TONE[d.status].fg, background: DOC_TONE[d.status].bg }}>{KR_DOC_STATUS_LABEL[d.status]}</span>
+                  <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", gridColumn: "1 / -1" }}>
+                    {d.reason}
+                    {d.reuse.length > 0 && <> · 다시 쓸 문서: {d.reuse.map((id, i) => <span key={id}>{i > 0 && ", "}<Link to={`/doc/${id}`} className="underline decoration-dotted">{titleOf(id)}</Link></span>)}</>}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* 시판 후 할 일 */}
+          <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="kr-post-title">
+            <h2 id="kr-post-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>시판 후 할 일</h2>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>허가를 받은 뒤에도 계속 해야 하는 일이에요. 근거: {KR_POSTMARKET_SOURCE}</p>
+            <ul style={{ marginTop: "var(--s-3)" }}>
+              {post.map((d) => (
+                <li key={d.id} data-krpost={d.id} data-status={d.status} className="grid items-start" style={{ gridTemplateColumns: "minmax(0,1fr) auto", gap: "4px var(--s-3)", padding: "10px 0", borderBottom: "1px dashed var(--border)" }}>
                   <span className="font-semibold text-text min-w-0" style={{ fontSize: "var(--t-sm)" }}>{d.title}</span>
                   <span className="rounded-full font-bold whitespace-nowrap" style={{ fontSize: "var(--t-xs)", padding: "2px 9px", color: DOC_TONE[d.status].fg, background: DOC_TONE[d.status].bg }}>{KR_DOC_STATUS_LABEL[d.status]}</span>
                   <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", gridColumn: "1 / -1" }}>
