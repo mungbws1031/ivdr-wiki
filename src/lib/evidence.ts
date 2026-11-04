@@ -16,7 +16,7 @@ export type EvidenceTag = "input" | "estimated" | "rule" | "assumed" | "missing"
 
 export const TAG_META: Record<EvidenceTag, { label: string; desc: string; color: string }> = {
   input: { label: "입력", desc: "사람이 스펙·결과에 넣은 값", color: "var(--success)" },
-  estimated: { label: "추정", desc: "컨셉 문장에서 뽑은 값 — 사람이 확인하기 전", color: "#C9A227" },
+  estimated: { label: "추정", desc: "한 줄 설명에서 자동으로 채운 값 — 확인 전", color: "#C9A227" },
   rule: { label: "규칙", desc: "입력값에 규칙(분류·실험계획·운송 판정)을 적용해 나온 값", color: "var(--info)" },
   assumed: { label: "가정", desc: "비어 있어 보수적인 기본값으로 채운 값 — 확인 필요", color: "var(--warning)" },
   missing: { label: "누락", desc: "데이터가 없어 비워 둔 칸 — 스펙·실험·사람 결정이 필요", color: "var(--danger)" },
@@ -121,7 +121,7 @@ export function markAssumed(ctx: Record<string, string | null>, assumed: Assumpt
     if ((TOKEN_DEPS[k] ?? []).some((p) => paths.has(p)))
       out[k] = v!.includes("\n") ? `${v}\n(가정 포함 — 비어 있는 스펙 칸을 보수적으로 가정함, 확인 필요)` : `${v} (가정)`;
     else if (depsOf(k).some((p) => est.has(p)))
-      out[k] = v!.includes("\n") ? `${v}\n(추정 포함 — 컨셉 문장에서 뽑은 값, 확인 필요)` : `${v} (추정)`;
+      out[k] = v!.includes("\n") ? `${v}\n(추정 포함 — 한 줄 설명에서 자동으로 채운 값, 확인 필요)` : `${v} (추정)`;
   }
   return out;
 }
