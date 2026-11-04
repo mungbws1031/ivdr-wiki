@@ -131,12 +131,12 @@ export function JourneyRouteMap({ onOpen }: { onOpen: (id: number) => void }) {
                 {isStart && (
                   <circle cx={p.x} cy={p.y} r={30} fill="none" stroke="var(--accent)" strokeWidth={3} />
                 )}
-                <circle cx={p.x} cy={p.y} r={22} fill={color} stroke="#fff" strokeWidth={3} />
+                <circle cx={p.x} cy={p.y} r={22} fill={color} stroke="var(--surface)" strokeWidth={3} />
                 <text
                   x={p.x}
                   y={p.y + 6}
                   textAnchor="middle"
-                  style={{ fontSize: 17, fontWeight: 800, fill: "#fff" }}
+                  style={{ fontSize: 17, fontWeight: 800, fill: "var(--text-on-color)" }}
                 >
                   {id}
                 </text>

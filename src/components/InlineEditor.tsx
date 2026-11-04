@@ -48,7 +48,7 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
   }
 
   function handleReset() {
-    if (!window.confirm("초기 템플릿으로 되돌리겠습니까? 작성한 내용이 사라집니다.")) return;
+    if (!window.confirm("처음 예시로 되돌릴까요? 이 섹션에 쓴 내용이 사라져요.")) return;
     setValue(originalPlaceholder);
     clearDraft(docId, sectionIdx);
     setSaveStatus("idle");
@@ -133,7 +133,7 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
           <span style={{ fontSize: "var(--t-xs)", color: "var(--success)" }}>✓ 저장됨</span>
         )}
         {hasSavedContent && saveStatus === "idle" && (
-          <span style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>초안 보존 중</span>
+          <span style={{ fontSize: "var(--t-xs)", color: "var(--info)" }}>쓴 내용 지키는 중</span>
         )}
         {isDirty && (
           <button
@@ -147,7 +147,7 @@ export function InlineEditor({ docId, sectionIdx, originalPlaceholder, guidance 
               background: "var(--surface)",
             }}
           >
-            초기화
+            처음 예시로
           </button>
         )}
       </div>

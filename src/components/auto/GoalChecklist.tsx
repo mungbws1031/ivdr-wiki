@@ -29,7 +29,7 @@ export function GoalChecklist({ goals }: { goals: Goal[] }) {
             return (
               <li key={g.id}>
                 <Link to={g.to} className="flex items-start rounded-[var(--r-md)] hover:brightness-[.98]" style={{ gap: 10, padding: "10px 12px", height: "100%", background: "var(--bg)", border: `1.5px solid ${now ? "var(--accent)" : ok ? "color-mix(in srgb, var(--success) 45%, var(--border))" : "var(--border)"}` }}>
-                  <span className="inline-grid place-items-center rounded-[6px] shrink-0" style={{ width: 20, height: 20, marginTop: 1, background: ok ? "var(--success)" : "var(--bg)", border: ok ? "none" : "1.5px solid var(--border-strong)", color: "#fff" }}>
+                  <span className="inline-grid place-items-center rounded-[6px] shrink-0" style={{ width: 20, height: 20, marginTop: 1, background: ok ? "var(--success)" : "var(--bg)", border: ok ? "none" : "1.5px solid var(--border-strong)", color: "var(--text-on-color)" }}>
                     {ok ? <Check size={13} strokeWidth={3.5} aria-hidden /> : <span className="text-text-subtle font-bold" style={{ fontSize: 10 }}>{i + 1}</span>}
                   </span>
                   <span className="flex-1 min-w-0">

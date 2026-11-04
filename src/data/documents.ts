@@ -32,7 +32,7 @@ export interface DocSection {
   placeholder: string; // 채워넣기 예시/뼈대
 }
 
-export type CalcToolType = "sens-spec" | "sample-size" | "risk-matrix" | "lod-calc" | "mkt";
+export type CalcToolType = "sens-spec" | "sample-size" | "risk-matrix" | "lod-calc" | "mkt" | "regression";
 
 export interface DocTemplate {
   id: string; // 고유 슬러그 (docTree 잎 id 와 일치)
@@ -929,7 +929,7 @@ export const documents: DocTemplate[] = [
     ],
     relatedConceptSlugs: ["pep-per", "annex-xiii", "gspr"],
     refs: ["IVDR Art.56", "Annex XIII"],
-    calcTools: ["sens-spec", "sample-size", "lod-calc"],
+    calcTools: ["sens-spec", "sample-size", "lod-calc", "regression"],
   },
   {
     id: "quality-manual",
@@ -1150,7 +1150,7 @@ export const documents: DocTemplate[] = [
     ],
     relatedConceptSlugs: ["annex-xiii", "pep-per", "gspr"],
     refs: ["IVDR Annex XIII 1.2.2", "IVDR Annex I §9.1", "CLSI EP12", "CLSI EP07", "CLSI EP37"],
-    calcTools: ["lod-calc"],
+    calcTools: ["lod-calc", "regression"],
   },
   {
     // 섹션 1~4는 자동 생성(generic) 템플릿과 같은 순서 — 이미 저장된 초안의 섹션 순번을 지키기 위해. 새 섹션은 뒤에만 붙인다.

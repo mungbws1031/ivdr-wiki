@@ -11,11 +11,11 @@ export function PageHeader({
 }) {
   // 자동작성 흐름 안에서는 흐름의 처음(제품 기획)으로, 기획 화면에서는 인증 홈으로 돌아간다 (U-9)
   const { pathname } = useLocation();
-  const back = pathname === "/auto/start" ? { to: "/", label: "인증 홈" } : pathname.startsWith("/auto") ? { to: "/auto/start", label: "제품 기획(처음)" } : { to: "/", label: "여정 지도" };
+  const back = pathname === "/auto/start" ? { to: "/", label: "인증 홈" } : pathname.startsWith("/auto") ? { to: "/auto/start", label: "제품 기획(처음)" } : { to: "/", label: "인증 홈" };
   return (
     <header
-      className="sticky top-0 z-30 border-b backdrop-blur"
-      style={{ background: "rgba(255,255,255,0.88)", borderColor: "var(--border)" }}
+      className="sticky top-0 z-30 border-b backdrop-blur ivdr-sticky-bg-88"
+      style={{ borderColor: "var(--border)" }}
     >
       <div
         className="mx-auto flex items-center gap-3"

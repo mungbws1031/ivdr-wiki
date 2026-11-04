@@ -260,7 +260,7 @@ export function WriteHub() {
 
   const STATUS_FILTERS: { key: FilterStatus; label: string }[] = [
     { key: "all",          label: "전체" },
-    { key: "not_started",  label: "미작성" },
+    { key: "not_started",  label: "아직 안 씀" },
     { key: "in_progress",  label: "작성 중" },
     { key: "done",         label: "완료" },
   ];
@@ -281,7 +281,7 @@ export function WriteHub() {
               style={{ width: 44, height: 44, background: "var(--accent)", flexShrink: 0 }}
               aria-hidden
             >
-              <PenLine size={24} style={{ color: "#fff" }} />
+              <PenLine size={24} style={{ color: "var(--text-on-color)" }} />
             </span>
             <h1
               className="font-extrabold text-text"
@@ -291,8 +291,8 @@ export function WriteHub() {
             </h1>
           </div>
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 600, lineHeight: "var(--lh-base)" }}>
-            인증에 필요한 문서를 아래서 골라 바로 작성을 시작하세요.
-            각 카드를 누르면 템플릿·가이드·문구 라이브러리가 함께 열립니다.
+            인증에 필요한 문서를 아래에서 골라 바로 써 보세요.
+            카드를 누르면 예시 틀·안내·자주 쓰는 문구가 함께 열려요.
           </p>
           <Link
             to="/auto"
@@ -355,7 +355,7 @@ export function WriteHub() {
                 여기서 시작하세요
               </h2>
               <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>
-                — 중요도 높고 쉬운 문서 먼저 써보세요
+                — 중요하고 쉬운 문서부터 써 보세요
               </span>
             </div>
             <div
@@ -409,8 +409,8 @@ export function WriteHub() {
             style={{ padding: "var(--s-16) 0", gap: "var(--s-3)" }}
           >
             <CheckCircle2 size={48} style={{ color: "var(--success)" }} aria-hidden />
-            <p className="font-bold text-text" style={{ fontSize: "var(--t-xl)" }}>이 조건의 문서가 없습니다</p>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-base)" }}>필터를 바꿔보세요</p>
+            <p className="font-bold text-text" style={{ fontSize: "var(--t-xl)" }}>이 조건에 맞는 문서가 없어요</p>
+            <p className="text-text-muted" style={{ fontSize: "var(--t-base)" }}>위에서 고르는 조건을 바꿔 보세요</p>
           </div>
         ) : (
           <div

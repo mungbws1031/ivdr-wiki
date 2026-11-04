@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ListChecks,
@@ -18,6 +18,7 @@ import {
   Home,
   Square,
   CheckSquare,
+  Glasses,
 } from "lucide-react";
 import { loadSchedule, getScheduleForCert, CERT_META, parseLocalDate } from "../data/projectSchedule";
 import { resolveDoc, toMarkdown, type DocTemplate } from "../data/documents";
@@ -45,6 +46,7 @@ import { SampleSizeCalc } from "./calcs/SampleSizeCalc";
 import { RiskMatrixCalc } from "./calcs/RiskMatrixCalc";
 import { LodCalc } from "./calcs/LodCalc";
 import { MktCalc } from "./calcs/MktCalc";
+import { RegressionCalc } from "./calcs/RegressionCalc";
 import { InlineEditor } from "./InlineEditor";
 import { useWorkingSpec } from "../hooks/useSpecStore";
 import { markAssumed } from "../lib/evidence";
@@ -59,6 +61,8 @@ import { SnippetLibrary } from "./SnippetLibrary";
 import { WritingKit } from "./WritingKit";
 import { hasDraft, docWithDrafts, getCheck, setCheck, countChecks, useStoreVersion } from "../hooks/useDraftStore";
 import type { CalcToolType } from "../data/documents";
+import { reviewerFindings } from "../lib/reviewerCheck";
+import { ReviewerPanel } from "./ReviewerPanel";
 
 // 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
 const CALC_LABEL: Record<CalcToolType, string> = {
@@ -67,6 +71,7 @@ const CALC_LABEL: Record<CalcToolType, string> = {
   "lod-calc": "검출한계(LoD)",
   "risk-matrix": "위험 매트릭스",
   "mkt": "평균동력학적온도(MKT)",
+  "regression": "방법비교 회귀분석",
 };
 
 // ── 작성 진척 바 (헤더) — 실제로 채운 섹션 수를 실시간 표시 ─────────
@@ -108,11 +113,39 @@ function CompletionChecklist({ doc }: { doc: DocTemplate }) {
   const total = doc.checklist.length;
   const checked = countChecks(doc.id, total);
   const allDone = checked === total && total > 0;
+
+  // 체크리스트가 false → true로 완성되는 순간만 0.6초 펄스로 축하.
+  const wasAllDone = useRef(allDone);
+  const [celebrate, setCelebrate] = useState(false);
+  useEffect(() => {
+    if (!allDone) {
+      // 미완료 상태에서는 celebrate가 항상 false로 강제된다 (타이머가 끝나기 전에 체크를
+      // 해제해도 영구 축하 배경이 남지 않도록).
+      setCelebrate(false);
+      wasAllDone.current = allDone;
+      return;
+    }
+    if (!wasAllDone.current) {
+      setCelebrate(true);
+      const t = setTimeout(() => setCelebrate(false), 600);
+      wasAllDone.current = allDone;
+      return () => clearTimeout(t);
+    }
+    wasAllDone.current = allDone;
+  }, [allDone]);
+
   return (
-    <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+    <div
+      className={`rounded-[var(--r-md)]${celebrate ? " ivdr-checklist-celebrate" : ""}`}
+      style={{
+        border: "1px solid var(--border)",
+        background: celebrate ? "var(--success-bg)" : "var(--surface)",
+        transition: "background .3s ease",
+      }}
+    >
       <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
         <ListChecks size={15} style={{ color: allDone ? "var(--success)" : "var(--text-muted)" }} aria-hidden />
-        <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>
+        <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>다 썼는지 확인하기</h3>
         <span
           className="ml-auto font-bold"
           style={{ fontSize: "var(--t-xs)", color: allDone ? "var(--success)" : "var(--text-subtle)" }}
@@ -186,8 +219,53 @@ function CopyMdButton({ doc, filename }: { doc: DocTemplate; filename: string })
       }}
     >
       <Copy size={14} aria-hidden />
-      {copied ? "복사됨!" : "MD 복사"}
+      {copied ? "복사됐어요!" : "글자로 복사(MD)"}
     </button>
+  );
+}
+
+// ── "심사관에게 물어보기" 버튼 — 결정적 규칙 점검(C-01·C-05·C-10)만 본다 ────
+// rawDoc(제품 정보로 채우기 전 원본 템플릿)의 섹션을 넘긴다 — {{auto.*}} 토큰이 남아 있으면
+// "자동 채움 대상"이라 C-05(순수 예시) 판정에서 빠진다. 빈칸 패턴([____] 등)은 템플릿에 그대로
+// 있는 문구라 원본으로도 똑같이 잡힌다.
+function ReviewerButton({ doc, rawDoc }: { doc: DocTemplate; rawDoc: DocTemplate }) {
+  useStoreVersion(); // 체크·초안 변경 시 재계산
+  const [open, setOpen] = useState(false);
+  const findings = reviewerFindings({
+    docId: doc.id,
+    sections: rawDoc.sections.map((s) => ({ heading: s.heading, placeholder: s.placeholder })),
+    checklist: doc.checklist,
+    checkedIdx: doc.checklist.map((_, i) => i).filter((i) => getCheck(doc.id, i)),
+    draftedIdx: doc.sections.map((_, i) => i).filter((i) => hasDraft(doc.id, i)),
+  });
+  const hasMajor = findings.some((f) => f.severity === "주요");
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        title="심사관에게 물어보기"
+        className="inline-flex items-center gap-1.5 rounded-[var(--r-md)] font-semibold hover:bg-surface transition-colors"
+        style={{
+          border: "1px solid var(--border)",
+          fontSize: "var(--t-sm)",
+          padding: "7px 14px",
+          color: hasMajor ? "var(--warning)" : "var(--text-muted)",
+        }}
+      >
+        <Glasses size={14} aria-hidden />
+        심사관에게 물어보기
+        {findings.length > 0 && (
+          <span
+            className="rounded-full font-bold"
+            style={{ fontSize: 11, padding: "0 6px", color: "var(--text-on-color)", background: hasMajor ? "var(--warning)" : "var(--text-subtle)" }}
+          >
+            {findings.length}
+          </span>
+        )}
+      </button>
+      {open && <ReviewerPanel docTitle={doc.docTitle} findings={findings} onClose={() => setOpen(false)} />}
+    </>
   );
 }
 
@@ -300,8 +378,8 @@ export function DocumentWorkspace() {
   if (!doc || !station) {
     const NAV = [
       { to: "/documents", Icon: Files, label: "문서 전체 보기", desc: "모든 문서를 트리로", primary: true },
-      { to: "/write", Icon: PenLine, label: "문서 작성 허브", desc: "바로 쓸 문서 고르기" },
-      { to: "/", Icon: Home, label: "인증 허브", desc: "처음으로" },
+      { to: "/write", Icon: PenLine, label: "문서 작성 모음", desc: "바로 쓸 문서 고르기" },
+      { to: "/", Icon: Home, label: "인증 홈", desc: "처음으로" },
     ];
     return (
       <div className="min-h-screen bg-bg">
@@ -402,7 +480,7 @@ export function DocumentWorkspace() {
                 </span>
               )}
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }} aria-hidden>·</span>
-              <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 허브</Link>
+              <Link to="/" className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>인증 홈</Link>
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
               <Link to={journeyPath} className="text-text-subtle hover:text-text" style={{ fontSize: "var(--t-xs)" }}>{journeyLabel}</Link>
               <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>/</span>
@@ -433,7 +511,7 @@ export function DocumentWorkspace() {
                   style={{ background: "var(--warning)", fontSize: 11, padding: "3px 10px" }}
                 >
                   <Calculator size={12} aria-hidden />
-                  계산 필요
+                  계산이 필요해요
                 </span>
                 {doc.calcTools.map((t) => (
                   <button
@@ -473,6 +551,7 @@ export function DocumentWorkspace() {
               </Link>
             )}
             <CopyMdButton doc={doc} filename={filename} />
+            {rawDoc && <ReviewerButton doc={doc} rawDoc={rawDoc} />}
           </div>
         </div>
 
@@ -486,7 +565,7 @@ export function DocumentWorkspace() {
               <FileText size={16} style={{ color }} aria-hidden />
               <h2 className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>여기에 작성해요</h2>
               <span className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-                예시를 우리 기기에 맞게 고치기만 하면 돼요 · 자동 저장
+                예시를 우리 제품에 맞게 고치기만 하면 돼요 · 자동으로 저장돼요
               </span>
               <span className="ml-auto text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
                 {doc.sections.length}개 섹션
@@ -583,6 +662,7 @@ export function DocumentWorkspace() {
                 {doc.calcTools.includes("risk-matrix") && <RiskMatrixCalc />}
                 {doc.calcTools.includes("lod-calc") && <LodCalc />}
                 {doc.calcTools.includes("mkt") && <MktCalc />}
+                {doc.calcTools.includes("regression") && <RegressionCalc />}
               </div>
             )}
           </div>

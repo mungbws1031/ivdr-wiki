@@ -177,7 +177,7 @@ function MDSAPDocumentList() {
           style={{ width: 32, height: 32, background: "var(--p4)" }}
           aria-hidden
         >
-          <FolderTree size={17} style={{ color: "#fff" }} />
+          <FolderTree size={17} style={{ color: "var(--text-on-color)" }} />
         </span>
         <div className="flex-1 min-w-0">
           <span className="font-extrabold text-text" style={{ fontSize: "var(--t-base)" }}>
@@ -379,7 +379,7 @@ export function MDSAPMap() {
                 minHeight: 44,
               }}
             >
-              ← 인증 허브
+              ← 인증 홈
             </Link>
             <Link
               to="/iso13485"
