@@ -108,7 +108,7 @@ function Timeline({ store }: { store: ScheduleStore }) {
                         (D-{Math.ceil((date.getTime() - today.getTime()) / 86400000)})
                       </span>
                     )}
-                    {isPast && <span className="ml-2 text-text-subtle">(완료)</span>}
+                    {isPast && <span className="ml-2 text-text-subtle">(지남)</span>}
                   </div>
                 </div>
               </div>

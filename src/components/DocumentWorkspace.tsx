@@ -721,7 +721,7 @@ export function DocumentWorkspace() {
                               {date}
                               {!isPast && diffDays === 0 && <span className="ml-1 font-bold" style={{ color: `var(${meta.colorVar})` }}>D-Day</span>}
                               {!isPast && diffDays > 0 && <span className="ml-1 text-text-subtle">D-{diffDays}</span>}
-                              {isPast && <span className="ml-1 text-text-subtle">(완료)</span>}
+                              {isPast && <span className="ml-1 text-text-subtle">(지남)</span>}
                             </div>
                           </div>
                         </li>
