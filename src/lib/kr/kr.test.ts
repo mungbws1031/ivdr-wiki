@@ -79,6 +79,16 @@ describe("한국 기술문서 템플릿", () => {
     for (const k of keys) expect(k in ctx).toBe(true);
     expect(ctx.krGrade).toContain("2등급");
   });
+  it("고시(제2026-58호) 항목 순서를 지키고, 새 섹션은 끝에만 붙는다", () => {
+    const doc = resolveDoc("kr-technical-doc")!;
+    const h = doc.sections.map((x) => x.heading);
+    expect(h.slice(0, 11).map((x) => x.split(" ")[0])).toEqual(["1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.", "10.", "11."]);
+    expect(h[11]).toContain("제조원");
+    expect(h[12]).toContain("제25조");
+    expect(doc.sections[9].placeholder.startsWith("체외진단용으로 사용해야 함")).toBe(true);
+    expect(doc.sections[4].placeholder).toContain("제조원의 제조방법에 따른다");
+    expect(doc.rationale).toContain("제2026-58호");
+  });
   it("한국을 고르지 않으면 한국 토큰은 비어 있다", () => {
     expect(krTokens(exampleSpec()).krGrade).toBeNull();
   });
