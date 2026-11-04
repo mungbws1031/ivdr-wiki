@@ -69,7 +69,7 @@ function ChunkRow({
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="스니펫 이름 (예: QMS 범위 선언)"
+            placeholder="문구 이름 (예: QMS 범위 선언)"
             className="flex-1 rounded-[var(--r-sm)] text-text outline-none min-w-0"
             style={{
               border: "1px solid var(--accent)",
@@ -110,7 +110,7 @@ function ChunkRow({
           style={{ border: "1px solid var(--border)", fontSize: "var(--t-xs)", padding: "4px 12px" }}
         >
           <Plus size={12} aria-hidden />
-          스니펫으로 저장
+          문구로 저장
         </button>
       )}
     </div>
@@ -143,8 +143,8 @@ export function DriveImporter({
       setFiles(await searchDocs(q));
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "";
-      if (msg === "TOKEN_EXPIRED") { setConnected(false); setError("인증이 만료되었습니다. 다시 연결해 주세요."); }
-      else setError("파일 목록을 불러올 수 없습니다.");
+      if (msg === "TOKEN_EXPIRED") { setConnected(false); setError("연결 시간이 끝났어요. 다시 연결해 주세요."); }
+      else setError("파일 목록을 불러오지 못했어요.");
     } finally {
       setFilesLoading(false);
     }
@@ -162,7 +162,7 @@ export function DriveImporter({
       setConnected(true);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "알 수 없는 오류";
-      setError("연결 실패: " + msg);
+      setError("연결하지 못했어요: " + msg);
     } finally {
       setConnecting(false);
     }
@@ -183,13 +183,13 @@ export function DriveImporter({
       const text = await exportDocText(file.id);
       const parsed = parseChunks(text);
       if (parsed.length === 0) {
-        setError("추출된 단락이 없습니다. 텍스트가 포함된 Google Docs 문서를 선택해 주세요.");
+        setError("가져올 단락이 없어요. 글이 들어 있는 Google Docs 문서를 골라 주세요.");
       }
       setChunks(parsed);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "";
-      if (msg === "TOKEN_EXPIRED") { setConnected(false); setError("인증이 만료되었습니다."); }
-      else setError("문서를 읽을 수 없습니다: " + msg);
+      if (msg === "TOKEN_EXPIRED") { setConnected(false); setError("연결 시간이 끝났어요. 다시 연결해 주세요."); }
+      else setError("문서를 읽지 못했어요: " + msg);
     } finally {
       setDocLoading(false);
     }
@@ -276,8 +276,8 @@ export function DriveImporter({
                 <FolderOpen size={36} style={{ color: "var(--accent)" }} aria-hidden />
               </span>
               <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 400, lineHeight: "var(--lh-base)" }}>
-                구글 드라이브에 연결하면 지침서·절차서의 내용을
-                <br />문구 라이브러리로 바로 가져올 수 있습니다.
+                구글 드라이브에 연결하면 지침서·절차서의 글을
+                <br />문구 라이브러리로 바로 가져올 수 있어요.
               </p>
               {error && (
                 <div className="flex items-center gap-2" style={{ color: "var(--error)", fontSize: "var(--t-sm)" }}>
@@ -316,7 +316,7 @@ export function DriveImporter({
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="문서 이름 검색..."
+                    placeholder="문서 이름으로 찾기"
                     className="flex-1 bg-transparent outline-none text-text placeholder:text-text-subtle"
                     style={{ fontSize: "var(--t-sm)" }}
                   />
@@ -331,7 +331,7 @@ export function DriveImporter({
                     padding: "8px 18px",
                   }}
                 >
-                  검색
+                  찾기
                 </button>
               </form>
 
@@ -353,7 +353,7 @@ export function DriveImporter({
                   className="text-text-subtle text-center"
                   style={{ padding: "var(--s-10) 0", fontSize: "var(--t-sm)" }}
                 >
-                  Google Docs 문서가 없습니다
+                  Google Docs 문서가 없어요
                 </p>
               ) : (
                 <ul className="flex flex-col" style={{ gap: "var(--s-2)" }}>
@@ -402,13 +402,13 @@ export function DriveImporter({
               ) : (
                 <>
                   <p className="text-text-muted" style={{ fontSize: "var(--t-xs)" }}>
-                    {chunks.length}개 단락 추출됨
+                    단락 {chunks.length}개를 가져왔어요
                     {savedCount > 0 && (
                       <span className="ml-2 font-bold" style={{ color: "var(--success)" }}>
-                        ✓ {savedCount}개 저장됨
+                        ✓ {savedCount}개 저장했어요
                       </span>
                     )}
-                    <span className="ml-2">· [스니펫으로 저장]을 클릭해 문구 라이브러리에 추가하세요</span>
+                    <span className="ml-2">· [문구로 저장]을 누르면 문구 라이브러리에 들어가요</span>
                   </p>
                   {chunks.map((chunk, i) => (
                     <ChunkRow
@@ -435,7 +435,7 @@ export function DriveImporter({
             }}
           >
             <span className="text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
-              ✓ 드라이브 연결됨 · Google Docs 파일만 지원
+              ✓ 드라이브에 연결했어요 · Google Docs 파일만 가져올 수 있어요
             </span>
             <button
               onClick={() => {
