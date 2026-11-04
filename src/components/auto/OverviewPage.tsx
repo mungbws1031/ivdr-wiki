@@ -118,6 +118,11 @@ function CertRoutes({ routes, missing }: { routes: CertRoute[]; missing: { cert:
       <h2 id="cert-title" className="flex items-center gap-2 font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>
         <Award size={20} style={{ color: "var(--accent)" }} aria-hidden /> 받아야 할 인증 {routes.length}개
       </h2>
+      {routes.length > 1 && (
+        <Link to="/documents?tab=schemes" className="inline-flex items-center font-semibold" style={{ minHeight: 40, fontSize: "var(--t-sm)", color: "var(--info)" }}>
+          나라끼리 같이 쓰는 문서 보기 (벤다이어그램) →
+        </Link>
+      )}
       {routes.length === 0 ? (
         <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>
           아직 고른 인증이 없어요. <Link to={fieldHref("markets")} className="font-semibold underline decoration-dotted" style={{ color: "var(--danger)" }}>어떤 인증을 받아야 하는지 고르기</Link>
