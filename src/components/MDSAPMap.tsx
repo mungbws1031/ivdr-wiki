@@ -379,7 +379,7 @@ export function MDSAPMap() {
                 minHeight: 44,
               }}
             >
-              ← 인증 허브
+              ← 인증 홈
             </Link>
             <Link
               to="/iso13485"

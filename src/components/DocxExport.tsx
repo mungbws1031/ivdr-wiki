@@ -20,26 +20,26 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
   const safeName = doc.docTitle.replace(/[\\/:*?"<>|]/g, "_");
 
   const onFinished = async () => {
-    setState({ kind: "busy", msg: "완성본 생성 중…" });
+    setState({ kind: "busy", msg: "완성본 만드는 중…" });
     try {
       const { generateFinishedDocx, downloadBlob } = await loadDocx();
       const blob = await generateFinishedDocx(docWithDrafts(doc));
       downloadBlob(blob, `완성-${safeName}.docx`);
-      setState({ kind: "done", msg: "지금까지 작성한 내용으로 완성본 .docx를 내려받았습니다." });
+      setState({ kind: "done", msg: "지금까지 쓴 내용으로 완성본 .docx를 내려받았어요." });
     } catch (e) {
-      setState({ kind: "error", msg: `생성 실패: ${(e as Error).message}` });
+      setState({ kind: "error", msg: `만들지 못했어요: ${(e as Error).message}` });
     }
   };
 
   const onSample = async () => {
-    setState({ kind: "busy", msg: "샘플 생성 중…" });
+    setState({ kind: "busy", msg: "샘플 만드는 중…" });
     try {
       const { generateSampleDocx, downloadBlob } = await loadDocx();
       const blob = await generateSampleDocx(doc);
       downloadBlob(blob, `샘플-${safeName}.docx`);
-      setState({ kind: "done", msg: "샘플 .docx를 내려받았습니다. 표시자 자리에 서식/로고를 넣어 다시 올리세요." });
+      setState({ kind: "done", msg: "샘플 .docx를 내려받았어요. 채울 자리 표시는 남기고 서식·로고만 바꿔서 다시 올려 주세요." });
     } catch (e) {
-      setState({ kind: "error", msg: `샘플 생성 실패: ${(e as Error).message}` });
+      setState({ kind: "error", msg: `샘플을 만들지 못했어요: ${(e as Error).message}` });
     }
   };
 
@@ -47,7 +47,7 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.name.toLowerCase().endsWith(".docx")) {
-      setState({ kind: "error", msg: ".docx 파일만 지원합니다 (.doc는 안 됨)." });
+      setState({ kind: "error", msg: ".docx 파일만 올릴 수 있어요 (.doc는 안 돼요)." });
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
@@ -62,11 +62,11 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
         kind: "done",
         msg:
           mode === "filled"
-            ? "표시자를 찾아 내용을 채웠습니다. 완성본을 내려받았습니다."
-            : "표시자가 없어 문서 끝에 내용을 추가했습니다. 완성본을 내려받았습니다.",
+            ? "채울 자리 표시를 찾아 내용을 넣었어요. 완성본을 내려받았어요."
+            : "채울 자리 표시가 없어서 문서 끝에 내용을 붙였어요. 완성본을 내려받았어요.",
       });
     } catch (err) {
-      setState({ kind: "error", msg: `처리 실패: ${(err as Error).message}` });
+      setState({ kind: "error", msg: `처리하지 못했어요: ${(err as Error).message}` });
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
@@ -84,8 +84,8 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
         <h3 className="font-bold" style={{ fontSize: "var(--t-sm)" }}>워드(.docx)로 내보내기</h3>
       </div>
       <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", marginBottom: "var(--s-3)" }}>
-        지금까지 작성한 내용 그대로 완성본을 받거나, 우리 회사 서식에 맞춰 받을 수 있습니다.
-        처리는 브라우저에서만 이뤄집니다.
+        지금까지 쓴 내용 그대로 완성본을 받거나, 우리 회사 서식에 맞춰 받을 수 있어요.
+        파일은 이 브라우저 안에서만 처리돼요.
       </p>
 
       {/* 완성본 받기 — 서식 없이 바로, 실제 작성 내용 포함 */}
@@ -137,8 +137,8 @@ export function DocxExport({ doc }: { doc: DocTemplate }) {
           </label>
         </div>
         <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-2)", lineHeight: "var(--lh-base)" }}>
-          샘플을 받아 표시자({"{docTitle}"} 등)를 남긴 채 서식·로고만 편집한 뒤 다시 올리면 그 자리에 채워 넣습니다.
-          표시자가 없는 임의의 .docx를 올리면 문서 끝에 내용을 추가합니다.
+          샘플을 받아 채울 자리 표시({"{docTitle}"} 등)는 남기고 서식·로고만 고쳐서 다시 올리면, 그 자리에 내용을 넣어 드려요.
+          채울 자리 표시가 없는 .docx를 올리면 문서 끝에 내용을 붙여요.
         </p>
       </details>
 

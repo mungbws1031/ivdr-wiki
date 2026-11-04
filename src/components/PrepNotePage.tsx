@@ -511,7 +511,7 @@ export function PrepNotePage() {
             style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-4)" }}
           >
             <ArrowLeft size={16} aria-hidden />
-            인증 허브
+            인증 홈
           </Link>
           <div className="flex items-center gap-3" style={{ marginBottom: "var(--s-3)" }}>
             <CheckSquare size={28} style={{ color: "var(--info)" }} aria-hidden />

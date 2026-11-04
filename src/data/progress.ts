@@ -58,7 +58,7 @@ export function useProgress(certId: "ivdr" | "iso13485" | "ivdd" | "mdsap") {
 }
 
 export const STATUS_LABEL: Record<DocStatus, string> = {
-  not_started: "미작성",
+  not_started: "아직 안 씀",
   in_progress: "작성 중",
   done: "완료",
 };
