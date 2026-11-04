@@ -63,6 +63,7 @@ import { hasDraft, docWithDrafts, getCheck, setCheck, countChecks, useStoreVersi
 import type { CalcToolType } from "../data/documents";
 import { reviewerFindings } from "../lib/reviewerCheck";
 import { ReviewerPanel } from "./ReviewerPanel";
+import { DraftNotice } from "./auto/AutoUi";
 
 // 내장 계산기 한글 라벨 (헤더 배지·계산 영역에서 공용)
 const CALC_LABEL: Record<CalcToolType, string> = {
@@ -499,6 +500,7 @@ export function DocumentWorkspace() {
             <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: 2, maxWidth: 560, wordBreak: "keep-all" }}>
               {doc.purpose}
             </p>
+            <DraftNotice />
 
             {/* 작성 진척 — 실제 채운 섹션 수 (수동 상태 배지와 별개로 실시간 반영) */}
             <SectionProgress doc={doc} color={color} />

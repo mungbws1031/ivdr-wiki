@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { FieldLink } from "./AutoUi";
+import { FieldLink, WikiLink } from "./AutoUi";
+import { WithTerms } from "../Term";
 import { RULE_VERDICT_LABEL, type RuleRow, type RuleVerdict } from "../../lib/rules/justify";
 import { GSPR_CHAPTERS, GSPR_VERDICT_LABEL, gsprCounts, type GsprRow, type GsprVerdict } from "../../lib/gspr";
 
@@ -34,6 +35,7 @@ export function RuleTable({ rows, decided }: { rows: RuleRow[]; decided: string 
       <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
         규칙을 하나씩 순서대로 봐요. Rule 6은 Rule 1~5에 모두 해당하지 않을 때만 써요. 둘 이상 해당하면 더 높은 클래스를 따라요. 정해진 규칙: <b className="text-text">{decided}</b>
       </p>
+      <WikiLink slug="annex-viii">등급 판정 근거(분류 규칙)</WikiLink>
       <div className="overflow-x-auto" style={{ marginTop: "var(--s-4)" }}>
         <table className="w-full" style={{ borderCollapse: "collapse", fontSize: "var(--t-sm)", minWidth: 520 }}>
           <thead>
@@ -46,7 +48,7 @@ export function RuleTable({ rows, decided }: { rows: RuleRow[]; decided: string 
                 <td style={cell}><Pill label={RULE_VERDICT_LABEL[r.verdict]} tone={RULE_TONE[r.verdict]} /></td>
                 <td className="font-bold text-text" style={cell}>{r.cls ?? "—"}</td>
                 <td className="text-text" style={{ ...cell, lineHeight: "var(--lh-base)" }}>
-                  {r.reason}
+                  <WithTerms text={r.reason} />
                   {r.fields.length > 0 && (
                     <span className="block text-text-muted" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>
                       입력: {r.fields.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}
@@ -83,6 +85,7 @@ export function GsprTable({ rows, title }: { rows: GsprRow[]; title: (id: string
       <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
         제품 정보로 조항마다 적용되는지 먼저 정해 뒀어요. 어떻게 지키는지와 증거 위치는 <Link to="/doc/tech-doc-toc-gspr" className="underline">기술문서 GSPR 체크리스트</Link>에서 채워요.
       </p>
+      <WikiLink slug="gspr" />
       {([1, 2, 3] as const).map((ch) => (
         <div key={ch} style={{ marginTop: "var(--s-4)" }}>
           <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)", marginBottom: 4 }}>{GSPR_CHAPTERS[ch]}</h3>
@@ -99,7 +102,7 @@ export function GsprTable({ rows, title }: { rows: GsprRow[]; title: (id: string
                     <td className="text-text" style={cell}>{r.title}</td>
                     <td style={cell}><Pill label={GSPR_VERDICT_LABEL[r.verdict]} tone={GSPR_TONE[r.verdict]} /></td>
                     <td className="text-text-muted" style={{ ...cell, lineHeight: "var(--lh-base)" }}>
-                      {r.reason}
+                      <WithTerms text={r.reason} />
                       {r.verdict === "check" && r.fields.length > 0 && (
                         <span className="block" style={{ fontSize: "var(--t-xs)", marginTop: 2 }}>
                           입력: {r.fields.map((p, i) => <span key={p}>{i > 0 && ", "}<FieldLink path={p} /></span>)}

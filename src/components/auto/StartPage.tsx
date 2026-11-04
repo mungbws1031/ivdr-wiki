@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AlertTriangle, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner } from "./AutoUi";
+import { AssumptionBanner, WikiLink } from "./AutoUi";
 import { ConceptBox } from "./ConceptBox";
 import { ConceptSketch } from "./ConceptSketch";
 import { SpecField } from "./SpecField";
@@ -110,6 +110,7 @@ export function StartPage() {
           <AutoSteps current="/auto/start" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>제품 기획</h1>
+          <WikiLink slug="ce-marking" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             개발 전에 어떤 제품인지 한 줄만 적어 주세요. 필요한 인증, 걸리는 기간, 판매하려면 언제까지 무엇을 시작해야 하는지 계산하고 개념 스케치를 그려요. 여기서 정한 제품 정보로 문서가 개발과 함께 써져요.
           </p>

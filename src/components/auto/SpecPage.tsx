@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WikiLink } from "./AutoUi";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Check, ClipboardList, Download, Eye, FileText, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { PageHeader } from "../PageHeader";
@@ -105,6 +106,7 @@ export function SpecPage() {
             <Sparkles size={13} aria-hidden /> 자동작성 · 베타
           </span>
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)" }}>제품 정보</h1>
+          <WikiLink slug="intended-purpose" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
             여기에 한 번 적으면 등급 추천, 필요한 문서, 실험계획, 문서 초안이 모두 이 내용으로 만들어져요.
             모르는 칸은 비워 두세요. 앱이 추측하지 않고 "사람이 할 일"로 남겨 둬요.

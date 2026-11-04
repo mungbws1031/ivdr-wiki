@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CheckCircle2, ChevronDown, ChevronRight, CircleDashed, FileText, Trash2, XCircle } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner } from "./AutoUi";
+import { AssumptionBanner, WikiLink } from "./AutoUi";
 import { docTree } from "../../data/docTree";
 import { completion } from "../../data/spec/validate";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
@@ -208,6 +208,7 @@ export function ResultsPage() {
           <AutoSteps current="/auto/results" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험 결과 입력</h1>
+          <WikiLink slug="pep-per" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             실험을 마치면 건수·판정·원자료 번호를 적어 주세요. 민감도·특이도·신뢰하한은 적은 건수로 계산해요. 결과는 분석적 성능·임상적 성능·안정성·운송 문서의 결과 섹션에 자동으로 들어가요.
             값을 지어내지 않아요. 적지 않은 실험은 문서에 [실험 후 입력]으로 남아요.

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner } from "./AutoUi";
+import { AssumptionBanner, DraftNotice } from "./AutoUi";
 import { resolveDoc } from "../../data/documents";
 import { completion, specHash, unresolvedFields } from "../../data/spec/validate";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
@@ -92,6 +92,7 @@ export function FactoryPage() {
           <AutoSteps current="/auto/factory" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>IVDR 문서 공장</h1>
+          <DraftNotice />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             문서 한 장이 직원 한 명이에요. 층은 부서예요. 사람이 정하거나 적어 줘야 하는 문서는 대기줄에 서 있어요. 직원을 누르면 그 문서가 열리고, 층을 누르면 그 층의 할 일이 펼쳐져요.
           </p>

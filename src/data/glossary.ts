@@ -30,4 +30,15 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   LoD: { term: "LoD (검출 한계)", short: "검사가 안정적으로 검출할 수 있는 가장 낮은 농도." },
   "ISO 13485": { term: "ISO 13485", short: "의료기기 품질경영시스템 국제 표준.", slug: "iso-13485" },
   MDSAP: { term: "MDSAP", short: "여러 나라 규제기관이 함께 인정하는 품질경영시스템 단일 심사 프로그램.", slug: "mdsap" },
+  // 아래 풀이는 개념 위키(content/wiki/*.md)의 summary를 그대로 옮긴 것
+  "의도된 목적": { term: "의도된 목적 (Intended Purpose)", short: "제조자가 정한 기기의 용도예요. 분류·성능·라벨링의 출발점이에요.", slug: "intended-purpose" },
+  위험관리: { term: "위험관리 (ISO 14971)", short: "의료기기 위험관리 국제 표준이에요. GSPR·성능과 추적으로 연결돼요.", slug: "iso-14971" },
+  "ISO 14971": { term: "ISO 14971 — 위험관리", short: "의료기기 위험관리 국제 표준이에요. GSPR·성능과 추적으로 연결돼요.", slug: "iso-14971" },
+  FMEA: { term: "FMEA — 고장모드 영향분석", short: "부품·기능·공정의 잠재 고장모드와 영향을 평가해 위험의 우선순위를 정하는 ISO 14971 실행 도구예요.", slug: "fmea" },
+  사용적합성: { term: "사용적합성 (IEC 62366-1)", short: "사용적합성(휴먼팩터) 엔지니어링 표준이에요. 자가검사에는 꼭 필요해요.", slug: "iec-62366" },
+  "IEC 62366": { term: "IEC 62366-1 — 사용적합성", short: "사용적합성(휴먼팩터) 엔지니어링 표준이에요. 자가검사에는 꼭 필요해요.", slug: "iec-62366" },
+  "IEC 62304": { term: "IEC 62304 — 의료기기 소프트웨어 수명주기", short: "의료기기 소프트웨어의 개발·유지보수·위험관리 국제 표준이에요.", slug: "iec-62304" },
+  성능평가: { term: "성능평가 (Annex XIII)", short: "성능평가 3단(과학·분석·임상)과 PMPF의 절차예요.", slug: "annex-xiii" },
+  기술문서: { term: "기술문서 (Annex II)", short: "제품이 규정에 맞는다는 것을 보여 주는 기술문서의 필수 목차예요.", slug: "annex-ii" },
+  DHF: { term: "DHF — 설계 이력 파일", short: "설계 입력→출력→검증→확인(V&V) 전 과정의 산출물을 추적하는 파일이에요. ISO 13485의 '설계·개발 파일'에 해당해요.", slug: "dhf" },
 };

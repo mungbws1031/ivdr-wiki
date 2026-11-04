@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCircle2, Download, Info, Plus, Trash2 } from "lucid
 import { PageHeader } from "../PageHeader";
 import { StorageNote } from "../StorageNote";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner, fieldHref } from "./AutoUi";
+import { AssumptionBanner, fieldHref, DraftNotice, WikiLink } from "./AutoUi";
 import { DsoSection } from "./DsoSection";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { useResults } from "../../hooks/useResultsStore";
@@ -123,6 +123,8 @@ export function TracePage() {
           <AutoSteps current="/auto/trace" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>추적성 매트릭스</h1>
+          <DraftNotice />
+          <WikiLink slug="iso-14971" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             제품 스펙의 요구사항이 어떤 위험·검증 시험·증거(결과)로 이어지는지 ID로 연결합니다. 자동 연결은 <b className="text-text">후보</b>이고, 행마다 "검토함"을 눌러 확정하세요. 확정 뒤 요구사항이 바뀌면 재검토로 표시됩니다.
           </p>

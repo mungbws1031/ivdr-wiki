@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight, Check, Lightbulb } from "lucide-react";
 import { fieldByPath } from "../../data/spec/fields";
 import { getAt, setAt } from "../../data/spec/validate";
@@ -26,13 +26,26 @@ export function ConceptBox() {
   const questions = openQuestions(spec);
   const unapplied = text.trim() !== "" && text.trim() !== concept.text.trim();
 
-  const run = () => {
-    const hits = parseConcept(text);
+  // 홈의 "내 제품이 있어요"에서 넘어온 한 줄은 여기서 한 번 적용한다 (같은 문장이면 건너뜀)
+  const location = useLocation();
+  const navigate = useNavigate();
+  const handed = (location.state as { concept?: string } | null)?.concept?.trim();
+  useEffect(() => {
+    if (!handed) return;
+    navigate({ pathname: location.pathname, hash: location.hash }, { replace: true, state: null });
+    if (handed === getConcept().text.trim()) return;
+    setText(handed);
+    run(handed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handed]);
+
+  const run = (input: string = text) => {
+    const hits = parseConcept(input);
     const prevEst = getConcept().estimated;
     const r = reapplyConcept(getSpec(), hits, prevEst);
     if (r.applied.length || r.cleared.length) replaceSpec(r.spec);
     const est = [...prevEst.filter((p) => !r.cleared.includes(p)), ...r.applied.map((a) => a.path)];
-    saveConcept(text, est);
+    saveConcept(input, est);
     setConflicts(r.conflicts);
     const parts = [
       r.applied.length && `${r.applied.length}칸을 채웠어요`,
@@ -79,7 +92,7 @@ export function ConceptBox() {
       <div className="flex flex-wrap" style={{ gap: 8, marginTop: 10 }}>
         <textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="예: 집에서 쓰는 소변 호르몬 측정기, 스마트폰 연동"
           className="flex-1 rounded-[var(--r-md)] border text-text" style={{ minWidth: 240, padding: "10px 12px", fontSize: "var(--t-base)", borderColor: "var(--border-strong)", background: "var(--bg)", resize: "vertical" }} aria-label="제품 설명" />
-        <button type="button" onClick={run} disabled={!text.trim()} className="self-start rounded-[var(--r-md)] font-bold disabled:opacity-40" style={{ padding: "10px 18px", minHeight: 44, background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
+        <button type="button" onClick={() => run()} disabled={!text.trim()} className="self-start rounded-[var(--r-md)] font-bold disabled:opacity-40" style={{ padding: "10px 18px", minHeight: 44, background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
           이 내용으로 채우기
         </button>
       </div>

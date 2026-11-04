@@ -4,6 +4,27 @@ import { fieldByPath } from "../../data/spec/fields";
 import type { ApplStatus } from "../../lib/rules/applicability";
 import { setAssumeMode } from "../../hooks/useSpecStore";
 import { TAG_META, type Assumption, type EvidenceTag } from "../../lib/evidence";
+import { conceptBySlug } from "../../data/concepts";
+
+/** 자동 생성 문서 화면 공용 안내 — 초안이며 심사 제출 전 전문가 검토가 필요하다. */
+export function DraftNotice() {
+  return (
+    <p role="note" className="rounded-[var(--r-md)] text-text" style={{ background: "var(--warning-bg)", borderLeft: "4px solid var(--warning)", padding: "8px 12px", fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)", marginTop: "var(--s-3)" }}>
+      <b>초안이며 심사 제출 전 전문가 검토 필요</b> — 자동으로 채운 내용이에요. 빈칸·가정·추정이 남아 있을 수 있으니 RA 담당자가 확인한 뒤에 써 주세요.
+    </p>
+  );
+}
+
+/** 개념 위키 바로가기 — 위키에 없는 slug면 아무것도 그리지 않는다. */
+export function WikiLink({ slug, children }: { slug: string; children?: React.ReactNode }) {
+  const c = conceptBySlug(slug);
+  if (!c) return null;
+  return (
+    <Link to={`/wiki/${slug}`} className="inline-flex items-center font-semibold underline decoration-dotted underline-offset-2" style={{ color: "var(--info)", fontSize: "var(--t-sm)", minHeight: 40, gap: 4 }}>
+      📖 {children ?? c.term} — 위키에서 보기
+    </Link>
+  );
+}
 
 /** 자동작성 화면 공용 — 판정 상태 칩과 스펙 입력칸 링크. */
 export const STATUS_META: Record<ApplStatus, { label: string; fg: string; bg: string }> = {

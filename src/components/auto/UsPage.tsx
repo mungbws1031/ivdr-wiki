@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner, fieldHref } from "./AutoUi";
+import { AssumptionBanner, fieldHref, DraftNotice } from "./AutoUi";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { classifyUs, PATHWAY_LABEL, US_DOC_STATUS_LABEL, US_KNOWN, US_RULES_REVIEWED, usDocSet, type UsDocStatus, type UsStatus } from "../../lib/us";
 import { leafById } from "../../data/docTree";
@@ -39,6 +39,7 @@ export function UsPage() {
           <AutoSteps current="/auto/us" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>미국 FDA 인허가</h1>
+          <DraftNotice />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
             체외진단기기 등급(Class I~III), 인허가 경로(면제·510(k)·De Novo·PMA), CLIA 분류, 낼 자료를 정리해요. 최종 등급은 FDA 분류 데이터베이스의 제품 코드로 정해져요. 그래서 여기 추천은 제품 코드를 찾기 위한 출발점이에요.
           </p>
