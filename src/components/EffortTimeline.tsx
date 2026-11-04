@@ -26,7 +26,7 @@ export function EffortTimeline({ effort }: { effort: DocEffort }) {
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 36, height: 36, background: "var(--p4)" }}>
-          <Clock size={19} style={{ color: "#fff" }} aria-hidden />
+          <Clock size={19} style={{ color: "var(--text-on-color)" }} aria-hidden />
         </span>
         <h2 id="effort-heading" className="font-extrabold text-text" style={{ fontSize: "var(--t-lg)" }}>
           예상 소요 기간

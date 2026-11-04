@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   ListChecks,
@@ -113,8 +113,36 @@ function CompletionChecklist({ doc }: { doc: DocTemplate }) {
   const total = doc.checklist.length;
   const checked = countChecks(doc.id, total);
   const allDone = checked === total && total > 0;
+
+  // 체크리스트가 false → true로 완성되는 순간만 0.6초 펄스로 축하.
+  const wasAllDone = useRef(allDone);
+  const [celebrate, setCelebrate] = useState(false);
+  useEffect(() => {
+    if (!allDone) {
+      // 미완료 상태에서는 celebrate가 항상 false로 강제된다 (타이머가 끝나기 전에 체크를
+      // 해제해도 영구 축하 배경이 남지 않도록).
+      setCelebrate(false);
+      wasAllDone.current = allDone;
+      return;
+    }
+    if (!wasAllDone.current) {
+      setCelebrate(true);
+      const t = setTimeout(() => setCelebrate(false), 600);
+      wasAllDone.current = allDone;
+      return () => clearTimeout(t);
+    }
+    wasAllDone.current = allDone;
+  }, [allDone]);
+
   return (
-    <div className="rounded-[var(--r-md)]" style={{ border: "1px solid var(--border)", background: "var(--surface)" }}>
+    <div
+      className={`rounded-[var(--r-md)]${celebrate ? " ivdr-checklist-celebrate" : ""}`}
+      style={{
+        border: "1px solid var(--border)",
+        background: celebrate ? "var(--success-bg)" : "var(--surface)",
+        transition: "background .3s ease",
+      }}
+    >
       <div className="flex items-center gap-2" style={{ padding: "var(--s-3) var(--s-4)", borderBottom: "1px solid var(--border)" }}>
         <ListChecks size={15} style={{ color: allDone ? "var(--success)" : "var(--text-muted)" }} aria-hidden />
         <h3 className="font-bold text-text" style={{ fontSize: "var(--t-sm)" }}>완료 체크리스트</h3>

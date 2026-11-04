@@ -281,7 +281,7 @@ export function WriteHub() {
               style={{ width: 44, height: 44, background: "var(--accent)", flexShrink: 0 }}
               aria-hidden
             >
-              <PenLine size={24} style={{ color: "#fff" }} />
+              <PenLine size={24} style={{ color: "var(--text-on-color)" }} />
             </span>
             <h1
               className="font-extrabold text-text"

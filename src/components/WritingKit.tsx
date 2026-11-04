@@ -132,7 +132,7 @@ export function WritingKit({ doc, color, defaultOpen = true }: { doc: KitDoc; co
       <div style={{ background: `color-mix(in srgb, ${color} 9%, var(--surface))`, borderBottom: `1px solid color-mix(in srgb, ${color} 22%, transparent)` }}>
         <div className="flex flex-wrap items-center gap-3" style={{ padding: open ? "var(--s-4) var(--s-4) var(--s-3)" : "var(--s-3) var(--s-4)" }}>
           <span className="grid shrink-0 place-items-center rounded-[var(--r-md)]" style={{ width: 38, height: 38, background: color }} aria-hidden>
-            <PackageIcon size={20} style={{ color: "#fff" }} />
+            <PackageIcon size={20} style={{ color: "var(--text-on-color)" }} />
           </span>
           <div className="min-w-0" style={{ flex: "1 1 180px" }}>
             <div className="flex flex-wrap items-center gap-2">
