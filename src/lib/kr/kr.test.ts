@@ -10,11 +10,48 @@ const kr = (s: ProductSpec) => classifyKr(s);
 const base = () => setAt(exampleSpec(), "markets", ["EU", "KR"]);
 
 describe("classifyKr", () => {
-  it("예시 LH 일반인: 2등급 추천(잠정), 자가검사 허용 품목은 확인 필요, 인증 경로", () => {
+  it("예시 LH 일반인: 개인용임신내분비물질검사지(J14030.01) 2등급, 잠정, 인증 경로", () => {
     const r = kr(base());
     expect(r).toMatchObject({ grade: "2", status: "provisional" });
-    expect(r.selfTest.status).toBe("check");
+    expect(r.rule).toContain("J14030.01");
+    expect(r.selfTest.status).toBe("allowed");
     expect(r.route).toContain("인증");
+    expect(r.route).toContain("본질적으로 동등하지 않으면 허가");
+    expect(r.steps.join()).toContain("시행규칙 제5조");
+  });
+  it("혈당 자가검사: 별표 개인용혈당검사지 3등급, 허가 경로", () => {
+    const r = kr(setAt(base(), "analyte.preset", "glucose"));
+    expect(r.grade).toBe("3");
+    expect(r.route).toContain("허가");
+  });
+  it("콜레스테롤 자가검사: 개인용단백질·지질검사지 2등급", () => {
+    expect(kr(setAt(base(), "analyte.preset", "cholesterol")).grade).toBe("2");
+  });
+  it("HIV 자가검사는 별도 품목(4등급)이라 성매개감염 보류로 묶지 않는다", () => {
+    let s = setAt(base(), "analyte.preset", "other");
+    s = setAt(s, "analyte.name", "HIV 항체");
+    const st = kr(s).selfTest;
+    expect(st.status).toBe("allowed");
+    expect(st.reason).toContain("K05060.01");
+  });
+  it("마약류 대사체 자가검사는 2028-06-30 시행 전이라 확인 필요", () => {
+    let s = setAt(base(), "analyte.preset", "other");
+    s = setAt(s, "analyte.name", "마약류 대사체");
+    const st = kr(s).selfTest;
+    expect(st.status).toBe("check");
+    expect(st.reason).toContain("2028-06-30");
+    expect(kr(s).grade).toBe("2");
+  });
+  it("코로나19·인플루엔자 자가검사: 자가검사용호흡기바이러스면역검사시약(K05070.01) 3등급", () => {
+    let s = setAt(base(), "analyte.preset", "other");
+    s = setAt(s, "analyte.name", "SARS-CoV-2 항원");
+    s = setAt(s, "rule1to3Flags.transmissibleAgent", true);
+    const r = kr(s);
+    expect(r.selfTest.status).toBe("allowed");
+    expect(r.grade).toBe("3");
+    expect(r.rule).toContain("K05070.01");
+    s = setAt(s, "analyte.name", "인플루엔자 A/B 항원");
+    expect(kr(s).grade).toBe("3");
   });
   it("hCG 일반인: 2등급, 자가검사 허용", () => {
     let s = setAt(base(), "analyte.preset", "hCG");
@@ -62,6 +99,14 @@ describe("krDocSet", () => {
     const d = krDocSet(s, kr(s));
     expect(d.find((x) => x.id === "kr-clinical")!.status).toBe("required");
     expect(d.find((x) => x.id === "kr-import")!.status).toBe("required");
+  });
+  it("허가 고시 제25조 자료가 모두 있고, 2등급은 면제 가능 자료를 '확인 필요'로 둔다", () => {
+    const s = base();
+    const d = krDocSet(s, kr(s));
+    for (const id of ["kr-compare", "kr-origin", "kr-usage", "kr-analytical", "kr-clinical", "kr-qc", "kr-reference", "kr-handler", "kr-usability", "kr-stability"]) expect(d.find((x) => x.id === id)).toBeTruthy();
+    expect(d.find((x) => x.id === "kr-clinical")!.status).toBe("check");
+    expect(d.find((x) => x.id === "kr-clinical")!.reason).toContain("제26조");
+    expect(d.find((x) => x.id === "kr-usability")!.status).toBe("conditional");
   });
   it("국내 제조면 수입업 불필요, 재사용 문서는 모두 열 수 있다", () => {
     const s = base();

@@ -37,9 +37,9 @@ describe("Rule 4(a) 자가검사 예외 (1차 패널 T-01)", () => {
   it("기타 일반인은 여전히 C", () => {
     expect(classify(setAt(exampleSpec(), "analyte.preset", "other")).value).toBe("C");
   });
-  it("혈당: 한국 등급은 확인 필요(null), 미국 Class II 확인, 위해 문구", () => {
+  it("혈당: 한국 3등급(별표 개인용혈당검사지), 미국 Class II 확인, 위해 문구", () => {
     const s = setAt(setAt(exampleSpec(), "analyte.preset", "glucose"), "markets", ["EU", "KR", "US"]);
-    expect(classifyKr(s).grade).toBeNull();
+    expect(classifyKr(s).grade).toBe("3");
     expect(classifyKr(s).selfTest.status).toBe("allowed");
     expect(classifyUs(s)).toMatchObject({ deviceClass: "II", pathway: "check" });
     expect(hazards(s)[0].harm).toContain("저혈당");
