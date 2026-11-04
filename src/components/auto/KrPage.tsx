@@ -133,9 +133,14 @@ export function KrPage() {
           <section className="rounded-[var(--r-lg)] border bg-bg" style={card} aria-labelledby="kr-docs-title">
             <div className="flex flex-wrap items-baseline justify-between" style={{ gap: "var(--s-3)" }}>
               <h2 id="kr-docs-title" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>국내 제출 자료</h2>
-              <Link to="/doc/kr-technical-doc" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
-                한국 기술문서 초안 열기 <ChevronRight size={16} aria-hidden />
-              </Link>
+              <div className="flex flex-wrap" style={{ gap: "var(--s-2)" }}>
+                <Link to="/doc/kr-technical-doc" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold" style={{ padding: "8px 14px", background: "var(--accent)", color: "var(--text-on-color)", fontSize: "var(--t-sm)" }}>
+                  한국 기술문서 초안 열기 <ChevronRight size={16} aria-hidden />
+                </Link>
+                <Link to="/doc/kr-labelling" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold border" style={{ padding: "8px 14px", color: "var(--accent)", borderColor: "var(--accent)", fontSize: "var(--t-sm)" }}>
+                  한국 표시기재 초안 열기 <ChevronRight size={16} aria-hidden />
+                </Link>
+              </div>
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>IVDR용으로 쓴 문서 중 다시 쓸 수 있는 것도 함께 보여 드려요.</p>
             <ul style={{ marginTop: "var(--s-3)" }}>
