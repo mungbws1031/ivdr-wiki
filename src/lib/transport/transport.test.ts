@@ -27,12 +27,16 @@ describe("운송 — 예시 스펙 (EU, 택배+항공, 2–30℃, 비멸균, 위
     noAir.transport.modes = ["parcel"];
     expect(transportTestPlan(noAir).steps.find((x) => x.id === "low-pressure")?.required).toBe(false);
   });
-  it("PPWR 예외는 1차 포장에만 — 2·3차는 예외 아님", () => {
+  it("PPWR: 항목마다 조문 번호, 예외 범위만 해석 확인 표시", () => {
     const ppwr = packagingChecklist(s).find((g) => g.id === "ppwr")!;
+    for (const i of ppwr.items) expect(i.text).toMatch(/제\d+조/);
     const recyc = ppwr.items.find((i) => i.text.startsWith("재활용 가능 설계"))!;
-    expect(recyc.text).toContain("1차 포장만 예외");
-    expect(recyc.why).toContain("2·3차 포장은 예외가 아니에요");
-    expect(ppwr.items.every((i) => i.verify)).toBe(true);
+    expect(recyc.text).toContain("제6조제11항");
+    expect(recyc.why).toContain("1차 포장으로 한정하는 말이 없어요");
+    expect(recyc.verify).toBe(true);
+    expect(ppwr.items.find((i) => i.text.startsWith("포장 최소화"))!.text).toContain("2030-01-01");
+    expect(ppwr.items.find((i) => i.text.startsWith("빈 공간"))!.why).toContain("완충재");
+    expect(ppwr.items.find((i) => i.text.startsWith("포장 내 납"))!.verify).toBeFalsy();
   });
   it("시험 강도 수치를 지어내지 않는다", () => {
     const text = transportTestPlan(s).steps.map((x) => x.detail).join("\n");

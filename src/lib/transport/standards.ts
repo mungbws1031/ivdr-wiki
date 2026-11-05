@@ -2,7 +2,7 @@
 // src/lib/transport/standards.ts
 // 제품 정보 → 운송·포장에 적용되는 규정·규격과 그 이유.
 // 시험 강도(낙하 높이·진동 PSD 등)는 유료 원문 표에 있어 수치를 넣지 않는다.
-// PPWR 은 EUR-Lex 원문 대조 전이라 verify: true (2차 자료 기준).
+// PPWR 은 관보 원문과 대조함(2026-11-05). IVD 접촉 민감 포장 예외 범위가 해석에 달려 verify: true 를 남긴다.
 // =====================================================================
 
 import type { ProductSpec } from "../../data/spec/types";
@@ -22,7 +22,7 @@ export interface StandardItem {
 const it = (id: string, name: string, status: TStatus, reason: string, source: string, dependsOn: string[] = [], verify = false): StandardItem =>
   ({ id, name, status, reason, source, dependsOn, ...(verify ? { verify } : {}) });
 
-export const PPWR_SOURCES = "Regulation (EU) 2025/40 — 2차 자료: regsurance.com, mdlaw.eu, nsf.org, conai.org, eucerep.com";
+export const PPWR_SOURCES = "Regulation (EU) 2025/40 관보 원문 (OJ L, 2025.1.22 — 2026-11-05 대조)";
 
 export function applicableStandards(s: ProductSpec): StandardItem[] {
   const f = transportFacts(s);
@@ -84,7 +84,7 @@ export function applicableStandards(s: ProductSpec): StandardItem[] {
 
   out.push(
     f.eu === null ? it("ppwr", "PPWR — EU 포장·포장폐기물 규정", "unknown", "출시 시장·목적지가 정해지면 판정됩니다.", PPWR_SOURCES, ["markets", "transport.destinations"], true)
-    : f.eu ? it("ppwr", "PPWR — EU 포장·포장폐기물 규정", "required", "2026-08-12부터 적용됩니다. EU에 출시하는 모든 포장이 대상이며, IVD의 접촉 민감 1차 포장만 재활용·재생원료 의무에서 예외입니다. 키트 상자·출하 박스는 예외가 아닙니다. 세부 의무는 포장 설계 체크리스트를 보세요.", PPWR_SOURCES, ["markets", "transport.destinations"], true)
+    : f.eu ? it("ppwr", "PPWR — EU 포장·포장폐기물 규정", "required", "2026-08-12부터 적용됩니다(제71조). EU에 출시하는 포장이 대상이에요. IVD의 접촉 민감 포장은 재활용·재생원료 의무에서 예외(제6조제11항, 제7조제4항)인데, 원문에 1차 포장으로 한정하는 말이 없어 키트 상자·출하 박스까지 빠지는지는 해석이 갈려요. 세부 의무는 포장 설계 체크리스트를 보세요.", PPWR_SOURCES, ["markets", "transport.destinations"], true)
     : it("ppwr", "PPWR — EU 포장·포장폐기물 규정", "excluded", "EU 출시가 아닙니다. 목적지의 포장 규정을 따로 확인하세요.", PPWR_SOURCES, ["markets", "transport.destinations"], true),
   );
 
