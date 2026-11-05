@@ -127,10 +127,6 @@ export function DocumentTree() {
         {/* 작성 순서 (로드맵) */}
         {tab === "order" && (
           <div style={{ marginTop: "var(--s-6)" }}>
-            <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginBottom: "var(--s-6)" }}>
-              의존성을 반영한 권장 작성 순서입니다. 위에서 아래로 진행하며, 같은 단계 안의 문서는
-              병행 가능합니다. 칩을 누르면 작성 페이지로 이동합니다.
-            </p>
             <DocumentOrder />
           </div>
         )}
