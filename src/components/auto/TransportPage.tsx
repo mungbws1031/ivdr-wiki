@@ -22,9 +22,9 @@ function VerifyBadge() {
     <span
       className="inline-flex items-center rounded-full font-bold shrink-0"
       style={{ fontSize: 11, padding: "1px 8px", color: "var(--warning)", background: "var(--warning-bg)" }}
-      title="EUR-Lex 원문과 아직 맞춰 보지 않았어요 — 2차 자료 기준"
+      title="관보 원문만으로 해석이 갈려요 — 인증기관·규제 전문가와 확인하세요"
     >
-      원문 확인 필요
+      해석 확인 필요
     </span>
   );
 }
@@ -205,7 +205,7 @@ export function TransportPage() {
                     {g.id === "ppwr" && (
                       <p className="flex text-text-subtle" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)", marginTop: "var(--s-3)", gap: 6 }}>
                         <Info size={14} className="shrink-0" style={{ marginTop: 2 }} aria-hidden />
-                        <span>출처: {PPWR_SOURCES}. 이 내용은 아직 EUR-Lex 원문과 맞춰 보지 않았어요. 제출하기 전에 관보(OJ) 원문과 시행법으로 확인해 주세요.</span>
+                        <span>출처: {PPWR_SOURCES}. 조문은 관보 원문과 맞춰 봤어요. 다만 날짜 상당수가 아직 나오지 않은 위임법·시행법에 따라 늦춰질 수 있고, '확인 필요' 표시는 원문만으로 해석이 갈리는 항목이에요. 제출하기 전에 시행법이 나왔는지 확인해 주세요.</span>
                       </p>
                     )}
                   </div>

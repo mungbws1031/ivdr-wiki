@@ -1461,7 +1461,7 @@ export const documents: DocTemplate[] = [
       {
         heading: "3. 근거 · 참조",
         guidance: "관련 조항·표준·연결 문서를 적어 주세요.",
-        placeholder: "IVDR Annex I §7 — 운송·보관 중 성능 유지\nEN ISO 23640 — IVD 시약 안정성 평가\nISTA 3A — 택배 단일 포장 시험\nISO 13485 7.5.11 — 제품 보존\nRegulation (EU) 2025/40 (PPWR) — 포장 요건 (원문 확인 필요)\n연결 문서: 안정성 시험, 포장 사양, 취급·보관·배송 관리",
+        placeholder: "IVDR Annex I §7 — 운송·보관 중 성능 유지\nEN ISO 23640 — IVD 시약 안정성 평가\nISTA 3A — 택배 단일 포장 시험\nISO 13485 7.5.11 — 제품 보존\nRegulation (EU) 2025/40 (PPWR) — 포장 요건 (제5·6·7·10·12·15·24조)\n연결 문서: 안정성 시험, 포장 사양, 취급·보관·배송 관리",
       },
       {
         heading: "4. 검토 · 승인",
@@ -1515,7 +1515,7 @@ export const documents: DocTemplate[] = [
       "항공 구간이 있으면 저압 단계를 넣었는가",
       "판정 기준을 시험 전에 확정했는가",
       "운송 후 성능을 비운송 대조와 비교했는가",
-      "EU 출시면 PPWR 의무(재활용·빈 공간·중금속)와 1차 포장 예외 근거를 정리했는가",
+      "EU 출시면 PPWR 의무(중금속·재활용·빈 공간·라벨)와 IVD 접촉 민감 포장 예외를 쓰는 근거를 정리했는가",
     ],
     relatedConceptSlugs: ["gspr", "ifu"],
     refs: ["IVDR Annex I §7", "EN ISO 23640", "ISTA 3A", "ISTA 7E", "ASTM D4169", "ISO 13485 7.5.11", "Regulation (EU) 2025/40 (PPWR)"],
