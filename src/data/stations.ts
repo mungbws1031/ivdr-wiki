@@ -369,11 +369,12 @@ export const stationKnowledgeFor = (id: number): string[] =>
   stationKnowledge[id] ?? [];
 
 // ---------------------------------------------------------------------
-// 전환 기한 (TransitionTimeline) — Regulation (EU) 2024/1860
+// 전환 기한 (TransitionTimeline) — IVDR Art.110(3a)~(3c), Regulation (EU) 2024/1860로 개정
+// EUR-Lex 원문 대조: 2026-11-05 (CELEX 32024R1860, 통합본 02017R0746-20250110)
 // ---------------------------------------------------------------------
 export interface TransitionMilestone {
   cls: string; // "Class D"
-  deadline: string; // "2027.12"
+  deadline: string; // "2027.12.31"
   detail?: string; // 부가 마일스톤
   tone: TagTone;
 }
@@ -386,28 +387,30 @@ export const transitions: TransitionMilestone[] = [
     tone: "danger",
   },
   {
-    cls: "Class D",
-    deadline: "2027.12",
-    detail: "NB 신청 2025.5.26 · 서면계약 2025.9.26",
+    cls: "Class D · IVDD NB 인증서가 있는 기기",
+    deadline: "2027.12.31",
+    detail: "NB 신청 2025.5.26 · 서면계약 2025.9.26 — Art.110(3a)·(3b)(a)",
     tone: "warning",
   },
   {
-    cls: "Class C",
-    deadline: "2028.12",
-    detail: "NB 신청 2026.5.26 · 서면계약 2026.9.26",
+    cls: "Class C (IVDD 자가선언)",
+    deadline: "2028.12.31",
+    detail: "NB 신청 2026.5.26 · 서면계약 2026.9.26 — Art.110(3b)(b)",
     tone: "warning",
   },
   {
-    cls: "Class B · A멸균",
-    deadline: "2029.12",
-    detail: "NB 신청 2027.5.26 · 서면계약 2027.9.26",
+    cls: "Class B · A멸균 (IVDD 자가선언)",
+    deadline: "2029.12.31",
+    detail: "NB 신청 2027.5.26 · 서면계약 2027.9.26 — Art.110(3b)(c)",
     tone: "info",
   },
 ];
 
-/** 전환 기한 연장은 자동이 아니다 — 아래 조건을 모두 충족해야 한다. */
+/** 전환 기한 연장은 자동이 아니다 — Art.110(3c) 조건을 모두 충족해야 한다. */
 export const transitionConditions: string[] = [
   "IVDD 적합성을 계속 유지할 것",
+  "설계·사용 목적에 중대한 변경이 없을 것",
+  "환자·사용자에게 받아들일 수 없는 위험이 없을 것",
   "2025.5.26까지 Art.10(8) QMS를 갖출 것",
   "클래스별 마일스톤(NB 신청·서면계약)을 기한 내 충족할 것",
 ];
