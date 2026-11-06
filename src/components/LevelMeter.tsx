@@ -48,11 +48,30 @@ export function LevelMeter({
           />
         ))}
       </span>
-      {showLabel && (
+      {showLabel ? (
         <span className="font-semibold" style={{ fontSize: "var(--t-xs)", color: "var(--text-muted)" }}>
           {isImp ? "중요도" : "난이도"} {label}
         </span>
+      ) : (
+        <span className="sr-only">{isImp ? "중요도" : "난이도"} {label}</span>
       )}
     </span>
+  );
+}
+
+/** 라벨 없이 아이콘만 보여 주는 목록 위에 다는 한 줄 범례. */
+export function LevelLegend({ difficulty = true }: { difficulty?: boolean }) {
+  return (
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-text-subtle" style={{ fontSize: "var(--t-xs)" }}>
+      <span className="inline-flex items-center gap-1">
+        <LevelMeter kind="importance" level="high" showLabel={false} /> 중요도
+      </span>
+      {difficulty && (
+        <span className="inline-flex items-center gap-1">
+          <LevelMeter kind="difficulty" level="high" showLabel={false} /> 난이도
+        </span>
+      )}
+      <span>— 점이 많을수록 높아요 (점 3개 = 필수·어려움)</span>
+    </p>
   );
 }

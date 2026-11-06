@@ -9,7 +9,7 @@ import { getIcon } from "../lib/icons";
 import { renderRich } from "../lib/richText";
 import { StatusChip } from "./StatusChip";
 import { ConceptChip } from "./ConceptChip";
-import { LevelMeter } from "./LevelMeter";
+import { LevelMeter, LevelLegend } from "./LevelMeter";
 
 /**
  * 정거장 상세 — 본문은 여기서만 (개요 오염 X).
@@ -131,6 +131,9 @@ export function StationDetail({
                   >
                     {docsForStation.length}
                   </span>
+                </div>
+                <div style={{ padding: "0 12px 8px" }}>
+                  <LevelLegend difficulty={false} />
                 </div>
                 <ul>
                   {docsForStation.map((l) => {

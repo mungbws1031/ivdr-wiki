@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Library, ChevronRight, Search, X } from "lucide-react";
+import { Library, ChevronRight, Search, X, FileText } from "lucide-react";
 import {
   concepts,
   categoryLabel,
   type ConceptCategory,
 } from "../data/concepts";
+import { searchDocs } from "../lib/docSearch";
 import { PageHeader } from "./PageHeader";
 
 const ORDER: ConceptCategory[] = ["concept", "annex", "standard", "actor", "deliverable"];
@@ -43,6 +44,7 @@ export function WikiIndex() {
   })).filter((g) => g.items.length > 0);
 
   const hasFilter = query.trim() !== "" || activeCat !== null;
+  const docHits = useMemo(() => searchDocs(query), [query]);
 
   return (
     <div className="min-h-screen bg-bg">
@@ -78,8 +80,8 @@ export function WikiIndex() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="용어 검색 (예: GSPR, PMS, UDI...)"
-            aria-label="개념 검색"
+            placeholder="용어·문서 검색 (예: GSPR, PMS, 포장, 운송...)"
+            aria-label="개념과 문서 검색"
             className="w-full rounded-[var(--r-md)] border bg-bg text-text"
             style={{
               borderColor: "var(--border-strong)",
@@ -142,11 +144,39 @@ export function WikiIndex() {
 
         {hasFilter && (
           <p className="text-text-subtle" style={{ fontSize: "var(--t-sm)", marginTop: "var(--s-3)" }}>
-            검색 결과 {filtered.length}개
+            검색 결과 개념 {filtered.length}개{query.trim() ? ` · 문서 ${docHits.length}개` : ""}
           </p>
         )}
 
-        {filtered.length === 0 ? (
+        {docHits.length > 0 && (
+          <section style={{ marginTop: "var(--s-6)" }}>
+            <h2
+              className="font-bold text-text-muted"
+              style={{ fontSize: "var(--t-sm)", letterSpacing: "var(--ls-label)", marginBottom: "var(--s-3)" }}
+            >
+              문서 템플릿에서 찾았어요
+            </h2>
+            <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+              {docHits.map((d) => (
+                <Link
+                  key={d.id}
+                  to={`/doc/${d.id}`}
+                  className="group flex items-start gap-3 rounded-[var(--r-md)] border bg-bg transition-[transform] hover:-translate-y-0.5"
+                  style={{ borderColor: "var(--border)", boxShadow: "var(--shadow-card)", padding: "var(--s-4)" }}
+                >
+                  <FileText size={18} className="mt-0.5 shrink-0" style={{ color: "var(--info)" }} aria-hidden />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-bold text-text" style={{ fontSize: "var(--t-base)" }}>{d.title}</h3>
+                    <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>{d.group}</p>
+                  </div>
+                  <ChevronRight size={18} className="mt-0.5 shrink-0" style={{ color: "var(--text-subtle)" }} aria-hidden />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {filtered.length === 0 && docHits.length > 0 ? null : filtered.length === 0 ? (
           <div
             className="rounded-[var(--r-md)] border text-center"
             style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-8)", marginTop: "var(--s-6)" }}

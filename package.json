@@ -6,7 +6,7 @@
   "description": "IVDR 여정 위키 — 한눈에 보는 IVDR 인증 가이드",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/spa-routes.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run"

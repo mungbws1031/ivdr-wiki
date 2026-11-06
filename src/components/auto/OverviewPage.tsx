@@ -322,6 +322,11 @@ export function OverviewPage() {
               <p className="text-text-muted" style={{ fontSize: "var(--t-sm)", margin: "4px 0 var(--s-4)" }}>
                 누르면 제품 정보·분류·실험계획·결과가 들어간 초안이 열려요. 그 자리에서 고쳐 쓰고 Word로 내보낼 수 있어요.
               </p>
+              <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", margin: "0 0 var(--s-4)", lineHeight: "var(--lh-base)" }}>
+                <b className="text-text-muted">근거 확정 %</b> = 문서 속 값 중 내가 입력했거나 규칙으로 정해진 값의 비율이에요.
+                <span style={{ color: "var(--warning)" }}> 가정</span>은 임시로 넣어 둔 값,
+                <span style={{ color: "var(--danger)" }}> 누락</span>은 아직 빈 값이에요. 숫자가 낮다고 문제인 게 아니라 "더 채울 곳이 남았다"는 뜻이에요.
+              </p>
               <div className="rounded-[var(--r-md)]" style={{ padding: "12px 14px", marginBottom: "var(--s-4)", background: "var(--surface)", border: "1px solid var(--border)" }}>
                 <p className="font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 6 }}>P1 초안 — 기기 설명서 · 라벨 · 사용설명서 · 위험관리 계획</p>
                 <PipelineExportButton />
