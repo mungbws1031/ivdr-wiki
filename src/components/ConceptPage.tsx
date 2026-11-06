@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { BookOpen, BookMarked, MapPin } from "lucide-react";
+import { BookOpen, BookMarked, MapPin, Sparkles } from "lucide-react";
 import { conceptBySlug, categoryLabel } from "../data/concepts";
 import { stations, phaseById } from "../data/stations";
 import { getIcon } from "../lib/icons";
@@ -66,6 +66,20 @@ export function ConceptPage() {
           {c.summary}
         </p>
 
+        {/* 그래서 우리 팀이 할 일 — 관련 정거장의 '지금 할 일'을 먼저 */}
+        {relatedStations.length > 0 && (
+          <section className="rounded-[var(--r-md)]" style={{ background: "var(--accent-weak)", borderLeft: "4px solid var(--accent)", padding: "var(--s-4)", marginTop: "var(--s-6)" }}>
+            <h2 className="font-bold text-text" style={{ fontSize: "var(--t-base)", marginBottom: "var(--s-2)" }}>그래서 우리 팀이 할 일</h2>
+            <ul className="flex flex-col" style={{ gap: 6 }}>
+              {relatedStations.map((s) => (
+                <li key={s.id} className="text-text" style={{ fontSize: "var(--t-sm)", lineHeight: "var(--lh-base)" }}>
+                  <Link to={`/ivdr/station/${s.id}`} className="font-semibold underline decoration-dotted underline-offset-2">정거장 {s.id} · {s.title}</Link> — {s.todo}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {/* 본문 */}
         <div style={{ marginTop: "var(--s-6)" }}>
           {c.body.map((p, i) => (
@@ -129,13 +143,13 @@ export function ConceptPage() {
           </section>
         )}
 
-        {/* 조항 */}
-        <section style={{ marginTop: "var(--s-8)" }}>
-          <div className="flex items-center gap-2 text-text-muted" style={{ marginBottom: "var(--s-2)" }}>
+        {/* 조항 — 근거는 접어 둔다 */}
+        <details style={{ marginTop: "var(--s-8)" }}>
+          <summary className="flex items-center gap-2 text-text-muted cursor-pointer" style={{ minHeight: 40 }}>
             <BookMarked size={16} aria-hidden />
-            <h2 className="font-semibold" style={{ fontSize: "var(--t-sm)" }}>관련 조항</h2>
-          </div>
-          <ul className="flex flex-wrap gap-2">
+            <span className="font-semibold" style={{ fontSize: "var(--t-sm)" }}>근거 조문 보기 ({c.refs.length})</span>
+          </summary>
+          <ul className="flex flex-wrap gap-2" style={{ marginTop: "var(--s-2)" }}>
             {c.refs.map((r) => (
               <li
                 key={r}
@@ -146,7 +160,17 @@ export function ConceptPage() {
               </li>
             ))}
           </ul>
-        </section>
+        </details>
+
+        {/* 위키 → 도구 */}
+        <Link
+          to="/auto/start"
+          className="inline-flex items-center gap-2 rounded-[var(--r-md)] font-bold text-text-on-color"
+          style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "10px 18px", minHeight: 44, marginTop: "var(--s-8)" }}
+        >
+          <Sparkles size={16} aria-hidden />
+          내 제품에 적용해 보기 →
+        </Link>
       </main>
     </div>
   );

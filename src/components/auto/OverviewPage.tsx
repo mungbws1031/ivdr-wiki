@@ -4,7 +4,7 @@ import { ArrowRight, Award, Building2, CheckCircle2, ClipboardList, FileText, Fl
 import { PageHeader } from "../PageHeader";
 import { WithTerms } from "../Term";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner, EvidenceBar, fieldHref, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, EvidenceBar, fieldHref, STATUS_META, DraftNotice } from "./AutoUi";
 import { allLeaves } from "../../data/docTree";
 import { resolveDoc } from "../../data/documents";
 import { completion, specHash, unresolvedFields } from "../../data/spec/validate";
@@ -223,6 +223,7 @@ export function OverviewPage() {
           <AutoSteps current="/auto/overview" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>자동작성 결과</h1>
+          <DraftNotice />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             {spec.identity.productName ? <b className="text-text">{spec.identity.productName}</b> : "입력한 제품"}의 제품 정보로 만든 결과예요. 제품 정보를 고치면 이 화면과 모든 문서가 바로 바뀌어요. 카드를 누르면 자세히 볼 수 있어요.
           </p>

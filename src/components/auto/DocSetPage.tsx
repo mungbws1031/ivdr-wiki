@@ -5,7 +5,7 @@ import { PageHeader } from "../PageHeader";
 import { WithTerms } from "../Term";
 import { AutoSteps } from "./AutoSteps";
 import { docTree } from "../../data/docTree";
-import { AssumptionBanner, Chip, FieldLink, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, Chip, FieldLink, STATUS_META, DraftNotice, WikiLink } from "./AutoUi";
 import { completion, specHash } from "../../data/spec/validate";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { clearClassConfirm, confirmClass, useClassConfirm } from "../../hooks/useClassConfirm";
@@ -76,6 +76,8 @@ export function DocSetPage() {
           <AutoSteps current="/auto/docs" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>분류·문서 세트</h1>
+          <DraftNotice />
+          <WikiLink slug="annex-ii" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
             제품 정보로 IVDR 클래스를 추천해요. 문서 {set.length}개가 이 제품에 필요한지도 이유와 함께 알려 줘요.
             어디까지나 추천이에요. 클래스는 담당자가 확정해요.

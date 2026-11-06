@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, ChevronRight, ClipboardList, Clock, FileText, Sigma } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner, Chip, FieldLink, fieldHref, STATUS_META } from "./AutoUi";
+import { AssumptionBanner, Chip, FieldLink, fieldHref, STATUS_META, DraftNotice, WikiLink } from "./AutoUi";
 import { docTree } from "../../data/docTree";
 import { completion } from "../../data/spec/validate";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
@@ -137,6 +137,8 @@ export function PlanPage() {
           <AutoSteps current="/auto/plan" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>실험계획</h1>
+          <DraftNotice />
+          <WikiLink slug="annex-xiii" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 760 }}>
             제품 정보를 보고 어떤 실험이 필요한지 알려 드려요. 실험마다 설계·시료·판정 기준을 정리하고, 사람이 직접 할 일도 모아 둬요.
             표본수처럼 계산할 수 있는 값은 계산해요. 규격 원문에 있는 값과 합격 수치는 지어내지 않고 <mark className="rounded-[4px]" style={{ background: "var(--warning-bg)", color: "var(--warning)", padding: "0 3px", fontWeight: 600 }}>[표시]</mark>로 비워 둬요.

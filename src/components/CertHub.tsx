@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
-import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, MapPinned, FileEdit, Download, HelpCircle, ArrowRight, Library, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Compass, CheckCircle, Layers, Clock, Activity, Globe, CheckSquare, CalendarDays, PenLine, HelpCircle, ArrowRight, Library, Sparkles } from "lucide-react";
 import { useProgress } from "../data/progress";
 import { allLeaves } from "../data/docTree";
 import { sharedDocIds } from "../data/schemes";
@@ -22,6 +23,8 @@ export function CertHub() {
   const isoCount = isoProgress.countByStatus(isoDocIds);
   // 자동작성에 이미 입력한 스펙이 있으면 "이어서" 링크를 보여 준다
   const specFilled = completion(getSpec()).filled;
+  const navigate = useNavigate();
+  const [concept, setConcept] = useState("");
 
   return (
     <div className="min-h-screen bg-bg">
@@ -29,96 +32,98 @@ export function CertHub() {
         className="mx-auto"
         style={{ maxWidth: "var(--max-w)", padding: "var(--s-12) var(--margin) var(--s-16)" }}
       >
-        {/* Hero */}
+        {/* Hero — 정체성 한 문장 */}
         <header style={{ marginBottom: "var(--s-8)", textAlign: "center" }}>
           <span
             className="inline-flex items-center gap-2 rounded-full font-semibold"
             style={{ background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)", padding: "4px 12px" }}
           >
             <Layers size={16} strokeWidth={2.5} aria-hidden />
-            의료기기 인증 문서 작성 플랫폼
+            IVDR 인증 허브
           </span>
           <h1
             className="font-extrabold text-text"
             style={{ fontSize: "var(--t-3xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-4)" }}
           >
-            의료기기 인증 문서, 어디서 시작할까요?
+            IVDR, 어디서 시작할까요?
           </h1>
           <p
             className="text-text-muted"
             style={{ fontSize: "var(--t-lg)", marginTop: "var(--s-4)", maxWidth: 680, margin: "var(--s-4) auto 0" }}
           >
-            새 제품이면 한 줄 설명으로 시작하고, 이미 진행 중이면 인증별 여정에서 이어 써 주세요.
+            IVDR을 처음 접해도, 내 제품 한 줄 설명에서 시작해 인증 계획과 문서 초안까지 따라가며 배워요.
           </p>
         </header>
 
-        {/* 두 갈래 입구 — 새 제품(자동작성) / 인증별 여정 */}
-        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "var(--s-4)", marginBottom: "40px" }}>
-          <div className="rounded-[var(--r-lg)] border flex flex-col" style={{ borderColor: "var(--accent)", background: "var(--accent-weak)", padding: "var(--s-6)", gap: "var(--s-3)" }}>
-            <Link to="/auto/start" className="flex items-start" style={{ gap: "var(--s-4)" }}>
+        {/* 입구는 둘만 — 처음이에요 / 내 제품이 있어요 */}
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: "var(--s-4)", marginBottom: "var(--s-6)" }}>
+          <section aria-labelledby="entry-new" className="rounded-[var(--r-lg)] border flex flex-col" style={{ borderColor: "var(--border-strong)", background: "var(--bg)", padding: "var(--s-6)", gap: "var(--s-3)" }}>
+            <div className="flex items-start" style={{ gap: "var(--s-4)" }}>
+              <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 48, height: 48, background: "var(--surface)" }}>
+                <Compass size={22} className="text-text" aria-hidden />
+              </span>
+              <span className="flex flex-col" style={{ gap: 4 }}>
+                <h2 id="entry-new" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>IVDR이 처음이에요</h2>
+                <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>인증이 무엇이고 어떤 순서로 가는지부터 봐요. 단계마다 우리 팀이 할 일이 먼저 나와요.</span>
+              </span>
+            </div>
+            <div className="flex flex-wrap" style={{ gap: "var(--s-2)", marginLeft: 64 }}>
+              <Link to="/ivdr" className="inline-flex items-center gap-1 rounded-[var(--r-md)] font-bold text-text-on-color" style={{ background: "var(--text)", fontSize: "var(--t-sm)", padding: "10px 16px", minHeight: 44 }}>
+                IVDR 여정 지도 <ArrowRight size={15} aria-hidden />
+              </Link>
+              <Link to="/wiki" className="inline-flex items-center gap-1 rounded-[var(--r-md)] border font-bold text-text" style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "10px 16px", minHeight: 44 }}>
+                <Library size={15} aria-hidden /> 개념 위키
+              </Link>
+            </div>
+          </section>
+
+          <section aria-labelledby="entry-product" className="rounded-[var(--r-lg)] border flex flex-col" style={{ borderColor: "var(--accent)", background: "var(--accent-weak)", padding: "var(--s-6)", gap: "var(--s-3)" }}>
+            <div className="flex items-start" style={{ gap: "var(--s-4)" }}>
               <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 48, height: 48, background: "var(--bg)" }}>
                 <Sparkles size={22} style={{ color: "var(--accent)" }} aria-hidden />
               </span>
               <span className="flex flex-col" style={{ gap: 4 }}>
-                <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>새 제품 — 한 줄 설명으로 시작</span>
-                <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>필요한 인증·기간·일정과 문서 초안까지 자동으로 만들어요.</span>
-                <span className="inline-flex items-center gap-1 font-bold" style={{ color: "var(--accent)", fontSize: "var(--t-sm)", marginTop: 4 }}>시작하기 <ArrowRight size={15} aria-hidden /></span>
+                <h2 id="entry-product" className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>내 제품이 있어요</h2>
+                <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>제품을 한 줄로 적으면 등급 → 일정 → 실험계획 → 문서 초안 → 추적성으로 이어져요.</span>
               </span>
-            </Link>
+            </div>
+            <form
+              className="flex flex-col sm:flex-row"
+              style={{ gap: "var(--s-2)" }}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const t = concept.trim();
+                navigate("/auto/start", t ? { state: { concept: t } } : undefined);
+              }}
+            >
+              <label htmlFor="home-concept" className="sr-only">제품 한 줄 설명</label>
+              <input
+                id="home-concept"
+                value={concept}
+                onChange={(e) => setConcept(e.target.value)}
+                placeholder="예: 집에서 쓰는 소변 LH 배란 스틱, 유럽·한국 출시"
+                className="min-w-0 flex-1 rounded-[var(--r-md)] border bg-bg text-text"
+                style={{ borderColor: "var(--border-strong)", fontSize: "var(--t-sm)", padding: "10px 12px", minHeight: 44 }}
+              />
+              <button type="submit" className="inline-flex items-center justify-center gap-1 rounded-[var(--r-md)] font-bold text-text-on-color shrink-0" style={{ background: "var(--accent)", fontSize: "var(--t-sm)", padding: "10px 18px", minHeight: 44 }}>
+                시작하기 <ArrowRight size={15} aria-hidden />
+              </button>
+            </form>
             {specFilled > 0 && (
-              <Link to="/auto/overview" className="self-start font-semibold underline decoration-dotted text-text" style={{ fontSize: "var(--t-sm)", marginLeft: 64 }}>
+              <Link to="/auto/overview" className="self-start font-semibold underline decoration-dotted text-text" style={{ fontSize: "var(--t-sm)" }}>
                 이어서: 결과 한눈에 (제품 정보 {specFilled}칸 채움) →
               </Link>
             )}
-          </div>
-          <a href="#certs" onClick={(e) => { e.preventDefault(); document.getElementById("certs")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
-            className="rounded-[var(--r-lg)] border flex items-start" style={{ borderColor: "var(--border-strong)", background: "var(--bg)", padding: "var(--s-6)", gap: "var(--s-4)" }}>
-            <span className="inline-flex items-center justify-center rounded-full shrink-0" style={{ width: 48, height: 48, background: "var(--surface)" }}>
-              <MapPinned size={22} className="text-text" aria-hidden />
-            </span>
-            <span className="flex flex-col" style={{ gap: 4 }}>
-              <span className="font-extrabold text-text" style={{ fontSize: "var(--t-xl)" }}>인증별 여정에서 문서 쓰기</span>
-              <span className="text-text-muted" style={{ fontSize: "var(--t-sm)" }}>IVDR·ISO 13485·MDSAP 정거장별로 문서를 골라 이어 써요.</span>
-              <span className="inline-flex items-center gap-1 font-bold text-text" style={{ fontSize: "var(--t-sm)", marginTop: 4 }}>인증 고르기 <ArrowRight size={15} aria-hidden /></span>
-            </span>
-          </a>
+          </section>
         </div>
-        <div style={{ marginBottom: "var(--s-6)" }}><StorageNote /></div>
+        <div style={{ marginBottom: "var(--s-8)" }}><StorageNote /></div>
 
-        {/* 처음이신가요? — 3단계 오리엔테이션 (규제가 처음이어도 30초면 감 잡을 수 있게) */}
-        <section
-          className="rounded-[var(--r-lg)] border"
-          style={{ borderColor: "var(--border)", background: "var(--surface)", padding: "var(--s-6) var(--s-8)", marginBottom: "var(--s-6)" }}
-        >
-          <div className="font-bold text-text-muted" style={{ fontSize: "var(--t-xs)", letterSpacing: "var(--ls-label)", marginBottom: "var(--s-4)", textTransform: "uppercase" }}>
-            처음이신가요? 이렇게 쓰면 돼요
-          </div>
-          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--s-5)" }}>
-            {([
-              { Icon: MapPinned, step: "1", title: "인증 선택 & 여정 확인", desc: "아래에서 내 상황에 맞는 인증을 고르면, 인증을 받기까지의 전체 과정(여정)과 지금 할 일이 지도로 보여요." },
-              { Icon: FileEdit, step: "2", title: "단계(정거장)별 문서 작성", desc: "단계마다 필요한 문서를 열어 안내를 보며 예시 틀을 채워요. 자동으로 저장돼요." },
-              { Icon: Download, step: "3", title: "완성본 내보내기", desc: "글자로 복사(MD)하거나 워드(.docx)로 받아 제출·공유해요." },
-            ] as const).map(({ Icon, step, title, desc }) => (
-              <div key={step} className="flex gap-3">
-                <span
-                  className="inline-flex items-center justify-center rounded-full shrink-0 font-bold"
-                  style={{ width: 28, height: 28, background: "var(--accent-weak)", color: "var(--accent)", fontSize: "var(--t-sm)" }}
-                  aria-hidden
-                >
-                  {step}
-                </span>
-                <div>
-                  <div className="flex items-center gap-1.5 font-bold text-text" style={{ fontSize: "var(--t-sm)", marginBottom: 3 }}>
-                    <Icon size={14} style={{ color: "var(--text-muted)" }} aria-hidden />
-                    {title}
-                  </div>
-                  <p className="text-text-muted" style={{ fontSize: "var(--t-xs)", lineHeight: "var(--lh-base)" }}>{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
+        {/* 나머지는 접어 둔다 — 인증 지도 4종·일정·준비 체크리스트·역사·위키·공통 문서 */}
+        <details className="rounded-[var(--r-lg)] border" style={{ borderColor: "var(--border)", background: "var(--bg)" }}>
+          <summary className="cursor-pointer font-bold text-text" style={{ padding: "var(--s-4) var(--s-6)", minHeight: 44, fontSize: "var(--t-base)" }}>
+            인증 지도(IVDR·ISO 13485·IVDD·MDSAP)와 다른 도구 모두 보기
+          </summary>
+          <div style={{ padding: "0 var(--s-6) var(--s-6)" }}>
         {/* 어느 인증인지 모르겠다면 — 상황별 추천 (규제 초심자를 위한 진입 가이드) */}
         <section
           className="rounded-[var(--r-lg)] border"
@@ -253,7 +258,7 @@ export function CertHub() {
             </div>
             <p className="text-text-muted" style={{ fontSize: "var(--t-base)", lineHeight: "var(--lh-base)", marginBottom: "var(--s-6)" }}>
               4 페이즈 · 7 정거장 · IVDR 전환 기한 대응<br />
-              NB 신청 기한 Class D 2025 · C 2026 · B 2027
+              IVDR 전환 일정·기한 확인
             </p>
             <span className="font-bold" style={{ color: "var(--p2)", fontSize: "var(--t-sm)" }}>
               여정 시작 →
@@ -447,6 +452,9 @@ export function CertHub() {
             </Link>
           </div>
         </section>
+
+          </div>
+        </details>
 
         {/* Attribution */}
         <footer

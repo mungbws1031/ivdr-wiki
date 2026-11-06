@@ -110,6 +110,27 @@ export function StationDetail({
             <StatusChip label={station.tag.label} tone={station.tag.tone} size="md" />
           </div>
 
+          {/* 🧭 그래서 우리 팀이 할 일 — 맨 먼저. accent 아님, 페이즈색 카드 */}
+          <div
+            className="rounded-[var(--r-md)]"
+            style={{
+              background: `var(${phase.tintVar})`,
+              borderLeft: `4px solid ${color}`,
+              padding: "var(--s-4)",
+              marginTop: "var(--s-6)",
+            }}
+          >
+            <div className="flex items-center gap-2" style={{ color }}>
+              <Compass size={18} strokeWidth={2.25} aria-hidden />
+              <span className="font-bold" style={{ fontSize: "var(--t-sm)" }}>
+                그래서 우리 팀이 할 일
+              </span>
+            </div>
+            <p className="text-text" style={{ fontSize: "var(--t-base)", marginTop: 6, fontWeight: 600 }}>
+              {station.todo}
+            </p>
+          </div>
+
           {/* 📄 이 단계에서 써야 할 문서 (전체 리스트) */}
           {(() => {
             const docsForStation = certId === "iso13485"
@@ -160,27 +181,6 @@ export function StationDetail({
               </div>
             );
           })()}
-
-          {/* 🧭 지금 할 일 — accent 아님, 페이즈색 카드 */}
-          <div
-            className="rounded-[var(--r-md)]"
-            style={{
-              background: `var(${phase.tintVar})`,
-              borderLeft: `4px solid ${color}`,
-              padding: "var(--s-4)",
-              marginTop: "var(--s-6)",
-            }}
-          >
-            <div className="flex items-center gap-2" style={{ color }}>
-              <Compass size={18} strokeWidth={2.25} aria-hidden />
-              <span className="font-bold" style={{ fontSize: "var(--t-sm)" }}>
-                지금 할 일
-              </span>
-            </div>
-            <p className="text-text" style={{ fontSize: "var(--t-base)", marginTop: 6, fontWeight: 600 }}>
-              {station.todo}
-            </p>
-          </div>
 
           {/* ✅ 이 단계에서 알아야 할 정보 (체크리스트) */}
           {(() => {
@@ -290,15 +290,15 @@ export function StationDetail({
             );
           })()}
 
-          {/* 관련 조항 */}
-          <div style={{ marginTop: "var(--s-6)" }}>
-            <div className="flex items-center gap-2 text-text-muted" style={{ marginBottom: "var(--s-2)" }}>
+          {/* 관련 조항 — 근거는 접어 둔다 */}
+          <details style={{ marginTop: "var(--s-6)" }}>
+            <summary className="flex items-center gap-2 text-text-muted cursor-pointer" style={{ minHeight: 40 }}>
               <BookMarked size={16} aria-hidden />
               <span className="font-semibold" style={{ fontSize: "var(--t-sm)" }}>
-                관련 조항
+                근거 조문 보기 ({station.refs.length})
               </span>
-            </div>
-            <ul className="flex flex-wrap gap-2">
+            </summary>
+            <ul className="flex flex-wrap gap-2" style={{ marginTop: "var(--s-2)" }}>
               {station.refs.map((r) => (
                 <li
                   key={r}
@@ -314,7 +314,7 @@ export function StationDetail({
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
         </div>
       </div>
     </div>

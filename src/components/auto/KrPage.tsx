@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AlertTriangle, ChevronRight, ShieldCheck } from "lucide-react";
 import { PageHeader } from "../PageHeader";
 import { AutoSteps } from "./AutoSteps";
-import { AssumptionBanner, FieldLink, fieldHref } from "./AutoUi";
+import { AssumptionBanner, FieldLink, fieldHref, DraftNotice, WikiLink } from "./AutoUi";
 import { useWorkingSpec } from "../../hooks/useSpecStore";
 import { classifyKr, krDocSet, KR_DOC_STATUS_LABEL, KR_RULES_REVIEWED, KR_SELF_TEST_ITEMS, KR_SOURCES, type KrDocStatus, type KrStatus } from "../../lib/kr";
 import { leafById } from "../../data/docTree";
@@ -47,6 +47,8 @@ export function KrPage() {
           <AutoSteps current="/auto/kr" />
           <AssumptionBanner assumed={assumed} assumeOn={assumeOn} />
           <h1 className="font-extrabold text-text" style={{ fontSize: "var(--t-2xl)", lineHeight: "var(--lh-tight)", marginTop: "var(--s-2)" }}>한국 식약처(MFDS) 인증</h1>
+          <DraftNotice />
+          <WikiLink slug="kr-regulatory-history" />
           <p className="text-text-muted" style={{ fontSize: "var(--t-base)", maxWidth: 720 }}>
             체외진단의료기기 등급을 추천해요. 자가검사용으로 허용된 품목인지, 국내에 낼 자료는 무엇인지도 정리해요. 최종 등급은 식약처 고시의 품목별 등급으로 정해져요. 그래서 여기 추천은 품목을 찾기 위한 출발점이에요.
           </p>
