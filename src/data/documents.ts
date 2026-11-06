@@ -152,7 +152,7 @@ export const documents: DocTemplate[] = [
     ],
     checklist: [
       "Rule 1~7을 모두 순서대로 검토했는가",
-      "자가/근접검사면 Rule 4(대체로 Class C)를 반영했는가",
+      "자가검사면 Rule 4(a)(원칙 C, 예외 B)를, 근접검사면 Rule 4(b)(그 자체로 분류)를 반영했는가",
       "둘 이상 해당 시 최고 등급을 채택했는가",
       "결정적 Rule과 근거가 한눈에 보이는가",
     ],

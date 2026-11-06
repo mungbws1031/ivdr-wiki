@@ -109,14 +109,14 @@ export const ivddStations: IVDDStation[] = [
     phase: "ivdd-assess",
     title: "EU 적합성선언 & CE 마킹",
     icon: "check-circle",
-    oneLine: "Article 11 — EC 선언을 쓰고, CE를 붙이고, EU 대리인을 정해요",
+    oneLine: "Art.9·Art.16 — EC 선언을 쓰고, CE를 붙이고, EU 대리인을 정해요",
     tag: { label: "최종 관문", tone: "success" },
     body: [
       "적합성 절차를 마치면 제조자가 **EC 적합성선언(DoC)** 을 쓰고 서명해요. DoC에는 기기 식별·적용 지침·절차·NB 번호(해당 시)·제조자 서명이 들어가요.",
       "EU 밖의 제조자는 EU 대리인(Authorized Representative)을 정해야 해요. NB가 개입했다면 CE 마크는 CE + NB 번호를 함께 붙여요.",
     ],
     todo: "DoC 초안을 쓰고, EU 대리인과 계약하고, CE 마킹 양식을 확정해 주세요",
-    refs: ["98/79/EC Art.11", "Art.10", "Annex III", "Annex VIII"],
+    refs: ["98/79/EC Art.9", "Art.16", "Art.10", "Annex III", "Annex VIII"],
   },
   {
     id: 7,

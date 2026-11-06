@@ -191,7 +191,7 @@ export const SNIPPETS: Snippet[] = [
     label: "중대 사고 보고 기준",
     category: "PMS·Vigilance",
     certTypes: ["ivdr"],
-    text: "중대한 사고(Serious Incident)는 IVDR Article 82에 따라 인지 후 즉시 또는 15일 이내에 관할 당국에 보고합니다. 안전 시정 조치(FSCA)는 MEDDEV 2.12/1 Rev 8 기준을 적용합니다.",
+    text: "중대한 사고(Serious Incident)는 IVDR Article 82에 따라 인과관계를 확인하는 즉시, 늦어도 인지 후 15일 이내(사망·예상치 못한 심각한 악화는 10일, 심각한 공중보건 위협은 2일)에 관할 당국에 보고합니다. 용어와 판단 기준은 MDCG 2023-3을 따릅니다.",
   },
   {
     id: "pms-004",

@@ -22,7 +22,7 @@ export const ivddDocTree: IVDDDocLeaf[] = [
   // Station 5 — NB
   { id: "ivdd-nb-submission",        title: "NB 제출 패키지",               refs: ["Annex IV", "Annex V"],          stationId: 5, requirement: "conditional", note: "List A/B 기기에 해당" },
   // Station 6 — DoC & CE
-  { id: "ivdd-doc",                  title: "EC 적합성선언(DoC)",           refs: ["Art.11", "Annex III"],          stationId: 6, requirement: "required" },
+  { id: "ivdd-doc",                  title: "EC 적합성선언(DoC)",           refs: ["Art.9", "Art.16", "Annex III"], stationId: 6, requirement: "required" },
   // Station 7 — PMS
   { id: "ivdd-pms-plan",             title: "사후 시장 감시 계획",          refs: ["Art.11(4)"],                    stationId: 7, requirement: "required" },
 ];

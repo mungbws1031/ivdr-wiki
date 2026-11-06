@@ -16,18 +16,18 @@ interface TLEvent {
 }
 
 const ERA_META: Record<EraId, { label: string; years: string; color: string; tint: string; desc: string }> = {
-  1: { label: "규제 공백기", years: "1963–2002", color: "var(--p1)", tint: "var(--p1-tint)", desc: "약사법 하에 의료기기 별도 법체계 없음. 수출 기업이 글로벌 기준과 처음 조우." },
+  1: { label: "규제 공백기", years: "1953–2002", color: "var(--p1)", tint: "var(--p1-tint)", desc: "약사법 하에 의료기기 별도 법체계 없음. 수출 기업이 글로벌 기준과 처음 조우." },
   2: { label: "법체계 구축기", years: "2003–2012", color: "var(--p2)", tint: "var(--p2-tint)", desc: "의료기기법 독립 제정·GMP 의무화. '문서로 증명해야 팔 수 있다'는 패러다임 정착." },
   3: { label: "글로벌 정렬기", years: "2013–2019", color: "var(--p3)", tint: "var(--p3-tint)", desc: "MFDS 격상, 위험관리·PMS 명문화. EU MDR/IVDR 발표에 한국 즉각 연동." },
-  4: { label: "이중 의무 심화기", years: "2020–현재", color: "var(--p4)", tint: "var(--p4-tint)", desc: "AI·체외진단기기법 독립. EU IVDR 전면 시행으로 이중 문서 관리 시대 도래." },
+  4: { label: "이중 의무 심화기", years: "2020–현재", color: "var(--p4)", tint: "var(--p4-tint)", desc: "AI·체외진단기기법 독립. EU IVDR 적용(2022)으로 이중 문서 관리 시대 도래." },
 };
 
 const EVENTS: TLEvent[] = [
   // ── Era 1 ─────────────────────────────────────────────────────────
   {
-    year: 1963, side: "kr", era: 1, tier: "major",
+    year: 1953, side: "kr", era: 1, tier: "major",
     label: "약사법 제정",
-    detail: "의료기기를 의약품과 함께 규율 시작. 별도 문서 체계 없음.",
+    detail: "법률 제300호(1953.12.18). 의료용구를 의약품과 함께 규율 시작. 1963년 전부개정(법률 제1491호).",
     trigger: "해방 후 무규제 혼란 — 불량 의약품·기기 유통 방지 필요",
   },
   {
@@ -37,9 +37,9 @@ const EVENTS: TLEvent[] = [
     trigger: "달콘 실드(IUD) 사고: 수천 명 감염·사산 — 기기 안전 입법 요구 폭발",
   },
   {
-    year: 1990, side: "world", era: 1, tier: "major",
+    year: 1993, side: "world", era: 1, tier: "major",
     label: "EU 의료기기 지침 MDD",
-    detail: "93/42/EEC 발효 — CE 마킹 제도 시작.",
+    detail: "93/42/EEC 채택(1993.6.14) — 의료기기 CE 마킹 체계.",
     trigger: "유럽 단일시장 통합(1993) 준비 — 회원국 간 이중 인증 혼란 해소",
   },
   {
@@ -101,7 +101,7 @@ const EVENTS: TLEvent[] = [
   {
     year: 2013, side: "kr", era: 3, tier: "med",
     label: "MFDS 격상",
-    detail: "차관급 청 → 장관급 처. 예산·인력 확대, 규제 강화 가속.",
+    detail: "보건복지부 소속 식약청 → 국무총리 소속 식약처. 규제 강화 가속.",
     trigger: "2011~12년 가습기 살균제 사건 → 식품·의약품 안전 강화 범국민 요구",
   },
   {
@@ -145,13 +145,13 @@ const EVENTS: TLEvent[] = [
     year: 2025, side: "kr", era: 4, tier: "major",
     label: "이중 문서 관리 시대",
     detail: "한국 허가 + EUDAMED + MDCG 가이드 동시 관리 필수.",
-    trigger: "EU IVDR 전면 시행 — 수출 기업이 양국 규제를 동시에 준수해야 하는 현실",
+    trigger: "EU IVDR 적용(2022)과 전환기 진행 — 수출 기업이 양국 규제를 동시에 준수해야 하는 현실",
   },
   {
-    year: 2025, side: "world", era: 4, tier: "major",
-    label: "EU IVDR 전면 시행",
-    detail: "체외진단기기 완전 의무화 원년. EUDAMED 4개 모듈 의무화.",
-    trigger: "COVID-19로 진단기기 중요성 재인식 + IVD 전환기 최종 종료",
+    year: 2022, side: "world", era: 4, tier: "major",
+    label: "EU IVDR 적용 시작",
+    detail: "2022.5.26부터 적용(Art.113(2)). EUDAMED 모듈은 기능 확인 공지 6개월 뒤부터 차례로 의무(Art.113(3)(f)).",
+    trigger: "기존 IVDD 기기는 Regulation (EU) 2024/1860 개정으로 2027~2029년까지 단계적 전환",
   },
 ];
 
@@ -223,7 +223,7 @@ export function HistoryPage() {
             60년의 기록
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "var(--t-base)", marginTop: "var(--s-2)" }}>
-            약사법(1963)부터 EU IVDR 이중 의무(2025)까지 — 한국 의료기기 규제 역사
+            약사법(1953)부터 EU IVDR 이중 의무(2025)까지 — 한국 의료기기 규제 역사
           </p>
           <p style={{ color: "var(--text-subtle)", fontSize: "var(--t-sm)", marginTop: "var(--s-1)" }}>
             ⚡ 각 사건 아래 이탤릭체는 <strong style={{ color: "var(--text-muted)" }}>변화를 촉발한 계기</strong>입니다
@@ -233,7 +233,7 @@ export function HistoryPage() {
         {/* Stats */}
         <div style={{ display: "flex", gap: "var(--s-4)", justifyContent: "center", flexWrap: "wrap", marginBottom: "var(--s-10)" }}>
           {[
-            { num: "1963", label: "규제 시작" },
+            { num: "1953", label: "규제 시작" },
             { num: "4단계", label: "법체계 전환" },
             { num: "2025", label: "이중 의무 도래" },
             { num: "글로벌 동시", label: "정렬 완성" },
