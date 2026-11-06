@@ -444,7 +444,7 @@ export const ivddDocuments: DocTemplate[] = [
     stationId: 6,
     docTitle: "EC 적합성선언(DoC)",
     purpose:
-      "98/79/EC Art.11 및 Annex III에 따라 기기가 지침의 필수 요건을 충족함을 공식 선언하고 CE 마킹의 법적 근거를 만든다.",
+      "98/79/EC Art.9·Art.16 및 Annex III에 따라 기기가 지침의 필수 요건을 충족함을 공식 선언하고 CE 마킹의 법적 근거를 만든다.",
     rationale:
       "DoC는 CE 마킹의 필수 전제 문서다. 제조자는 DoC를 작성·서명 후 최소 5년간 보관해야 하며, NB가 개입한 경우 NB 번호와 인증서 정보를 포함해야 한다.",
     intent:
@@ -485,7 +485,7 @@ export const ivddDocuments: DocTemplate[] = [
       "EU 대리인 정보가 포함됐는가 (비EU 제조자)",
     ],
     relatedConceptSlugs: ["doc", "ce-marking"],
-    refs: ["98/79/EC Art.11", "Annex III"],
+    refs: ["98/79/EC Art.9", "Art.16", "Annex III"],
   },
 
   // ── Station 7 · PMS 계획 ────────────────────────────────────────────

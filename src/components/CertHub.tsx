@@ -375,7 +375,7 @@ export function CertHub() {
               🇰🇷 규제 역사 60년 — 한국 × 해외 동시 비교 인포그래픽
             </div>
             <div className="text-text-muted" style={{ fontSize: "var(--t-sm)", marginTop: 2 }}>
-              약사법(1963)부터 EU IVDR 이중 의무(2025)까지 · 4개 시대 · 21개 사건
+              약사법(1953)부터 EU IVDR 이중 의무(2025)까지 · 4개 시대 · 21개 사건
             </div>
           </div>
           <span className="font-bold shrink-0" style={{ color: "var(--info)", fontSize: "var(--t-sm)" }}>

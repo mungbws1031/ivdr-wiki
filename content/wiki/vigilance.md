@@ -9,9 +9,9 @@ aliases:
 category: concept
 summary: 중대사고(Serious Incident)와 현장안전조치(FSCA)를 법정 기한 안에 당국에 보고하는 의무 체계예요.
 refs:
-  - IVDR Art.82~89
-  - MEDDEV 2.12/1
-  - EU Implementing Regulation 2022/197
+  - IVDR Art.82~87 (중대사고·FSCA 보고, 추세 보고, 분석, 이행법, 전자 시스템 — Art.88부터는 시장감시)
+  - IVDR Art.82(3)~(5) — 중대사고 15일, 사망·예상치 못한 심각한 악화 10일, 심각한 공중보건 위협 2일 (EUR-Lex 원문 대조 2026-11-06)
+  - MDCG 2023-3 (비질런스 용어·개념 Q&A — MDR·IVDR 공통)
 stations:
   - 9
   - 10
