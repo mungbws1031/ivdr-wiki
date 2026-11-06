@@ -13,7 +13,7 @@ import { getIcon } from "../lib/icons";
 import { PageHeader } from "./PageHeader";
 import { CopyMarkdownBar } from "./CopyMarkdownBar";
 import { StatusChip } from "./StatusChip";
-import { LevelMeter } from "./LevelMeter";
+import { LevelMeter, LevelLegend } from "./LevelMeter";
 import { DocumentMindmap } from "./DocumentMindmap";
 import { DocumentOrder } from "./DocumentOrder";
 import { SchemeOverlap } from "./SchemeOverlap";
@@ -59,6 +59,9 @@ export function DocumentTree() {
           제출 구조를 트리로 펼쳤습니다. 색은 문서 그룹을 구분하고, 모든 잎 노드를 누르면 작성
           템플릿이 열립니다(워드 내보내기 포함).
         </p>
+        <div style={{ marginTop: "var(--s-2)" }}>
+          <LevelLegend />
+        </div>
 
         {/* 요약 + 등록부 내보내기 */}
         <div

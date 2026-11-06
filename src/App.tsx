@@ -1,5 +1,5 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { BrowserRouter, Route, Routes, useLocation, useNavigationType } from "react-router-dom";
+import { Suspense, lazy, useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { CertHub } from "./components/CertHub"; // 랜딩 — 첫 화면이라 즉시 로딩
 
@@ -37,10 +37,30 @@ function RouteFallback() {
   );
 }
 
+/**
+ * 다른 페이지로 옮기면 맨 위에서 열리게 한다.
+ * - 같은 지도 안에서 정거장만 바꿀 때(/ivdr/station/3 → /ivdr/station/4)는 그대로 둔다.
+ * - #주소(앵커)가 있으면 그 페이지가 알아서 스크롤하니 건드리지 않는다.
+ * - 뒤로 가기(POP)는 브라우저가 기억한 위치를 쓰게 둔다.
+ */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  const navType = useNavigationType();
+  const base = pathname.replace(/\/station\/[^/]+$/, "");
+  const prev = useRef(base);
+  useEffect(() => {
+    if (prev.current === base) return;
+    prev.current = base;
+    if (!hash && navType !== "POP") window.scrollTo(0, 0);
+  }, [base, hash, navType]);
+  return null;
+}
+
 export default function App() {
   const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
   return (
     <BrowserRouter basename={basename}>
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* 인증 선택 허브 */}

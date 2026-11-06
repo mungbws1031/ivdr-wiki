@@ -688,8 +688,8 @@ export function DocumentWorkspace() {
 
             {/* P1 초안 — sug-doc-pipeline 형식(초안 docx + state.json + input.json) */}
             {P1_DOCS.some((d) => d.id === doc.id) && (
-              <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--border)", padding: "16px 20px" }} aria-label="파이프라인용 내보내기">
-                <PipelineExportButton ids={[doc.id]} label="파이프라인용 내보내기 (sug-doc-pipeline)" />
+              <section className="rounded-[var(--r-lg)] border bg-bg" style={{ borderColor: "var(--border)", padding: "16px 20px" }} aria-label="초안 묶음 내보내기">
+                <PipelineExportButton ids={[doc.id]} label="초안 묶음 내보내기 (zip — 문서 작성 도구용)" />
               </section>
             )}
 

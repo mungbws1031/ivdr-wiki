@@ -168,6 +168,7 @@ export function StartPage() {
             )}
             {!start && <p className="text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: 6 }}>개발 시작일을 넣으면 날짜로 보여 줘요. 목표 판매일을 넣으면 "늦어도 시작"할 날을 계산해요.</p>}
 
+            <p className="sm:hidden text-text-subtle" style={{ fontSize: "var(--t-xs)", marginTop: "var(--s-4)" }}>옆으로 밀면 일정 막대 전체가 보여요 →</p>
             <div className="overflow-x-auto" style={{ marginTop: "var(--s-4)" }}>
               <div style={{ minWidth: 760 }}>
                 <div className="grid text-text-subtle" style={{ gridTemplateColumns: "230px 1fr 84px", fontSize: 11, padding: "0 0 4px" }}>
